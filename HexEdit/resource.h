@@ -443,6 +443,7 @@
 #define IDB_HELP                        520
 #define IDB_HELP_HOT                    521
 #define IDR_CONTEXT_PREVW               522
+#define IDD_PROP_BITMAP                 525
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1258,7 +1259,9 @@
 #define IDC_STATS_MD5                   1645
 #define IDC_STATS_SHA1                  1646
 #define IDC_CSRC_PREVIEW                1647
+#define IDC_BMP_HEIGHT                  1647
 #define IDC_CRC_REFLECTREM              1648
+#define IDC_BMP_HEIGHT_DISK             1648
 #define IDC_CRC_BITS                    1649
 #define IDC_CRC_POLY                    1650
 #define IDC_CRC_INITREM                 1651
@@ -1303,6 +1306,14 @@
 #define IDC_DISPLAY_AERIAL              1691
 #define IDC_DISPLAY_COMP                1692
 #define IDC_DISPLAY_PREVW               1693
+#define IDC_BMP_FORMAT                  1695
+#define IDC_BMP_BPP                     1696
+#define IDC_BMP_WIDTH                   1697
+#define IDC_BMP_DESC_MEMORY             1698
+#define IDC_BMP_FORMAT_DISK             1699
+#define IDC_BMP_BPP_DISK                1700
+#define IDC_BMP_WIDTH_DISK              1701
+#define IDC_BMP_DESC_DISK               1702
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1862,9 +1873,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        525
+#define _APS_NEXT_RESOURCE_VALUE        526
 #define _APS_NEXT_COMMAND_VALUE         39230
-#define _APS_NEXT_CONTROL_VALUE         1695
+#define _APS_NEXT_CONTROL_VALUE         1703
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

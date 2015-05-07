@@ -44,6 +44,14 @@
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC
 #define HIDC_BINARY                     0x807503ec    // IDD_CALC
 #define HIDC_BITS                       0x8075044a    // IDD_CALC
+#define HIDC_BMP_BPP                    0x820d06a0    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_BPP_DISK               0x820d06a4    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_FORMAT                 0x820d069f    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_FORMAT_DISK            0x820d06a3    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_HEIGHT                 0x820d066f    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_HEIGHT_DISK            0x820d0670    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_WIDTH                  0x820d06a1    // IDD_PROP_BITMAP [English (United States)]
+#define HIDC_BMP_WIDTH_DISK             0x820d06a5    // IDD_PROP_BITMAP [English (United States)]
 #define HIDC_BOOKMARKS_HELP             0x810f0514    // IDD_BOOKMARKS
 #define HIDC_BOOKMARKS_VALIDATE         0x810f04cc    // IDD_BOOKMARKS
 #define HIDC_BOOKMARK_ADD               0x810f04cb    // IDD_BOOKMARKS
@@ -501,9 +509,9 @@
 #define HIDC_SOURCE_CODE                0x813005b2    // IDD_TPARSE
 #define HIDC_SPLASH                     0x809e0419    // IDD_OPT_SYSTEM [English (United States)]
 #define HIDC_STARTUP_PAGE               0x819a0611    // IDD_OPT_WORKLAYOUT [English (United States)]
-#define HIDC_STATS_CRC32                0x81f9066c    // IDD_PROP_STATS [English (United States)]
-#define HIDC_STATS_MD5                  0x81f9066d    // IDD_PROP_STATS [English (United States)]
-#define HIDC_STATS_SHA1                 0x81f9066e    // IDD_PROP_STATS [English (United States)]
+#define HIDC_STATS_CRC32                0x820d066c    // IDD_PROP_STATS [English (United States)]
+#define HIDC_STATS_MD5                  0x820d066d    // IDD_PROP_STATS [English (United States)]
+#define HIDC_STATS_SHA1                 0x820d066e    // IDD_PROP_STATS [English (United States)]
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
 #define HIDC_SYNC_TREE                  0x81ff0688    // IDD_OPT_EXPLORER [English (United States)]
