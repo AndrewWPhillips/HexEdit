@@ -103,7 +103,7 @@ CHexEditDoc::CHexEditDoc()
    start_aerial_event_(FALSE, TRUE), aerial_buf_(NULL),
    start_comp_event_  (FALSE, TRUE), comp_bufa_(NULL), comp_bufb_(NULL),
    stats_buf_(NULL), c32_(NULL), c64_(NULL),
-   preview_address_(0L)
+   preview_address_(0L), preview_init_fif_(FREE_IMAGE_FORMAT(-999))
 {
 	doc_changed_ = false;
 
@@ -1921,7 +1921,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			if (idx == -1)
 			{
 				TaskMessageBox("Too Many Temporary Files",
-					"To insert a large file HexEdit Pro needs to create a temporary "
+					"To insert a large file HexEdit needs to create a temporary "
 					"file but has run out of temporary file handles.\n\n"
 					"Please save the file to deallocate "
 					"temporary file handles and try again.");

@@ -194,7 +194,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 						pp->prop_date.UpdateWindow();
 				}
 				break;
-			case km_prop_stats:
+			case km_prop_graph:
 				{
 					OnProperties();
 					CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
@@ -202,6 +202,23 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 						pp->prop_graph.UpdateWindow();
 				}
 				break;
+			case km_prop_stats:
+				{
+					OnProperties();
+					CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
+					if (pp->SetActivePage(&pp->prop_stats))
+						pp->prop_stats.UpdateWindow();
+				}
+				break;
+			case km_prop_bitmap:
+				{
+					OnProperties();
+					CPropSheet *pp = &((CMainFrame *)AfxGetMainWnd())->m_wndProp;
+					if (pp->SetActivePage(&pp->prop_bitmap))
+						pp->prop_bitmap.UpdateWindow();
+				}
+				break;
+
 			case km_prop_close:
 				((CMainFrame *)AfxGetMainWnd())->m_wndProp.ShowWindow(SW_HIDE);
 				break;
@@ -1952,7 +1969,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 		if (magic != 0xCDAB)
 		{
 				TaskMessageBox("Invalid Macro File",
-					"This is not a HexEdit Pro macro file or it has become corrupted.",
+					"This is not a HexEdit macro file or it has become corrupted.",
 					0, 0, MAKEINTRESOURCE(IDI_CROSS));
 			pfe->Delete();
 			mac_error_ = 10;
@@ -1977,7 +1994,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 		if (version > INTERNAL_VERSION &&
 			TaskMessageBox("Version Warning",
 						   CString("This macro (") + filename + ")\n"
-						  "was recorded in a later version of HexEdit Pro "
+						  "was recorded in a later version of HexEdit "
 						  "than you are currently using.  "
 						  "It may not run as expected.\n\n"
 						  "Do you want to continue?",

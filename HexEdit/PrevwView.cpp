@@ -9,20 +9,20 @@
 // TODO
 // Code
 //  > handle alpha channel
-//  - forward unused message to hex view
 //  > double-buffer to addresses flickering
-//    - scroll window when dragging to stop flicker
-//  > save/restore current pos and zoom + background_
-//  - copy to clipboard command??
+//    > scroll window when dragging to stop flicker
+//  - fix border if bpp < 32 (currently black)
 //  - scrollbars??
+//  - properties (disk/memory): format, dimensions, bpp
 // Maybe later
+//  - copy to clipboard command??
 //  - commands to rotate/flip the view of the bitmap
 //    - ie. alpha blend (possibly large) FreeImage bitmap into window sized (smaller) hidden bitmap then rotate/flip that before/while blt to screen
 //    - flip vert/horiz (maybe use FreeImage_FlipHorizontal during render process)
 //    - rotate command (Note: 90/270 requires swap of bitmap heigh/width in calcs)
 // Test
 //  > zoom min/max with different sized bitmaps
-//  - BLT boundary contions
+//  - BLT boundary conditions
 
 IMPLEMENT_DYNCREATE(CPrevwView, CView)
 
@@ -102,16 +102,25 @@ void CPrevwView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		validate_display();
 		Invalidate();
+		phev_->show_prop();
 	}
 }
 
 void CPrevwView::OnDraw(CDC* pDC)
 {
 	CHexEditDoc *pDoc = GetDocument();
+	ASSERT(pDoc != NULL);
 	if (pDoc == NULL || pDoc->preview_dib_ == NULL || zoom_ == 0.0)
-		return;
+	{
+		pDC->SetBkMode(TRANSPARENT);
 
-	// xxx if preview_dib_ == NULL just draw text "Invalid or unrecognized format"
+		CRect cli;
+		GetClientRect(&cli);
+		pDC->DPtoLP(&cli);
+		pDC->SetTextColor(::GetSysColor(COLOR_WINDOWTEXT));
+		pDC->DrawText("Unrecognized format or corrupt file", -1, &cli, DT_CENTER | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
+		return;
+	}
 	draw_bitmap(pDC);
 }
 
@@ -143,10 +152,6 @@ BOOL CPrevwView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 		CRect rct;
 		GetClientRect(&rct);
-
-		// Get dimensions of the bitmap (as double so we can calculate zoom)
-		double bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
-		double bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
 
 		if (zoom_ < zoom_fit())
 		{
@@ -350,6 +355,8 @@ void CPrevwView::OnBackgroundCheck()
 void CPrevwView::OnUpdateBackgroundCheck(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(background_ == CHECKERBOARD);
+	CHexEditDoc *pDoc = GetDocument();
+	pCmdUI->Enable(pDoc!= NULL && FreeImage_GetBPP(pDoc->preview_dib_) >= 32);
 }
 
 void CPrevwView::OnBackgroundWhite()
@@ -361,6 +368,8 @@ void CPrevwView::OnBackgroundWhite()
 void CPrevwView::OnUpdateBackgroundWhite(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(background_ == WHITE);
+	CHexEditDoc *pDoc = GetDocument();
+	pCmdUI->Enable(pDoc!= NULL && FreeImage_GetBPP(pDoc->preview_dib_) >= 32);
 }
 
 void CPrevwView::OnBackgroundBlack()
@@ -372,6 +381,8 @@ void CPrevwView::OnBackgroundBlack()
 void CPrevwView::OnUpdateBackgroundBlack(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(background_ == BLACK);
+	CHexEditDoc *pDoc = GetDocument();
+	pCmdUI->Enable(pDoc!= NULL && FreeImage_GetBPP(pDoc->preview_dib_) >= 32);
 }
 
 void CPrevwView::OnBackgroundGrey()
@@ -383,6 +394,8 @@ void CPrevwView::OnBackgroundGrey()
 void CPrevwView::OnUpdateBackgroundGrey(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(background_ == GREY);
+	CHexEditDoc *pDoc = GetDocument();
+	pCmdUI->Enable(pDoc!= NULL && FreeImage_GetBPP(pDoc->preview_dib_) >= 32);
 }
 
 // Drawing routines
@@ -406,21 +419,16 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 	if (pDoc == NULL || rct.IsRectEmpty())
 		return;
 
-//	BITMAPINFOHEADER *bih = FreeImage_GetInfoHeader(pDoc->preview_dib_);
-//	ASSERT(bih->biCompression == BI_RGB && bih->biHeight > 0);
-	int bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
-	int bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
-	ASSERT(bmheight > 0);
+	ASSERT(pDoc->preview_width_ > 0 && pDoc->preview_height_ > 0);
 
-	// xxx need to check this code for boundary problems with small/large bitmaps/windows
 	int sl = (rct.left - pos_.x) * zoom_;
 	if (sl < 0) sl = 0;
 	int st = (rct.top - pos_.y) * zoom_;
 	if (st < 0) st = 0;
 	int sr = (rct.right - pos_.x) * zoom_ + 1;
-	if (sr > bmwidth) sr = bmwidth;
+	if (sr > pDoc->preview_width_) sr = pDoc->preview_width_;
 	int sb = (rct.bottom - pos_.y) * zoom_ + 1;
-	if (sb > bmheight) sb = bmheight;
+	if (sb > pDoc->preview_height_) sb = pDoc->preview_height_;
 
 	int dl = sl/zoom_ + pos_.x;
 	int dt = st/zoom_ + pos_.y;
@@ -495,11 +503,11 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		//MemDC.SetWindowOrg(0, 0);
 
 		// Get the bitmap required by AlphBlend
-		FIBITMAP * dib = FreeImage_Copy(pDoc->preview_dib_, 0, 0, bmwidth, bmheight);
+		FIBITMAP * dib = FreeImage_Copy(pDoc->preview_dib_, 0, 0, pDoc->preview_width_, pDoc->preview_height_);
 		FreeImage_PreMultiplyWithAlpha(dib);
 		::StretchDIBits(MemDC.GetSafeHdc(),
 						dl - rct.left, dt - rct.top, dr - dl, db - dt,
-						sl, bmheight - sb, sr - sl, sb - st,
+						sl, pDoc->preview_height_ - sb, sr - sl, sb - st,
 						FreeImage_GetBits(dib), FreeImage_GetInfo(dib),
 						DIB_RGB_COLORS, SRCCOPY);
 
@@ -517,7 +525,7 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 		// Copy all or part of the FreeImage bitmap to the display
 		::StretchDIBits(BufDC.GetSafeHdc(),
 						dl - rct.left + xoff, dt - rct.top + yoff, dr - dl, db - dt,
-						sl, bmheight - sb, sr - sl, sb - st,
+						sl, pDoc->preview_height_ - sb, sr - sl, sb - st,
 						FreeImage_GetBits(pDoc->preview_dib_), FreeImage_GetInfo(pDoc->preview_dib_),
 						DIB_RGB_COLORS, SRCCOPY);
 	}
@@ -539,10 +547,6 @@ void CPrevwView::validate_display()
 	CRect rct;
 	GetClientRect(&rct);
 
-	// Get dimensions of the bitmap (as double so we can calculate zoom)
-	double bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
-	double bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
-
 	// zoom of zero is probably due to first display
 	if (zoom_ <= 0.0)
 	{
@@ -553,7 +557,7 @@ void CPrevwView::validate_display()
 		pos_.x = pos_.y = 0;
 	}
 
-	int width = int(bmwidth/zoom_);
+	int width = int(pDoc->preview_width_/zoom_);
 
 	// Check if the displayed bitmap width is less than the window width
 	if (width < rct.Width())
@@ -572,7 +576,7 @@ void CPrevwView::validate_display()
 		pos_.x = 0;
 	}
 
-	int height = int(bmheight/zoom_);
+	int height = int(pDoc->preview_height_/zoom_);
 
 	// Check if the displayed height is less than the window height
 	if (height < rct.Height())
@@ -626,8 +630,8 @@ double CPrevwView::zoom_fit()
 	GetClientRect(&rct);
 
 	// Get dimensions of the bitmap (as double so we can calculate zoom)
-	double bmwidth  = FreeImage_GetWidth(pDoc->preview_dib_);
-	double bmheight = FreeImage_GetHeight(pDoc->preview_dib_);
+	double bmwidth  = pDoc->preview_height_;
+	double bmheight = pDoc->preview_height_;
 
 	return max(bmwidth/rct.Width(), bmheight/rct.Height());
 }

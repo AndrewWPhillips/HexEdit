@@ -415,7 +415,6 @@ public:
 	CFile64 *pfile1_;
 	FILE_ADDRESS length() const { return length_; }
 	BOOL read_only() { return readonly_; }
-	//BOOL keep_times() { return keep_times_; }
 	int doc_flags() { return (keep_times_ ? 1 : 0) | (dffd_edit_mode_ ? 2 : 0); }
 	BOOL readonly_;
 	BOOL shared_;
@@ -665,6 +664,9 @@ public:
 	UINT RunAerialThread();     // Main func in bg thread
 	int AerialProgress();       // 0 to 100 (or -1 if not scanning)
 
+	int GetBpe() { return bpe_; }
+	int NumElts() { return int((length_ - 1)/bpe_) + 1; }    // Number of elts required for the whole file
+
 	// Bitmap preview
 	void AddPreviewView(CHexEditView *pview);
 	void RemovePreviewView();
@@ -806,8 +808,9 @@ public:
 	BOOL ScanFile();
 	void CheckUpdate();
 
-	int GetBpe() { return bpe_; }
-	int NumElts() { return int((length_ - 1)/bpe_) + 1; }    // Number of elts required for the whole file
+	// Bitmap/preview stuff
+	int GetBmpInfo(CString &format, CString &bpp, CString &w, CString &h);     // returns -2 (in prog) -4 (not avail) or 0 (OK)
+	int GetDiskBmpInfo(CString &format, CString &bpp, CString &w, CString &h); // returns -4 or 0
 
 private:
 	void HandleError(const char *mess);
@@ -900,6 +903,12 @@ private:
 	enum BG_STATE   preview_state_;
 	bool preview_fin_;           // Flags that the bg scan is finished and the view needs updating
 	long preview_address_;       // Each doc must store address where FreeImage (eg: FreeImage_LoadFromHandle) is currently reading from the file
+
+	// We store some info about the bitmap - both initial and current (current may be different if the file has been modified)
+	FREE_IMAGE_FORMAT preview_fif_, preview_init_fif_;
+	int preview_bpp_, preview_init_bpp_;
+	unsigned preview_width_, preview_init_width_;
+	unsigned preview_height_, preview_init_height_;
 
 	CFile64 *pfile6_;            // Using a copy of the file avoids synchronising access problems
 	// Also see data_file6_ (above)

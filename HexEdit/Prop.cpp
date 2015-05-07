@@ -382,6 +382,7 @@ CPropSheet::CPropSheet()
 	AddPage(&prop_date);
 	AddPage(&prop_graph);
 	AddPage(&prop_stats);
+	AddPage(&prop_bitmap);
 
 	// Create the brush used for background of read-only edit control
 	ASSERT(pBrush == NULL);
@@ -3810,7 +3811,7 @@ void CPropGraphPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 
 	if (!theApp.bg_stats_)
 	{
-		mess = "Statistics are not available.  Please turn on the Statistics option "
+		mess = "Counts and statistics are not available.  Please turn on the Statistics option "
 			   "in the Background Processing page of the Options dialog.";
 		GetDlgItem(IDC_STATS_OPTIONS)->ShowWindow(SW_SHOW);
 		goto error_return;
@@ -3948,8 +3949,6 @@ void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
 void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 {
 	CString mess, strCrc32, strMd5, strSha1;
-	std::vector<FILE_ADDRESS> cnt;
-	std::vector<COLORREF> col;
 
 	if (!theApp.bg_stats_)
 	{
@@ -4057,6 +4056,119 @@ BOOL CPropStatsPage::OnHelpInfo(HELPINFO* pHelpInfo)
 }
 
 void CPropStatsPage::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
+}
+
+//===========================================================================
+/////////////////////////////////////////////////////////////////////////////
+// CPropBitmapPage property page
+
+IMPLEMENT_DYNCREATE(CPropBitmapPage, CPropUpdatePage)
+
+CPropBitmapPage::CPropBitmapPage() : CPropUpdatePage(CPropBitmapPage::IDD)
+{
+}
+
+CPropBitmapPage::~CPropBitmapPage()
+{
+}
+
+void CPropBitmapPage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropUpdatePage::DoDataExchange(pDX);
+}
+
+void CPropBitmapPage::Update(CHexEditView *pv, FILE_ADDRESS address)
+{
+	CHexEditDoc *pDoc;
+	CString ss;                           // used to get old value for comparison to avoid flicker
+	CString format, bpp, width, height;   // values for text controls
+
+	if (pv == NULL || (pDoc = pv->GetDocument()) == NULL)
+	{
+		hide_disk_info();
+		goto error_return;
+	}
+
+	if (pDoc->IsModified())
+	{
+		hide_disk_info(false);
+		pDoc->GetDiskBmpInfo(format, bpp, width, height);
+
+		GetDlgItemText(IDC_BMP_FORMAT_DISK, ss);
+		if (ss != format)
+			SetDlgItemText(IDC_BMP_FORMAT_DISK, format);
+		GetDlgItemText(IDC_BMP_BPP_DISK, ss);
+		if (ss != bpp)
+			SetDlgItemText(IDC_BMP_BPP_DISK, bpp);
+		GetDlgItemText(IDC_BMP_WIDTH_DISK, ss);
+		if (ss != width)
+			SetDlgItemText(IDC_BMP_WIDTH_DISK, width);
+		GetDlgItemText(IDC_BMP_HEIGHT_DISK, ss);
+		if (ss != height)
+			SetDlgItemText(IDC_BMP_HEIGHT_DISK, height);
+	}
+	else
+		hide_disk_info(true);
+
+	pDoc->GetBmpInfo(format, bpp, width, height);
+
+error_return:
+	GetDlgItemText(IDC_BMP_FORMAT, ss);
+	if (ss != format)
+		SetDlgItemText(IDC_BMP_FORMAT, format);
+	GetDlgItemText(IDC_BMP_BPP, ss);
+	if (ss != bpp)
+		SetDlgItemText(IDC_BMP_BPP, bpp);
+	GetDlgItemText(IDC_BMP_WIDTH, ss);
+	if (ss != width)
+		SetDlgItemText(IDC_BMP_WIDTH, width);
+	GetDlgItemText(IDC_BMP_HEIGHT, ss);
+	if (ss != height)
+		SetDlgItemText(IDC_BMP_HEIGHT, height);
+	return;
+}
+
+// If memory info is the same as disk info we hide all the controls showing disk info
+void CPropBitmapPage::hide_disk_info(bool hide)
+{
+	GetDlgItem(IDC_BMP_DESC_DISK)->ShowWindow(hide ? SW_HIDE : SW_SHOW);
+	GetDlgItem(IDC_BMP_FORMAT_DISK)->ShowWindow(hide ? SW_HIDE : SW_SHOW);
+	GetDlgItem(IDC_BMP_BPP_DISK)->ShowWindow(hide ? SW_HIDE : SW_SHOW);
+	GetDlgItem(IDC_BMP_WIDTH_DISK)->ShowWindow(hide ? SW_HIDE : SW_SHOW);
+	GetDlgItem(IDC_BMP_HEIGHT_DISK)->ShowWindow(hide ? SW_HIDE : SW_SHOW);
+}
+
+BEGIN_MESSAGE_MAP(CPropBitmapPage, CPropUpdatePage)
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CPropBitmapPage message handlers
+
+BOOL CPropBitmapPage::OnInitDialog()
+{
+	CPropUpdatePage::OnInitDialog();
+
+	return TRUE;
+}
+
+BOOL CPropBitmapPage::OnSetActive()
+{
+	Update(GetView());
+	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_prop_bitmap);
+	return CPropUpdatePage::OnSetActive();
+}
+
+BOOL CPropBitmapPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	((CMainFrame *)AfxGetMainWnd())->m_wndProp.help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
+	return TRUE;
+}
+
+void CPropBitmapPage::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }

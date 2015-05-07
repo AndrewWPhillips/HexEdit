@@ -86,6 +86,92 @@ int CHexEditDoc::PreviewProgress()
 	return -1;
 }
 
+static const char *format_name[] =
+{
+	"BMP",
+	"Icon",
+	"JPEG",
+	"JNG",
+	"KOALA",
+	"IFF ILBM",
+	"MNG",
+	"PBM",
+	"PBMRAW",
+	"PCD",
+	"PCX",
+	"PGM",
+	"PGMRAW",
+	"PNG",
+	"PPM",
+	"PPMRAW",
+	"RAS",
+	"TARGA",
+	"TIFF",
+	"WBMP",
+	"PSD",
+	"CUT",
+	"XBM",
+	"XPM",
+	"DDS",
+	"GIF",
+	"HDR",
+	"FAXG3",
+	"SGI",
+	"EXR",
+	"J2K",
+	"JP2",
+	"PFM",
+	"PICT",
+	"RAW",
+	NULL
+};
+
+
+int CHexEditDoc::GetBmpInfo(CString &format, CString &bpp, CString &width, CString &height)
+{
+	// Clear strings in case of error return
+	format = "Unknown";
+	bpp = width = height = "";
+
+	if (pthread6_ == NULL)
+		return -4;         // no bitmap preview for this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (preview_dib_ == NULL)
+		return -2;
+
+	ASSERT(preview_init_fif_ != FREE_IMAGE_FORMAT(-999));
+	format = CString(format_name[int(preview_fif_)]);
+	bpp.Format("%d", preview_bpp_);
+	width.Format("%u pixels", preview_width_);
+	height.Format("%u pixels", preview_height_);
+
+	return 0;
+}
+
+int CHexEditDoc::GetDiskBmpInfo(CString &format, CString &bpp, CString &width, CString &height)
+{
+	// Clear strings in case of error return
+	format = "Unknown";
+	bpp = width = height = "";
+
+	if (pthread6_ == NULL || preview_init_fif_ == FREE_IMAGE_FORMAT(-999))
+		return -4;         // no bitmap preview for this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	format = CString(format_name[int(preview_init_fif_)]);
+	bpp.Format("%d", preview_init_bpp_);
+	width.Format("%u pixels", preview_init_width_);
+	height.Format("%u pixels", preview_init_height_);
+
+	return 0;
+}
+
+
 // Sends a message for the thread to kill itself then tides up shared members 
 void CHexEditDoc::KillPreviewThread()
 {
@@ -283,12 +369,29 @@ UINT CHexEditDoc::RunPreviewThread()
 
 		FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromHandle(&fi_funcs, this);
 		FIBITMAP * dib = FreeImage_LoadFromHandle(fif, &fi_funcs, this);
+		int bpp = FreeImage_GetBPP(dib);
+		unsigned width = FreeImage_GetWidth(dib);
+		unsigned height = FreeImage_GetHeight(dib);
 
 		TRACE1("+++ BGPreview: finished load for %p\n", this);
 		docdata_.Lock();
 		preview_fin_ = true;
 		preview_address_ = 0;
 		preview_dib_ = dib;
+
+		// Save info about the bitmap just loaded
+		preview_fif_ = fif;
+		preview_bpp_ = bpp;
+		preview_width_ = width;
+		preview_height_ = height;
+		if (preview_init_fif_ == FREE_IMAGE_FORMAT(-999))
+		{
+			// Must be first scan so save the inital format, bpp, etc
+			preview_init_fif_ = fif;
+			preview_init_bpp_ = bpp;
+			preview_init_width_ = width;
+			preview_init_height_ = height;
+		}
 		docdata_.Unlock();
 	}
 	return 0;   // never reached

@@ -68,6 +68,9 @@ enum km_type
 	// 3.0
 	km_new_str,                 // Always follows km_new and stores fill string (text, hex, range etc dep. on options)
 
+	// 4.5
+	km_prop_bitmap,             // Bitmap info page (width, height,  etc)
+
 	km_last_global, // = 35?    // leave as last value before km_calc
 
 	//---------------------------------------------------------
