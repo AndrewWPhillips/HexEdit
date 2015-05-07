@@ -63,7 +63,9 @@ typedef __int64 FILE_ADDRESS;
 #endif
 
 // Conditional compilation flags - always to be used
+#if _MSC_VER >= 1600        // SSE2 registers (__m128i) only added in VS2010
 #define USE_SSE2         1  // Use SSE2 (SIMD) instructions to speed up some operations
+#endif
 #define BOOST_CRC        1  // Use Boost CRC code rather than rather than dubious code I got somewhere
 #define BOOST_RAND       1  // Use Boost PRNGs rather than my own one
 #define USE_OWN_PRINTDLG 1  // Replace the standard print dialog with our own derived dialog

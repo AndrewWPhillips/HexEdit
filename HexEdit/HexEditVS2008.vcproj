@@ -236,6 +236,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BGPreview.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BGSearch.cpp"
 				>
 			</File>
@@ -472,6 +476,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NewCompare.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NewFile.cpp"
 				>
 			</File>
@@ -493,6 +501,10 @@
 			</File>
 			<File
 				RelativePath=".\Preview.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PrevwView.cpp"
 				>
 			</File>
 			<File
@@ -881,6 +893,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NewCompare.h"
+				>
+			</File>
+			<File
 				RelativePath=".\NewFile.h"
 				>
 			</File>
@@ -910,6 +926,10 @@
 			</File>
 			<File
 				RelativePath=".\Preview.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PrevwView.h"
 				>
 			</File>
 			<File
@@ -1067,6 +1087,38 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\bookmark_del.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_del_hot.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_go.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_go_hot.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_new.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_new_hot.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_val.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\bookmark_val_hot.bmp"
+				>
+			</File>
+			<File
 				RelativePath="D:\Andrew\graphics\HexEditButtons\calc.bmp"
 				>
 			</File>
@@ -1167,6 +1219,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RES\filters.bmp"
+				>
+			</File>
+			<File
 				RelativePath="RES\flip.bmp"
 				>
 			</File>
@@ -1216,6 +1272,14 @@
 			</File>
 			<File
 				RelativePath=".\RES\HandOpen.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\help.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\RES\help_hot.bmp"
 				>
 			</File>
 			<File
@@ -1532,11 +1596,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
