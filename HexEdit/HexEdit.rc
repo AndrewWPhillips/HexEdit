@@ -182,9 +182,6 @@ BEGIN
     BUTTON      ID_COMP_HIDE
     BUTTON      ID_COMP_SPLIT
     BUTTON      ID_COMP_TAB
-    BUTTON      ID_PREVW_HIDE
-    BUTTON      ID_PREVW_SPLIT
-    BUTTON      ID_PREVW_TAB
 END
 
 IDR_OPER TOOLBAR  16, 15
@@ -403,7 +400,7 @@ BEGIN
             MENUITEM "Support Forums",              ID_HELP_FORUM
             MENUITEM "Web Help",                    ID_HELP_WEB
             MENUITEM SEPARATOR
-            MENUITEM "HexEdit Pro Home Page",       ID_HELP_HOMEPAGE
+            MENUITEM "HexEdit Home Page",           ID_HELP_HOMEPAGE
             MENUITEM "Register",                    ID_HELP_REGISTER
         END
         MENUITEM "&Email Support...",           ID_HELP_EMAIL
@@ -420,7 +417,7 @@ BEGIN
         MENUITEM "&Keyboard Map",               ID_HELP_KEYBOARDMAP
         MENUITEM "Ti&p of the Day...",          CG_IDS_TIPOFTHEDAY
         MENUITEM SEPARATOR
-        MENUITEM "&About HexEdit Pro...",       ID_APP_ABOUT
+        MENUITEM "&About HexEdit...",           ID_APP_ABOUT
     END
 END
 
@@ -936,7 +933,7 @@ BEGIN
             MENUITEM "Support Forums",              ID_HELP_FORUM
             MENUITEM "Web Help",                    ID_HELP_WEB
             MENUITEM SEPARATOR
-            MENUITEM "HexEdit Pro Home Page",       ID_HELP_HOMEPAGE
+            MENUITEM "HexEdit Home Page",           ID_HELP_HOMEPAGE
             MENUITEM "Register",                    ID_HELP_REGISTER
         END
         MENUITEM "&Email Support...",           ID_HELP_EMAIL
@@ -953,7 +950,7 @@ BEGIN
         MENUITEM "&Keyboard Map",               ID_HELP_KEYBOARDMAP
         MENUITEM "Ti&p of the Day...",          CG_IDS_TIPOFTHEDAY
         MENUITEM SEPARATOR
-        MENUITEM "&About HexEdit Pro...",       ID_APP_ABOUT
+        MENUITEM "&About HexEdit...",           ID_APP_ABOUT
     END
 END
 
@@ -1485,7 +1482,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_PREVW MENU
+IDR_CONTEXT_PREVW MENU 
 BEGIN
     POPUP "Preview Context"
     BEGIN
@@ -1611,7 +1608,7 @@ BEGIN
     LTEXT           "Global settings",IDC_STATIC,12,4,47,8
     CONTROL         "Save settings on e&xit",IDC_SAVE_EXIT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,16,95,10,0,HIDC_SAVE_EXIT
     PUSHBUTTON      "&Save Settings Now",IDC_SAVE_NOW,152,13,94,15,WS_GROUP,0,HIDC_SAVE_NOW
-    CONTROL         "&Add ""Open with HexEdit Pro"" to Windows Explorer context menus",IDC_SHELLOPEN,
+    CONTROL         "&Add ""Open with HexEdit"" to Windows Explorer context menus",IDC_SHELLOPEN,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,29,232,10,0,HIDC_SHELLOPEN
     PUSHBUTTON      "&Restore All ""Not Shown"" Warning and Information Messages",IDC_RESTORE_AVOIDABLE,22,43,224,15,WS_GROUP,0,HIDC_RESTORE_AVOIDABLE
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,29,64,226,1
@@ -2152,17 +2149,17 @@ END
 
 IDD_ABOUT DIALOGEX 0, 0, 390, 266
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About HexEdit Pro"
+CAPTION "About HexEdit"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "HexEdit Pro 4.1",IDC_LINE1,150,24,166,8
-    LTEXT           "Copyright 1999-2012 Expert Commercial Software Pty Ltd",IDC_LINE2,150,38,96,18
+    LTEXT           "HexEdit 4.5",IDC_LINE1,150,24,166,8
+    LTEXT           "Copyright 1999-2015 Expert Commercial Software Pty Ltd",IDC_LINE2,150,38,96,18
     PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_URL,150,59,166,14,WS_GROUP
     LTEXT           "Licensing information:",IDC_LINE3,150,86,166,8
     PUSHBUTTON      "&Activate...",IDC_ACTIVATE,322,100,61,14
     PUSHBUTTON      "URL",IDC_BUTTON_REG_URL,150,138,166,14,WS_GROUP
-    LTEXT           "Third party software used in HexEdit Pro:",IDC_LINE4,150,165,166,8
+    LTEXT           "Third party software used in HexEdit:",IDC_LINE4,150,165,166,8
     LISTBOX         IDC_ACK,150,179,166,51,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | WS_VSCROLL
     PUSHBUTTON      "&More Info...",IDC_ACK_MORE,322,179,61,14
     DEFPUSHBUTTON   "OK",IDOK,322,244,61,14,WS_GROUP
@@ -2611,6 +2608,28 @@ BEGIN
     LTEXT           "Megabytes",IDC_STATIC,163,20,36,8
 END
 
+IDD_PROP_BITMAP DIALOGEX 0, 0, 223, 82
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Bitmap"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    RTEXT           "Format:",IDC_STATIC,8,18,39,8
+    EDITTEXT        IDC_BMP_FORMAT,49,16,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_FORMAT
+    RTEXT           "Bits/Pixel",IDC_STATIC,8,35,39,8
+    EDITTEXT        IDC_BMP_BPP,49,33,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_BPP
+    RTEXT           "Width:",IDC_STATIC,8,52,39,8
+    EDITTEXT        IDC_BMP_WIDTH,49,50,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_WIDTH
+    RTEXT           "Height:",IDC_STATIC,8,69,39,8
+    EDITTEXT        IDC_BMP_HEIGHT,49,67,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_HEIGHT
+    CTEXT           "MEMORY",IDC_BMP_DESC_MEMORY,11,5,138,8
+    EDITTEXT        IDC_BMP_FORMAT_DISK,136,16,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_FORMAT_DISK
+    EDITTEXT        IDC_BMP_BPP_DISK,136,34,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_BPP_DISK
+    EDITTEXT        IDC_BMP_WIDTH_DISK,136,50,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_WIDTH_DISK
+    EDITTEXT        IDC_BMP_HEIGHT_DISK,136,67,80,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_BMP_HEIGHT_DISK
+    LTEXT           "ON DISK",IDC_BMP_DESC_DISK,152,5,39,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2635,13 +2654,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
-            VALUE "FileDescription", "HexEdit Pro Application"
-            VALUE "FileVersion", "4, 10, 1, " SVNRevisionStr
-            VALUE "InternalName", "HexEditPro"
-            VALUE "LegalCopyright", "Copyright © 1999-2012  Expert Commercial Software"
-            VALUE "OriginalFilename", "HEXEDITPRO.EXE"
-            VALUE "ProductName", "HexEditPro"
-            VALUE "ProductVersion", "4, 10, 1, " SVNRevisionStr
+            VALUE "FileDescription", "HexEdit Application"
+            VALUE "FileVersion", "4, 50, 1, " SVNRevisionStr
+            VALUE "InternalName", "HexEdit"
+            VALUE "LegalCopyright", "Copyright © 1999-2015  Expert Commercial Software"
+            VALUE "OriginalFilename", "HEXEDIT.EXE"
+            VALUE "ProductName", "HexEdit"
+            VALUE "ProductVersion", "4, 50, 1, " SVNRevisionStr
         END
     END
     BLOCK "VarFileInfo"
@@ -2956,7 +2975,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "HexEdit Pro"
+    IDR_MAINFRAME           "HexEdit"
     IDR_HEXEDTYPE           "\nHexEd\nHexEd\n\n\nHexEdit.Document\nHexEdit Document"
     ID_TOOL1                "Activate user-defined tool\nUser Tool"
     ID_TOOL2                "Activate user-defined tool\nUser Tool"
@@ -3009,7 +3028,7 @@ STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Display program version and license information\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save changed files\nExit"
-    ID_HELP_INDEX           "Display HexEdit Pro help index\nHelp Index"
+    ID_HELP_INDEX           "Display HexEdit help index\nHelp Index"
     ID_HELP_FINDER          "List Help topics\nHelp Topics"
     ID_CONTEXT_HELP         "Display help for clicked on buttons, menus and windows\nHelp"
     ID_HELP                 "Display help for current task or command\nHelp"
@@ -3176,7 +3195,6 @@ BEGIN
     ID_PASTE_EBCDIC         "Insert Clipboard Text as EBCDIC\nPaste EBCDIC"
     ID_OPTIONS2             "Change window and global options\nOptions"
     ID_OPTIONS_CODEPAGE     "Change window code page options\nCode Page Options"
-    ID_EDIT_READFILE        "Insert a file at the cursor position\nInsert File"
     ID_OPTIONS3             "Change color scheme options\nColor Options"
 END
 
@@ -3185,6 +3203,7 @@ BEGIN
     ID_MULTI_PLAY           "Replay a macro one or more times\nMacro Play"
     ID_EXTENDTO_MARK        "Extend selection to mark\nExtend To Mark"
     ID_SWAP_MARK            "Swap positions of the cursor and mark\nSwap Cursor with Mark"
+    ID_EDIT_READFILE        "Insert a file at the cursor position\nInsert File"
     ID_EDIT_FIND2           "Specify bytes to search for\nHex Find"
     ID_HELP_EMAIL           "Get help from the developer via email\nEmail support"
     ID_SCROLL_UP            "Scroll the display upwards\nScroll Up"
@@ -3195,14 +3214,22 @@ BEGIN
     ID_DEL                  "Delete the character at the cursor or the current selection\nDelete"
     ID_OEM_TOGGLE           "Toggle between IBM/OEM and ANSI graphics characters\nIBM/OEM Chars"
     ID_EDIT_GOTO            "Calculate address to jump to\nGo To"
+END
+
+STRINGTABLE 
+BEGIN
     ID_FONT_INC             "Increase the font size in the active window\nIncrease Font"
+END
+
+STRINGTABLE 
+BEGIN
     ID_FONT_DEC             "Decreases the font size in the active window\nDecrease Font"
 END
 
 STRINGTABLE 
 BEGIN
     ID_CALCULATOR           "Invoke hex/decimal/octal/binary calculator\nCalculator"
-    ID_WEB_PAGE             "Show the HexEdit Pro site in your web browser\nHexEdit Pro Home Page"
+    ID_WEB_PAGE             "Show the HexEdit site in your web browser\nHexEdit Home Page"
     ID_CUSTOMIZE            "Modify menus, toolbars and keyboard shortcuts\nCustomize"
     ID_INVERT               "Invert bits (bitwise NOT) of the byte(s)\nInvert byte"
     ID_NEG_BYTE             "Change sign (2's complement) of the byte(s)\nNegate Byte"
@@ -3219,14 +3246,14 @@ BEGIN
     IDS_COLORS              "Color Schemes"
     CG_IDS_TIPOFTHEDAYMENU2 "Ti&p of the Day..."
     CG_IDS_DIDYOUKNOW2      "Did you know..."
-    CG_IDS_FILE_ABSENT2     "You can put the tips file (HexEditPro.tip) in the same directory as HexEditPro.exe or the working directory where you run HexEdit Pro.  The tips file was not found in either of those places."
+    CG_IDS_FILE_ABSENT2     "You can put the tips file (HexEdit.tip) in the same directory as HexEdit.exe or the working directory where you run HexEdit.  The tips file was not found in either of those places."
     CG_IDP_FILE_CORRUPT2    "Trouble reading the tips file"
     CG_IDS_TIPOFTHEDAYHELP2 "&Help"
-    IDS_WEB_ADDRESS         "http://www.hexeditpro.com/"
-    IDS_WEB_REG_USER        "http://www.hexeditpro.com/register.html"
-    IDS_WEB_HELP            "http://www.hexeditpro.com/contact_form.aspx"
-    IDS_WEB_UPGRADE         "http://www.hexeditpro.com/upgrade.html"
-    IDS_WEB_FORUMS          "http://www.hexeditpro.com/forums.html"
+    IDS_WEB_ADDRESS         "http://www.hexedit.com/"
+    IDS_WEB_REG_USER        "http://www.hexedit.com/register.html"
+    IDS_WEB_HELP            "http://www.hexedit.com/contact_form.aspx"
+    IDS_WEB_UPGRADE         "http://www.hexedit.com/upgrade.html"
+    IDS_WEB_FORUMS          "http://www.hexedit.com/forums.html"
 END
 
 STRINGTABLE 
@@ -3335,7 +3362,6 @@ BEGIN
     ID_CONTROL_ALPHA        "Display aphabetic control characters\nAlpha Control Chars"
     ID_CONTROL_C            "Display control characters as C/C++ escape sequences\nC/C++ Control Chars"
     ID_DISPLAY_STACKED      "Display character and hex nybbles stacked vertically\nStacked Mode"
-    ID_MAKE_FAVOURITE       "Add to Favorites category so that file name always appears on Windows Taskbar Jump List\nMake Favorite"
     ID_KEEP_TIMES           "Keep same file modification time, attributes etc when saving\nKeep Same Time"
     ID_VIEW_VIEWBAR         "Show or hide the Standard toolbar\nToggle ToolBar"
     ID_MACRO_MESSAGE        "Record a message that is shown in macro playback\nMacro Message"
@@ -3343,6 +3369,25 @@ BEGIN
     ID_CRC16                "Stores CRC 16 of selection in the calculator\nCRC 16"
     ID_CRC32                "Stores CRC 32 of selection in the calculator\nCRC 32"
     ID_CHECKSUM8            "Stores the 8 bit checksum in the calculator\n8 Bit Checksum"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CHECKSUM16           "Stores the 16 bit checksum in the calculator\n16 Bit Checksum"
+    ID_CHECKSUM32           "Stores the 32 bit checksum in the calculator\n32 Bit Checksum"
+    ID_CHECKSUM64           "Stores the 64 bit checksum in the calculator\n64 Bit Checksum"
+    ID_CRC_CCITT_F          "Stores alternative CCITT (16 bit) CRC in the calculator\nCRC CCITT F"
+    ID_CRC_CCITT_AUG        "Stores Augment CCITT (16 bit) CRC in the calculator\nCRC CCITT AUG"
+    ID_CRC_XMODEM           "Stores XMODEM (16 bit) CRC in the calculator\nCRC XMODEM"
+    ID_RECENT_FILES         "Open the Recent Files Dialog\nRecent File Dialog"
+    ID_MAKE_FAVOURITE       "Add to Favorites category so that file name always appears on Windows Taskbar Jump List\nMake Favorite"
+    ID_XOR_BYTE             "XOR calculator value with current byte or selected bytes\nXOR Byte"
+    ID_XOR_16BIT            "XOR calculator value with word(s) (16 bit)\nXOR Word"
+    ID_XOR_32BIT            "XOR calculator value with double word(s) (32 bit)\nXOR Double Word"
+    ID_XOR_64BIT            "XOR calculator value with quad word(s) (64 bit)\nXOR Quad Word"
+    ID_ASSIGN_BYTE          "Assign calculator value to current byte or all selected bytes\nAssign Byte"
+    ID_ASSIGN_16BIT         "Assign calculator value to word(s) (16 bit)\nAssign Word"
+    ID_ASSIGN_32BIT         "Assign calculator value to double word(s) (32 bit)\nAssign Double Word"
 END
 
 STRINGTABLE 
@@ -3361,28 +3406,10 @@ BEGIN
     ID_SCHEME               "Select colour scheme\nColour Scheme"
     ID_SCHEME_US            "Select color scheme\nColor Scheme"
     ID_BOOKMARKS_COMBO      "Select a bookmark from the active file\nBookmarks"
-    ID_HELP_WEB             "Go to the HexEdit Pro web site for help\nHelp via Web"
-    ID_HELP_FORUM           "Go to the HexEdit Pro Support Forums\nSupport Forums"
-    ID_HELP_HOMEPAGE        "Go to the HexEdit Pro Home Page\nHexEdit Home Page"
-    ID_HELP_REGISTER        "Go to the HexEdit Pro Registration Page\nRegister"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_CHECKSUM16           "Stores the 16 bit checksum in the calculator\n16 Bit Checksum"
-    ID_CHECKSUM32           "Stores the 32 bit checksum in the calculator\n32 Bit Checksum"
-    ID_CHECKSUM64           "Stores the 64 bit checksum in the calculator\n64 Bit Checksum"
-    ID_CRC_CCITT_F          "Stores alternative CCITT (16 bit) CRC in the calculator\nCRC CCITT F"
-    ID_CRC_CCITT_AUG        "Stores Augment CCITT (16 bit) CRC in the calculator\nCRC CCITT AUG"
-    ID_CRC_XMODEM           "Stores XMODEM (16 bit) CRC in the calculator\nCRC XMODEM"
-    ID_RECENT_FILES         "Open the Recent Files Dialog\nRecent File Dialog"
-    ID_XOR_BYTE             "XOR calculator value with current byte or selected bytes\nXOR Byte"
-    ID_XOR_16BIT            "XOR calculator value with word(s) (16 bit)\nXOR Word"
-    ID_XOR_32BIT            "XOR calculator value with double word(s) (32 bit)\nXOR Double Word"
-    ID_XOR_64BIT            "XOR calculator value with quad word(s) (64 bit)\nXOR Quad Word"
-    ID_ASSIGN_BYTE          "Assign calculator value to current byte or all selected bytes\nAssign Byte"
-    ID_ASSIGN_16BIT         "Assign calculator value to word(s) (16 bit)\nAssign Word"
-    ID_ASSIGN_32BIT         "Assign calculator value to double word(s) (32 bit)\nAssign Double Word"
+    ID_HELP_WEB             "Go to the HexEdit web site for help\nHelp via Web"
+    ID_HELP_FORUM           "Go to the HexEdit Support Forums\nSupport Forums"
+    ID_HELP_HOMEPAGE        "Go to the HexEdit Home Page\nHexEdit Home Page"
+    ID_HELP_REGISTER        "Go to the HexEdit Registration Page\nRegister"
 END
 
 STRINGTABLE 
@@ -3461,9 +3488,14 @@ BEGIN
     ID_RAND_BYTE            "Generate good (but slow) random bytes\nGood Random"
     ID_RAND_16BIT           "Generate random word (16 bit) value(s)\nRandom Word"
     ID_RAND_32BIT           "Generate random DWORD (32 bit) value(s)\nRandom Double Word"
-    ID_PREVW_HIDE          "Turn off preview of bitmap files\Preview Off"
-    ID_PREVW_SPLIT         "Show preview (bitmaps) in a split window\nPreview Split"
-    ID_PREVW_TAB           "Show preview (bitmaps) in a tabbed window\nPreview Tab"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_REPAIR_COPYUSERFILES "Setup personal files for macros, templates, etc\nCopy Personal Files"
+    ID_PREVW_HIDE           "Turn off preview of bitmap files\\Preview Off"
+    ID_PREVW_SPLIT          "Show preview (bitmaps) in a split window\nPreview Split"
+    ID_PREVW_TAB            "Show preview (bitmaps) in a tabbed window\nPreview Tab"
 END
 
 STRINGTABLE 
@@ -3477,16 +3509,11 @@ BEGIN
     ID_TAB_ICONS            "Toggles the display of icons in the window tabs\nTab Icons"
     ID_TABS_AT_BOTTOM       "Show Windows tabs at bottom (or top)\nTabs at Bottom"
     ID_TOGGLE_TABS          "Toggle display of windows tabs\nToggle Tabs"
-    ID_TOGGLE_ENDIAN        "Toggle byte order used for file operations\nToggle Endian"
     ID_BIG_ENDIAN           "Use big-endian byte order for file operations\nBig Endian"
     ID_LITTLE_ENDIAN        "Use little-endian byte order for file operations\nLittle Endian"
+    ID_TOGGLE_ENDIAN        "Toggle byte order used for file operations\nToggle Endian"
     ID_REPAIR_DIALOGBARS    "Restore (unhide/undock/unroll) all modeless dialogs\nRestore dialogs"
     ID_REPAIR_CUST          "Reset toolbar/menu/keyboard customizations\nRepair Customizations"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_REPAIR_COPYUSERFILES "Setup personal files for macros, templates, etc\nCopy Personal Files"
 END
 
 STRINGTABLE 
@@ -3652,6 +3679,10 @@ BEGIN
     IDS_BOOKMARK_NOFILE     "Adding a bookmark requires an open file"
     IDS_BOOKMARK_NOTFOUND   "Bookmark not found"
     IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_REG_REQUIRED        "Administrator Privileges required for Registry Changes"
     IDS_USE_AERIAL_SCHEME   "Change to MANY scheme?      "
 END
@@ -4104,7 +4135,7 @@ END
 IDD_EMAIL DIALOGEX 0, 0, 278, 238
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "Send Email to HexEdit Pro Support"
+CAPTION "Send Email to HexEdit Support"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "&To *",IDC_STATIC,9,9,14,8
@@ -4123,7 +4154,7 @@ BEGIN
     PUSHBUTTON      "Browse...",IDC_ATTACHMENT_BROWSE,221,152,50,14,0,0,HIDC_ATTACHMENT_BROWSE
     LTEXT           "S&ystem version:",IDC_STATIC,9,177,50,8
     COMBOBOX        IDC_SYSTYPE,59,175,63,96,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP,0,HIDC_SYSTYPE
-    LTEXT           "HexEdit Pro &Version:",IDC_STATIC,130,173,26,17
+    LTEXT           "HexEdit &Version:",IDC_STATIC,130,173,26,17
     COMBOBOX        IDC_VERSION,159,175,54,98,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP,0,HIDC_VERSION
     PUSHBUTTON      "&Help",IDC_EMAIL_HELP,221,174,50,14
     LTEXT           "Your &name:",IDC_STATIC,9,201,37,8
@@ -4314,7 +4345,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSME
 CAPTION "Reminder"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CTEXT           "Thankyou for trying HexEdit Pro.",IDC_STATIC,7,7,228,8
+    CTEXT           "Thankyou for trying HexEdit.",IDC_STATIC,7,7,228,8
     CTEXT           "Expires in 77 days.",IDC_TEXT,7,23,228,16,NOT WS_GROUP
     ICON            IDR_MAINFRAME,IDC_STATIC,7,7,20,20
     LTEXT           "Once you have registered you won't see this message anymore.  You will also be entitled to the next release for free and upgrades to the latest version ($15) for 2 years.\n\nA single user license costs $40 (US).\n\nTo register now click the link below.",IDC_STATIC,7,41,228,64,NOT WS_GROUP

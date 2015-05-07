@@ -817,7 +817,7 @@ void CHexFileList::SetupJumpList()
 		ext.insert(CString(::PathFindExtension(name_[fav[ii]])));
 	}
 
-	// Check if appid or exe name is wrong in "HKCR\HexEditPro.file"
+	// Check if appid or exe name is wrong in "HKCR\HexEdit.file"
 	bool need_reg = false;
 	HKEY hkey;
 
@@ -826,7 +826,7 @@ void CHexFileList::SetupJumpList()
 	                 CString(CHexEditApp::ProgID), 
 	                 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
 	{
-		need_reg = true;  // HexEdit Pro file registry setting is not present
+		need_reg = true;  // HexEdit file registry setting is not present
 	}
 	else
 	{
@@ -848,7 +848,7 @@ void CHexFileList::SetupJumpList()
 						 CString(CHexEditApp::ProgID) + "\\shell\\open\\command", 
 						 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
 		{
-			need_reg = true;  // HexEdit Pro file command setting is not present
+			need_reg = true;  // HexEdit file command setting is not present
 		}
 		else
 		{
@@ -894,9 +894,9 @@ void CHexFileList::SetupJumpList()
 		                           "In order to use customized jump lists under Windows 7, "
 		                           "the file extensions for recently opened, frequently opened "
 		                           "and favorites need to be registered for opening with "
-		                           "HexEdit Pro.  These are registry settings for all users, "
+		                           "HexEdit.  These are registry settings for all users, "
 		                           "which require Administrator privileges to modify.\n\n"
-		                           "Do you wish to associate HexEdit Pro with these file extensions?\n\n"
+		                           "Do you wish to associate HexEdit with these file extensions?\n\n"
 								   + strExt,
 		                           "File Registration",
 		                           MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES ||

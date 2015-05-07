@@ -1175,7 +1175,7 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 	VERIFY(mPopup.Attach(hm));
 
 	mPopup.InsertMenu(ii++, MF_SEPARATOR | MF_BYPOSITION);
-	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_OPEN, _T("Open in HexEdit Pro"));
+	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_OPEN, _T("Open in HexEdit"));
 	mPopup.InsertMenu(ii++, MF_STRING | MF_BYPOSITION, firstCustomCmd + ID_OPEN_RO, _T("Open Read-Only"));
 
 	// Create 3 sub-menus that allows setting of modified, accessed, created time of files to

@@ -43,4 +43,4 @@ rem del BcgIdMap.tmp
 
 ECHO Fix up hexedit.exe icon since the resource compiler cannot handle the new icon format
 rem ReplaceVistaIcon  D:\Andrew\cpp_out\HexEdit\ReleaseVS2005\hexedit.exe   res\hexedit2.ico
-"C:\Program Files\Utilities\ReplaceVistaIcon"  "C:\andrew\cpp_out\HexEdit\ReleaseVS2010\HexEditPro.exe"   res\hexedit2.ico
+"C:\Program Files\Utilities\ReplaceVistaIcon"  "C:\andrew\cpp_out\HexEdit\ReleaseVS2010\HexEdit.exe"   res\hexedit2.ico

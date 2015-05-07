@@ -24,11 +24,11 @@ static void Usage()
 {
 	_tprintf(_T("Usage:\r\n"));
 	_tprintf(_T("   RegHelper EXT <exepath> <progid> <docname> <appid> <ext1,ext2,ext3,...>\r\n"));
-	_tprintf(_T("eg:RegHelper EXT \"C:\\Program Files\\HexEditPro\\HexEditPro.exe\" \"HexEditPro.file\" \"HexEdit Pro file\" \"ECSoftware.HexEdit.Pro.40\" \".jpg|.png\"\r\n"));
+	_tprintf(_T("eg:RegHelper EXT \"C:\\Program Files\\HexEdit\\HexEdit.exe\" \"HexEdit.file\" \"HexEdit file\" \"ECSoftware.HexEdit.Pro.40\" \".jpg|.png\"\r\n"));
 	_tprintf(_T("   RegHelper REGALL <exepath> <shellkey> <shellsubkey> <shelldesc>\r\n"));
-	_tprintf(_T("eg:RegHelper REGALL \"C:\\Program Files\\HexEditPro\\HexEditPro.exe\" \"*\\shell\\HexEditPro\" \"*\\shell\\HexEditPro\\command\" \"Open with HexEdit Pro\"\r\n"));
+	_tprintf(_T("eg:RegHelper REGALL \"C:\\Program Files\\HexEdit\\HexEdit.exe\" \"*\\shell\\HexEdit\" \"*\\shell\\HexEdit\\command\" \"Open with HexEdit\"\r\n"));
 	_tprintf(_T("   RegHelper UNREGALL <shellkey> <shellsubkey>\r\n"));
-	_tprintf(_T("eg:RegHelper UNREGALL \"*\\shell\\HexEditPro\" \"*\\shell\\HexEditPro\\command\"\r\n"));
+	_tprintf(_T("eg:RegHelper UNREGALL \"*\\shell\\HexEdit\" \"*\\shell\\HexEdit\\command\"\r\n"));
 }
 
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])

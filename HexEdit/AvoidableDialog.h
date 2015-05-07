@@ -41,7 +41,7 @@ public:
 	//   id = string id used to display a brief (main) message at the top of the dialog,
 	//        also identifies the dialog for the purposes of tracking the "don't ask" flag.
 	//   content = more information, defaults to nothing
-	//   title = window title, defaults to HexEdit Pro
+	//   title = window title, defaults to HexEdit
 	//   buttons = flags saying which buttons to show, defaults to OK button only
 	//   icon = icon displayed in top right, if 0 then no icon id displayed, if empty string (default) then default icon is displayed
 	//          - IDI_QUESTIONMARK if "YES" button is shown

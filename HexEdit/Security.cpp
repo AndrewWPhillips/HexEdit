@@ -509,7 +509,7 @@ void CHexEditApp::SaveSecurityFile()
 
 	strcpy(fullname, GetExePath());
 	end = fullname + strlen(fullname);
-	strcpy(end, "HexEditPro.exe");
+	strcpy(end, "HexEdit.exe");
 	if (_stat(fullname, &exe_stat) == -1) return;
 
 	// Work out the name of the security file and open it
@@ -1097,7 +1097,7 @@ int CHexEditApp::QuickCheck()
 			no_check = 1;
 		return 1;
 #else
-		AfxMessageBox("HexEdit Pro has not been properly installed");
+		AfxMessageBox("HexEdit has not been properly installed");
 		return 0;
 #endif
 	}
@@ -1211,7 +1211,7 @@ void CHexEditApp::CleanUp()
 	DeleteSecurityFiles();   // remove Nt$ file created by GetMystery
 
 	if (admin)
-		TaskMessageBox("Finished!", "HexEdit Pro /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
+		TaskMessageBox("Finished!", "HexEdit /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
 	else
 		TaskMessageBox("Clean Failed", "When using the /clean option\n"
 					  "please run as administrator.\n");

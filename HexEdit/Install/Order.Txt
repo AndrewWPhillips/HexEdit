@@ -13,18 +13,18 @@ Australian residents can pay in the equivalent Australian dollars but must inclu
 
 You may also pay by credit card at: https://www.regnow.com/softsell/nph-softsell.cgi?item=4226-1
 
-Or use PayPal/credit card at: http://www.hexeditpro.com/register.html
+Or use PayPal/credit card at: http://www.hexedit.com/register.html
 
 When we have received your registration code or name and your payment, we will email instructions on how to register the software.  It is important that you supply a correct email address.
 
-Note that all information provided is kept strictly confidential.  Your email address will only be used for the purposes of registration and notification of HexEdit Pro updates.
+Note that all information provided is kept strictly confidential.  Your email address will only be used for the purposes of registration and notification of HexEdit updates.
 
-HexEdit Pro Order Form
-----------------------
+HexEdit Order Form
+------------------
 
 Please supply:
 
-(  ) HexEdit Pro 4.0 single license at $50 US      = ________
+(  ) HexEdit 4.0 single license at $50 US          = ________
 
 Australian residents only add 10% GST              = ________
 

@@ -2012,7 +2012,7 @@ void CTemplatePage::OnTemplatedir()
 {
 	ASSERT(theApp.xml_dir_.Right(1) == "\\");
 	CDirDialog dlg(theApp.xml_dir_, "Template Files (*.xml etc)|*.XML;BinaryFileFormat.DTD;_*_constants.txt|All Files (*.*)|*.*||", this);
-	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Pro Templates";
+	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Templates";
 
 	if (dlg.DoModal() == IDOK &&
 		TaskMessageBox("Changing Template Folder",
@@ -3712,7 +3712,7 @@ void CMacroPage::OnMacrodir()
 
 	ASSERT(aa->mac_dir_.Right(1) == "\\");
 	CDirDialog dlg(aa->mac_dir_, "Macro Files (*.hem)|*.hem|All Files (*.*)|*.*||", this);
-	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Pro Macros";
+	dlg.m_ofn.lpstrTitle = "Select Folder for HexEdit Macros";
 
 	if (dlg.DoModal() == IDOK)
 		aa->mac_dir_ = dlg.GetPath();

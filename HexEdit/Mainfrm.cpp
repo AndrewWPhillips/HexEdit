@@ -529,7 +529,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 					// Could not copy the default images file to user's toolbar images file
 					if (GetLastError() == ERROR_PATH_NOT_FOUND)
 					{
-						TaskMessageBox("Path Not Found", "The HexEdit Pro Application Data folder is invalid.");
+						TaskMessageBox("Path Not Found", "The HexEdit Application Data folder is invalid.");
 						m_strImagesFileName = strDefault;
 					}
 					else
@@ -553,7 +553,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 		else
 		{
-			TaskMessageBox("Path Not Found", "The HexEdit Pro Application Data folder is not found.  "
+			TaskMessageBox("Path Not Found", "The HexEdit Application Data folder is not found.  "
 				"Custom toolbar buttons and other user interface elements may have missing images.");
 			m_strImagesFileName = strDefault;
 		}
