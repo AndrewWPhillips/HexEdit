@@ -190,11 +190,11 @@ const char * CHexEditApp::HexEditClassName = "HexEditMDIFrame";
 const char * CHexEditApp::RegHelper = "RegHelper.exe";           // helper for things that require admin privileges
 
 // The following are used to enable the "Open with HexEdit" shell shortcut menu option.
-const char *CHexEditApp::HexEditSubKey = "*\\shell\\HexEditPro";
-const char *CHexEditApp::HexEditSubSubKey = "*\\shell\\HexEditPro\\command";
+const char *CHexEditApp::HexEditSubKey = "*\\shell\\HexEdit";
+const char *CHexEditApp::HexEditSubSubKey = "*\\shell\\HexEdit\\command";
 
 // The following is used to enable "Open With" file extension associations (so that files can be on Win7 task list).
-const char * CHexEditApp::ProgID = "HexEditPro.file";
+const char * CHexEditApp::ProgID = "HexEdit.file";
 
 #ifdef _DEBUG
 const int CHexEditApp::security_version_ = 12; // This is changed for testing of handling of versions (registration etc)
@@ -497,13 +497,13 @@ BOOL CHexEditApp::InitInstance()
 			time_t prev = (time_t)GetProfileInt(_T("Update"), _T("LastCheckDate"), 0);  // last time we checked
 			if (now > prev + (30*24L*60*60L))  // Check about once a month
 			{
-				UpdateChecker checker(_T("http://www.hexeditpro.com/version.txt"));
+				UpdateChecker checker(_T("http://www.hexedit.com/version.txt"));
 				if (checker.Online())
 				{
 					if (checker.UpdateAvailable(version_))
 					{
 						CAvoidableDialog::Show(IDS_UPDATE_AVAILABLE,
-						                       "A newer version of HexEdit Pro is currently available for download.", "", 
+						                       "A newer version of HexEdit is currently available for download.", "", 
 						                       MLCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
 					}
 					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
@@ -619,7 +619,7 @@ BOOL CHexEditApp::InitInstance()
 			ASSERT(0);
 			/* fall through */
 		case 0:
-			AfxMessageBox("HexEdit Pro has not been installed on this machine");
+			AfxMessageBox("HexEdit has not been installed on this machine");
 			return FALSE;
 		case 1:
 			ss = "Unfortunately, your trial period has expired.";
@@ -1038,7 +1038,7 @@ void CHexEditApp::OnNewUser()
 	// if we want to copy (but copy over files if not already there
 	if (::_access(dstFile, 0) == -1 &&
 		TaskMessageBox("New User",
-					  "This is the first time you have run this version of HexEdit Pro.\n\n"
+					  "This is the first time you have run this version of HexEdit.\n\n"
 					  "Do you want to set up you own personal copies of templates and macros?",
 					  MB_YESNO) == IDYES)
 	{
@@ -1475,7 +1475,7 @@ void CHexEditApp::OnRepairSettings()
 					  "All customizations and changes to "
 					  "settings will be removed.  "
 					  "(All registry entries will be removed.)\n"
-					  "\nTo do this HexEdit Pro must close.\n"
+					  "\nTo do this HexEdit must close.\n"
 					  "\nDo you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
@@ -1496,7 +1496,7 @@ void CHexEditApp::OnRepairAll()
 					  "* previously opened files settings (columns etc)\n"
 					  "* recent file list, bookmarks, highlights etc\n"
 					  "* ALL REGISTRATION INFORMATION WILL BE REMOVED\n\n"
-					  "When complete you will need to restart HexEdit Pro "
+					  "When complete you will need to restart HexEdit "
 					  "and re-enter your activation code.\n"
 					  "\nAre you absolutely sure you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
@@ -3303,7 +3303,7 @@ void CHexEditApp::OnOptionsCodePage()
 void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_page /*=FALSE*/)
 {
 	// Construct property sheet + its pages
-	COptSheet optSheet(_T("HexEdit Pro Options"), display_page, must_show_page);
+	COptSheet optSheet(_T("HexEdit Options"), display_page, must_show_page);
 
 	// Load current settings into the property sheet
 	get_options(optSheet.val_);
@@ -3551,7 +3551,7 @@ void CHexEditApp::set_options(struct OptValues &val)
 		{
 			if (val.shell_open_)
 			{
-				// Create the registry entries that allow "Open with HexEdit Pro" on shortcut menus
+				// Create the registry entries that allow "Open with HexEdit" on shortcut menus
 				RegisterOpenAll();
 			}
 			else
@@ -4130,7 +4130,7 @@ void CHexEditApp::ShowTipAtStartup(void)
 
 		CCommandLineInfo cmdInfo;
 		ParseCommandLine(cmdInfo);
-		if (cmdInfo.m_bShowSplash /* && _access("HexEditPro.tip", 0) == 0*/)
+		if (cmdInfo.m_bShowSplash /* && _access("HexEdit.tip", 0) == 0*/)
 		{
 				CTipDlg dlg;
 				if (dlg.m_bStartup)
@@ -4426,7 +4426,7 @@ UINT CHexEditApp::RunCleanupThread()
 #if _MFC_VER >= 0x0A00  // Only needed for Win7 jump lists which are only supported in MFC 10
 
 // RegisterExtensions is used to register file extensions so that the type of files can be opened 
-// in HexEdit (ie HexEdit Pro appears on the "Open With" Explorer menu).
+// in HexEdit (ie HexEdit appears on the "Open With" Explorer menu).
 // Since this requires admin privileges as separate program (RegHelper.exe) is fired up while 
 // using the ShellExecute() verb "runas".  The parameter takes one or more file extensions,
 // separated by vertical bars (|), for example ".jpg|.jpeg".
@@ -4435,7 +4435,7 @@ bool CHexEditApp::RegisterExtensions(LPCTSTR extensions)
 	CString strCmdLine;
     CString strExeFullName;
     AfxGetModuleFileName(0, strExeFullName);
-	strCmdLine.Format("EXT  \"%s\"  \"%s\"  \"HexEdit Pro file\"  \"%s\" \"%s\"",
+	strCmdLine.Format("EXT  \"%s\"  \"%s\"  \"HexEdit file\"  \"%s\" \"%s\"",
 	                  strExeFullName,
 					  ProgID,
 				      m_pszAppID,
@@ -4448,10 +4448,12 @@ bool CHexEditApp::RegisterExtensions(LPCTSTR extensions)
 bool CHexEditApp::RegisterOpenAll()
 {
 	CString strCmdLine;
-    CString strExeFullName;
-    AfxGetModuleFileName(0, strExeFullName);
-	strCmdLine.Format("REGALL  \"%s\"  \"%s\"  \"%s\"  \"Open with HexEdit Pro\"",
-	                  strExeFullName,
+    //CString FullName;
+    //AfxGetModuleFileName(0, FullName);
+	TCHAR FullName[MAX_PATH];
+	::GetModuleFileName(0, FullName, sizeof(FullName));
+	strCmdLine.Format("REGALL  \"%s\"  \"%s\"  \"%s\"  \"Open with HexEdit\"",
+	                  FullName,
 					  HexEditSubKey,
 				      HexEditSubSubKey);
 
@@ -4693,19 +4695,19 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 		switch (dlg.type_)
 		{
 		case 0:
-			subject = "HEXEDIT PRO BUG: ";
+			subject = "HEXEDIT BUG: ";
 			text = "TYPE: BUG REPORT\n";
 			break;
 		case 1:
-			subject = "HEXEDIT PRO REQ: ";
+			subject = "HEXEDIT REQ: ";
 			text = "TYPE: ENHANCEMENT REQUEST\n";
 			break;
 		case 2:
-			subject = "HEXEDIT PRO BUY: ";
+			subject = "HEXEDIT BUY: ";
 			text = "TYPE: REGISTRATION REQUEST\n";
 			break;
 		default:
-			subject = "HEXEDIT PRO OTH: ";
+			subject = "HEXEDIT OTH: ";
 			text = "TYPE: OTHER\n";
 		}
 		subject += dlg.subject_;
