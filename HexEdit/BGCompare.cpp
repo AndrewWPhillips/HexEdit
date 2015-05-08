@@ -128,7 +128,6 @@ void CHexEditDoc::RemoveCompView()
 {
 	if (--cv_count_ == 0)
 	{
-		ASSERT(pthread4_ != NULL);
 		if (pthread4_ != NULL)
 			KillCompThread();
 	}
@@ -193,6 +192,13 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 
 	if (bCompSelf_)
 	{
+		if (pfile1_ == NULL)
+		{
+			TaskMessageBox("File has not been saved to disk", "You have not yet saved the current file to disk. "
+						   "A self compare detects changes as they are made on disk. \n\n"
+						   "Please save the file to disk before performing a \"self compare\".");
+			return 0;
+		}
 		VERIFY(MakeTempFile());
 	}
 	else
