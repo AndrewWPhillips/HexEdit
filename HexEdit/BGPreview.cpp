@@ -132,11 +132,13 @@ static const char *format_name[] =
 int CHexEditDoc::GetBmpInfo(CString &format, CString &bpp, CString &width, CString &height)
 {
 	// Clear strings in case of error return
-	format = "Unknown";
+	format = "";
 	bpp = width = height = "";
 
 	if (pthread6_ == NULL)
 		return -4;         // no bitmap preview for this file
+
+	format = "Unknown";
 
 	// Protect access to shared data
 	CSingleLock sl(&docdata_, TRUE);
