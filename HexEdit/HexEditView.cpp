@@ -1801,9 +1801,9 @@ BOOL CHexEditView::set_colours()
 	addr_bg_col_   = ps->addr_bg_col_ == -1  ? ::tone_down(::GetSysColor(COLOR_INACTIVEBORDER), bg_col_, 0.5) : ps->addr_bg_col_;
 	// Getting change tracking colour and make a version closer to the background colour in luminance
 	// trk_col_ is used to underline replacements, trk_bg_col_ is used as background for insertions
-	trk_col_ = ps->trk_col_ == -1 ? RGB(255, 128, 0) : ps->trk_col_;              // orange-red
+	trk_col_ = ps->trk_col_ == -1 ? RGB(255, 128, 0) : ps->trk_col_;              // default change tracking colour is orange-red
 	trk_bg_col_    = ::tone_down(trk_col_, bg_col_);
-	comp_col_ = ps->comp_col_ == -1 ? RGB(255, 0, 128) : ps->comp_col_;           // purple
+	comp_col_ = ps->comp_col_ == -1 ? RGB(255, 0, 255) : ps->comp_col_;           // default compare tracking colour = purple
 	comp_bg_col_   = ::tone_down(comp_col_, bg_col_);
 
 	sector_col_    = ps->sector_col_ == -1   ? RGB(255, 160, 128)   : ps->sector_col_;          // pinkish orange

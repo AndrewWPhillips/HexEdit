@@ -3139,7 +3139,7 @@ void CHexEditApp::LoadSchemes()
 		new_scheme.hi_col_ = RGB(255, 255, 192);
 		new_scheme.sector_col_ = RGB(224, 192, 192);
 		new_scheme.trk_col_ = RGB(255, 192, 96);
-		new_scheme.comp_col_ = RGB(255, 96, 192);
+		new_scheme.comp_col_ = RGB(255, 128, 255);
 		// new_scheme.can_delete_ = TRUE;
 		scheme_.push_back(new_scheme);
 

@@ -711,24 +711,25 @@ void CCompareView::OnDraw(CDC* pDC)
 		else if (addr >= last_virt)
 			break;            // after end of window
 
-		COLORREF col;       // colours to shown underline (replace) or background (insert)
+		COLORREF comp_col;    // compare tracking colour - usedto shown underline (replace) or background (insert)
 		int vert;
 		if (insert)
 		{
 			// Use full height toned down background colour
-			col = phev_->comp_bg_col_;
+			comp_col = phev_->comp_bg_col_;
 			vert = -1;
 		}
 		else
 		{
-			col = phev_->comp_col_;
+			comp_col = phev_->comp_col_;
 			vert = (pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8;
 		}
 
 		// TBD xxx need to handle inserts/deletes here one day
+		TRACE2("drawing compare background %d to %d\n", int(addr), int(len));
 		draw_bg(pDC, doc_rect, neg_x, neg_y,
 				line_height, char_width, char_width_w,
-				col,
+				comp_col,
 				max(addr, first_addr), 
 				min(addr+len, last_addr),
 				vert);
