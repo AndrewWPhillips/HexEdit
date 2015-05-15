@@ -62,6 +62,18 @@ BEGIN_MESSAGE_MAP(CPrevwView, CView)
 	ON_UPDATE_COMMAND_UI(ID_PREVW_BG_BLACK, OnUpdateBackgroundBlack)
 	ON_COMMAND(ID_PREVW_BG_GREY, OnBackgroundGrey)
 	ON_UPDATE_COMMAND_UI(ID_PREVW_BG_GREY, OnUpdateBackgroundGrey)
+
+	// Disable commands that we do not want passed onto the hex view as they
+	// are confusing or we may want to implement them for this view one day.
+		ON_UPDATE_COMMAND_UI(ID_DEL, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_EDIT_CUT, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateDisable)
+
+		ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_DIRECT, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, OnUpdateDisable)
+
 END_MESSAGE_MAP()
 
 // CPrevwView drawing

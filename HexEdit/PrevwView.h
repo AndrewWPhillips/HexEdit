@@ -68,6 +68,8 @@ protected:
 	afx_msg void OnUpdateBackgroundBlack(CCmdUI *pCmdUI);
 	afx_msg void OnBackgroundGrey();
 	afx_msg void OnUpdateBackgroundGrey(CCmdUI *pCmdUI);
+
+	afx_msg void OnUpdateDisable(CCmdUI* pCmdUI) { pCmdUI->Enable(FALSE); }  // for disabling some commands
 	DECLARE_MESSAGE_MAP()
 
 #ifndef _DEBUG
