@@ -136,6 +136,7 @@ CHexEditDoc::CHexEditDoc()
 	bpe_ = -1;
 
 	// BG compare thread
+	TRACE1("+++ Setting compare thread to NULL for %p\n", this);
 	pthread4_ = NULL;
 	cv_count_ = 0;
 	bCompSelf_ = false;

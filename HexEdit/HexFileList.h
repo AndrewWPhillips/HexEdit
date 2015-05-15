@@ -37,6 +37,8 @@ public:
 				 int nSize, int nMaxDispLen = AFX_ABBREV_FILENAME_LEN);
 
 	// These are the fields stored in the list where each field is separated by |
+	// You can add to the end but DO NOT CHANGE THE ORDER of existing fields as
+	// this will cause the data in the recent file list to be wrongly read.
 	enum param_num { CMD, TOP, LEFT, BOTTOM, RIGHT, 
 					 SELSTART, SELEND, POS, MARK, SCHEME, HIGHLIGHTS,
 					 DISPLAY, DOC_FLAGS, COLUMNS, GROUPING, OFFSET,
@@ -47,9 +49,9 @@ public:
 					 AERIALVIEW, AERIALDISPLAY, AERIALPOS,
 					 COMPVIEW, COMPFILENAME,
 					 CODEPAGE, MBFONT, MBHEIGHT, 
-					 PREVIEWFILENAME,                     // used for preview for hex or all views
+					 PREVIEWFILENAME,                     // used for preview thumbnails (not to be confused with bitmap file preview)
 					 PREVIEWVIEW, PREVIEWZOOM,            // used for preview of a file (no relationship to PREVIEWFILENAME) - currently just bitmap files
-					   PREVIEWX, PREVIEWY, PREVIEWBG,
+					   PREVIEWX, PREVIEWY, PREVIEWBG,     // position (when zooomed in) and background type (for bitmaps with alpha channel)
 	};
 
 // Attributes

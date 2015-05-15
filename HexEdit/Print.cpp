@@ -21,6 +21,7 @@
 #include "HexEdit.h"
 #include "HexEditDoc.h"
 #include "HexEditView.h"
+#include "ChildFrm.h"
 #include "MainFrm.h"
 #include "HexFileList.h"
 #include "HexPrintDialog.h"
@@ -597,21 +598,5 @@ void CHexEditView::OnEndPrintPreview(CDC* pDC, CPrintInfo* pInfo, POINT point, C
 {
 	CScrView::OnEndPrintPreview(pDC, pInfo, point, pView);
 
-#if 0 // BCG toolbar changes - no longer nec (for some reason other toolbars hidden in print preview now)
-	// Re-enable the control bar combo controls (disabled in print preview)
-	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	CWnd *pcombo;           // Ptr to combo control in dialog bar
-	pcombo = mm->m_wndEditBar.GetDlgItem(IDC_JUMP_HEX);
-	ASSERT(pcombo != NULL);
-	if (pcombo != NULL)
-		pcombo->EnableWindow(TRUE);
-	pcombo = mm->m_wndEditBar.GetDlgItem(IDC_JUMP_DEC);
-	ASSERT(pcombo != NULL);
-	if (pcombo != NULL)
-		pcombo->EnableWindow(TRUE);
-	pcombo = mm->m_wndEditBar.GetDlgItem(IDC_SEARCH);
-	ASSERT(pcombo != NULL);
-	if (pcombo != NULL)
-		pcombo->EnableWindow(TRUE);
-#endif
+	//GetFrame()->ptv_->UpdateWindow();  // try to get tabs to redisplay
 }

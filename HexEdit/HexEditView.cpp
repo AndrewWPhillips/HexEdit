@@ -19214,8 +19214,9 @@ void CHexEditView::OnRandFast()
 
 // The display of views in tabs and split windows is complicated, mainly because the BCG tab view class
 // behaves very differently from a splitter (eg is derived from CView).
-// Currently we need to show 3 types of views: CHexEditView (normal hex view), CDataFormatView (template),
-// and CAerialView (bitmap overview).  There is also a CHexTabView that just contains one or more other views.
+// Currently we need to show 5 types of views: CHexEditView (normal hex view), CDataFormatView (template),
+// CAerialView (bitmap overview), CCompareView and CPrevwView. There is also a CHexTabView that just
+// contains one or more other views.
 // * The child frame has a splitter called "splitter_"
 //   - there is always at least one pane so at least one view
 //   - if there is only one pane then it contains the tab view
