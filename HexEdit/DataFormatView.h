@@ -130,6 +130,7 @@ protected:
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnEndPrintPreview(CDC* pDC, CPrintInfo* pInfo, POINT point, CPreviewView* pView);
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	//}}AFX_VIRTUAL

@@ -22,6 +22,7 @@
 #include "MainFrm.h"
 #include "HexFileList.h"
 #include "DataFormatView.h"
+#include "ChildFrm.h"
 #include "Misc.h"
 #include "Dialog.h"
 #include "NewCellTypes/GridCellCombo.h"     // For CGridCellCombo
@@ -5574,6 +5575,13 @@ void CDataFormatView::OnEndPrinting(CDC* pDC, CPrintInfo* pInfo)
 void CDataFormatView::OnFilePrintPreview()
 {
 	AFXPrintPreview(this);
+}
+
+void CDataFormatView::OnEndPrintPreview(CDC* pDC, CPrintInfo* pInfo, POINT point, CPreviewView* pView)
+{
+	CView::OnEndPrintPreview(pDC, pInfo, point, pView);
+
+	phev_->GetFrame()->splitter_.RecalcLayout();
 }
 
 void CDataFormatView::OnViewtest()
