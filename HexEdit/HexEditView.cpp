@@ -1170,10 +1170,10 @@ void CHexEditView::OnInitialUpdate()
 		break;
 	case 2:        // Last opened in tab view
 		split_width_c_ = -1;
-		DoCompTab(false);      // no WM_INITIALUPDATE needed here (done by MFC)
+		DoCompTab(AutoSyncCompare(), AutoScrollCompare(), GetDocument()->GetCompFileName(), false);
 		break;
 	default:       // Last opened in splitter
-		DoCompSplit(false);    // no WM_INITIALUPDATE needed here (done by MFC)
+		DoCompSplit(AutoSyncCompare(), AutoScrollCompare(), GetDocument()->GetCompFileName(), false);
 		break;
 	}
 
@@ -1344,6 +1344,7 @@ void CHexEditView::StoreOptions()
 		if (pcv_ == NULL)
 		{
 			pfl->SetData(ii, CHexFileList::COMPVIEW, "0");
+			pfl->SetData(ii, CHexFileList::COMPFILENAME, "");
 		}
 		else
 		{
@@ -19622,26 +19623,24 @@ void CHexEditView::OnUpdateCompHide(CCmdUI* pCmdUI)
 
 void CHexEditView::OnCompSplit()
 {
-	DoCompSplit();
-}
-
-bool CHexEditView::DoCompSplit(bool init /*=true*/)
-{
 	int snum_c;
 	if (pcv_ != NULL && (snum_c = GetFrame()->splitter_.FindViewColumn(pcv_->GetSafeHwnd())) > -1)
 	{
+		// Already open in splitter - just make sure it is visible and return
 		if (GetFrame()->splitter_.ColWidth(snum_c) < 8) AdjustColumns();
-		return false;   // already open in splitter
+		return;
 	}
 
-	// Make sure we have the name of the compare file to open
-	bool auto_sync = AutoSyncCompare() != 0;
-	bool auto_scroll = AutoScrollCompare() != 0;
+	CString compFile = GetDocument()->GetCompFileName();
+	if (compFile.IsEmpty())
+		GetDocument()->DoCompNew(1);
+	else
+		DoCompSplit(AutoSyncCompare(), AutoScrollCompare(), compFile);
+}
 
-	if (!GetDocument()->GetCompareFile(1, auto_sync, auto_scroll))
-		return false;
-
-	// Save current view so we can close it later
+bool CHexEditView::DoCompSplit(bool auto_sync, bool auto_scroll, CString compareFile, bool init /*=true*/)
+{
+	// Save current comp view (at this point pcv_ should point to tabbed comp view OR be NULL)
 	CCompareView * pSaved = pcv_;
 	pcv_ = NULL;
 
@@ -19678,9 +19677,20 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 	psplitter->RecalcLayout();
 	AdjustColumns();
 
+	// Update compare parameters
+	GetDocument()->bCompSelf_ = compareFile == "*";
+	if (GetDocument()->bCompSelf_)
+		VERIFY(GetDocument()->MakeTempFile());
+	else
+		GetDocument()->compFileName_ = compareFile;
+
 	// Make sure compare view knows which hex view it is assoc. with
 	if (init)
 		pcv_->SendMessage(WM_INITIALUPDATE);
+
+	// Update view options
+	SetAutoSyncCompare(auto_sync);
+	SetAutoScrollCompare(auto_scroll);
 
 	// If it was open in the tabbed view close that view
 	if (pSaved != NULL)
@@ -19693,8 +19703,6 @@ bool CHexEditView::DoCompSplit(bool init /*=true*/)
 			VERIFY(GetFrame()->ptv_->RemoveView(tnum_c));
 		GetDocument()->RemoveCompView();    // compare window is detroyed directly (no WM_CLOSE) so we need this here
 	}
-	SetAutoSyncCompare(auto_sync);
-	SetAutoScrollCompare(auto_scroll);
 
 	return true;
 }
@@ -19706,24 +19714,21 @@ void CHexEditView::OnUpdateCompSplit(CCmdUI* pCmdUI)
 
 void CHexEditView::OnCompTab()
 {
-	DoCompTab();
+	if (pcv_ != NULL && GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd()) > -1)
+		return;  // already open in tab
+
+	CString compFile = GetDocument()->GetCompFileName();
+	if (compFile.IsEmpty())
+		GetDocument()->DoCompNew(2);
+	else
+		DoCompTab(AutoSyncCompare(), AutoScrollCompare(), compFile);
 }
 
-bool CHexEditView::DoCompTab(bool init /*=true*/)
+bool CHexEditView::DoCompTab(bool auto_sync, bool auto_scroll, CString compareFile, bool init /*=true*/)
 {
-	if (pcv_ != NULL && GetFrame()->ptv_->FindTab(pcv_->GetSafeHwnd()) > -1)
-		return false;  // already open in tab
-
-	// Save current view so we can close it later
+	// Save current comp view (at this point pcv_ should point to split comp view OR be NULL)
 	CCompareView * pSaved = pcv_;
 	pcv_ = NULL;
-
-	// Make sure we have the name of the compare file to open
-	bool auto_sync = AutoSyncCompare() != 0;
-	bool auto_scroll = AutoScrollCompare() != 0;
-
-	if (!GetDocument()->GetCompareFile(2, auto_sync, auto_scroll))
-		return false;
 
 	// Reopen in the tab
 	CHexTabView *ptv = GetFrame()->ptv_;
@@ -19739,9 +19744,18 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 	// Make sure compare view knows which hex view it is assoc. with
 	pcv_->phev_ = this;
 
+	GetDocument()->bCompSelf_ = compareFile == "*";
+	if (GetDocument()->bCompSelf_)
+		VERIFY(GetDocument()->MakeTempFile());
+	else
+		GetDocument()->compFileName_ = compareFile;
+
 	ptv->SetActiveView(0);
 	if (init)
 		pcv_->SendMessage(WM_INITIALUPDATE);
+
+	SetAutoSyncCompare(auto_sync);
+	SetAutoScrollCompare(auto_scroll);
 
 	// Close Compare view in split window if there is one
 	if (pSaved != NULL)
@@ -19758,8 +19772,6 @@ bool CHexEditView::DoCompTab(bool init /*=true*/)
 			GetDocument()->RemoveCompView();    // compare window is detroyed directly (no WM_CLOSE) so we need this here
 		}
 	}
-	SetAutoSyncCompare(auto_sync);
-	SetAutoScrollCompare(auto_scroll);
 
 	return true;
 }

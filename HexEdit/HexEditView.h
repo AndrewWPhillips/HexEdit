@@ -270,9 +270,9 @@ public:
 
 	BOOL CompareViewVisible() const { return pcv_ != NULL; }
 	BOOL CompareWithSelf();  // Is self-compare comparing with earlier versions of itself?
-	BOOL AutoSyncCompare() const { return display_.auto_sync_comp; }
+	bool AutoSyncCompare() const { return display_.auto_sync_comp != 0; }
 	void SetAutoSyncCompare(bool b = true) { display_.auto_sync_comp = b; }
-	BOOL AutoScrollCompare() const { return display_.auto_scroll_comp; }
+	bool AutoScrollCompare() const { return display_.auto_scroll_comp != 0; }
 	void SetAutoScrollCompare(bool b = true) { display_.auto_scroll_comp = b; }
 
 	BOOL BigEndian() const { return display_.big_endian; }
@@ -854,8 +854,8 @@ public:
 	int CompViewType() const;
 	int PrevwViewType() const;
 	void AdjustColumns();
-	bool DoCompSplit(bool init = true);   // must be public to be called from the doc
-	bool DoCompTab(bool init = true);
+	bool DoCompSplit(bool auto_sync, bool auto_scroll, CString compareFile, bool init = true);   // must be public to be called from the doc
+	bool DoCompTab(bool auto_sync, bool auto_scroll, CString compareFile, bool init = true);
 
 	struct crc_params crc_params_;   // Use to store general CRC params for use in DoChecksum()
 

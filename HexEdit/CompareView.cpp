@@ -1,22 +1,5 @@
 // CompareView.cpp : implementation of the CCompareView class
 //
-// Copyright (c) 2010 by Andrew W. Phillips.
-//
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
-//
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
-//
-/////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "HexEdit.h"
@@ -24,11 +7,16 @@
 #include "HexEditView.h"
 #include "CompareView.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
+// xxx TBD TODO
+// Testing:
+// - self-compare: temp file creation and use is OK (was buggy)
+// - new file not saved to disk
+// - new file self-compare
+// - device file self-compare
+// - stacked mode auto-sync
+// - self-compare fade
+// Bugs:
+// - diff length files -  bit past end is not updated properly when top of block is off top of screen
 
 extern CHexEditApp theApp;
 
