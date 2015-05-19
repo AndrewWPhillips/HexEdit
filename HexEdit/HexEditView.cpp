@@ -19633,7 +19633,7 @@ void CHexEditView::OnCompSplit()
 
 	CString compFile = GetDocument()->GetCompFileName();
 	if (compFile.IsEmpty())
-		GetDocument()->DoCompNew(1);
+		GetDocument()->DoCompNew(splitter);
 	else
 		DoCompSplit(AutoSyncCompare(), AutoScrollCompare(), compFile);
 }
@@ -19719,7 +19719,7 @@ void CHexEditView::OnCompTab()
 
 	CString compFile = GetDocument()->GetCompFileName();
 	if (compFile.IsEmpty())
-		GetDocument()->DoCompNew(2);
+		GetDocument()->DoCompNew(tabbed);
 	else
 		DoCompTab(AutoSyncCompare(), AutoScrollCompare(), compFile);
 }
@@ -19875,7 +19875,7 @@ bool CHexEditView::DoPrevwSplit(bool init /*=true*/)
 	ppv_ = (CPrevwView *)psplitter->GetPane(0, snum_t + 1);
 	ASSERT_KINDOF(CPrevwView, ppv_);
 
-	// Make sure Prevw view knows which hex view it is assoc. with
+	// Make sure Preview view knows which hex view it is assoc. with
 	ppv_->phev_ = this;
 
 	psplitter->SetColumnInfo(snum_t, rr.Width() - split_width_p_, 10);
@@ -19920,7 +19920,7 @@ bool CHexEditView::DoPrevwTab(bool init /*=true*/)
 
 	// Reopen in the tab
 	CHexTabView *ptv = GetFrame()->ptv_;
-	int tnum_p = ptv->AddView(RUNTIME_CLASS (CPrevwView), _T("Prevw View"));
+	int tnum_p = ptv->AddView(RUNTIME_CLASS (CPrevwView), _T("Bitmap Preview"));
 	ASSERT(tnum_p > 0);
 	if (tnum_p == -1)
 		return false;
@@ -19929,14 +19929,14 @@ bool CHexEditView::DoPrevwTab(bool init /*=true*/)
 	ppv_ = (CPrevwView *)ptv->GetActiveView();
 	ASSERT_KINDOF(CPrevwView, ppv_);
 
-	// Make sure Prevw view knows which hex view it is assoc. with
+	// Make sure Preview view knows which hex view it is assoc. with
 	ppv_->phev_ = this;
 
 	ptv->SetActiveView(0);
 	if (init)
 		ppv_->SendMessage(WM_INITIALUPDATE);
 
-	// Close Prevw view in split window if there is one
+	// Close Preview view in split window if there is one
 	if (pSaved != NULL)
 	{
 		int snum_p = GetFrame()->splitter_.FindViewColumn(pSaved->GetSafeHwnd());
@@ -19959,7 +19959,7 @@ void CHexEditView::OnUpdatePrevwTab(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(PrevwViewType() == 2);
 }
 
-// public functiom that just says how we are displaying the Prevw view
+// public functiom that just says how we are displaying the Preview view
 int CHexEditView::PrevwViewType() const
 {
 	if (ppv_ == NULL)

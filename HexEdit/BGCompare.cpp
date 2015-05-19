@@ -40,29 +40,20 @@ static char THIS_FILE[] = __FILE__;
 // Start background compare, first killing any existing one
 void CHexEditDoc::OnCompNew()
 {
-	DoCompNew(0);
+	DoCompNew(none);
 }
 
-void CHexEditDoc::DoCompNew(int view_type)
+void CHexEditDoc::DoCompNew(view_t view_type)
 {
-	bool auto_sync = true, auto_scroll = true;
-	CString compareFile;
-
-	if ((view_type = GetCompareFile(view_type, auto_sync, auto_scroll, compareFile, true)) == 0)
-		return;
-
-	CHexEditView * phev = NULL;            // remembers the active hex view
 	CHexEditView * pactive = ::GetView();  // current active hex view (should be for this doc)
+	std::vector<CHexEditView *> pviews;    // remembers all the hex views on this doc
+	CHexEditView * phev = NULL;            // remembers the active hex view (if found)
 
-	// First we need to close all the compare views of this document.  (There
-	// can be more than one if there is more than one hex view open on this doc.)
-	// However, if we close a view while we are iterating through them (using
+	// Find all hex views of this doc (so we can later close any associated compare views).
+	// Note that we have to find them and store them in a vector so that we can close 
+	// them all at once -- if we close a view while we are iterating through them (using
 	// GetFirstViewPosition/GetNextView) then this really confuses MFC (even if
-	// we just send a hint to the view since UpdateAllViews uses GetNextView).
-	// So we make a list of all hex views, then later close their compare views.
-	std::vector<CHexEditView *> pviews;
-
-	// Find all hex views of this doc
+	// we just send a hint to the view since UpdateAllViews() uses GetNextView()).
 	POSITION pos = GetFirstViewPosition();
 	while (pos != NULL)
 	{
@@ -74,24 +65,28 @@ void CHexEditDoc::DoCompNew(int view_type)
 				phev = (CHexEditView *)pv;
 		}
 	}
+	ASSERT(phev != NULL);               // There should be an active view that is a hex view of this doc
+	if (phev == NULL)
+		return;
+
+	// Default the options to currently used ones in the current hex view
+	bool auto_sync = true;   //phev->AutoSyncCompare();
+	bool auto_scroll = true; //phev->AutoScrollCompare();
+	CString compareFile;
+
+	if ((view_type = GetCompareFile(view_type, auto_sync, auto_scroll, compareFile, true)) == none)
+		return;
 
 	// Kill all compare views (which are always associated with a hex view)
 	for (std::vector<CHexEditView *>::const_iterator ppv = pviews.begin(); ppv != pviews.end(); ++ppv)
 		(*ppv)->OnCompHide();
 
 	ASSERT(cv_count_ == 0 && pthread4_ == NULL);  // we should have closed all compare views and hence killed the compare thread
-	ASSERT(phev != NULL);
-	if (phev == NULL)
-		return;
 
-	// This triggers opening of compare file and start of background compare.
-	// Actually I should explain...
-	// It calls DoCompSplit (to create the compare view in a split window)
-	// which sends the new view a WM_INITIALUPDATE message which triggers 
-	// CCompareView::OninitialUpdate.  OninitialUpdate allows the view to 
-	// register itself with its document using CHexEditDoc::AddCompView()
-	// which call CreateCompThread (which sets up & starts the compare thread)
-	// then pulses start_comp_event_ to trigger the thread to start comparing.
+	// Now open the compare view and start the background compare.
+	// (DoCompSplit/DoCompTab create the new view and send WM_INITIALUPDATE
+	// thence CCompareView::OninitialUpdate registers itself with the doc using
+	// using CHexEditDoc::AddCompView() which starts the background thread.
 	if (view_type == 1)
 		phev->DoCompSplit(auto_sync, auto_scroll, compareFile);
 	else if (view_type == 2)
@@ -141,11 +136,8 @@ void CHexEditDoc::RemoveCompView()
 //   bForcePrompt = true forces prompting for file name, etc even if 
 //                  we already have one from previous compare.
 // Returns: 0 on error, 1 for split view, 2 for tabbed view
-int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, CString & compareFile, bool bForcePrompt /*=false*/)
+view_t CHexEditDoc::GetCompareFile(view_t view_type, bool & auto_sync, bool & auto_scroll, CString & compareFile, bool bForcePrompt /*=false*/)
 {
-	CHexFileList *pfl = theApp.GetFileList();
-	int idx = -1;                 // recent file list idx of current document
-
 	CNewCompare dlg;
 
 	// Get previous compare file name (if any) to be used as the default
@@ -153,15 +145,15 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 
 	if (compareFile.IsEmpty())
 	{
-		dlg.compare_type_ = 0;                                                           // default to self-compare
+		dlg.compare_type_ = 0;                                                               // default to self-compare
 		dlg.file_name_ = 	theApp.GetProfileString("File-Settings", "LastCompareFile", ""); // but get last used file name
 	}
 	else if (compareFile.Compare("*") == 0)
 	{
-		// If we don't have to prompt then we can proceed
+		// If we don't have to prompt then we can proceed with self-compare
 		if (!bForcePrompt)
 		{
-			return view;                 // return asked for view type (or error if asked for type is 0)
+			return view_type;                 // return asked for view type (or error if asked for type is 0)
 		}
 		dlg.compare_type_ = 0;                                                           // "*" means to use self-compare
 		dlg.file_name_ = 	theApp.GetProfileString("File-Settings", "LastCompareFile", ""); // but also get last used file name (disabled)
@@ -170,17 +162,17 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 	{
 		// If we don't have to prompt and the current file name exists then we can proceed using that file
 		if (!bForcePrompt && _access(compareFile, 0) != -1)
-			return view;                 // return asked for view type (or error if asked for type is 0)
+			return view_type;                 // return asked for view type (or error if asked for type is 0)
 
 		dlg.compare_type_ = 1;
 		dlg.file_name_ = compareFile;
 	}
-	dlg.compare_display_ = view - 1;
+	dlg.compare_display_ = int(view_type) - 1;
 	dlg.auto_sync_ = auto_sync;
 	dlg.auto_scroll_= auto_scroll;
 
 	if (dlg.DoModal() != IDOK)
-		return 0;
+		return none;
 
 	// Store selected values
 	auto_sync = dlg.auto_sync_ != 0;
@@ -193,7 +185,7 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 			TaskMessageBox("File has not been saved to disk", "You have not yet saved the current file to disk. "
 						   "A self compare detects changes as they are made on disk. \n\n"
 						   "Please save the file to disk before performing a \"self compare\".");
-			return 0;
+			return none;
 		}
 		compareFile = "*";
 	}
@@ -203,7 +195,7 @@ int CHexEditDoc::GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, 
 		theApp.WriteProfileString("File-Settings", "LastCompareFile", compareFile);   // last used - may be used for default next time
 	}
 
-	return dlg.compare_display_ + 1;
+	return view_t(dlg.compare_display_ + 1);
 }
 
 // Check if disk file has changed
@@ -237,7 +229,11 @@ bool CHexEditDoc::CompFileHasChanged()
 // return "*" is we are doing a self compare
 CString CHexEditDoc::GetCompFileName()
 {
-	if (compFileName_.IsEmpty())
+	if (bCompSelf_)
+	{
+		compFileName_ = "*";
+	}
+	else if (compFileName_.IsEmpty())
 	{
 		CHexFileList *pfl = theApp.GetFileList();
 		int idx = -1;                 // recent file list idx of current document
@@ -249,9 +245,6 @@ CString CHexEditDoc::GetCompFileName()
 			compFileName_ = pfl->GetData(idx, CHexFileList::COMPFILENAME);
 		}
 	}
-
-	if (compFileName_.IsEmpty() && bCompSelf_)
-		compFileName_ = "*";
 
 	return compFileName_;
 }
@@ -469,8 +462,8 @@ int CHexEditDoc::GetPrevDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 //   pfile1_compare_, pfile4_compare_ is file to compare with
 // When doing self-compare:
 //   pfile1_ is original file
-//   pfile4_ is newer temp file (tempFileA_)
-//   pfile1_compare_, pfile4_compare_ = older temp file
+//   pfile4_ is newer temp file (file name = tempFileA_)
+//   pfile1_compare_, pfile4_compare_ is older temp file (file name = tempFileB_)
 bool CHexEditDoc::OpenCompFile()
 {
 	// Open file to be used by background thread
@@ -565,7 +558,7 @@ void CHexEditDoc::CloseCompFile()
 bool CHexEditDoc::MakeTempFile()
 {
 	if (!tempFileA_.IsEmpty() && _access(tempFileA_, 0) != -1)
-		return true;    // temp file already present
+		return true;    // temp file already present when swapping between tab/split views
 
 	char temp_dir[_MAX_PATH];
 	char temp_file[_MAX_PATH];

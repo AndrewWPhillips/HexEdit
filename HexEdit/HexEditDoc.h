@@ -55,6 +55,9 @@ enum mod_type
 	mod_insert_file = 'F',      // Bytes inserted - requires index into data_file_[]
 };
 
+
+enum view_t { none, splitter, tabbed };
+
 // This object is passed to view OnUpdate() functions as the (3rd) hint
 // parameter.  It is used by the view to tell what parts of its display
 // (if any) need to be updated.
@@ -686,8 +689,8 @@ public:
 	bool IsCompWaiting();     // is compare thread in wait state?
 	void StartComp();
 	void StopComp();
-	void DoCompNew(int view_type);
-	int GetCompareFile(int view, bool & auto_sync, bool & auto_scroll, CString & filename, bool bForcePrompt = false);
+	void DoCompNew(view_t view_type);
+	view_t GetCompareFile(view_t view_type, bool & auto_sync, bool & auto_scroll, CString & filename, bool bForcePrompt = false);
 	int CompareDifferences(int rr = 0);
 	int FirstDiffAt(bool other, int rr, FILE_ADDRESS from);     // returns index of first diff at or after address
 	int CompareProgress();
