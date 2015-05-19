@@ -9,7 +9,6 @@
 
 // xxx TBD TODO
 // Testing:
-// - self-compare: temp file creation and use is OK (was buggy)
 // - new file not saved to disk
 // - new file self-compare
 // - device file self-compare
@@ -17,6 +16,10 @@
 // - self-compare fade
 // Bugs:
 // - diff length files -  bit past end is not updated properly when top of block is off top of screen
+// - next/prev difference do not always do anything
+// - next preview does not work for last diff
+// - last does not select the block past eof when files are doifferent length
+// - cut/copy in compare view
 
 extern CHexEditApp theApp;
 
@@ -30,6 +33,7 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_LBUTTONUP()
+	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_WM_MOUSEMOVE()
@@ -1928,6 +1932,12 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 		phev_->MoveWithDesc("Compare Auto-sync", start_addr, end_addr);
 		phev_->SetAutoSyncCompare(true);
 	}
+}
+
+void CCompareView::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	CContextMenuManager *pCMM = theApp.GetContextMenuManager();
+	pCMM->ShowPopupMenu(IDR_CONTEXT_COMPARE, point.x, point.y, this);
 }
 
 void CCompareView::OnSetFocus(CWnd* pNewWnd)

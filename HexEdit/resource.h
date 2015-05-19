@@ -443,6 +443,7 @@
 #define IDB_HELP                        520
 #define IDB_HELP_HOT                    521
 #define IDR_CONTEXT_PREVW               522
+#define IDR_CONTEXT_COMPARE             523
 #define IDD_PROP_BITMAP                 525
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000

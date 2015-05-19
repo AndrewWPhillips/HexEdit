@@ -855,19 +855,6 @@ BEGIN
             MENUITEM "Zoom X 1&6",                  ID_AERIAL_ZOOM16
         END
     END
-    POPUP "Compare"
-    BEGIN
-        MENUITEM "&New Compare...",             ID_COMP_NEW
-        MENUITEM SEPARATOR
-        MENUITEM "&Hide Compare View",          ID_COMP_HIDE
-        MENUITEM "&Split Compare View",         ID_COMP_SPLIT
-        MENUITEM "&Tabbed Compare View",        ID_COMP_TAB
-        MENUITEM SEPARATOR
-        MENUITEM "None",                        ID_COMP_ALL_DUMMY
-        MENUITEM SEPARATOR
-        MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
-        MENUITEM "A&uto Scroll",                ID_COMP_AUTO_SCROLL
-    END
     POPUP "Preview"
     BEGIN
         MENUITEM "&Hide Bitmap Preview",        ID_PREVW_HIDE
@@ -883,6 +870,19 @@ BEGIN
         MENUITEM "&White Background ",          ID_PREVW_BG_WHITE
         MENUITEM "&Black Background ",          ID_PREVW_BG_BLACK
         MENUITEM "&Standard Background ",       ID_PREVW_BG_GREY
+    END
+    POPUP "Compare"
+    BEGIN
+        MENUITEM "&New Compare...",             ID_COMP_NEW
+        MENUITEM SEPARATOR
+        MENUITEM "&Hide Compare View",          ID_COMP_HIDE
+        MENUITEM "&Split Compare View",         ID_COMP_SPLIT
+        MENUITEM "&Tabbed Compare View",        ID_COMP_TAB
+        MENUITEM SEPARATOR
+        MENUITEM "None",                        ID_COMP_ALL_DUMMY
+        MENUITEM SEPARATOR
+        MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
+        MENUITEM "A&uto Scroll",                ID_COMP_AUTO_SCROLL
     END
     POPUP "&Tools"
     BEGIN
@@ -1495,6 +1495,19 @@ BEGIN
         MENUITEM "&White Background ",          ID_PREVW_BG_WHITE
         MENUITEM "&Black Background ",          ID_PREVW_BG_BLACK
         MENUITEM "&Standard Background ",       ID_PREVW_BG_GREY
+        MENUITEM SEPARATOR
+        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
+        MENUITEM "&Options...",                 ID_OPTIONS2
+        MENUITEM "&Properties...",              ID_PROPERTIES_BMP
+    END
+END
+
+IDR_CONTEXT_COMPARE MENU 
+BEGIN
+    POPUP "Compare Context"
+    BEGIN
+        MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
+        MENUITEM "Auto &Scroll",                ID_COMP_AUTO_SCROLL
         MENUITEM SEPARATOR
         MENUITEM "C&ustomize...",               ID_CUSTOMIZE
         MENUITEM "&Options...",                 ID_OPTIONS2
