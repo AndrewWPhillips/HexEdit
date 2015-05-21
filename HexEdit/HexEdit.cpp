@@ -4096,12 +4096,13 @@ void CHexEditApp::set_options(struct OptValues &val)
 			nextc != NULL;
 			nextc = dynamic_cast<CMDIChildWnd *>(nextc->GetWindow(GW_HWNDNEXT)) )
 		{
-			CHexEditView *pview = dynamic_cast<CHexEditView *>(nextc->GetActiveView());
-			// Note pview may be NULL if in print preview or its another type of view
-			if (pview != NULL && pview->IsKindOf(RUNTIME_CLASS(CHexEditView)))
+			CChildFrame * pfrm = dynamic_cast<CChildFrame *>(nextc);
+
+			CHexEditView * phev = pfrm->GetHexEditView();
+			if (phev != NULL)
 			{
-				pview->recalc_display(); // Address width may have changed
-				pview->DoInvalidate();
+				phev->recalc_display(); // Address width, etc may have changed
+				phev->DoInvalidate();
 			}
 		}
 	}

@@ -1395,9 +1395,7 @@ void CHexEditDoc::loc_split(FILE_ADDRESS address, FILE_ADDRESS pos, ploc_t pl)
 void CHexEditDoc::rebuild_change_tracking()
 {
 	// Clear the info before rebuild
-	replace_pair_.clear();
-	insert_pair_.clear();
-	delete_pair_.clear();
+	clear_change_tracking();
 
 	FILE_ADDRESS pos = 0;       // Tracks position in current (displayed file)
 	FILE_ADDRESS last_fileaddr = 0; // Tracks last byte used from orig file
@@ -1433,11 +1431,20 @@ void CHexEditDoc::rebuild_change_tracking()
 			diff = pl->fileaddr - last_fileaddr;
 			repl = min(diff, nf_bytes);
 			if (repl > 0)
-				replace_pair_.push_back(make_pair(pos, repl));
+			{
+				replace_addr_.push_back(pos);
+				replace_len_.push_back(repl);
+			}
 			if (diff < nf_bytes)
-				insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+			{
+				insert_addr_.push_back(pos + repl);
+				insert_len_.push_back(nf_bytes - diff);
+			}
 			else if (diff > nf_bytes)
-				delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+			{
+				delete_addr_.push_back(pos);
+				delete_len_.push_back(diff - nf_bytes);
+			}
 
 			// Work out curr address by adding length of non-file recs skipped + current file rec
 			pos += nf_bytes + (pl->dlen&doc_loc::mask);
@@ -1452,12 +1459,22 @@ void CHexEditDoc::rebuild_change_tracking()
 			// (If no orig file we treat the first memory record as the base for comparison)
 			diff = (pl->memaddr - undo_[0].ptr) - last_fileaddr;
 			repl = min(diff, nf_bytes);
+
 			if (repl > 0)
-				replace_pair_.push_back(make_pair(pos, repl));
+			{
+				replace_addr_.push_back(pos);
+				replace_len_.push_back(repl);
+			}
 			if (diff < nf_bytes)
-				insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+			{
+				insert_addr_.push_back(pos + repl);
+				insert_len_.push_back(nf_bytes - diff);
+			}
 			else if (diff > nf_bytes)
-				delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+			{
+				delete_addr_.push_back(pos);
+				delete_len_.push_back(diff - nf_bytes);
+			}
 
 			// Work out curr address by adding length of non-file recs skipped + current file rec
 			pos += nf_bytes + (pl->dlen&doc_loc::mask);
@@ -1473,11 +1490,20 @@ void CHexEditDoc::rebuild_change_tracking()
 			diff = pl->fileaddr - last_fileaddr;
 			repl = min(diff, nf_bytes);
 			if (repl > 0)
-				replace_pair_.push_back(make_pair(pos, repl));
+			{
+				replace_addr_.push_back(pos);
+				replace_len_.push_back(repl);
+			}
 			if (diff < nf_bytes)
-				insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+			{
+				insert_addr_.push_back(pos + repl);
+				insert_len_.push_back(nf_bytes - diff);
+			}
 			else if (diff > nf_bytes)
-				delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+			{
+				delete_addr_.push_back(pos);
+				delete_len_.push_back(diff - nf_bytes);
+			}
 
 			// Work out curr address by adding length of non-file recs skipped + current file rec
 			pos += nf_bytes + (pl->dlen&doc_loc::mask);
@@ -1496,15 +1522,34 @@ void CHexEditDoc::rebuild_change_tracking()
 	diff = orig_length - last_fileaddr;
 	repl = min(diff, nf_bytes);
 	if (repl > 0)
-		replace_pair_.push_back(make_pair(pos, repl));
+	{
+		replace_addr_.push_back(pos);
+		replace_len_.push_back(repl);
+	}
 	if (diff < nf_bytes)
-		insert_pair_.push_back(make_pair(pos + repl, nf_bytes - diff));
+	{
+		insert_addr_.push_back(pos + repl);
+		insert_len_.push_back(nf_bytes - diff);
+	}
 	else if (diff > nf_bytes)
-		delete_pair_.push_back(make_pair(pos, diff - nf_bytes));
+	{
+		delete_addr_.push_back(pos);
+		delete_len_.push_back(diff - nf_bytes);
+	}
 	pos += nf_bytes;
 
 	ASSERT(pos == length_);
 	need_change_track_ = false;            // Signal that they have been rebuilt
+}
+
+void CHexEditDoc::clear_change_tracking()
+{
+	replace_addr_.clear();
+	replace_len_.clear();
+	insert_addr_.clear();
+	insert_len_.clear();
+	delete_addr_.clear();
+	delete_len_.clear();
 }
 
 void CHexEditDoc::send_change_hint(FILE_ADDRESS address)

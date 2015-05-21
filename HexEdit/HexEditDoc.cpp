@@ -822,9 +822,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 				loc_.clear();
 				loc_.push_back(doc_loc(FILE_ADDRESS(0), length_));
 				// Reset change tracking
-				replace_pair_.clear();
-				insert_pair_.clear();
-				delete_pair_.clear();
+				clear_change_tracking();
 				need_change_track_ = false;            // Signal that rebuild not required
 				base_type_ = 0;                        // Now we can use the saved file as base for compare
 				SetModifiedFlag(FALSE);
@@ -917,9 +915,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	}
 
 	// Reset change tracking
-	replace_pair_.clear();
-	insert_pair_.clear();
-	delete_pair_.clear();
+	clear_change_tracking();
 	need_change_track_ = false;            // Signal that rebuild not required
 	base_type_ = 0;                        // Now we can use the saved file as base for compare
 
@@ -1351,9 +1347,7 @@ void CHexEditDoc::DeleteContents()
 	}
 
 	// Reset change tracking
-	replace_pair_.clear();
-	insert_pair_.clear();
-	delete_pair_.clear();
+	clear_change_tracking();
 	need_change_track_ = false;            // Signal that rebuild not required
 	base_type_ = 0;                        // Now we can use the saved file as base for compare
 	length_ = 0L;

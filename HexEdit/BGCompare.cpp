@@ -262,7 +262,7 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 // Returns index of first diff at or after address 'from', which may be
 // the numbers of diffs if 'from' is past the last one.
 // If we have a list of "historical" results then rr is the desired one, but a value
-// of zero for rr is always valid - gives the recent diffs (could be empty).
+// of zero for rr is always valid - gives the recent diffs (will exist but could be empty).
 // We can look through the diffs from the perspective of the original file (other==false)
 // or the comare file (other==true), since the addresses may be different between
 // them if there have been insertions/deletions.

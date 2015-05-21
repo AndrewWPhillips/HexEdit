@@ -424,20 +424,20 @@ public:
 
 	timer view_time_, edit_time_;     // Track total time file is open for view (ie, read only) or edit
 
-	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *Replacements()
+	pair<std::vector<FILE_ADDRESS> *, std::vector<FILE_ADDRESS> *> Replacements()
 	{
 		if (need_change_track_) rebuild_change_tracking();
-		return &replace_pair_;
+		return make_pair(&replace_addr_, &replace_len_);
 	}
-	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *Insertions()
+	pair<std::vector<FILE_ADDRESS> *, std::vector<FILE_ADDRESS> *> Insertions()
 	{
 		if (need_change_track_) rebuild_change_tracking();
-		return &insert_pair_;
+		return make_pair(&insert_addr_, &insert_len_);
 	}
-	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *Deletions()
+	pair<std::vector<FILE_ADDRESS> *, std::vector<FILE_ADDRESS> *> Deletions()
 	{
 		if (need_change_track_) rebuild_change_tracking();
-		return &delete_pair_;
+		return make_pair(&delete_addr_, &delete_len_);
 	}
 
 	const char *why0() const
@@ -603,15 +603,22 @@ private:
 
 	// The following are used for change tracking
 	bool need_change_track_;               // Do change tracking structures need rebuilding
-	void rebuild_change_tracking();        // Rebuilds replace_pair_, insert_pair_, delete_pair_
+	void rebuild_change_tracking();        // Rebuilds replace_addr_, replace_len_, insert_addr_, etc
+	void clear_change_tracking();          // Clears the same vectors
 	void send_change_hint(FILE_ADDRESS address); // Invalidate change tracking areas of display
 	int base_type_;  // Determines what we compare against 0=orig file, 1=mem blk, 2=temp file
 
-	// The following pairs store all the replacement, insertion and deletion points
-	// for change tracking.  The first of the pair is the address, the 2nd is the length.
-	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > replace_pair_;
-	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > insert_pair_;
-	std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > delete_pair_;
+	// There are 3 types of changes we track: insertions, deletions and replacements.
+	// All the chnages of a certain type are stored in 2 vectors (address and length)
+	std::vector<FILE_ADDRESS> replace_addr_, replace_len_;
+	std::vector<FILE_ADDRESS> insert_addr_, insert_len_;
+	std::vector<FILE_ADDRESS> delete_addr_, delete_len_;
+
+	//// The following pairs store all the replacement, insertion and deletion points
+	//// for change tracking.  The first of the pair is the address, the 2nd is the length.
+	//std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > replace_pair_;
+	//std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > insert_pair_;
+	//std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > delete_pair_;
 
 	void load_icon(LPCTSTR lpszPathName); // Load icon based on file ext. into hicon_
 	void show_icon();           // Show icon in child frame windows of views

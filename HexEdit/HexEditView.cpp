@@ -3159,202 +3159,8 @@ void CHexEditView::OnDraw(CDC* pDC)
 	}
 	pDC->SelectObject(psaved_pen);      // restore pen after drawing borders etc
 
-	// Make sure background compare is on and finished and also print_compare_ is on (if printing)
-	if (!((GetDocument()->CompareDifferences() <= 0) || pDC->IsPrinting() && !theApp.print_compare_))
-	{
-		// Draw differences with compare file
-		CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
-		// xxx TBD make "number of minutes before it completely disappears" into a parameter
-		CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
-		for (int rr = GetDocument()->ResultCount() - 1; rr >= 0; rr--)
-		{
-			CTime tt = GetDocument()->ResultTime(rr);
-			if (tt < tearliest)
-				continue;
-			// Tone down based on how long ago the change was made (up to 0.8 since toning down more is not that visible)
-			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
-			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
-			{
-				FILE_ADDRESS addr;
-				int len;
-				bool insert;
-
-				GetDocument()->GetOrigDiff(rr, dd, addr, len, insert);
-
-				if (addr + len < first_virt)
-					continue;         // before top of window
-				else if (addr >= last_virt)
-					break;            // after end of window
-
-				// Work out where a how to highlight insertion/replacement
-				COLORREF col;       // colours to shown underline (replace) or background (insert)
-				int vert;
-				if (insert)
-				{
-					// USe full height toned down background colour
-					col = ::tone_down(comp_bg_col_, bg_col_, amt);
-					vert = -1;
-				}
-				else
-				{
-					col = ::tone_down(comp_col_, bg_col_, amt);
-					vert = (pDC->IsPrinting() ? print_text_height_ : text_height_)/8;
-				}
-
-				draw_bg(pDC, doc_rect, neg_x, neg_y,
-						line_height, char_width, char_width_w, col,
-						max(addr, first_addr), 
-						min(addr+len, last_addr),
-						false,  // overwrite (not merge) since mutiple changes at the same address really mess up the colours
-						vert);
-			}
-		}
-	}
-
-	// Draw deletion marks always from top (shouldn't be too visible)
-	if (!(display_.hide_delete || pDC->IsPrinting() && !theApp.print_change_))
-	{
-		COLORREF prev_col = pDC->SetTextColor(bg_col_);
-
-		std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-			GetDocument()->Deletions();
-		std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp;
-		for (pp = ppr->begin(); pp != ppr->end(); ++pp)
-		{
-			// Check if its before or after the display area
-			if (pp->first < first_virt)
-				continue;
-			else if (pp->first > last_virt)
-				break;
-
-			CRect draw_rect;
-
-			draw_rect.top = int(((pp->first + offset_)/rowsize_) * line_height - 
-								doc_rect.top + bdr_top_);
-			draw_rect.bottom = draw_rect.top + line_height;
-			if (neg_y)
-			{
-				draw_rect.top = -draw_rect.top;
-				draw_rect.bottom = -draw_rect.bottom;
-			}
-
-			if (!display_.vert_display && display_.hex_area)
-			{
-				draw_rect.left = hex_pos(int((pp->first + offset_)%rowsize_), char_width) - 
-									char_width - doc_rect.left + bdr_left_;
-				draw_rect.right = draw_rect.left + char_width;
-				if (neg_x)
-				{
-					draw_rect.left = -draw_rect.left;
-					draw_rect.right = -draw_rect.right;
-				}
-				pDC->FillSolidRect(&draw_rect, trk_col_);
-				char cc = (pp->second > 9 || !display_.delete_count) ? '*' : '0' + char(pp->second);
-				pDC->DrawText(&cc, 1, &draw_rect, DT_CENTER | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
-			}
-			if (display_.vert_display || display_.char_area)
-			{
-				draw_rect.left = char_pos(int((pp->first + offset_)%rowsize_), char_width, char_width_w) - 
-									doc_rect.left + bdr_left_ - 2;
-				draw_rect.right = draw_rect.left + char_width_w/5+1;
-				if (neg_x)
-				{
-					draw_rect.left = -draw_rect.left;
-					draw_rect.right = -draw_rect.right;
-				}
-				pDC->FillSolidRect(&draw_rect, trk_col_);
-			}
-		}
-		pDC->SetTextColor(prev_col);   // restore text colour
-	}
-
-	// Now draw other change tracking stuff top down OR bottom up depending on ScrollUp()
-	if (!pDC->IsPrinting() && ScrollUp())
-	{
-		// Draw change tracking from bottom up
-		if (!display_.hide_replace)
-		{
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-				GetDocument()->Replacements();
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::reverse_iterator pp;
-			for (pp = ppr->rbegin(); pp != ppr->rend(); ++pp)
-				if (pp->first < last_virt)
-					break;
-			for ( ; pp != ppr->rend(); ++pp)
-			{
-				if (pp->first + pp->second <= first_virt)
-					break;
-				draw_bg(pDC, doc_rect, neg_x, neg_y,
-						line_height, char_width, char_width_w, trk_col_,
-						max(pp->first, first_addr), 
-						min(pp->first + pp->second, last_addr),
-						true,
-						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
-			}
-		}
-		if (!display_.hide_insert)
-		{
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-				GetDocument()->Insertions();
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::reverse_iterator pp;
-			for (pp = ppr->rbegin(); pp != ppr->rend(); ++pp)
-				if (pp->first < last_virt)
-					break;
-			for ( ; pp != ppr->rend(); ++pp)
-			{
-				if (pp->first +pp->second <= first_virt)
-					break;
-				draw_bg(pDC, doc_rect, neg_x, neg_y,
-						line_height, char_width, char_width_w, trk_bg_col_,
-						max(pp->first, first_addr), 
-						min(pp->first + pp->second, last_addr));
-			}
-		}
-	}
-	else if (!pDC->IsPrinting() || theApp.print_change_)
-	{
-		// Draw change tracking from top down
-		if (!display_.hide_replace)
-		{
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-				GetDocument()->Replacements();
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp;
-			for (pp = ppr->begin(); pp != ppr->end(); ++pp)
-				if (pp->first + pp->second > first_virt)
-					break;
-			for ( ; pp != ppr->end(); ++pp)
-			{
-				if (pp->first > last_virt)
-					break;
-				draw_bg(pDC, doc_rect, neg_x, neg_y,
-						line_height, char_width, char_width_w, trk_col_,
-						max(pp->first, first_addr), 
-						min(pp->first + pp->second, last_addr),
-						true,
-						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
-			}
-		}
-		if (!display_.hide_insert)
-		{
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > *ppr =
-				GetDocument()->Insertions();
-			std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> >::const_iterator pp;
-			for (pp = ppr->begin(); pp != ppr->end(); ++pp)
-				if (pp->first + pp->second > first_virt)
-					break;
-			for ( ; pp != ppr->end(); ++pp)
-			{
-				if (pp->first > last_virt)
-					break;
-				draw_bg(pDC, doc_rect, neg_x, neg_y,
-						line_height, char_width, char_width_w, trk_bg_col_,
-						max(pp->first, first_addr), 
-						min(pp->first + pp->second, last_addr));
-			}
-		}
-	}
-
-	// Don't print bookmarks if hide_bookmarks is on OR printing and print_bookmarks_ is off
+	// Draw bookmarks (and mark next) before highlights etc as they are drawn solid not transparent.
+	// [Don't print bookmarks if hide_bookmarks is on OR printing and print_bookmarks_ is off]
 	if (!(display_.hide_bookmarks || pDC->IsPrinting() && !theApp.print_bookmarks_))
 	{
 		// Draw bookmarks
@@ -3486,10 +3292,6 @@ void CHexEditView::OnDraw(CDC* pDC)
 
 			//pDC->FillSolidRect(&info_rect, sector_bg_col_);
 			pDC->Rectangle(&info_rect);
-			//pDC->MoveTo(info_rect.right, info_rect.bottom-1);
-			//pDC->LineTo(info_rect.left, info_rect.bottom-1);
-			//pDC->LineTo(info_rect.left, info_rect.top);
-			//pDC->LineTo(info_rect.right, info_rect.top);
 		}
 
 		if (display_.vert_display || display_.char_area)
@@ -3504,10 +3306,6 @@ void CHexEditView::OnDraw(CDC* pDC)
 			}
 			//pDC->FillSolidRect(&info_rect, sector_bg_col_);
 			pDC->Rectangle(&info_rect);
-			//pDC->MoveTo(info_rect.right, info_rect.bottom-1);
-			//pDC->LineTo(info_rect.left, info_rect.bottom-1);
-			//pDC->LineTo(info_rect.left, info_rect.top);
-			//pDC->LineTo(info_rect.right, info_rect.top);
 		}
 		(void)pDC->SelectObject(psaved_pen);
 		(void)pDC->SelectObject(psaved_brush);
@@ -3559,6 +3357,169 @@ void CHexEditView::OnDraw(CDC* pDC)
 		}
 		(void)pDC->SelectObject(psaved_pen);
 		(void)pDC->SelectObject(psaved_brush);
+	}
+
+	// ---------------------------------------------------------
+	// Things with "transparency" (change tracking, compare tracking, highlights, searc occ) are draw last
+
+	// Make sure background compare is on and finished and also print_compare_ is on (if printing)
+	if (!((GetDocument()->CompareDifferences() <= 0) || pDC->IsPrinting() && !theApp.print_compare_))
+	{
+		// Draw differences with compare file
+		CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
+		// xxx TBD make "number of minutes before it completely disappears" into a parameter
+		CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
+		for (int rr = GetDocument()->ResultCount() - 1; rr >= 0; rr--)
+		{
+			CTime tt = GetDocument()->ResultTime(rr);
+			if (tt < tearliest)
+				continue;
+			// Tone down based on how long ago the change was made (up to 0.8 since toning down more is not that visible)
+			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
+			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
+			{
+				FILE_ADDRESS addr;
+				int len;
+				bool insert;
+
+				GetDocument()->GetOrigDiff(rr, dd, addr, len, insert);
+
+				if (addr + len < first_virt)
+					continue;         // before top of window
+				else if (addr >= last_virt)
+					break;            // after end of window
+
+				// Work out where a how to highlight insertion/replacement
+				COLORREF col;       // colours to shown underline (replace) or background (insert)
+				int vert;
+				if (insert)
+				{
+					// USe full height toned down background colour
+					col = ::tone_down(comp_bg_col_, bg_col_, amt);
+					vert = -1;
+				}
+				else
+				{
+					col = ::tone_down(comp_col_, bg_col_, amt);
+					vert = (pDC->IsPrinting() ? print_text_height_ : text_height_)/8;
+				}
+
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, col,
+						max(addr, first_addr), 
+						min(addr+len, last_addr),
+						false,  // overwrite (not merge) since mutiple changes at the same address really mess up the colours
+						vert);
+			}
+		}
+	}
+
+	// Draw deletions (unless hidden OR printing and not printing them)
+	if (!(display_.hide_delete || pDC->IsPrinting() && !theApp.print_change_))
+	{
+		pair<vector<FILE_ADDRESS> *, vector<FILE_ADDRESS> *> alp = GetDocument()->Deletions();
+		draw_deletions(pDC, *alp.first, *alp.second,
+		               first_virt, last_virt, doc_rect, neg_x, neg_y,
+		               line_height, char_width, char_width_w, trk_col_);
+	}
+
+	// Now draw other change tracking stuff top down OR bottom up depending on ScrollUp()
+	if (!pDC->IsPrinting() && ScrollUp())
+	{
+		// Draw change tracking from bottom up
+		if (!display_.hide_replace)
+		{
+			// Get pair of arrays that store the addresses and lengths of the replacements
+			pair<vector<FILE_ADDRESS> *, vector<FILE_ADDRESS> *> alp = GetDocument()->Replacements();
+			int ii, len = alp.first->size();
+			ASSERT(alp.second->size() == len);
+
+			for (ii = len - 1; ii >= 0; ii--)
+				if ((*alp.first)[ii] < last_virt)
+					break;
+
+			for ( ; ii >= 0; ii--)
+			{
+				if ((*alp.first)[ii] + (*alp.second)[ii] <= first_virt)
+					break;
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, trk_col_,
+						max((*alp.first)[ii], first_addr), 
+						min((*alp.first)[ii] + (*alp.second)[ii], last_addr),
+						true,
+						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
+			}
+		}
+
+		if (!display_.hide_insert)
+		{
+			// Get pair of arrays that store the addresses and lengths of the replacements
+			pair<vector<FILE_ADDRESS> *, vector<FILE_ADDRESS> *> alp = GetDocument()->Insertions();
+			int ii, len = alp.first->size();
+			ASSERT(alp.second->size() == len);
+
+			for (ii = len - 1; ii >= 0; ii--)
+				if ((*alp.first)[ii] < last_virt)
+					break;
+
+			for ( ; ii >= 0; ii--)
+			{
+				if ((*alp.first)[ii] + (*alp.second)[ii] <= first_virt)
+					break;
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, trk_bg_col_,
+						max((*alp.first)[ii], first_addr), 
+						min((*alp.first)[ii] + (*alp.second)[ii], last_addr));
+			}
+		}
+	}
+	else if (!pDC->IsPrinting() || theApp.print_change_)
+	{
+		// Draw change tracking from top down
+		if (!display_.hide_replace)
+		{
+			// Get pair of arrays that store the addresses and lengths of the replacements
+			pair<vector<FILE_ADDRESS> *, vector<FILE_ADDRESS> *> alp = GetDocument()->Replacements();
+			int ii, len = alp.first->size();
+			ASSERT(alp.second->size() == len);
+
+			for (ii = 0; ii < len; ++ii)
+				if ((*alp.first)[ii] + (*alp.second)[ii] > first_virt)
+					break;
+
+			for ( ; ii < len; ++ii)
+			{
+				if ((*alp.first)[ii] > last_virt)
+					break;
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, trk_col_,
+						max((*alp.first)[ii], first_addr), 
+						min((*alp.first)[ii] + (*alp.second)[ii], last_addr),
+						true,
+						(pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
+			}
+		}
+		if (!display_.hide_insert)
+		{
+			// Get pair of arrays that store the addresses and lengths of the replacements
+			pair<vector<FILE_ADDRESS> *, vector<FILE_ADDRESS> *> alp = GetDocument()->Insertions();
+			int ii, len = alp.first->size();
+			ASSERT(alp.second->size() == len);
+
+			for (ii = 0; ii < len; ++ii)
+				if ((*alp.first)[ii] + (*alp.second)[ii] > first_virt)
+					break;
+
+			for ( ; ii < len; ++ii)
+			{
+				if ((*alp.first)[ii] > last_virt)
+					break;
+				draw_bg(pDC, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, trk_bg_col_,
+						max((*alp.first)[ii], first_addr), 
+						min((*alp.first)[ii] + (*alp.second)[ii], last_addr));
+			}
+		}
 	}
 
 	// Don't print highlights if hide_highlight is on OR printing and print_highlights_ is off
@@ -4927,6 +4888,64 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 	pDC->SelectObject(psaved_pen);
 	pDC->SelectObject(psaved_brush);
 	return;
+}
+
+void CHexEditView::draw_deletions(CDC* pDC, const vector<FILE_ADDRESS> & addr, const vector<FILE_ADDRESS> & len, 
+								  FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
+								  const CRectAp &doc_rect, bool neg_x, bool neg_y,
+								  int line_height, int char_width, int char_width_w,
+								  COLORREF colour)
+{
+	ASSERT(addr.size() == len.size());               // there should be equal numbers of addresses and lengths
+
+	COLORREF prev_col = pDC->SetTextColor(bg_col_);
+
+	for (int ii = 0; ii < addr.size(); ++ii)
+	{
+		if (addr[ii] < first_virt)
+			continue;
+		else if (addr[ii] > last_virt)
+			break;
+
+		CRect draw_rect;
+
+		draw_rect.top = int(((addr[ii] + offset_)/rowsize_) * line_height - 
+							doc_rect.top + bdr_top_);
+		draw_rect.bottom = draw_rect.top + line_height;
+		if (neg_y)
+		{
+			draw_rect.top = -draw_rect.top;
+			draw_rect.bottom = -draw_rect.bottom;
+		}
+
+		if (!display_.vert_display && display_.hex_area)
+		{
+			draw_rect.left = hex_pos(int((addr[ii] + offset_)%rowsize_), char_width) - 
+								char_width - doc_rect.left + bdr_left_;
+			draw_rect.right = draw_rect.left + char_width;
+			if (neg_x)
+			{
+				draw_rect.left = -draw_rect.left;
+				draw_rect.right = -draw_rect.right;
+			}
+			pDC->FillSolidRect(&draw_rect, colour);
+			char cc = (len[ii] > 9 || !display_.delete_count) ? '*' : '0' + char(len[ii]);
+			pDC->DrawText(&cc, 1, &draw_rect, DT_CENTER | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
+		}
+		if (display_.vert_display || display_.char_area)
+		{
+			draw_rect.left = char_pos(int((addr[ii] + offset_)%rowsize_), char_width, char_width_w) - 
+								doc_rect.left + bdr_left_ - 2;
+			draw_rect.right = draw_rect.left + char_width_w/5+1;
+			if (neg_x)
+			{
+				draw_rect.left = -draw_rect.left;
+				draw_rect.right = -draw_rect.right;
+			}
+			pDC->FillSolidRect(&draw_rect, colour);
+		}
+	}
+	pDC->SetTextColor(prev_col);   // restore text colour
 }
 
 // recalc_display() - recalculates everything to do with the display
