@@ -430,13 +430,13 @@ void CPrevwView::draw_bitmap(CDC* pDC)
 
 	ASSERT(pDoc->preview_width_ > 0 && pDoc->preview_height_ > 0);
 
-	int sl = (rct.left - pos_.x) * zoom_;
+	int sl = int((rct.left - pos_.x) * zoom_);
 	if (sl < 0) sl = 0;
-	int st = (rct.top - pos_.y) * zoom_;
+	int st = int((rct.top - pos_.y) * zoom_);
 	if (st < 0) st = 0;
-	int sr = (rct.right - pos_.x) * zoom_ + 1;
+	int sr = int((rct.right - pos_.x) * zoom_) + 1;
 	if (sr > pDoc->preview_width_) sr = pDoc->preview_width_;
-	int sb = (rct.bottom - pos_.y) * zoom_ + 1;
+	int sb = int((rct.bottom - pos_.y) * zoom_) + 1;
 	if (sb > pDoc->preview_height_) sb = pDoc->preview_height_;
 
 	int dl = int(sl/zoom_) + pos_.x;
