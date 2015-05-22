@@ -287,10 +287,16 @@ public:
 				 COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
 				 bool merge = true, int draw_height = -1);
 	void draw_deletions(CDC* pDC, const vector<FILE_ADDRESS> & addr, const vector<FILE_ADDRESS> & len, 
-								  FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
-								  const CRectAp &doc_rect, bool neg_x, bool neg_y,
-								  int line_height, int char_width, int char_width_w,
-								  COLORREF colour);
+						FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
+						const CRectAp &doc_rect, bool neg_x, bool neg_y,
+						int line_height, int char_width, int char_width_w,
+						COLORREF colour);
+	void draw_backgrounds(CDC* pDC,
+						const vector<FILE_ADDRESS> & addr, const vector<FILE_ADDRESS> & len, 
+						FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
+						const CRectAp &doc_rect, bool neg_x, bool neg_y,
+						int line_height, int char_width, int char_width_w,
+						COLORREF colour, bool merge = true, int draw_height = -1);
 	void do_mouse(CPoint dev_down, CSizeAp doc_dist) ;
 	void do_shift_mouse(CPoint dev_down, CSizeAp doc_dist) ;
 	void do_autofit(int state = -1);

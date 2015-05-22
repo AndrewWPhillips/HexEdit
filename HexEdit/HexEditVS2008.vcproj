@@ -440,6 +440,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HexViewDraw.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HexViewPrint.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\IntelHex.cpp"
 				>
 			</File>
@@ -505,10 +513,6 @@
 			</File>
 			<File
 				RelativePath=".\PrevwView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Print.cpp"
 				>
 			</File>
 			<File

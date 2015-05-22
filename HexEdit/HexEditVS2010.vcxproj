@@ -209,6 +209,7 @@
     <ClCompile Include="HexEditView.cpp" />
     <ClCompile Include="HexFileList.cpp" />
     <ClCompile Include="HexPrintDialog.cpp" />
+    <ClCompile Include="HexViewDraw.cpp" />
     <ClCompile Include="IntelHex.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="md5.c">
@@ -227,7 +228,7 @@
     <ClCompile Include="Password.cpp" />
     <ClCompile Include="Preview.cpp" />
     <ClCompile Include="PrevwView.cpp" />
-    <ClCompile Include="Print.cpp" />
+    <ClCompile Include="HexViewPrint.cpp" />
     <ClCompile Include="Prop.cpp" />
     <ClCompile Include="RecentFileDlg.cpp" />
     <ClCompile Include="Register.cpp" />

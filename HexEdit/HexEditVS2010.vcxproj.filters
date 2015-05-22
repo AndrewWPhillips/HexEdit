@@ -211,9 +211,6 @@
     <ClCompile Include="Preview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Print.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Prop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -386,6 +383,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PrevwView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexViewDraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HexViewPrint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
