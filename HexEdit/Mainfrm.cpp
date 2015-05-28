@@ -1336,8 +1336,13 @@ LRESULT CMainFrame::OnGetTabToolTip(WPARAM /*wp*/, LPARAM lp)
 		CHexEditView *pView = pHEDoc->GetBestView();
 		if (pView != NULL && pView->CompareViewVisible())
 		{
+			CString ss = pHEDoc->GetCompFileName();
+
 			// Show file name and file being compared with (* means self-compare)
-			pInfo->m_strText = pDoc->GetPathName() + " -- Comparing with: " + pHEDoc->GetCompFileName();
+			if (ss == "*")
+				pInfo->m_strText = pDoc->GetPathName() + " -- Comparing with self";
+			else
+				pInfo->m_strText = pDoc->GetPathName() + " -- Comparing with: " + ss;
 		}
 	}
 	return 0;
@@ -4287,7 +4292,8 @@ void CMainFrame::OnCustomize()
 	pdlg->AddMenuCommands(menu.GetSubMenu(0), FALSE, "Format commands");
 	pdlg->AddMenuCommands(menu.GetSubMenu(1), FALSE, "Navigation commands");
 	pdlg->AddMenuCommands(menu.GetSubMenu(2), FALSE, "Find commands");
-	pdlg->AddMenuCommands(menu.GetSubMenu(3), FALSE, "Aerial view commands");
+	pdlg->AddMenuCommands(menu.GetSubMenu(3), FALSE, "Aerial");
+	pdlg->AddMenuCommands(menu.GetSubMenu(4), FALSE, "Compare");
 	menu.DestroyMenu();
 
 	// Get macro cmd names

@@ -1260,6 +1260,17 @@ BEGIN
         MENUITEM "Zoom X 15",                   ID_AERIAL_ZOOM15
         MENUITEM "Zoom X 16",                   ID_AERIAL_ZOOM16
     END
+    POPUP "Compare"
+    BEGIN
+        MENUITEM "First Difference",            ID_COMP_FIRST
+        MENUITEM "Previous Difference",         ID_COMP_PREV
+        MENUITEM "Next Difference",             ID_COMP_NEXT
+        MENUITEM "Last Difference",             ID_COMP_LAST
+        MENUITEM "All First Difference",        ID_COMP_ALL_FIRST
+        MENUITEM "All Previous Difference",     ID_COMP_ALL_PREV
+        MENUITEM "All Next Difference",         ID_COMP_ALL_NEXT
+        MENUITEM "All Last Difference",         ID_COMP_ALL_LAST
+    END
 END
 
 IDR_CONTEXT_HIGHLIGHT MENU 
