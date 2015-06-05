@@ -86,9 +86,18 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	int wndHeight = rct.Height();
 	calc_widths(rct);
 
+	COLORREF base_colour =  m_pParent->radix_ == 16 ? ::BestHexAddrCol() :
+	                        m_pParent->radix_ == 10 ? ::BestDecAddrCol() :
+							                          ::GetSysColor(COLOR_BTNTEXT);
+	base_colour = ::same_hue(base_colour, 100, 35);
+	COLORREF disabled_colour = ::tone_down(base_colour, ::afxGlobalData.clrBarFace, 0.6);
+	COLORREF enabled_colour = ::add_contrast(base_colour,  ::afxGlobalData.clrBarFace);
+
 	// Set up the graphics objects we need for drawing the bits
-	CPen penDisabled(PS_SOLID, 0, ::tone_down(::GetSysColor(COLOR_BTNTEXT), ::afxGlobalData.clrBarFace, 0.7));
-	CPen penEnabled (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
+	//CPen penDisabled(PS_SOLID, 0, ::tone_down(::GetSysColor(COLOR_BTNTEXT), ::afxGlobalData.clrBarFace, 0.7));
+	//CPen penEnabled (PS_SOLID, 0, ::GetSysColor(COLOR_BTNTEXT));
+	CPen penDisabled(PS_SOLID, 0, disabled_colour);
+	CPen penEnabled (PS_SOLID, 0, enabled_colour);
 
 	CFont font;
 	LOGFONT lf;
@@ -99,7 +108,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 	CFont *pOldFont = (CFont *)pDC->SelectObject(&font);
 
 	// Start off with disabled colours as we draw from left (disabled side first)
-	COLORREF colour = ::tone_down(::afxGlobalData.clrBarDkShadow, ::afxGlobalData.clrBarFace, 0.7);
+	COLORREF colour = ::tone_down(base_colour, ::afxGlobalData.clrBarFace, 0.8);
 	CPen * pOldPen = (CPen*) pDC->SelectObject(&penDisabled);
 	bool enabled = false;
 
@@ -126,7 +135,7 @@ BOOL CCalcBits::OnEraseBkgnd(CDC* pDC)
 		if (!enabled && (bnum < m_pParent->bits_ || m_pParent->bits_ == 0))
 		{
 			pDC->SelectObject(&penEnabled);
-			colour = ::add_contrast(::afxGlobalData.clrBarDkShadow,  ::afxGlobalData.clrBarFace);
+			colour = enabled_colour;
 			enabled = true;
 		}
 
@@ -2056,6 +2065,7 @@ void CCalcDlg::update_file_buttons()
 	ASSERT(GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS) != NULL);
 
 	CHexEditView *pview = GetView();
+	int bytes = bits_ == 0 ? INT_MAX : bits_/8;   // # of bytes when reading/writing file
 
 	mpz_class start, eof, mark, sel_len;
 
@@ -2081,25 +2091,25 @@ void CCalcDlg::update_file_buttons()
 	button_colour(GetDlgItem(IDC_MARK_SUBTRACT), basic && mark - get_norm(current_) >= 0 &&
 	                                                      mark - get_norm(current_) <= eof,      RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_MARK_AT_STORE), basic && !pview->ReadOnly() && mark <= eof &&
-	                                             (mark + bits_/8 <= eof || !pview->OverType()),  RGB(0xC0, 0x0, 0x0));
+	                                             (mark + bytes <= eof || !pview->OverType()),  RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_SEL_STORE),     basic && get_norm(current_) >= 0 &&
 	                                                      get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_SEL_AT_STORE),  basic && !pview->ReadOnly() && start <= eof &&
-	                                             (start + bits_/8 <= eof || !pview->OverType()), RGB(0xC0, 0x0, 0x0));
+	                                             (start + bytes <= eof || !pview->OverType()), RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_SEL_LEN_STORE), basic && get_norm(current_) >= 0 &&
 	                                                      start + get_norm(current_) <= eof,     RGB(0xC0, 0x0, 0x0));
 	button_colour(GetDlgItem(IDC_GO),            basic && get_norm(current_) <= eof,             RGB(0xC0, 0x0, 0x0));
 
 	// Dark grey buttons
 	button_colour(GetDlgItem(IDC_MARK_GET),      pview != NULL && mark <= max_val_,              RGB(0x40, 0x40, 0x40));
-	button_colour(GetDlgItem(IDC_MARK_AT),       pview != NULL && mark + bits_/8 <= eof,         RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_MARK_AT),       pview != NULL && mark + bytes <= eof,         RGB(0x40, 0x40, 0x40));
 	button_colour(GetDlgItem(IDC_SEL_GET),       pview != NULL && start <= max_val_,             RGB(0x40, 0x40, 0x40));
-	button_colour(GetDlgItem(IDC_SEL_AT),        pview != NULL && start + bits_/8 <= eof,        RGB(0x40, 0x40, 0x40));
+	button_colour(GetDlgItem(IDC_SEL_AT),        pview != NULL && start + bytes <= eof,        RGB(0x40, 0x40, 0x40));
 	button_colour(GetDlgItem(IDC_SEL_LEN),       pview != NULL && sel_len <= max_val_,           RGB(0x40, 0x40, 0x40));
 	button_colour(GetDlgItem(IDC_EOF_GET),       pview != NULL && eof <= max_val_,               RGB(0x40, 0x40, 0x40));
 
 	// Purple
-	button_colour(GetDlgItem(IDC_UNARY_AT),      basic && get_norm(current_) + bits_/8 <= eof,   RGB(0x80, 0x0, 0x80));
+	button_colour(GetDlgItem(IDC_UNARY_AT),      basic && get_norm(current_) + bytes <= eof,   RGB(0x80, 0x0, 0x80));
 
 	if (pview != NULL)
 	{

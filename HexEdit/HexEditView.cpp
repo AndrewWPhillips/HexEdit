@@ -1425,177 +1425,177 @@ void CHexEditView::StoreOptions()
 				hh = cc->m_hWnd;             // frame window
 			else
 				hh = m_hWnd;                 // client area of hex view
-			HDC dc = ::GetDC(hh);
 			VERIFY(::GetWindowRect(hh, &rct));
-			ASSERT(rct.Width() > 0 && rct.Height() > 0);
-
-			::SetWindowPos(mm->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // make topmost
-			//Sleep(500);    // allow time to refresh
-			mm->RedrawWindow();              // Gets rid of stuff like context menu
-
-			// Prepare the DCs
-			HDC dstDC = ::GetDC(NULL);
-			HDC srcDC = ::GetWindowDC(hh);
-			HDC memDC = ::CreateCompatibleDC(dstDC);
-
-			// Copy the window to the bitmap
-			HBITMAP hbmp = CreateCompatibleBitmap(dstDC, rct.Width(), rct.Height());
-			HBITMAP oldbm = (HBITMAP)::SelectObject(memDC, hbmp);
-			VERIFY(::BitBlt(memDC, 0, 0, rct.Width(), rct.Height(), srcDC, 0, 0, SRCCOPY));
-
-			::SetWindowPos(mm->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // NOT topmost
-
-			///if (pv != this)
-			///	mm->SetActiveView(pv);
-
-			// Get information about the bitmap
-			BITMAP bm_info;
-			VERIFY(::GetObject(hbmp, sizeof(bm_info), &bm_info));
-
-			// Create the FreeImage bitmap
-			FIBITMAP * dib = FreeImage_AllocateT(FIT_BITMAP, (WORD)bm_info.bmWidth, (WORD)bm_info.bmHeight, (WORD)bm_info.bmBitsPixel);
-			if (dib != NULL)
+			if (rct.Width() > 10 && rct.Height() > 10)
 			{
-				if (bm_info.bmBitsPixel <= 8)
+				::SetWindowPos(mm->m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // make topmost
+				//Sleep(500);    // allow time to refresh
+				mm->RedrawWindow();              // Gets rid of stuff like context menu
+
+				// Prepare the DCs
+				HDC dstDC = ::GetDC(NULL);
+				HDC srcDC = ::GetWindowDC(hh);
+				HDC memDC = ::CreateCompatibleDC(dstDC);
+
+				// Copy the window to the bitmap
+				HBITMAP hbmp = CreateCompatibleBitmap(dstDC, rct.Width(), rct.Height());
+				HBITMAP oldbm = (HBITMAP)::SelectObject(memDC, hbmp);
+				VERIFY(::BitBlt(memDC, 0, 0, rct.Width(), rct.Height(), srcDC, 0, 0, SRCCOPY));
+
+				::SetWindowPos(mm->m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);  // NOT topmost
+
+				///if (pv != this)
+				///	mm->SetActiveView(pv);
+
+				// Get information about the bitmap
+				BITMAP bm_info;
+				VERIFY(::GetObject(hbmp, sizeof(bm_info), &bm_info));
+
+				// Create the FreeImage bitmap
+				FIBITMAP * dib = FreeImage_AllocateT(FIT_BITMAP, (WORD)bm_info.bmWidth, (WORD)bm_info.bmHeight, (WORD)bm_info.bmBitsPixel);
+				if (dib != NULL)
 				{
-					// Create palette if bpp is small (indicates paletted bitmap)
-					RGBQUAD * pal = FreeImage_GetPalette(dib);
-					for (int jj = 0; jj < FreeImage_GetColorsUsed(dib); ++jj)
+					if (bm_info.bmBitsPixel <= 8)
 					{
-						pal[jj].rgbRed = jj;
-						pal[jj].rgbGreen = jj;
-						pal[jj].rgbBlue = jj;
+						// Create palette if bpp is small (indicates paletted bitmap)
+						RGBQUAD * pal = FreeImage_GetPalette(dib);
+						for (int jj = 0; jj < FreeImage_GetColorsUsed(dib); ++jj)
+						{
+							pal[jj].rgbRed = jj;
+							pal[jj].rgbGreen = jj;
+							pal[jj].rgbBlue = jj;
+						}
 					}
-				}
-				int num = FreeImage_GetColorsUsed(dib);
+					int num = FreeImage_GetColorsUsed(dib);
 
-				HDC dc = ::GetDC(NULL);
+					HDC dc = ::GetDC(NULL);
 
-				// Copy the pixels to the FreeImage bitmap
-				if (::GetDIBits(dc, hbmp, 0,
-								FreeImage_GetHeight(dib),   // number of scan lines to copy
-								FreeImage_GetBits(dib),     // array for bitmap bits
-								FreeImage_GetInfo(dib),     // bitmap data buffer
-								DIB_RGB_COLORS))
-				{
-					::ReleaseDC(NULL, dc);
-
-					FreeImage_GetInfoHeader(dib)->biClrUsed = num;
-					FreeImage_GetInfoHeader(dib)->biClrImportant = num;
-
-					FIBITMAP * dib_thumb = FreeImage_MakeThumbnail(dib, theApp.thumb_size_);
-					FreeImage_Unload(dib);
-
-					FIBITMAP * dib_final;
-
-					// I had trouble with trying to use 8-bit bitmaps. Eg: FreeImage_ColorQuantize()
-					// always fails, writing 8-bit bitmap as PNG converts to 32-bit, etc, so gave up
-					//if ( theApp.thumb_8bit_ && FreeImage_GetBPP(dib_thumb) == 8 ||
-					//	!theApp.thumb_8bit_ && FreeImage_GetBPP(dib_thumb) == 24)
-					//{
-					//	dib_final = dib_thumb;
-					//}
-					//else if (theApp.thumb_8bit_)
-					//{
-					//	//dib_final = FreeImage_ConvertTo8Bits(dib_thumb);  // creates grey-scale image
-					//	dib_final = FreeImage_ColorQuantize(dib_thumb, FIQ_NNQUANT);
-					//	FreeImage_Unload(dib_thumb);
-					//}
-					//else
+					// Copy the pixels to the FreeImage bitmap
+					if (::GetDIBits(dc, hbmp, 0,
+									FreeImage_GetHeight(dib),   // number of scan lines to copy
+									FreeImage_GetBits(dib),     // array for bitmap bits
+									FreeImage_GetInfo(dib),     // bitmap data buffer
+									DIB_RGB_COLORS))
 					{
-						dib_final = FreeImage_ConvertTo24Bits(dib_thumb);
-						FreeImage_Unload(dib_thumb);
-					}
+						::ReleaseDC(NULL, dc);
 
-					CString fname;
-					if (dib_final != NULL && ::GetDataPath(fname))
-					{
-						// Get firectory and prefix for the file name
-						fname += DIRNAME_PREVIEW;
-						fname += _T("HEPV");
+						FreeImage_GetInfoHeader(dib)->biClrUsed = num;
+						FreeImage_GetInfoHeader(dib)->biClrImportant = num;
 
-						CString strPrevious = pfl->GetData(ii, CHexFileList::PREVIEWFILENAME);
-						if (!strPrevious.IsEmpty())
+						FIBITMAP * dib_thumb = FreeImage_MakeThumbnail(dib, theApp.thumb_size_);
+						FreeImage_Unload(dib);
+
+						FIBITMAP * dib_final;
+
+						// I had trouble with trying to use 8-bit bitmaps. Eg: FreeImage_ColorQuantize()
+						// always fails, writing 8-bit bitmap as PNG converts to 32-bit, etc, so gave up
+						//if ( theApp.thumb_8bit_ && FreeImage_GetBPP(dib_thumb) == 8 ||
+						//	!theApp.thumb_8bit_ && FreeImage_GetBPP(dib_thumb) == 24)
+						//{
+						//	dib_final = dib_thumb;
+						//}
+						//else if (theApp.thumb_8bit_)
+						//{
+						//	//dib_final = FreeImage_ConvertTo8Bits(dib_thumb);  // creates grey-scale image
+						//	dib_final = FreeImage_ColorQuantize(dib_thumb, FIQ_NNQUANT);
+						//	FreeImage_Unload(dib_thumb);
+						//}
+						//else
 						{
-							strPrevious = fname + strPrevious;
-							::DeleteFileA(strPrevious);
+							dib_final = FreeImage_ConvertTo24Bits(dib_thumb);
+							FreeImage_Unload(dib_thumb);
 						}
 
-						// Create the directory for the preview files if it does not exist yet
-						static bool first = true;
-						if (first)
+						CString fname;
+						if (dib_final != NULL && ::GetDataPath(fname))
 						{
-							MakeSureDirectoryPathExists(fname);
-							first = false;
-						}
+							// Get firectory and prefix for the file name
+							fname += DIRNAME_PREVIEW;
+							fname += _T("HEPV");
 
-						// Work out what sort of file to write
-						FREE_IMAGE_FORMAT fmt;
-						int flags;
-						const char * ext;
-						switch (theApp.thumb_type_)
-						{
-						case CHexEditApp::PNG:
-							fmt = FIF_PNG;
-							//flags = PNG_Z_BEST_SPEED;
-							flags = PNG_DEFAULT;
-							ext = ".PNG";
-							break;
-						case CHexEditApp::JPEG_GOOD:
-							fmt = FIF_JPEG;
-							flags = JPEG_QUALITYNORMAL;
-							ext = ".JPG";
-							break;
-						case CHexEditApp::JPEG_AVERAGE:
-							fmt = FIF_JPEG;
-							flags = JPEG_QUALITYAVERAGE;
-							ext = ".JPG";
-							break;
-						default:
-							ASSERT(0);
-							// fall through
-						case CHexEditApp::JPEG_BAD:
-							fmt = FIF_JPEG;
-							flags = JPEG_QUALITYBAD;
-							ext = ".JPG";
-							break;
-						}
-
-						static int last_vacant = 0;  // remember the last vacant spot we found to save a bit of time
-
-						// Try different file names till we find a vacant slot
-						for (int jj = last_vacant + 1; jj < 1000000; ++jj)
-						{
-							CString tt;
-							tt.Format("%04d", jj);
-							if (_access(fname + tt + ext, 0) < 0 && errno == ENOENT)
+							CString strPrevious = pfl->GetData(ii, CHexFileList::PREVIEWFILENAME);
+							if (!strPrevious.IsEmpty())
 							{
-								// File does not exist so use this file name
-								fname += tt;
-								fname += ext;
+								strPrevious = fname + strPrevious;
+								::DeleteFileA(strPrevious);
+							}
 
-								// Save the thumbnail to the file and remember in recent file list
-								if (FreeImage_Save(fmt, dib_final, fname, flags))
-									pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, tt + ext);   // no need to save full path
+							// Create the directory for the preview files if it does not exist yet
+							static bool first = true;
+							if (first)
+							{
+								MakeSureDirectoryPathExists(fname);
+								first = false;
+							}
 
-								last_vacant = jj;
+							// Work out what sort of file to write
+							FREE_IMAGE_FORMAT fmt;
+							int flags;
+							const char * ext;
+							switch (theApp.thumb_type_)
+							{
+							case CHexEditApp::PNG:
+								fmt = FIF_PNG;
+								//flags = PNG_Z_BEST_SPEED;
+								flags = PNG_DEFAULT;
+								ext = ".PNG";
+								break;
+							case CHexEditApp::JPEG_GOOD:
+								fmt = FIF_JPEG;
+								flags = JPEG_QUALITYNORMAL;
+								ext = ".JPG";
+								break;
+							case CHexEditApp::JPEG_AVERAGE:
+								fmt = FIF_JPEG;
+								flags = JPEG_QUALITYAVERAGE;
+								ext = ".JPG";
+								break;
+							default:
+								ASSERT(0);
+								// fall through
+							case CHexEditApp::JPEG_BAD:
+								fmt = FIF_JPEG;
+								flags = JPEG_QUALITYBAD;
+								ext = ".JPG";
 								break;
 							}
-						}
 
-						FreeImage_Unload(dib_final);
+							static int last_vacant = 0;  // remember the last vacant spot we found to save a bit of time
+
+							// Try different file names till we find a vacant slot
+							for (int jj = last_vacant + 1; jj < 1000000; ++jj)
+							{
+								CString tt;
+								tt.Format("%04d", jj);
+								if (_access(fname + tt + ext, 0) < 0 && errno == ENOENT)
+								{
+									// File does not exist so use this file name
+									fname += tt;
+									fname += ext;
+
+									// Save the thumbnail to the file and remember in recent file list
+									if (FreeImage_Save(fmt, dib_final, fname, flags))
+										pfl->SetData(ii, CHexFileList::PREVIEWFILENAME, tt + ext);   // no need to save full path
+
+									last_vacant = jj;
+									break;
+								}
+							}
+
+							FreeImage_Unload(dib_final);
+						}
+					}
+					else
+					{
+						::ReleaseDC(NULL, dc);
+						FreeImage_Unload(dib);
 					}
 				}
-				else
-				{
-					::ReleaseDC(NULL, dc);
-					FreeImage_Unload(dib);
-				}
-			}
 
-			(void)::SelectObject(memDC, oldbm);
-			::DeleteObject(hbmp);
-			::DeleteDC(memDC);
+				(void)::SelectObject(memDC, oldbm);
+				::DeleteObject(hbmp);
+				::DeleteDC(memDC);
+			}
 		}
 #endif // FILE_PREVIEW
 	}
@@ -1628,6 +1628,8 @@ void CHexEditView::SetScheme(const char *name)
 	}
 	DoInvalidate();
 	show_prop();      // Stats page depends on current colour scheme
+	if (!theApp.refresh_off_)
+		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->m_wndCalc.Invalidate();
 }
 
 // When docked vertically the colour scheme drop down combo (ID_SCHEME) becomes a command
@@ -4702,6 +4704,10 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 	if (pav_ != NULL && IsWindow(pav_->m_hWnd)) pav_->StartTimer();       // Turn on any animation in aerial view
 
 	CScrView::OnSetFocus(pOldWnd);
+
+	// Force redraw of bits as colour scheme may have changed (hex/dec addr colour is used for drawing the calc bits)
+	if (!theApp.refresh_off_)
+		dynamic_cast<CMainFrame *>(::AfxGetMainWnd())->m_wndCalc.Invalidate();
 
 	if (nav_moves_ < 0)
 		return;

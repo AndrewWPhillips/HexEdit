@@ -1121,7 +1121,7 @@ void CHexEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 HBRUSH CHexEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 {
 	if (nCtlColor == CTLCOLOR_EDIT)
-		pDC->SetTextColor(::GetHexAddrCol());
+		pDC->SetTextColor(::BestHexAddrCol());
 
 	return m_brush;
 }
@@ -1445,7 +1445,7 @@ void CDecEditControl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 HBRUSH CDecEditControl::CtlColor(CDC* pDC, UINT nCtlColor)
 {
 	if (nCtlColor == CTLCOLOR_EDIT)
-		pDC->SetTextColor(::GetDecAddrCol());
+		pDC->SetTextColor(::BestDecAddrCol());
 
 	return m_brush;
 }

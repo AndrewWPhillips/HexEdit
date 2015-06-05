@@ -114,8 +114,9 @@ public:
 		char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); 
 		CString retval(ss); 
 
-		// This was added due to linking with release version of mpir.lib causing debug free() to throw an exception
-		// xxx we need a better solution (eg, in debug mode link with debug mpir.lib?) since this causes memory leak messages
+		// This was added due to linking with release version of mpir.lib causing debug free() to throw an exception because
+		// memory is allocated using release mode malloc but free'd using debug mode free (need to link with debug build of mpir)
+		// xxx we need a better solution since not calling free causes memory leak messages at end of debug session
 #ifndef _DEBUG
 		free(ss); 
 #endif
