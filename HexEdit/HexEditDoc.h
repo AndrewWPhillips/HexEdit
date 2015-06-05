@@ -699,15 +699,36 @@ public:
 	void DoCompNew(view_t view_type);
 	view_t GetCompareFile(view_t view_type, bool & auto_sync, bool & auto_scroll, CString & filename, bool bForcePrompt = false);
 	int CompareDifferences(int rr = 0);
-	int FirstDiffAt(bool other, int rr, FILE_ADDRESS from);     // returns index of first diff at or after address
 	int CompareProgress();
-	// The following look through all results (not just the latest)
-	void GetFirstDiffAll(FILE_ADDRESS &addr, int &len);
-	void GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len);
-	void GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len);
-	void GetLastDiffAll(FILE_ADDRESS &addr, int &len);
-	int GetNextDiff(bool other, FILE_ADDRESS from, int rr = 0);
-	int GetPrevDiff(bool other, FILE_ADDRESS from, int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetFirstDiff(int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetPrevDiff(FILE_ADDRESS from, int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextDiff(FILE_ADDRESS from, int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetLastDiff(int rr = 0);
+
+	// The following look through all results (not just the latest) for self-compare
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetFirstDiffAll();
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetPrevDiffAll(FILE_ADDRESS from);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextDiffAll(FILE_ADDRESS from);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetLastDiffAll();
+
+	// xxx just realised that these may not be necessary - eg instead of GetFirstOtherDiff we could call GetFirstDiff then get corresponding other diff
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetFirstOtherDiff(int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetPrevOtherDiff(FILE_ADDRESS from, int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextOtherDiff(FILE_ADDRESS from, int rr = 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetLastOtherDiff(int rr = 0);
+
+	pair<const std::vector<FILE_ADDRESS> *, const std::vector<FILE_ADDRESS> *> OrigReplacements(int rr = 0)
+	{
+		return make_pair(&comp_[rr].m_replace_A, &comp_[rr].m_replace_len);
+	}
+	pair<const std::vector<FILE_ADDRESS> *, const std::vector<FILE_ADDRESS> *> OrigInsertions(int rr = 0)
+	{
+		return make_pair(&comp_[rr].m_insert_A, &comp_[rr].m_insert_len);
+	}
+	pair<const std::vector<FILE_ADDRESS> *, const std::vector<FILE_ADDRESS> *> OrigDeletions(int rr = 0)
+	{
+		return make_pair(&comp_[rr].m_delete_A, &comp_[rr].m_delete_len);
+	}
 	CString GetCompFileName();
 	bool OrigFileHasChanged();
 	bool CompFileHasChanged();
@@ -968,48 +989,52 @@ private:
 
 	public:
 		enum Type { Deletion = -1, Replacement = 0, Insertion = 1, };
-		void Reset(const CTime &tm) { m_addrA.clear(); m_addrB.clear(); m_len.clear(); m_type.clear(); m_fileTime = tm; }
+		void Reset(const CTime &tm)
+		{
+			m_insert_A.clear();   m_insert_B.clear();   m_insert_len.clear();
+			m_delete_A.clear();   m_delete_B.clear();   m_delete_len.clear();
+			m_replace_A.clear();  m_replace_B.clear();  m_replace_len.clear();
+			m_fileTime = tm;
+		}
 		void Final() { m_compTime = CTime::GetCurrentTime(); }
 
 	private:
-		// These vectors store informations about each difference found.
-		// Each index corresponds to one difference - the vectors must always have the same length.
-		std::vector<__int64> m_addrA;  // address of difference in "original" file
-		std::vector<__int64> m_addrB;  // address of difference in "compare" file
-		std::vector<int> m_len;        // length of difference = bytes inserted/deleted/replaced
-		std::vector<Type> m_type;      // type of diff for file A (= opposite for file B)
+		// These vectors store info about the 3 types of diffs found.
+		// Note that insertions for file A are deletions for file B and vice versa
+		// Also each of the 3 related arrays must have the same length (ie: _A, _B and _len)
+		std::vector<FILE_ADDRESS> m_insert_A;
+		std::vector<FILE_ADDRESS> m_insert_B;
+		std::vector<FILE_ADDRESS> m_insert_len;
+		std::vector<FILE_ADDRESS> m_delete_A;
+		std::vector<FILE_ADDRESS> m_delete_B;
+		std::vector<FILE_ADDRESS> m_delete_len;
+		std::vector<FILE_ADDRESS> m_replace_A;
+		std::vector<FILE_ADDRESS> m_replace_B;
+		std::vector<FILE_ADDRESS> m_replace_len;
 
 		CTime m_fileTime;        // file modification time when we did the compare (used to check for file changes)
 		CTime m_compTime;        // when we did the compare (used to "age" the diffs when comparing to oneself)
 	};
 
 	std::deque<CompResult> comp_;
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> get_first_diff(bool other, int rr);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> get_prev_diff(bool other, FILE_ADDRESS from, int rr);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> get_next_diff(bool other, FILE_ADDRESS from, int rr);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> get_last_diff(bool other, int rr);
+
+	// AddressAt does a binary search of a vector looking for the largest 
+	// address less than or equal to a specified address.
+	//   tosearch = the vector of addresses to search (must be in ascending order)
+	//   from = address to search for
+	// returns the index of the element OR -1 if not found.
+	int CHexEditDoc::AddressAt(const std::vector<FILE_ADDRESS> & tosearch, FILE_ADDRESS from)
+	{
+		return std::upper_bound(tosearch.begin(), tosearch.end(), from) - tosearch.begin();
+	}
 
 	// Number of results and number of differences in specified result
 	int ResultCount() const { CSingleLock sl(&docdata_, TRUE); return comp_.size(); }
 	const CTime & ResultTime(int rr) const { CSingleLock sl(&docdata_, TRUE); ASSERT(rr < comp_.size()); return comp_[rr].m_compTime; }
-	// We need to be able to return differences from the point of view of the original file
-	// and the compared file.  For now these are the same but later there will be differences.
-	void GetOrigDiff(int rr, int idx, FILE_ADDRESS &addr, int &len, bool &insert)
-	{
-		CSingleLock sl(&docdata_, TRUE);
-		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addrA.size());
-		ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_len.size());
-		ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_type.size());
-		addr = comp_[rr].m_addrA[idx];
-		len = comp_[rr].m_len[idx];
-		insert = comp_[rr].m_type[idx] > 0;
-	}
-	void GetCompDiff(int rr, int idx, FILE_ADDRESS &addr, int &len, bool &insert)
-	{
-		CSingleLock sl(&docdata_, TRUE);
-		ASSERT(rr < comp_.size() && idx < comp_[rr].m_addrB.size());
-		ASSERT(comp_[rr].m_addrB.size() == comp_[rr].m_len.size());
-		ASSERT(comp_[rr].m_addrB.size() == comp_[rr].m_type.size());
-		addr = comp_[rr].m_addrB[idx];
-		len = comp_[rr].m_len[idx];
-		insert = comp_[rr].m_type[idx] < 0;
-	}
 
 	// ------- To calculate file statistics in background thread (see BGstats.cpp) ----------
 	CWinThread *pthread5_;      // Ptr to background stats thread or NULL

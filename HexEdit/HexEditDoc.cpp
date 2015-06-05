@@ -1468,7 +1468,8 @@ void CHexEditDoc::CheckBGProcessing()
 			TRACE("oooooooo pushing empty compare result\r\n");
 			// Previous compare has finished so keep it (if not empty) and add a new one
 			docdata_.Lock();
-			if (!comp_[0].m_addrA.empty())
+			// If the current revision zero is not empty push a new empty revision at front
+			if (!comp_[0].m_replace_A.empty() || !comp_[0].m_insert_A.empty() || !comp_[0].m_replace_A.empty())
 				comp_.push_front(CompResult());
 			docdata_.Unlock();
 		}

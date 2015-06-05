@@ -1004,56 +1004,26 @@ void CHexEditView::OnDraw(CDC* pDC)
 		}
 	}
 
-	// Make sure background compare is on and finished and also print_compare_ is on (if printing)
 	if (!((GetDocument()->CompareDifferences() <= 0) || pDC->IsPrinting() && !theApp.print_compare_))
 	{
-		// Draw differences with compare file
-		CTime tnew = GetDocument()->ResultTime(0);         // time of most recent comparison
-		// xxx TBD make "number of minutes before it completely disappears" into a parameter
-		CTime tearliest = tnew - CTimeSpan(0, 0, 15, 0);   // older diffs are shown in lighter shades
-		for (int rr = GetDocument()->ResultCount() - 1; rr >= 0; rr--)
-		{
-			CTime tt = GetDocument()->ResultTime(rr);
-			if (tt < tearliest)
-				continue;
-			// Tone down based on how long ago the change was made (up to 0.8 since toning down more is not that visible)
-			double amt = 0.8 - double((tt - tearliest).GetTotalSeconds()) / double((tnew - tearliest).GetTotalSeconds());
-			for (int dd = GetDocument()->FirstDiffAt(false, rr, first_virt); dd < GetDocument()->CompareDifferences(rr); ++dd)
-			{
-				FILE_ADDRESS addr;
-				int len;
-				bool insert;
+		CSingleLock sl(&(GetDocument()->docdata_), TRUE); // Protect shared data access to the returned vectors
 
-				GetDocument()->GetOrigDiff(rr, dd, addr, len, insert);
+		// xxx just draw revision 0 for now (other revisions are for self-coompare)
+		pair<const vector<FILE_ADDRESS> *, const vector<FILE_ADDRESS> *> alp = GetDocument()->OrigDeletions();
+		draw_deletions(pDC, *alp.first, *alp.second,
+						first_virt, last_virt, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, comp_col_);
 
-				if (addr + len < first_virt)
-					continue;         // before top of window
-				else if (addr >= last_virt)
-					break;            // after end of window
+		alp = GetDocument()->OrigInsertions();
+		draw_backgrounds(pDC, *alp.first, *alp.second,
+							first_virt, last_virt, doc_rect, neg_x, neg_y,
+							line_height, char_width, char_width_w, comp_bg_col_);
 
-				// Work out where a how to highlight insertion/replacement
-				COLORREF col;       // colours to shown underline (replace) or background (insert)
-				int vert;
-				if (insert)
-				{
-					// USe full height toned down background colour
-					col = ::tone_down(comp_bg_col_, bg_col_, amt);
-					vert = -1;
-				}
-				else
-				{
-					col = ::tone_down(comp_col_, bg_col_, amt);
-					vert = (pDC->IsPrinting() ? print_text_height_ : text_height_)/8;
-				}
-
-				draw_bg(pDC, doc_rect, neg_x, neg_y,
-						line_height, char_width, char_width_w, col,
-						max(addr, first_addr), 
-						min(addr+len, last_addr),
-						false,  // overwrite (not merge) since mutiple changes at the same address really mess up the colours
-						vert);
-			}
-		}
+		alp = GetDocument()->OrigReplacements();
+		draw_backgrounds(pDC, *alp.first, *alp.second,
+							first_virt, last_virt, doc_rect, neg_x, neg_y,
+							line_height, char_width, char_width_w,	comp_col_,
+							true, (pDC->IsPrinting() ? print_text_height_ : text_height_)/8);
 	}
 
 	// Don't print highlights if hide_highlight is on OR printing and print_highlights_ is off
@@ -2424,6 +2394,10 @@ void CHexEditView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 	return;
 }
 
+// xxx TODO TBD test deletion at end (when last_virt == last_addr)
+// xxx can we pass first_addr/last_addr instead of first_virt/last_virt
+// xxx comments
+
 void CHexEditView::draw_deletions(CDC* pDC, const vector<FILE_ADDRESS> & addr, const vector<FILE_ADDRESS> & len, 
 								  FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
 								  const CRectAp &doc_rect, bool neg_x, bool neg_y,
@@ -2434,11 +2408,17 @@ void CHexEditView::draw_deletions(CDC* pDC, const vector<FILE_ADDRESS> & addr, c
 
 	COLORREF prev_col = pDC->SetTextColor(bg_col_);
 
-	for (int ii = 0; ii < addr.size(); ++ii)
+	int ii;
+	// Skip blocks above the top of the display area
+	// [This needs to be a binary search in case we get a large number of compare diffs]
+	for (ii = 0; ii < addr.size(); ++ii)
+		if (addr[ii] >= first_virt)
+			break;
+
+	for ( ; ii < addr.size(); ++ii)
 	{
-		if (addr[ii] < first_virt)
-			continue;
-		else if (addr[ii] > last_virt)
+		// Check if we are now past the end of the display area
+		if (addr[ii] > last_virt)
 			break;
 
 		CRect draw_rect;
@@ -2498,7 +2478,7 @@ void CHexEditView::draw_backgrounds(CDC* pDC,
 	if (!ScrollUp())
 	{
 		// Skip blocks above the top of the display area
-		// [This could be chnage from a linear to binary search if too slow for large diffs.]
+		// [This needs to be a binary search in case we get a large number of compare diffs]
 		for (ii = 0; ii < addr.size(); ++ii)
 			if (addr[ii] + len[ii] > first_virt)
 				break;
@@ -2519,6 +2499,7 @@ void CHexEditView::draw_backgrounds(CDC* pDC,
 	else
 	{
 		// Starting at end skip blocks below the display area
+		// [This needs to be a binary search in case we get a large number of compare diffs]
 		for (ii = addr.size() - 1; ii >= 0; ii--)
 			if (addr[ii] < last_virt)
 				break;

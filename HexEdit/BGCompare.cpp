@@ -259,32 +259,6 @@ size_t CHexEditDoc::GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc
 	return pf->Read(buf, len);
 }
 
-// Returns index of first diff at or after address 'from', which may be
-// the numbers of diffs if 'from' is past the last one.
-// If we have a list of "historical" results then rr is the desired one, but a value
-// of zero for rr is always valid - gives the recent diffs (will exist but could be empty).
-// We can look through the diffs from the perspective of the original file (other==false)
-// or the comare file (other==true), since the addresses may be different between
-// them if there have been insertions/deletions.
-int CHexEditDoc::FirstDiffAt(bool other, int rr, FILE_ADDRESS from)
-{
-	std::vector<__int64> & addr = other ? comp_[rr].m_addrB : comp_[rr].m_addrA;
-
-	CSingleLock sl(&docdata_, TRUE);
-	int bot = 0;
-	int top = addr.size();
-	while (bot < top)
-	{
-		// Get the element roughly halfway in between (binary search)
-		int curr = (bot+top)/2;
-		if (from <= addr[curr])
-			top = curr;         // now check bottom half
-		else
-			bot = curr + 1;     // check top half
-	}
-	return bot;
-}
-
 // Returns the number of diffs (in bytes) OR
 // -4 = bg compare not on
 // -2 = bg compare is still in progress
@@ -301,10 +275,15 @@ int CHexEditDoc::CompareDifferences(int rr /*=0*/)
 	{
 		return -2;
 	}
-	// xxx TBD?
-	ASSERT(rr >= 0 && rr < comp_.size());  // also ensures
-	ASSERT(comp_[rr].m_addrA.size() == comp_[rr].m_addrB.size());
-	return comp_[rr].m_addrA.size();
+
+	ASSERT(rr >= 0 && rr < comp_.size());
+	if (rr < 0 || rr >= comp_.size())
+		return -1;
+
+	ASSERT(comp_[rr].m_replace_A.size() == comp_[rr].m_replace_len.size());
+	ASSERT(comp_[rr].m_insert_A.size() == comp_[rr].m_insert_len.size());
+	ASSERT(comp_[rr].m_delete_A.size() == comp_[rr].m_delete_len.size());
+	return comp_[rr].m_replace_A.size() + comp_[rr].m_insert_A.size() + comp_[rr].m_delete_A.size();
 }
 
 // Return how far our background compare has progressed as a percentage (0 to 100).
@@ -318,97 +297,535 @@ int CHexEditDoc::CompareProgress()
 	return 1 + int((comp_progress_ * 99)/length_);  // 1-100 (don't start at zero)
 }
 
-// Returns the address and length of the first difference or
-// -1 if there are no differences.
-void CHexEditDoc::GetFirstDiffAll(FILE_ADDRESS &addr, int &len)
+// GetFirstDiff returns the first difference in the original file.
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and location in the original file
+//   first = address of the difference in the original file (or -1 if there are no diffs)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiff(int rr /*=0*/)
 {
-	addr = -1;
-	if (pthread4_ == NULL) return;
+	return get_first_diff(false, rr);
+}
+
+// GetFirstOtherDiff returns the address/length of the 1st difference in the compare file.
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and location in the original file
+//   first = address of the difference in the original file (or -1 if there are no diffs)
+//   second = length of the difference (+ve for replacment, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstOtherDiff(int rr /*=0*/)
+{
+	return get_first_diff(true, rr);
+}
+
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, int rr)
+{
+	ASSERT(rr >= 0 && rr < comp_.size());
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = -1;
+
+	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
 	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
 
-	for (int rr = 0; rr < ResultCount(); ++rr)
+	const std::vector<FILE_ADDRESS> * replace_addr;
+	const std::vector<FILE_ADDRESS> * replace_len;
+	const std::vector<FILE_ADDRESS> * insert_addr;
+	const std::vector<FILE_ADDRESS> * insert_len;
+	const std::vector<FILE_ADDRESS> * delete_addr;
+	if (other)
 	{
-		if (comp_[rr].m_addrA.size() == 0)
-			continue;    // no diffs at all in this result set
+		replace_addr = &comp_[rr].m_replace_B;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_delete_B;
+		insert_len   = &comp_[rr].m_delete_len;
+		delete_addr  = &comp_[rr].m_insert_B;
+	}
+	else
+	{
+		replace_addr = &comp_[rr].m_replace_A;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_insert_A;
+		insert_len   = &comp_[rr].m_insert_len;
+		delete_addr  = &comp_[rr].m_delete_A;
+	}
 
-		if (addr < 0 || comp_[rr].m_addrA[0] < addr)
+	if (!replace_addr->empty())
+	{
+		retval.first  = (*replace_addr)[0];
+		retval.second = (*replace_len)[0];
+	}
+
+	if (!insert_addr->empty())
+	{
+		if ((*insert_addr)[0] < retval.first)
 		{
-			addr = comp_[rr].m_addrA[0];
-			len  = comp_[rr].m_len[0];
+			retval.first = (*insert_addr)[0];
+			retval.second = - (*insert_len)[0];        // use -ve length to indicate insertion
 		}
 	}
-}
 
-void CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len)
-{
-	addr = -1;
-	if (pthread4_ == NULL) return;
-
-	for (int rr = 0; rr < ResultCount(); ++rr)
+	if (!delete_addr->empty())
 	{
-		int idx = FirstDiffAt(false, rr, from);
-
-		CSingleLock sl(&docdata_, TRUE);
-		if (idx == 0)
-			continue;     // before first diff
-
-		idx--;           // goto previous one
-
-		ASSERT(idx > -1 && idx < comp_[rr].m_addrA.size());
-		if (addr < 0 || comp_[rr].m_addrA[idx] + comp_[rr].m_len[idx] > addr + len)
+		if ((*delete_addr)[0] < retval.first)
 		{
-			addr = comp_[rr].m_addrA[idx];
-			len  = comp_[rr].m_len[idx];
+			retval.first = (*delete_addr)[0];
+			retval.second = 0;                        // use zero length to indicate a deletion
 		}
 	}
+
+	return retval;
 }
 
-void CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from, FILE_ADDRESS &addr, int &len)
+// GetFirstDiffAll returns the first difference of all diffs in self-compare
+// returns a pair of numbers representing the type of difference and location in the original file
+//   first = address of the difference in the original file (or -1 if there are no diffs)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiffAll()
 {
-	addr = -1;
-	if (pthread4_ == NULL) return;
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = -1;
 
-	for (int rr = 0; rr < ResultCount(); ++rr)
-	{
-		int idx = FirstDiffAt(false, rr, from);
-
-		CSingleLock sl(&docdata_, TRUE);
-		if (idx == comp_[rr].m_addrA.size())
-			continue;     // past last diff in this result
-
-		ASSERT(idx > -1 && idx < comp_[rr].m_addrA.size());
-		if (addr < 0 || comp_[rr].m_addrA[idx] < addr)
-		{
-			addr = comp_[rr].m_addrA[idx];
-			len  = comp_[rr].m_len[idx];
-		}
-	}
-}
-
-// Returns the address and length of the last difference or
-// -1 for the address if there are no differences.
-void CHexEditDoc::GetLastDiffAll(FILE_ADDRESS &addr, int &len)
-{
-	addr = -1;
-	if (pthread4_ == NULL) return;
+	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
 	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
 
-	for (int rr = 0; rr < ResultCount(); ++rr)
+	for (int rr = 0; rr < comp_.size(); ++rr)
 	{
-		if (comp_[rr].m_addrA.size() == 0)
-			continue;    // no diffs in this result set
-
-		int last = comp_[rr].m_addrA.size() - 1;
-		if (addr < 0 || comp_[rr].m_addrA[last] > addr)
+		if (!comp_[rr].m_replace_A.empty())
 		{
-			addr = comp_[rr].m_addrA[last];
-			len  = comp_[rr].m_len[last];
+			retval.first  = comp_[rr].m_replace_A[0];
+			retval.second = comp_[rr].m_replace_len[0];
+		}
+
+		if (!comp_[rr].m_insert_A.empty())
+		{
+			if (comp_[rr].m_insert_A[0] < retval.first)
+			{
+				retval.first = comp_[rr].m_insert_A[0];
+				retval.second = - comp_[rr].m_insert_len[0];        // use -ve length to indicate insertion
+			}
+		}
+
+		if (!comp_[rr].m_delete_A.empty())
+		{
+			if (comp_[rr].m_delete_A[0] < retval.first)
+			{
+				retval.first = comp_[rr].m_delete_A[0];
+				retval.second = 0;                        // use zero length to indicate a deletion
+			}
 		}
 	}
+
+	return retval;
 }
 
+// GetPrevDiff returns the first difference before a specified address in the original file.
+//   from = the address to start looking backwards from
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and where it occurs in the original file
+//   first = address of the difference in the original file (or -1 if not found)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetPrevDiff(FILE_ADDRESS from, int rr /*=0*/)
+{
+	return get_prev_diff(false, from, rr);
+}
+
+// GetPrevDiff returns the first difference before a specified address in the original file.
+//   from = the address to start looking backwards from
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and where it occurs in the original file
+//   first = address of the difference in the original file (or -1 if not found)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetPrevOtherDiff(FILE_ADDRESS from, int rr /*=0*/)
+{
+	return get_prev_diff(true, from, rr);
+}
+
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_prev_diff(bool other, FILE_ADDRESS from, int rr)
+{
+	ASSERT(rr >= 0 && rr < comp_.size());
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = -1;                                 // default to "not found"
+
+	if (pthread4_ == NULL) return retval;              // no background compare is happening
+
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
+
+	const std::vector<FILE_ADDRESS> * replace_addr;
+	const std::vector<FILE_ADDRESS> * replace_len;
+	const std::vector<FILE_ADDRESS> * insert_addr;
+	const std::vector<FILE_ADDRESS> * insert_len;
+	const std::vector<FILE_ADDRESS> * delete_addr;
+	if (other)
+	{
+		replace_addr = &comp_[rr].m_replace_B;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_delete_B;
+		insert_len   = &comp_[rr].m_delete_len;
+		delete_addr  = &comp_[rr].m_insert_B;
+	}
+	else
+	{
+		replace_addr = &comp_[rr].m_replace_A;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_insert_A;
+		insert_len   = &comp_[rr].m_insert_len;
+		delete_addr  = &comp_[rr].m_delete_A;
+	}
+
+	int idx;
+	
+	// First check for a replacement that is before the address
+	if ((idx = AddressAt(*replace_addr, from) - 1) >= 0)
+	{
+		ASSERT(idx < replace_addr->size());
+		retval.first  = (*replace_addr)[idx];
+		retval.second = (*replace_len)[idx];
+	}
+
+	// Check for an insertion that is before the address
+	if ((idx = AddressAt(*insert_addr, from) - 1) >= 0)
+	{
+		// Check if it is closer to the address than what we have (for replacement)
+		if ((*insert_addr)[idx] > retval.first)
+		{
+			retval.first = (*insert_addr)[idx];
+			retval.second = - (*insert_len)[idx];      // use -ve length to indicate insertion
+		}
+	}
+
+	// Check if there is a deletion before the address
+	if ((idx = AddressAt(*delete_addr, from) - 1) >= 0)
+	{
+		// Check if it is closer to the address than what we have
+		if ((*delete_addr)[idx] > retval.first)
+		{
+			retval.first = (*delete_addr)[idx];
+			retval.second = 0;                                  // use zero length to indicate a deletion
+		}
+	}
+
+	return retval;
+}
+
+// GetPrevDiffAll returns the first difference before a specified address of all diffs in self-compare
+//   from = the address to start looking backwards from
+// returns a pair of numbers representing the type of difference and where it occurs in the original file
+//   first = address of the difference in the original file (or -1 if not found)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetPrevDiffAll(FILE_ADDRESS from)
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = -1;
+
+	if (pthread4_ == NULL) return retval;
+
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
+
+	int idx;
+
+	for (int rr = 0; rr < comp_.size(); ++rr)
+	{
+		// First check for a replacement that is before the address
+		if ((idx = AddressAt(comp_[rr].m_replace_A, from) - 1) >= 0)
+		{
+			ASSERT(idx < comp_[rr].m_replace_A.size());
+			retval.first  = comp_[rr].m_replace_A[idx];
+			retval.second = comp_[rr].m_replace_len[idx];
+		}
+
+		// Check for an insertion that is before the address
+		if ((idx = AddressAt(comp_[rr].m_insert_A, from) - 1) >= 0)
+		{
+			// Check if it is closer to the address than what we have (for replacement)
+			if (comp_[rr].m_insert_A[idx] > retval.first)
+			{
+				retval.first = comp_[rr].m_insert_A[idx];
+				retval.second = - comp_[rr].m_insert_len[idx];      // use -ve length to indicate insertion
+			}
+		}
+
+		// Check if there is a deletion before the address
+		if ((idx = AddressAt(comp_[rr].m_delete_A, from) - 1) >= 0)
+		{
+			// Check if it is closer to the address than what we have
+			if (comp_[rr].m_delete_A[idx] > retval.first)
+			{
+				retval.first = comp_[rr].m_delete_A[idx];
+				retval.second = 0;                                  // use zero length to indicate a deletion
+			}
+		}
+	}
+
+	return retval;
+}
+
+// GetNextDiff returns the first difference after a specified address in the original file.
+//   from = the address to start looking (forward) from
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and where it occurs in the original file
+//   first = address of the difference in the original file (or -1 if not found)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextDiff(FILE_ADDRESS from, int rr /*=0*/)
+{
+	return get_next_diff(false, from, rr);
+}
+
+// GetNextOtherDiff returns the first difference after a specified address in the compare file.
+//   from = the address to start looking (forward) from
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and where it occurs in the original file
+//   first = address of the difference in the original file (or -1 if not found)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextOtherDiff(FILE_ADDRESS from, int rr /*=0*/)
+{
+	return get_next_diff(true, from, rr);
+}
+
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FILE_ADDRESS from, int rr)
+{
+	ASSERT(rr >= 0 && rr < comp_.size());
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = length_;                            // default to "not found"
+
+	if (pthread4_ == NULL) return retval;              // no background compare is happening
+
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
+
+	const std::vector<FILE_ADDRESS> * replace_addr;
+	const std::vector<FILE_ADDRESS> * replace_len;
+	const std::vector<FILE_ADDRESS> * insert_addr;
+	const std::vector<FILE_ADDRESS> * insert_len;
+	const std::vector<FILE_ADDRESS> * delete_addr;
+	if (other)
+	{
+		replace_addr = &comp_[rr].m_replace_B;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_delete_B;
+		insert_len   = &comp_[rr].m_delete_len;
+		delete_addr  = &comp_[rr].m_insert_B;
+	}
+	else
+	{
+		replace_addr = &comp_[rr].m_replace_A;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_insert_A;
+		insert_len   = &comp_[rr].m_insert_len;
+		delete_addr  = &comp_[rr].m_delete_A;
+	}
+
+	int idx;
+	
+	if ((idx = AddressAt(*replace_addr, from)) < replace_addr->size())
+	{
+		retval.first  = (*replace_addr)[idx];
+		retval.second = (*replace_len)[idx];
+	}
+
+	if ((idx = AddressAt(*insert_addr, from)) < insert_addr->size())
+	{
+		if ((*insert_addr)[idx] < retval.first)
+		{
+			retval.first  = (*insert_addr)[idx];
+			retval.second = - (*insert_len)[idx];      // use -ve length to indicate insertion
+		}
+	}
+
+	if ((idx = AddressAt(*delete_addr, from)) < delete_addr->size())
+	{
+		if ((*delete_addr)[idx] < retval.first)
+		{
+			retval.first = (*delete_addr)[idx];
+			retval.second = 0;                                  // use zero length to indicate a deletion
+		}
+	}
+
+	return retval;
+}
+
+// GetNextDiffAll returns the first difference before a specified address of all diffs in self-compare
+//   from = the address to start looking backwards from
+// returns a pair of numbers representing the type of difference and where it occurs in the original file
+//   first = address of the difference in the original file (or -1 if not found)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from)
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = length_;
+
+	if (pthread4_ == NULL) return retval;
+
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
+
+	int idx;
+
+	for (int rr = 0; rr < comp_.size(); ++rr)
+	{
+		// First check for a replacement that is before the address
+		if ((idx = AddressAt(comp_[rr].m_replace_A, from) - 1) < comp_[rr].m_replace_A.size())
+		{
+			retval.first  = comp_[rr].m_replace_A[idx];
+			retval.second = comp_[rr].m_replace_len[idx];
+		}
+
+		// Check for an insertion that is before the address
+		if ((idx = AddressAt(comp_[rr].m_insert_A, from) - 1) < comp_[rr].m_insert_A.size())
+		{
+			// Check if it is closer to the address than what we have (for replacement)
+			if (comp_[rr].m_insert_A[idx] < retval.first)
+			{
+				retval.first = comp_[rr].m_insert_A[idx];
+				retval.second = - comp_[rr].m_insert_len[idx];      // use -ve length to indicate insertion
+			}
+		}
+
+		// Check if there is a deletion before the address
+		if ((idx = AddressAt(comp_[rr].m_delete_A, from) - 1) < comp_[rr].m_delete_A.size())
+		{
+			// Check if it is closer to the address than what we have
+			if (comp_[rr].m_delete_A[idx] < retval.first)
+			{
+				retval.first = comp_[rr].m_delete_A[idx];
+				retval.second = 0;                                  // use zero length to indicate a deletion
+			}
+		}
+	}
+
+	return retval;
+}
+
+// GetLastDiff returns the last difference in the original file.
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and location in the original file
+//   first = address of the difference in the original file (or -1 if there are no diffs)
+//   second = length of the difference (+ve for replacment, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetLastDiff(int rr /*=0*/)
+{
+	return get_last_diff(false, rr);
+}
+
+// GetLastOtherDiff returns the last difference in the compare file.
+//   rr = revision to look at (must be zero unless doing a self-compare)
+// returns a pair of numbers representing the type of difference and location in the original file
+//   first = address of the difference in the original file (or -1 if there are no diffs)
+//   second = length of the difference (+ve for replacment, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetLastOtherDiff(int rr /*=0*/)
+{
+	return get_last_diff(true, rr);
+}
+
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_last_diff(bool other, int rr)
+{
+	ASSERT(rr >= 0 && rr < comp_.size());
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = -1;                                 // default to "not found"
+
+	if (pthread4_ == NULL) return retval;              // no background compare is happening
+
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
+
+	const std::vector<FILE_ADDRESS> * replace_addr;
+	const std::vector<FILE_ADDRESS> * replace_len;
+	const std::vector<FILE_ADDRESS> * insert_addr;
+	const std::vector<FILE_ADDRESS> * insert_len;
+	const std::vector<FILE_ADDRESS> * delete_addr;
+	if (other)
+	{
+		replace_addr = &comp_[rr].m_replace_B;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_delete_B;
+		insert_len   = &comp_[rr].m_delete_len;
+		delete_addr  = &comp_[rr].m_insert_B;
+	}
+	else
+	{
+		replace_addr = &comp_[rr].m_replace_A;
+		replace_len  = &comp_[rr].m_replace_len;
+		insert_addr  = &comp_[rr].m_insert_A;
+		insert_len   = &comp_[rr].m_insert_len;
+		delete_addr  = &comp_[rr].m_delete_A;
+	}
+
+	if (!replace_addr->empty())
+	{
+		retval.first  = (*replace_addr).back();
+		retval.second = (*replace_len).back();
+	}
+
+	if (!insert_addr->empty())
+	{
+		if ((*insert_addr).back() > retval.first)
+		{
+			retval.first = (*insert_addr).back();
+			retval.second = - (*insert_len).back();        // use -ve length to indicate insertion not replacement
+		}
+	}
+
+	if (!delete_addr->empty())
+	{
+		if ((*delete_addr).back() > retval.first)
+		{
+			retval.first = (*delete_addr).back();
+			retval.second = 0;                                  // use zero length to indicate a deletion
+		}
+	}
+
+	return retval;
+}
+
+// GetLastDiffAll returns the first difference in the original file of all diffs (in self compare)
+// returns a pair of numbers representing the type of difference and location in the original file
+//   first = address of the difference in the original file (or -1 if there are no diffs)
+//   second = length of the difference (+ve for replacement, -ve for insertion, zero for deletion)
+std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetLastDiffAll()
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
+	retval.first = -1;
+
+	if (pthread4_ == NULL) return retval;
+
+	CSingleLock sl(&docdata_, TRUE);
+	if (comp_state_ != WAITING) return retval;         // not finished
+
+	for (int rr = 0; rr < comp_.size(); ++rr)
+	{
+		if (!comp_[rr].m_replace_A.empty())
+		{
+			retval.first  = comp_[rr].m_replace_A.back();
+			retval.second = comp_[rr].m_replace_len.back();
+		}
+
+		if (!comp_[rr].m_insert_A.empty())
+		{
+			if (comp_[rr].m_insert_A.back() > retval.first)
+			{
+				retval.first = comp_[rr].m_insert_A.back();
+				retval.second = - comp_[rr].m_insert_len.back();        // use -ve length to indicate insertion
+			}
+		}
+
+		if (!comp_[rr].m_delete_A.empty())
+		{
+			if (comp_[rr].m_delete_A.back() < retval.first)
+			{
+				retval.first = comp_[rr].m_delete_A.back();
+				retval.second = 0;                        // use zero length to indicate a deletion
+			}
+		}
+	}
+
+	return retval;
+}
+
+
+#if 0 // xxx
 // Returns:
 // -4 = compare not running
 // -2 = still in progress
@@ -450,6 +867,7 @@ int CHexEditDoc::GetPrevDiff(bool other, FILE_ADDRESS from, int rr /*=0*/)
 
 	return ii - 1;
 }
+#endif
 
 // Open CompFile just opens the files for comparing.
 // Note when comparing that there are 4 files involved:
@@ -793,21 +1211,16 @@ UINT CHexEditDoc::RunCompThread()
 				for ( ; pos < endpos; ++pos)
 					if (comp_bufa_[pos] != comp_bufb_[pos])
 						break;
-				// xxx for now addresses are always the same
-				result.m_addrA.push_back(addr + pos);
-				result.m_addrB.push_back(addr + pos);
+
+				result.m_replace_A.push_back(addr + pos);
+				result.m_replace_B.push_back(addr + pos);
 
 				ASSERT(pos < endpos);   // must have found a difference
 				for ( ; pos < endpos; ++pos)
 					if (comp_bufa_[pos] == comp_bufb_[pos])
 						break;
 
-				result.m_len.push_back(int(addr + pos - result.m_addrA.back()));
-				result.m_type.push_back(CompResult::Replacement);
-
-				ASSERT(result.m_addrA.size() == result.m_len.size());     // must always be same length
-				ASSERT(result.m_addrA.size() == result.m_addrB.size());
-				ASSERT(result.m_addrA.size() == result.m_type.size());
+				result.m_replace_len.push_back(int(addr + pos - result.m_replace_A.back()));
 			}
 
 			addr += std::min(gota, gotb);
@@ -816,20 +1229,18 @@ UINT CHexEditDoc::RunCompThread()
 				gotb -= gota;
 				gota = 0;
 
-				result.m_addrA.push_back(addr);
-				result.m_addrB.push_back(addr);
-				result.m_len.push_back(gotb);
-				result.m_type.push_back(CompResult::Deletion);  // extra bytes in compare file
+				result.m_delete_A.push_back(addr);
+				result.m_delete_B.push_back(addr);
+				result.m_delete_len.push_back(gotb);
 			}
 			else if (gotb < gota)
 			{
 				gota -= gotb;
 				gotb = 0;
 
-				result.m_addrA.push_back(addr);
-				result.m_addrB.push_back(addr);
-				result.m_len.push_back(gota);
-				result.m_type.push_back(CompResult::Insertion);  // extra byte(s) in orig file
+				result.m_insert_A.push_back(addr);
+				result.m_insert_B.push_back(addr);
+				result.m_insert_len.push_back(gota);
 			}
 
 			if (gota <= 0 || gotb <= 0)
@@ -847,6 +1258,9 @@ UINT CHexEditDoc::RunCompThread()
 		}
 		delete[] comp_bufa_; comp_bufa_ = NULL;
 		delete[] comp_bufb_; comp_bufb_ = NULL;
+
+		ASSERT(result.m_replace_A.size() == result.m_replace_B.size());
+		ASSERT(result.m_replace_A.size() == result.m_replace_len.size());
 	}
 	return 0;  // never reached
 }

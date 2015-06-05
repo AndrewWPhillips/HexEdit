@@ -689,43 +689,29 @@ void CCompareView::OnDraw(CDC* pDC)
 
 	ASSERT(GetDocument()->ResultCount() > 0);
 
-	// Just display most recent diffs (0) which is how this file differs from the original
-	for (int dd = GetDocument()->FirstDiffAt(false, 0, first_virt); dd < GetDocument()->CompareDifferences(0); ++dd)
+#if 0  // noty quite ready
+	if (GetDocument()->CompareDifferences() > 0)
 	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
+		CSingleLock sl(&(GetDocument()->docdata_), TRUE); // Protect shared data access to the returned vectors
 
-		GetDocument()->GetCompDiff(0, dd, addr, len, insert);
+		// Just draw revision 0 here
+		pair<const vector<FILE_ADDRESS> *, const vector<FILE_ADDRESS> *> alp = GetDocument()->CompDeletions();
+		draw_deletions(pDC, *alp.first, *alp.second,
+						first_virt, last_virt, doc_rect, neg_x, neg_y,
+						line_height, char_width, char_width_w, phev_->comp_col_);
 
-		if (addr + len < first_virt)
-			continue;         // before top of window
-		else if (addr >= last_virt)
-			break;            // after end of window
+		alp = GetDocument()->CompInsertions();
+		draw_backgrounds(pDC, *alp.first, *alp.second,
+							first_virt, last_virt, doc_rect, neg_x, neg_y,
+							line_height, char_width, char_width_w, phev_->comp_bg_col_);
 
-		COLORREF comp_col;    // compare tracking colour - usedto shown underline (replace) or background (insert)
-		int vert;
-		if (insert)
-		{
-			// Use full height toned down background colour
-			comp_col = phev_->comp_bg_col_;
-			vert = -1;
-		}
-		else
-		{
-			comp_col = phev_->comp_col_;
-			vert = (pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8;
-		}
-
-		// TBD xxx need to handle inserts/deletes here one day
-		TRACE2("drawing compare background %d to %d\n", int(addr), int(len));
-		draw_bg(pDC, doc_rect, neg_x, neg_y,
-				line_height, char_width, char_width_w,
-				comp_col,
-				max(addr, first_addr), 
-				min(addr+len, last_addr),
-				vert);
+		alp = GetDocument()->CompReplacements();
+		draw_backgrounds(pDC, *alp.first, *alp.second,
+							first_virt, last_virt, doc_rect, neg_x, neg_y,
+							line_height, char_width, char_width_w,	phev_->comp_col_,
+							true, (pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
 	}
+#endif
 
 	unsigned char buf[CHexEditView::max_buf];  // Holds bytes for current line being displayed
 	size_t last_col = 0;                     // Number of bytes in buf to display
@@ -1192,19 +1178,17 @@ void CCompareView::OnDraw(CDC* pDC)
 void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
 						   int line_height, int char_width, int char_width_w,
 						   COLORREF clr, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
-						   int draw_height /*=-1*/)
+						   bool merge /*=true*/, int draw_height /*=-1*/)
 {
 	if (end_addr < start_addr) return;
 
 	if (draw_height > -1 && draw_height < 2) draw_height = 2;  // make it at least 2 pixels (1 does not draw properly)
 
-#ifdef USE_ROP2
 	int saved_rop = pDC->SetROP2(R2_NOTXORPEN);
 	CPen pen(PS_SOLID, 0, clr);
 	CPen * psaved_pen = pDC->SelectObject(&pen);
 	CBrush brush(clr);
 	CBrush * psaved_brush = pDC->SelectObject(&brush);
-#endif
 
 	FILE_ADDRESS start_line = (start_addr + phev_->offset_)/phev_->rowsize_;
 	FILE_ADDRESS end_line = (end_addr + phev_->offset_)/phev_->rowsize_;
@@ -1237,11 +1221,12 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 			}
 
 			if (neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right)
-#ifdef USE_ROP2
-				pDC->Rectangle(&rct);
-#else
-				pDC->FillSolidRect(&rct, clr);
-#endif
+			{
+				if (merge)
+					pDC->Rectangle(&rct);
+				else
+					pDC->FillSolidRect(&rct, clr);
+			}
 		}
 
 		if (phev_->display_.vert_display || phev_->display_.char_area)
@@ -1257,18 +1242,15 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 				rct.left = -rct.left;
 				rct.right = -rct.right;
 			}
-#ifdef USE_ROP2
-			pDC->Rectangle(&rct);
-#else
-			pDC->FillSolidRect(&rct, clr);
-#endif
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
 		}
 
-#ifdef USE_ROP2
 		pDC->SetROP2(saved_rop);
 		pDC->SelectObject(psaved_pen);
 		pDC->SelectObject(psaved_brush);
-#endif
 		return;  // All on one line so that's it
 	}
 
@@ -1292,11 +1274,10 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 			rct.right = -rct.right;
 		}
 		ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
-#ifdef USE_ROP2
-		pDC->Rectangle(&rct);
-#else
-		pDC->FillSolidRect(&rct, clr);
-#endif
+		if (merge)
+			pDC->Rectangle(&rct);
+		else
+			pDC->FillSolidRect(&rct, clr);
 	}
 
 	if (phev_->display_.vert_display || phev_->display_.char_area)
@@ -1310,11 +1291,10 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 			rct.left = -rct.left;
 			rct.right = -rct.right;
 		}
-#ifdef USE_ROP2
-		pDC->Rectangle(&rct);
-#else
-		pDC->FillSolidRect(&rct, clr);
-#endif
+		if (merge)
+			pDC->Rectangle(&rct);
+		else
+			pDC->FillSolidRect(&rct, clr);
 	}
 
 	// Last (partial) line
@@ -1337,11 +1317,12 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 			rct.right = -rct.right;
 		}
 		if (neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right)
-#ifdef USE_ROP2
-			pDC->Rectangle(&rct);
-#else
-			pDC->FillSolidRect(&rct, clr);
-#endif
+		{
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
+		}
 	}
 
 	if (phev_->display_.vert_display || phev_->display_.char_area)
@@ -1355,11 +1336,10 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 			rct.left = -rct.left;
 			rct.right = -rct.right;
 		}
-#ifdef USE_ROP2
-		pDC->Rectangle(&rct);
-#else
-		pDC->FillSolidRect(&rct, clr);
-#endif
+		if (merge)
+			pDC->Rectangle(&rct);
+		else
+			pDC->FillSolidRect(&rct, clr);
 	}
 
 	// Now draw all the full lines
@@ -1388,11 +1368,10 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 					rct.right = -rct.right;
 				}
 				ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
-#ifdef USE_ROP2
-				pDC->Rectangle(&rct);
-#else
-				pDC->FillSolidRect(&rct, clr);
-#endif
+				if (merge)
+					pDC->Rectangle(&rct);
+				else
+					pDC->FillSolidRect(&rct, clr);
 			}
 
 			if (phev_->display_.vert_display || phev_->display_.char_area)
@@ -1406,11 +1385,10 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 					rct.left = -rct.left;
 					rct.right = -rct.right;
 				}
-#ifdef USE_ROP2
-				pDC->Rectangle(&rct);
-#else
-				pDC->FillSolidRect(&rct, clr);
-#endif
+				if (merge)
+					pDC->Rectangle(&rct);
+				else
+					pDC->FillSolidRect(&rct, clr);
 			}
 		}
 	}
@@ -1437,11 +1415,10 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 				rct.right = -rct.right;
 			}
 			ASSERT(neg_x && rct.left > rct.right || !neg_x && rct.left < rct.right);
-#ifdef USE_ROP2
-			pDC->Rectangle(&rct);
-#else
-			pDC->FillSolidRect(&rct, clr);
-#endif
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
 		}
 
 		if (phev_->display_.vert_display || phev_->display_.char_area)
@@ -1455,19 +1432,16 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 				rct.left = -rct.left;
 				rct.right = -rct.right;
 			}
-#ifdef USE_ROP2
-			pDC->Rectangle(&rct);
-#else
-			pDC->FillSolidRect(&rct, clr);
-#endif
+			if (merge)
+				pDC->Rectangle(&rct);
+			else
+				pDC->FillSolidRect(&rct, clr);
 		}
 	}
 
-#ifdef USE_ROP2
 	pDC->SetROP2(saved_rop);
 	pDC->SelectObject(psaved_pen);
 	pDC->SelectObject(psaved_brush);
-#endif
 	return;
 }
 
@@ -1991,19 +1965,17 @@ LRESULT CCompareView::OnMouseLeave(WPARAM, LPARAM lp)
 // Command to go to first recent difference in compare view
 void CCompareView::OnCompFirst()
 {
-	if (GetDocument()->CompareDifferences(0) > 0)
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetFirstOtherDiff();
+	if (locn.first > -1)
 	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetCompDiff(0, 0, addr, len, insert);
-		MoveToAddress(addr, addr+len);
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
 	}
 }
 
 void CCompareView::OnUpdateCompFirst(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetDocument()->CompareDifferences(0) > 0);
+	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
 }
 
 // Command to go to previous recent difference in compare view
@@ -2012,23 +1984,26 @@ void CCompareView::OnCompPrev()
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
 
-	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
-	if (idx > 0)
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetPrevOtherDiff(start - 1);
+	if (locn.first > -1)
 	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetCompDiff(0, idx - 1, addr, len, insert);
-		MoveToAddress(addr, addr+len);
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
 	}
 }
 
 void CCompareView::OnUpdateCompPrev(CCmdUI* pCmdUI)
 {
+	if (GetDocument()->CompareDifferences() <= 0)
+	{
+		pCmdUI->Enable(FALSE);
+		return;
+	}
+
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
-	pCmdUI->Enable(GetDocument()->CompareDifferences(0) >= 0 &&
-				   GetDocument()->FirstDiffAt(false, 0, start - 1) > 0);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetPrevOtherDiff(start - 1);
+	pCmdUI->Enable(locn.first > -1);
 }
 
 // Command to go to next recent difference in compare view
@@ -2037,42 +2012,40 @@ void CCompareView::OnCompNext()
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
 
-	int idx = GetDocument()->FirstDiffAt(false, 0, start);
-	if (idx < GetDocument()->CompareDifferences(0))
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(end);
+	if (locn.first  < GetDocument()->length())
 	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetCompDiff(0, idx, addr, len, insert);
-		MoveToAddress(addr, addr+len);
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
 	}
 }
 
 void CCompareView::OnUpdateCompNext(CCmdUI* pCmdUI)
 {
+	if (GetDocument()->CompareDifferences() <= 0)
+	{
+		pCmdUI->Enable(FALSE);
+		return;
+	}
+
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
-	pCmdUI->Enable(GetDocument()->CompareDifferences(0) >= 0 &&
-				   GetDocument()->FirstDiffAt(false, 0, start) < 
-							   GetDocument()->CompareDifferences(0));
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(end);
+	pCmdUI->Enable(locn.first < GetDocument()->length());
 }
 
 // Command to go to last recent difference in compare view
 void CCompareView::OnCompLast()
 {
-	int count = GetDocument()->CompareDifferences(0);
-	if (count > 0)
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetLastOtherDiff();
+	if (locn.first > -1)
 	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetCompDiff(0, count - 1, addr, len, insert);
-		MoveToAddress(addr, addr+len);
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
 	}
 }
 
 void CCompareView::OnUpdateCompLast(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetDocument()->CompareDifferences(0) > 0);
+	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
 }
-

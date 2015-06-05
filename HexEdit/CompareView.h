@@ -154,7 +154,7 @@ private:
 	void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
 				 int char_height, int char_width, int char_width_w,
 				 COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
-				 int draw_height = -1);
+				 bool merge = true, int draw_height = -1);
 
 	CPointAp addr2pos(FILE_ADDRESS address, int row = 0) const; // Convert byte address in doc to display position
 	int hex_pos(int column, int width=0) const // get X coord of hex display column

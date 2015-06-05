@@ -16704,6 +16704,51 @@ void CHexEditView::OnRandFast()
 //  where -1 indicates the view is not present
 //  Note tnum_h is not required as the hex view is always the left (0) view in the tab view
 
+// private function which hopefully makes sure all the splitter columns are obvious (ie a min width)
+void CHexEditView::AdjustColumns()
+{
+	int d, t, a, c, p, min;        // Current width of dffd, tab, aerial, and compare columns
+	d = t = a = c = p = -1;
+	int snum_d, snum_t, snum_a, snum_c, snum_p;
+	snum_d = snum_t = snum_a = snum_c = snum_p = -1;
+
+	// Get current column widths
+	CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
+	if (pdfv_ != NULL) snum_d = psplitter->FindViewColumn(pdfv_->GetSafeHwnd());
+	snum_t = psplitter->FindViewColumn(GetFrame()->ptv_->GetSafeHwnd());        // We always have a tab column since it contains the hex view
+	if (pav_ != NULL) snum_a = psplitter->FindViewColumn(pav_->GetSafeHwnd());
+	if (pcv_ != NULL) snum_c = psplitter->FindViewColumn(pcv_->GetSafeHwnd());
+	if (ppv_ != NULL) snum_p = psplitter->FindViewColumn(ppv_->GetSafeHwnd());
+
+	if (snum_d > -1) psplitter->GetColumnInfo(snum_d, d, min);
+	if (snum_t > -1) psplitter->GetColumnInfo(snum_t, t, min);
+	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, a, min);
+	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, c, min);
+	if (snum_p > -1) psplitter->GetColumnInfo(snum_p, p, min);
+
+	// Make ideal widths slightly smaller but not less than a minimum
+	bool adjust = false;
+	d -= 20; if (snum_d > -1 && d < 20) { d = 20; adjust = true; }
+	t -= 30; if (snum_t > -1 && t < 30) { t = 30; adjust = true; }
+	a -= 10; if (snum_a > -1 && a < 10) { a = 10; adjust = true; }
+	c -= 10; if (snum_c > -1 && c < 10) { c = 10; adjust = true; }
+	p -= 10; if (snum_p > -1 && p < 10) { p = 10; adjust = true; }
+	if (adjust)
+	{
+		if (snum_d > -1) psplitter->SetColumnInfo(snum_d, d, 10);
+		if (snum_t > -1) psplitter->SetColumnInfo(snum_t, t, 10);
+		if (snum_a > -1) psplitter->SetColumnInfo(snum_a, a, 8);
+		if (snum_c > -1) psplitter->SetColumnInfo(snum_c, c, 8);
+		if (snum_p > -1) psplitter->SetColumnInfo(snum_p, p, 8);
+		psplitter->RecalcLayout();
+	}
+	if (snum_d > -1) psplitter->GetColumnInfo(snum_d, split_width_d_, min);
+	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, split_width_a_, min);
+	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, split_width_c_, min);
+	if (snum_p > -1) psplitter->GetColumnInfo(snum_p, split_width_p_, min);
+}
+
+// Template (DFFD) commands -------------------------------------------------------------
 void CHexEditView::ShowDffd()
 {
 	if (pdfv_ == NULL)
@@ -16747,6 +16792,7 @@ void CHexEditView::OnDffdSplit()
 	if (DoDffdSplit())
 		pdfv_->SendMessage(WM_INITIALUPDATE);
 }
+
 bool CHexEditView::DoDffdSplit()
 {
 	//if (pdfv_ == GetFrame()->splitter_.GetPane(0, 0))
@@ -17262,6 +17308,227 @@ int CHexEditView::CompViewType() const
 	}
 }
 
+// Command to go to first recent difference in compare view
+void CHexEditView::OnCompFirst()
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetFirstDiff();
+	if (locn.first > -1)
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompFirst(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
+}
+
+// Command to go to previous recent difference in compare view
+void CHexEditView::OnCompPrev()
+{
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetPrevDiff(start - 1);
+	if (locn.first > -1)
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompPrev(CCmdUI* pCmdUI)
+{
+	if (GetDocument()->CompareDifferences() <= 0)
+	{
+		pCmdUI->Enable(FALSE);
+		return;
+	}
+
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetPrevDiff(start - 1);
+	pCmdUI->Enable(locn.first > -1);
+}
+
+// Command to go to next recent difference in compare view
+void CHexEditView::OnCompNext()
+{
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiff(end);
+	if (locn.first  < GetDocument()->length())
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
+{
+	if (GetDocument()->CompareDifferences() <= 0)
+	{
+		pCmdUI->Enable(FALSE);
+		return;
+	}
+
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiff(end);
+	pCmdUI->Enable(locn.first < GetDocument()->length());
+}
+
+// Command to go to last recent difference in compare view
+void CHexEditView::OnCompLast()
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetLastDiff();
+	if (locn.first > -1)
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompLast(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
+}
+
+// Command to go to first of all differences (not just recent) in compare view
+void CHexEditView::OnCompAllFirst()
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetFirstDiffAll();
+	if (locn.first > -1)
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompAllFirst(CCmdUI* pCmdUI)
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetFirstDiffAll();
+	pCmdUI->Enable(locn.first > -1);
+}
+
+void CHexEditView::OnCompAllPrev()
+{
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetPrevDiffAll(start);
+	if (locn.first > -1)
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompAllPrev(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetPrevDiffAll(start - 1);
+	pCmdUI->Enable(locn.first > -1);
+}
+
+void CHexEditView::OnCompAllNext()
+{
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiffAll(end);
+	if (locn.first  < GetDocument()->length())
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompAllNext(CCmdUI* pCmdUI)
+{
+	FILE_ADDRESS start, end;  // current selection
+	GetSelAddr(start, end);
+
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiffAll(end);
+	pCmdUI->Enable(locn.first > -1);
+}
+
+void CHexEditView::OnCompAllLast()
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetLastDiffAll();
+	if (locn.first > -1)
+	{
+		FILE_ADDRESS len = abs(int(locn.second));
+		MoveToAddress(locn.first, locn.first + len);
+	}
+}
+
+void CHexEditView::OnUpdateCompAllLast(CCmdUI* pCmdUI)
+{
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetLastDiffAll();
+	pCmdUI->Enable(locn.first > -1);
+}
+
+void CHexEditView::OnCompAutoSync()
+{
+	if (pcv_ == NULL)
+	{
+		AfxMessageBox("No Compare is available");
+		theApp.mac_error_ = 10;
+		return;
+	}
+	begin_change();
+	display_.auto_sync_comp = !display_.auto_sync_comp;
+	make_change();
+	end_change();
+
+	// If has been turned on then sync now
+	if (display_.auto_sync_comp)
+	{
+		FILE_ADDRESS start_addr, end_addr;
+		GetSelAddr(start_addr, end_addr);
+		pcv_->MoveToAddress(start_addr, end_addr);
+	}
+
+	theApp.SaveToMacro(km_comp_sync, 2);
+}
+
+void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(pcv_ != NULL);
+	pCmdUI->SetCheck(display_.auto_sync_comp);
+}
+
+void CHexEditView::OnCompAutoScroll()
+{
+	if (pcv_ == NULL)
+	{
+		AfxMessageBox("No Compare is available");
+		theApp.mac_error_ = 10;
+		return;
+	}
+	begin_change();
+	display_.auto_scroll_comp = !display_.auto_scroll_comp;
+	make_change();
+	end_change();
+
+	// If has been turned on then scroll now
+	if (display_.auto_scroll_comp)
+		pcv_->SetScroll(GetScroll());
+
+	theApp.SaveToMacro(km_comp_sync, 3);
+}
+
+void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(pcv_ != NULL);
+	pCmdUI->SetCheck(display_.auto_scroll_comp);
+}
+
 // Preview View commands --------------------------------------
 void CHexEditView::OnPrevwHide()
 {
@@ -17441,275 +17708,7 @@ int CHexEditView::PrevwViewType() const
 	}
 }
 
-// private function which hopefully makes sure all the splitter columns are obvious (ie a min width)
-void CHexEditView::AdjustColumns()
-{
-	int d, t, a, c, p, min;        // Current width of dffd, tab, aerial, and compare columns
-	d = t = a = c = p = -1;
-	int snum_d, snum_t, snum_a, snum_c, snum_p;
-	snum_d = snum_t = snum_a = snum_c = snum_p = -1;
-
-	// Get current column widths
-	CHexEditSplitter *psplitter = &(GetFrame()->splitter_);
-	if (pdfv_ != NULL) snum_d = psplitter->FindViewColumn(pdfv_->GetSafeHwnd());
-	snum_t = psplitter->FindViewColumn(GetFrame()->ptv_->GetSafeHwnd());        // We always have a tab column since it contains the hex view
-	if (pav_ != NULL) snum_a = psplitter->FindViewColumn(pav_->GetSafeHwnd());
-	if (pcv_ != NULL) snum_c = psplitter->FindViewColumn(pcv_->GetSafeHwnd());
-	if (ppv_ != NULL) snum_p = psplitter->FindViewColumn(ppv_->GetSafeHwnd());
-
-	if (snum_d > -1) psplitter->GetColumnInfo(snum_d, d, min);
-	if (snum_t > -1) psplitter->GetColumnInfo(snum_t, t, min);
-	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, a, min);
-	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, c, min);
-	if (snum_p > -1) psplitter->GetColumnInfo(snum_p, p, min);
-
-	// Make ideal widths slightly smaller but not less than a minimum
-	bool adjust = false;
-	d -= 20; if (snum_d > -1 && d < 20) { d = 20; adjust = true; }
-	t -= 30; if (snum_t > -1 && t < 30) { t = 30; adjust = true; }
-	a -= 10; if (snum_a > -1 && a < 10) { a = 10; adjust = true; }
-	c -= 10; if (snum_c > -1 && c < 10) { c = 10; adjust = true; }
-	p -= 10; if (snum_p > -1 && p < 10) { p = 10; adjust = true; }
-	if (adjust)
-	{
-		if (snum_d > -1) psplitter->SetColumnInfo(snum_d, d, 10);
-		if (snum_t > -1) psplitter->SetColumnInfo(snum_t, t, 10);
-		if (snum_a > -1) psplitter->SetColumnInfo(snum_a, a, 8);
-		if (snum_c > -1) psplitter->SetColumnInfo(snum_c, c, 8);
-		if (snum_p > -1) psplitter->SetColumnInfo(snum_p, p, 8);
-		psplitter->RecalcLayout();
-	}
-	if (snum_d > -1) psplitter->GetColumnInfo(snum_d, split_width_d_, min);
-	if (snum_a > -1) psplitter->GetColumnInfo(snum_a, split_width_a_, min);
-	if (snum_c > -1) psplitter->GetColumnInfo(snum_c, split_width_c_, min);
-	if (snum_p > -1) psplitter->GetColumnInfo(snum_p, split_width_p_, min);
-}
-
-// Command to go to first recent difference in compare view
-void CHexEditView::OnCompFirst()
-{
-	if (GetDocument()->CompareDifferences() > 0)
-	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetOrigDiff(0, 0, addr, len, insert);
-		MoveToAddress(addr, addr+len);
-	}
-}
-
-void CHexEditView::OnUpdateCompFirst(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
-}
-
-// Command to go to previous recent difference in compare view
-void CHexEditView::OnCompPrev()
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-
-	int idx = GetDocument()->FirstDiffAt(false, 0, start - 1);
-	if (idx > 0)
-	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetOrigDiff(0, idx - 1, addr, len, insert);
-		MoveToAddress(addr, addr+len);
-	}
-}
-
-void CHexEditView::OnUpdateCompPrev(CCmdUI* pCmdUI)
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-	pCmdUI->Enable(GetDocument()->CompareDifferences() >= 0 &&
-				   GetDocument()->FirstDiffAt(false, 0, start - 1) > 0);
-}
-
-// Command to go to next recent difference in compare view
-void CHexEditView::OnCompNext()
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-
-	int idx = GetDocument()->FirstDiffAt(false, 0, start);
-	if (idx < GetDocument()->CompareDifferences(0))
-	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetOrigDiff(0, idx, addr, len, insert);
-		MoveToAddress(addr, addr+len);
-	}
-}
-
-void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-	pCmdUI->Enable(GetDocument()->CompareDifferences() >= 0 &&
-				   GetDocument()->FirstDiffAt(false, 0, start) < 
-							   GetDocument()->CompareDifferences());
-}
-
-// Command to go to last recent difference in compare view
-void CHexEditView::OnCompLast()
-{
-	int count = GetDocument()->CompareDifferences();
-	if (count > 0)
-	{
-		FILE_ADDRESS addr;
-		int len;
-		bool insert;
-		GetDocument()->GetOrigDiff(0, count - 1, addr, len, insert);
-		MoveToAddress(addr, addr+len);
-	}
-}
-
-void CHexEditView::OnUpdateCompLast(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
-}
-
-// Command to go to first of all differences (not just recent) in compare view
-void CHexEditView::OnCompAllFirst()
-{
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetFirstDiffAll(addr, len);
-	if (addr > -1)
-		MoveToAddress(addr, addr+len);
-}
-
-void CHexEditView::OnUpdateCompAllFirst(CCmdUI* pCmdUI)
-{
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetFirstDiffAll(addr, len);
-	pCmdUI->Enable(addr > -1);
-}
-
-void CHexEditView::OnCompAllPrev()
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetPrevDiffAll(start - 1, addr, len);
-	if (addr > -1)
-		MoveToAddress(addr, addr+len);
-}
-
-void CHexEditView::OnUpdateCompAllPrev(CCmdUI* pCmdUI)
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetPrevDiffAll(start - 1, addr, len);
-	pCmdUI->Enable(addr > -1);
-}
-
-void CHexEditView::OnCompAllNext()
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetNextDiffAll(end, addr, len);
-	if (addr > -1)
-		MoveToAddress(addr, addr+len);
-}
-
-void CHexEditView::OnUpdateCompAllNext(CCmdUI* pCmdUI)
-{
-	FILE_ADDRESS start, end;  // current selection
-	GetSelAddr(start, end);
-
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetNextDiffAll(end, addr, len);
-	pCmdUI->Enable(addr > -1);
-}
-
-void CHexEditView::OnCompAllLast()
-{
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetLastDiffAll(addr, len);
-	if (addr > -1)
-		MoveToAddress(addr, addr+len);
-}
-
-void CHexEditView::OnUpdateCompAllLast(CCmdUI* pCmdUI)
-{
-	FILE_ADDRESS addr;
-	int len;
-	GetDocument()->GetLastDiffAll(addr, len);
-	pCmdUI->Enable(addr > -1);
-}
-
-void CHexEditView::OnCompAutoSync()
-{
-	if (pcv_ == NULL)
-	{
-		AfxMessageBox("No Compare is available");
-		theApp.mac_error_ = 10;
-		return;
-	}
-	begin_change();
-	display_.auto_sync_comp = !display_.auto_sync_comp;
-	make_change();
-	end_change();
-
-	// If has been turned on then sync now
-	if (display_.auto_sync_comp)
-	{
-		FILE_ADDRESS start_addr, end_addr;
-		GetSelAddr(start_addr, end_addr);
-		pcv_->MoveToAddress(start_addr, end_addr);
-	}
-
-	theApp.SaveToMacro(km_comp_sync, 2);
-}
-
-void CHexEditView::OnUpdateCompAutoSync(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(pcv_ != NULL);
-	pCmdUI->SetCheck(display_.auto_sync_comp);
-}
-
-void CHexEditView::OnCompAutoScroll()
-{
-	if (pcv_ == NULL)
-	{
-		AfxMessageBox("No Compare is available");
-		theApp.mac_error_ = 10;
-		return;
-	}
-	begin_change();
-	display_.auto_scroll_comp = !display_.auto_scroll_comp;
-	make_change();
-	end_change();
-
-	// If has been turned on then scroll now
-	if (display_.auto_scroll_comp)
-		pcv_->SetScroll(GetScroll());
-
-	theApp.SaveToMacro(km_comp_sync, 3);
-}
-
-void CHexEditView::OnUpdateCompAutoScroll(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(pcv_ != NULL);
-	pCmdUI->SetCheck(display_.auto_scroll_comp);
-}
-
+//-----------------------------------------------------------------------------
 int CHexEditView::CurrentSearchOccurrence()
 {
 	FILE_ADDRESS start, end;
