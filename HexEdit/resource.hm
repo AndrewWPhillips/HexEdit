@@ -59,6 +59,7 @@
 #define HIDC_BOOKMARK_REMOVE            0x810f04ca    // IDD_BOOKMARKS
 #define HIDC_BORDERS                    0x810c0475    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_BUG                        0x80e5043e    // IDD_EMAIL
+#define HIDC_CALC_HIST_CLEAR            0x820e06a7    // IDD_CALC_HIST
 #define HIDC_CHARSET                    0x810c04b0    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_CHAR_ASCII                 0x8132042e    // IDD_PROP_CHAR [English (United States)]
 #define HIDC_CHAR_BINARY                0x81320604    // IDD_PROP_CHAR [English (United States)]

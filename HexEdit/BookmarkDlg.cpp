@@ -40,6 +40,7 @@ static char THIS_FILE[] = __FILE__;
 
 // We need access to the grid since the callback sorting function does not have
 // access to it and we need to know which column we are sorting on (GetSortColumn).
+// Note: can be static as there is only one bookmarks dlg, hence need one grid ctrl.
 static CGridCtrl *p_grid;
 
 // The sorting callback function can't be a member function
@@ -971,10 +972,7 @@ void CBookmarkDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 
 	// NOTE: IMPORTANT For this to work with static text controls the control
-	// must have the "Notify" (SS_NOTIFY) checkbox set.  Windows appears to
-	// see that the right click was on a static text control and just pass
-	// the message to the parent, which simply causes the control bars
-	// context menu (IDR_CONTEXT_BARS) to be shown.
+	// must have the "Notify" (SS_NOTIFY) checkbox set.
 	// It took me days to work out how right click of the "Name:" static
 	// text should show the "What's This" context menu.
 

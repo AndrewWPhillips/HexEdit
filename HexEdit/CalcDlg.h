@@ -116,7 +116,7 @@ public:
 
 		// This was added due to linking with release version of mpir.lib causing debug free() to throw an exception
 		// xxx we need a better solution (eg, in debug mode link with debug mpir.lib?) since this causes memory leak messages
-#ifdef _DEBUG
+#ifndef _DEBUG
 		free(ss); 
 #endif
 		return retval; 

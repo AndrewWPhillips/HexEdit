@@ -39,6 +39,7 @@
 #define HIDC_HELP_BUTTON              0x01050
 #define HIDD_ALGORITHM_HELP           0x01060
 #define HIDD_PASSWORD_HELP            0x01068
+#define HIDD_CALC_HIST_HELP           0x01070
 #define HIDD_ZLIB_HELP                0x01078
 #define HIDD_NEW_FILE_HELP            0x01080
 #define HIDD_INSERT_BLOCK_HELP        0x01081

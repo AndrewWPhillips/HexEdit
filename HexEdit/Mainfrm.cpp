@@ -458,6 +458,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneFind.InitialUpdate(&m_wndFind);
 		m_paneFind.EnableDocking(CBRS_ALIGN_ANY);
 
+		// xxx IDD_CALC_PARENT does nothing!!?!
 		if (!m_paneCalc.Create("Calculator", this, CSize(500, 250), TRUE, IDD_CALC_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
 			!m_wndCalc.Create(&m_paneCalc) )
 		{
@@ -471,6 +472,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		rct.bottom = rct.top + (rct.bottom - rct.top)*3/4;
 		m_paneCalc.SetMinSize(rct.Size());
 		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
+
+		if (!m_paneCalcHist.Create("Calculator Tape", this, CSize(200, 250), TRUE, IDD_CALC_HIST_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndCalcHist.Create(&m_paneCalcHist) )
+		{
+			return FALSE; // failed to create
+		}
+		m_paneCalcHist.InitialUpdate(&m_wndCalcHist);
+		m_paneCalcHist.EnableDocking(CBRS_ALIGN_ANY);
 
 		m_wndProp.EnableStackedTabs(FALSE);  // If we don't use a single row of tabs then default sizes and positions are confused
 		if (!m_paneProp.Create("Properties", this, CSize(500, 250), TRUE, IDD_PROP_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
@@ -492,13 +501,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Set initial positions and docking/floating status but then hide all the windows
 		InitDockWindows();
 
-		m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
-		m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
-		m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
+		//m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
+		//m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
+		// xxx m_paneCalcHist.
+		//m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
 		m_paneBookmarks.Hide();
 		m_paneFind.Hide();
 		m_paneProp.Hide();
 		m_paneCalc.Hide();
+		m_paneCalcHist.Hide();
 		m_paneExpl.Hide();
 
 		// Get extra command images (without creating a toolbar)
@@ -1035,6 +1046,7 @@ void CMainFrame::InitDockWindows()
 	m_paneBookmarks.Float(false);
 	m_paneProp.Float(false);
 	m_paneCalc.Float(false);
+	m_paneCalcHist.Float(false);
 	m_paneExpl.Float(false);
 
 	// We get the main window rectangle so we can position the floating
@@ -1075,6 +1087,8 @@ void CMainFrame::InitDockWindows()
 	rct.bottom = rct.top + sz.cy;
 	m_paneCalc.GetParent()->MoveWindow(rct);
 
+	// xxx m_paneCalc
+
 	// Position Explorer at top right
 	sz = m_paneExpl.GetFrameSize();
 	rct.left = mainRect.right - sz.cx;
@@ -1086,7 +1100,7 @@ void CMainFrame::InitDockWindows()
 
 void CMainFrame::FixPanes()
 {
-	// Doing this at the strat avoids a problem where panes floating by themself are
+	// Doing this at the start avoids a problem where panes floating by themself are
 	// not drawn properly when their position is restored on startup.  The disadvantage
 	// to the user is that any window they left floating will not be restored when they
 	// reopen HexEdit (though the position is remembered and restored when they open it).
@@ -1096,6 +1110,8 @@ void CMainFrame::FixPanes()
 		m_paneFind.Hide();
 	if (m_paneCalc.IsFloating())
 		m_paneCalc.Hide();
+	if (m_paneCalcHist.IsFloating())
+		m_paneCalcHist.Hide();
 	if (m_paneProp.IsFloating())
 		m_paneProp.Hide();
 	if (m_paneExpl.IsFloating())
@@ -1372,6 +1388,8 @@ void CMainFrame::OnDockableToggle()
 		m_paneProp.EnableDocking(0);
 		m_paneCalc.Float();
 		m_paneCalc.EnableDocking(0);
+		m_paneCalcHist.Float();
+		m_paneCalcHist.EnableDocking(0);
 		m_paneExpl.Float();
 		m_paneExpl.EnableDocking(0);
 	}
@@ -1382,6 +1400,7 @@ void CMainFrame::OnDockableToggle()
 		m_paneBookmarks.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneProp.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
+		m_paneCalcHist.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
 	}
 }

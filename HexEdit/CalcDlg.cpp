@@ -2858,11 +2858,15 @@ void CCalcDlg::OnEquals()               // Calculate result
 void CCalcDlg::add_hist()
 {
 	// Get the expression that generated the result
-	CString Expr = CString(get_expr(true));
-	if (Expr.GetLength() > 100)
-		Expr = Expr.Left(100) + "...";
+	CString strRoll = CString(get_expr(true));
 
-	// The first part of the string stores the radix as a char ('2'-'9', 'A'-'Z')
+	CString strDrop;
+	if (strRoll.GetLength() <= 100)
+		strDrop = strRoll;
+	else
+		strDrop = strRoll.Left(100) + "...";
+
+	// The first char of the string stores the radix as a char ('2'-'9', 'A'-'Z')
 	char buf[64];
 	if (state_ > CALCINTEXPR)
 		buf[0] = ' ';               // space indicates we don't care about the radix because it's not an int
@@ -2871,11 +2875,15 @@ void CCalcDlg::add_hist()
 	else
 		buf[0] = orig_radix_ - 10 + 'A'; // A-Z
 	buf[1] = '\0';
-	CString * pResult = new CString(buf);
+
+	CString * pResult = new CString(buf);   // Create the string to attach to the new drop-down hist list element
 
 	// Put the result string on the heap so we can store it in the drop list item data
 	edit_.get();   // Get the result string into current_str_
 	int len = current_str_.GetLength();
+
+	mm_->m_wndCalcHist.Add(strRoll + " = " + CString(current_str_));
+
 	if (len < 2000 && state_ > CALCINTLIT)
 	{
 		// Short non-int result
@@ -2950,7 +2958,7 @@ void CCalcDlg::add_hist()
 		ctl_edit_combo_.GetLBText(ii, ss);
 		ps = (CString *)ctl_edit_combo_.GetItemDataPtr(ii);
 
-		if (ss == Expr && ps != NULL && *ps == *pResult)
+		if (ss == strDrop && ps != NULL && *ps == *pResult)
 		{
 			// We also have to delete the string (here and when combo is destroyed)
 			// It would have been easy just to handle WM_DELETEITEM but 
@@ -2964,7 +2972,7 @@ void CCalcDlg::add_hist()
 	}
 
 	// Add the new entry (at the top of the drop-down list)
-	ctl_edit_combo_.InsertString(0, Expr);
+	ctl_edit_combo_.InsertString(0, strDrop);
 	ctl_edit_combo_.SetItemDataPtr(0, pResult);
 }
 

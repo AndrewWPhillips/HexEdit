@@ -280,6 +280,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CalcHist.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFile64.cpp"
 				>
 			</File>
@@ -738,6 +742,10 @@
 			</File>
 			<File
 				RelativePath=".\CalcEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CalcHist.h"
 				>
 			</File>
 			<File

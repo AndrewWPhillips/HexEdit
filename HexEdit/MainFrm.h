@@ -25,6 +25,7 @@
 #include "BookmarkDlg.h"
 #include "Prop.h"
 #include "CalcDlg.h"
+#include "CalcHist.h"
 #include "Explorer.h"
 
 #include "TipWnd.h"
@@ -121,6 +122,8 @@ public:
 	CGenDockablePane m_paneProp;        // Docking pane that holds m_wndProp
 	CCalcDlg m_wndCalc;                 // Calculator dialog/bar
 	CGenDockablePane m_paneCalc;        // Docking pane that holds m_wndCalc
+	CCalcHistDlg m_wndCalcHist;         // Calculator history
+	CGenDockablePane m_paneCalcHist;    // Docking pane that holds m_wndCalcHist
 	CExplorerWnd m_wndExpl;             // Explorer dialog/bar
 	void UpdateExplorer(LPCTSTR ff = NULL) { m_wndExpl.Update(ff); }
 	CGenDockablePane m_paneExpl;        // Docking pane that holds m_wndExpl
@@ -287,6 +290,7 @@ public:
 		move_dlgbar(m_paneBookmarks, rct);
 		move_dlgbar(m_paneProp, rct);
 		move_dlgbar(m_paneCalc, rct);
+		move_dlgbar(m_paneCalcHist, rct);
 		move_dlgbar(m_paneExpl, rct);
 	}
 	void redraw_background() { m_wndClientArea.Invalidate(); }
