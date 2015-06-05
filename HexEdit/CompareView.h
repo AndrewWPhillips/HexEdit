@@ -62,15 +62,6 @@ public:
 	//virtual void SetSel(CPointAp, CPointAp, bool base1 = false);
 
 	bool CopyToClipboard();
-	//COLORREF GetDefaultTextCol() { return phev_->text_col_; }
-	//COLORREF GetBackgroundCol() { return phev_->bg_col_; }
-	//COLORREF GetDecAddrCol() { return phev_->dec_addr_col_; }
-	//COLORREF GetHexAddrCol() { return phev_->hex_addr_col_; }
-	//COLORREF GetSearchCol() { return phev_->search_col_; }
-	//COLORREF GetHighlightCol() { return phev_->hi_col_; }
-	//COLORREF GetMarkCol() { return phev_->mark_col_; }
-	//COLORREF GetBookmarkCol() { return phev_->bm_col_; }
-	//CString GetSchemeName() { return phev_->scheme_name_; }
 	virtual BOOL MovePos(UINT nChar, UINT nRepCnt, BOOL, BOOL, BOOL);
 	void MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend = -1, int row = 0);
 
@@ -151,9 +142,13 @@ protected:
 
 private:
 	void calc_addr_width(FILE_ADDRESS);     // Also used by recalc_display
+	//void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
+	//			 int char_height, int char_width, int char_width_w,
+	//			 COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
+	//			 int draw_height = -1);
 	void draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool neg_y,
-				 int char_height, int char_width, int char_width_w,
-				 COLORREF, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
+				 int line_height, int char_width, int char_width_w,
+				 COLORREF clr, FILE_ADDRESS start_addr, FILE_ADDRESS end_addr,
 				 bool merge = true, int draw_height = -1);
 
 	CPointAp addr2pos(FILE_ADDRESS address, int row = 0) const; // Convert byte address in doc to display position

@@ -493,7 +493,7 @@ void CCompareView::OnDraw(CDC* pDC)
 				// Do hex numbers in ruler
 				CRect rect(-1, vert, -1, vert + phev_->text_height_ + 1);
 				CString ss;
-				pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
+				pDC->SetTextColor(phev_->GetHexAddrCol());   // Colour of hex addresses
 
 				// Show hex offsets above hex area
 				if (!phev_->display_.vert_display && phev_->display_.hex_area)
@@ -583,7 +583,7 @@ void CCompareView::OnDraw(CDC* pDC)
 
 				CRect rect(-1, vert, -1, vert + phev_->text_height_ + 1);
 				CString ss;
-				pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+				pDC->SetTextColor(phev_->GetDecAddrCol());   // Colour of dec addresses
 
 				// Decimal offsets above hex area
 				if (!phev_->display_.vert_display && phev_->display_.hex_area)
@@ -808,7 +808,7 @@ void CCompareView::OnDraw(CDC* pDC)
 					AddSpaces(ss);
 					ww += (hex_width_-1)/4;
 				}
-				pDC->SetTextColor(GetHexAddrCol());   // Colour of hex addresses
+				pDC->SetTextColor(phev_->GetHexAddrCol());   // Colour of hex addresses
 				addr_rect.right = addr_rect.left + ww*char_width;
 				pDC->DrawText(ss, &addr_rect, DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
 				addr_rect.left = addr_rect.right;
@@ -828,7 +828,7 @@ void CCompareView::OnDraw(CDC* pDC)
 					AddCommas(ss);
 					ww += (dec_width_-1)/3;
 				}
-				pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+				pDC->SetTextColor(phev_->GetDecAddrCol());   // Colour of dec addresses
 				addr_rect.right = addr_rect.left + ww*char_width;
 				pDC->DrawText(ss, &addr_rect, DT_TOP | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE);
 				addr_rect.left = addr_rect.right;
@@ -848,7 +848,7 @@ void CCompareView::OnDraw(CDC* pDC)
 					AddCommas(ss);
 					ww += (num_width_-1)/3;
 				}
-				pDC->SetTextColor(GetDecAddrCol());   // Colour of dec addresses
+				pDC->SetTextColor(phev_->GetDecAddrCol());   // Colour of dec addresses
 				addr_rect.right = addr_rect.left + ww*char_width;
 				pDC->DrawText(ss, &addr_rect, DT_TOP | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE);
 				addr_rect.left = addr_rect.right;
