@@ -357,7 +357,6 @@ public:
 
 	void show_pos(FILE_ADDRESS address = -1, BOOL no_dffd = FALSE); // Show position (toolbar/DFFD)
 	void show_prop(FILE_ADDRESS address = -1); // Show current properties (modeless dlg)
-	void show_calc();           // Show view info in state of calculator buttons
 
 public:
 

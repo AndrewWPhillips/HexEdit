@@ -196,7 +196,6 @@ void CChildFrame::OnSetFocus(CWnd* pOldWnd)
 	if (pv != NULL)
 	{
 		pv->show_prop();
-		pv->show_calc();
 		pv->show_pos();
 	}
 }

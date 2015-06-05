@@ -1213,7 +1213,6 @@ void CHexEditView::OnInitialUpdate()
 		CaretMode();
 		SetSel(addr2pos(start_addr), addr2pos(end_addr));
 		show_prop();
-		show_calc();
 		show_pos();
 	}
 
@@ -2194,7 +2193,6 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			}
 		}
 		show_prop();
-		show_calc();
 
 		// If mark moved and current search is relative to mark then restart bg search
 		if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
@@ -3611,7 +3609,6 @@ void CHexEditView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 		nav_save(astart, aend, desc);
 
 		show_prop();                            // Update prop modeless dlg
-		show_calc();
 		show_pos(-1, no_dffd);                  // Update tool bar
 	}
 
@@ -3928,11 +3925,6 @@ void CHexEditView::show_prop(FILE_ADDRESS address /*=-1*/)
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 	if (address < 0) address = GetPos();
 	mm->m_wndProp.Update(this, address);
-}
-
-void CHexEditView::show_calc()
-{
-	// xxx no longer needed?
 }
 
 // Update hex and decimal address tools in edit bar
@@ -4447,7 +4439,6 @@ void CHexEditView::do_char(UINT nChar)
 		}
 		SetCaret(addr2pos(start_addr, row));
 		show_prop();                            // Current char under caret may have changed so update prop dlg
-		show_calc();
 		show_pos();                             // Update tool bar
 		if ((num_entered_ % 2) == 0)
 			DisplayCaret();                     // Make sure end is visible
@@ -4599,7 +4590,6 @@ void CHexEditView::do_char(UINT nChar)
 		// Move the caret
 		SetCaret(addr2pos(start_addr));
 		show_prop();                            // New char - check props
-		show_calc();
 		show_pos();                             // Update tool bar
 		DisplayCaret();                         // Make sure caret is visible
 	}
@@ -4718,7 +4708,6 @@ void CHexEditView::OnSetFocus(CWnd* pOldWnd)
 
 #if 0 // Handled in CChildFrame::OnSetFocus now
 	show_prop();
-	show_calc();
 	show_pos();
 #endif
 	move_dlgs();
@@ -4780,12 +4769,6 @@ void CHexEditView::OnDestroy()
 
 	// If there are no more views active ...
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
-	if (GetView() == NULL)
-	{
-		// If this is the last window we need to make sure that all file
-		// access buttons are disabled in the calculator (if visible)
-		show_calc();
-	}
 }
 
 // Point is in window coordinates
@@ -5091,7 +5074,6 @@ void CHexEditView::OnLButtonDown(UINT nFlags, CPoint point)
 		invalidate_ruler(swap_addr);
 	reset_tip();
 	show_prop();
-	show_calc();
 	show_pos();
 	mouse_down_ = true;                         // We saw left button down event
 }
@@ -5258,7 +5240,6 @@ void CHexEditView::OnLButtonUp(UINT nFlags, CPoint point)
 		}
 
 		show_prop();
-		show_calc();
 		show_pos();
 		mouse_down_ = false;
 		update_sel_tip();           // Make sure window hidden when mouse button up
@@ -6451,9 +6432,7 @@ void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point)
 
 	// Update properties etc for new position
 	show_prop();
-	show_calc();
 	show_pos();
-
 
 #if 0
 	else if (saved_state_ != disp_state_)
@@ -6476,7 +6455,6 @@ void CHexEditView::OnRButtonDown(UINT nFlags, CPoint point)
 
 		// Update properties etc for new position
 		show_prop();
-		show_calc();
 		show_pos();
 	}
 #endif
@@ -6829,7 +6807,6 @@ void CHexEditView::OnSelectAll()
 		prev_row_ = pos2row(GetCaret());
 	SetSel(addr2pos(0), addr2pos(GetDocument()->length()));
 	show_prop();
-	show_calc();
 	show_pos();
 
 	// Save in undo array if position moved
@@ -6863,7 +6840,6 @@ void CHexEditView::OnSelectLine()
 	ASSERT(new_end > new_start);
 	SetSel(addr2pos(new_start), addr2pos(new_end));
 	show_prop();
-	show_calc();
 	show_pos();
 
 	// Save in undo array if position moved
@@ -9150,7 +9126,6 @@ void CHexEditView::do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned cha
 	SetSel(addr2pos(start+len, row), addr2pos(start+len, row));
 	DisplayCaret();
 	show_prop();                            // Make sure dialogs don't obscure our changes
-	show_calc();
 	show_pos();                             // Update tool bar
 }
 
@@ -9257,7 +9232,6 @@ void CHexEditView::OnEditPaste()
 				SetSel(addr2pos(start_addr+*pl, row), addr2pos(start_addr+*pl, row));
 				DisplayCaret();
 				show_prop();                            // New char - check props
-				show_calc();
 				show_pos();                             // Update tool bar
 				aa->SaveToMacro(km_paste);
 			}
@@ -9359,7 +9333,6 @@ void CHexEditView::OnEditPaste()
 				SetSel(addr2pos(start_addr+fs.m_size, row), addr2pos(start_addr+fs.m_size, row));
 				DisplayCaret();
 				show_prop();                            // New current char - check props
-				show_calc();
 				show_pos();                             // Update tool bar
 				aa->SaveToMacro(km_paste);
 			}
@@ -9536,7 +9509,6 @@ error_return:
 	::CloseClipboard();
 	// This actually records even when there were some errors & probably shouldn't
 	show_prop();                            // New char - check props
-	show_calc();
 	show_pos();                             // Update tool bar
 	aa->SaveToMacro(km_paste);
 }
@@ -10156,7 +10128,6 @@ BOOL CHexEditView::do_undo()
 	case undo_move:
 		GoAddress(undo_.back().address);
 		show_prop();
-		show_calc();
 		show_pos();
 		DisplayCaret();         // Make sure move visible
 		break;
@@ -10169,7 +10140,6 @@ BOOL CHexEditView::do_undo()
 		ASSERT(undo_.back().utype == undo_move);
 		GoAddress(undo_.back().address, end_addr);
 		show_prop();
-		show_calc();
 		show_pos();
 		DisplayCaret();         // Make sure move visible
 		break;
@@ -10393,7 +10363,6 @@ BOOL CHexEditView::do_undo()
 			GetDocument()->StartSearch();
 		}
 		invalidate_addr_range(mark_, mark_ + 1);
-		show_calc();                    // Status of some buttons may have changed when mark_ moves
 		break;
 
 	case undo_highlight:
@@ -12258,8 +12227,6 @@ void CHexEditView::SetMark(FILE_ADDRESS new_mark)
 	invalidate_addr_range(mark_, mark_ + 1);
 
 	CHECK_SECURITY(41);
-
-	show_calc();                        // Some button enablement depends on mark_ position (eg. @ Mark)
 }
 
 void CHexEditView::OnGotoMark()
@@ -12384,7 +12351,6 @@ void CHexEditView::OnSwapMark()
 		GetDocument()->base_addr_ = GetSearchBase();
 		GetDocument()->StartSearch();
 	}
-	show_calc();
 
 	aa->SaveToMacro(km_swap_mark);
 }
