@@ -1686,7 +1686,7 @@ BOOL WipeFile(const char * filename, wipe_t wipe_type /*= WIPE_GOOD*/)
 //   data = points to complete compressed data to be written to the file
 //   len  = length of the (compressed) data
 //   returns: true on success of falso on error
-bool UncompressAndWriteFile(const char *filename, unsigned char *data, size_t len)
+bool UncompressAndWriteFile(const char *filename, const unsigned char *data, size_t len)
 {
 	z_stream zs = {0};
 	if (inflateInit(&zs) != Z_OK)
