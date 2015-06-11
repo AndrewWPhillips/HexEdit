@@ -408,7 +408,7 @@ void CHexFileList::ReadList()
 			data_.push_back("");
 
 			fnum.Format("File%d", ii+1);
-			SetData(name_.size()-1, CMD, theApp.GetProfileInt(fnum, "WindowState", SW_SHOWNORMAL));
+			SetData(name_.size()-1, CMD, theApp.GetProfileInt(fnum, "WindowState", SW_MAXIMIZE));
 			SetData(name_.size()-1, TOP, (int)theApp.GetProfileInt(fnum, "WindowTop", -30000));
 			SetData(name_.size()-1, LEFT, (int)theApp.GetProfileInt(fnum, "WindowLeft", -30000));
 			SetData(name_.size()-1, BOTTOM, (int)theApp.GetProfileInt(fnum, "WindowBottom", -30000));

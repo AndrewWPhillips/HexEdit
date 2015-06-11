@@ -498,19 +498,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneExpl.InitialUpdate(&m_wndExpl);
 		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
 
-		// Set initial positions and docking/floating status but then hide all the windows
+		if (theApp.GetProfileInt("MainFrame", "WindowState", -1) == -1)
+		{
+			// If this is the first run then set positions of docking windows
+			ShowWindow(SW_SHOWMAXIMIZED);
+		}
 		InitDockWindows();
-
-		//m_paneBookmarks.DockToFrameWindow(CBRS_ALIGN_LEFT);
-		//m_paneCalc.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_BOTTOM);
-		// xxx m_paneCalcHist.
-		//m_paneExpl.DockToFrameWindow(CBRS_ALIGN_BOTTOM);
-		m_paneBookmarks.Hide();
-		m_paneFind.Hide();
-		m_paneProp.Hide();
-		m_paneCalc.Hide();
-		m_paneCalcHist.Hide();
-		m_paneExpl.Hide();
 
 		// Get extra command images (without creating a toolbar)
 #if SHADED_TOOLBARS
@@ -1041,61 +1034,115 @@ void CMainFrame::SaveFrameOptions()
 // Set the default positions of all docking windows
 void CMainFrame::InitDockWindows()
 {
-	// Initially all are floating
-	m_paneFind.Float(false);
-	m_paneBookmarks.Float(false);
-	m_paneProp.Float(false);
-	m_paneCalc.Float(false);
-	m_paneCalcHist.Float(false);
-	m_paneExpl.Float(false);
+	// First hide them all
+	m_paneFind.Hide();
+	m_paneBookmarks.Hide();
+	m_paneProp.Hide();
+	m_paneCalc.Hide();
+	m_paneCalcHist.Hide();
+	m_paneExpl.Hide();
 
-	// We get the main window rectangle so we can position the floating
-	// windows around its edges.
+	// get the main window rectangle to position floating pane
 	CSize sz;
 	CRect mainRect, rct;
 	GetWindowRect(&mainRect);   // get main window in order to set float positions
 
-	// Position bookmarks in middle of left side
-	sz = m_paneBookmarks.GetFrameSize();
+	// Position Properties dialog at top left
+	sz = m_paneProp.GetDefaultSize();
 	rct.left = mainRect.left;
 	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2;
+	rct.top = mainRect.top + 60;
 	rct.bottom = rct.top + sz.cy;
-	m_paneBookmarks.GetParent()->MoveWindow(rct);
+	m_paneProp.FloatPane(rct);
 
-	// Position Find dialog at bottom left
-	sz = m_paneFind.GetFrameSize();
+	// Float bookmarks in middle of left side
+	sz = m_paneBookmarks.GetDefaultSize();
+	rct.left = mainRect.left;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2 + 30;
+	rct.bottom = rct.top + sz.cy;
+	m_paneBookmarks.FloatPane(rct);
+
+	// Float Find dialog at bottom left
+	sz = m_paneFind.GetDefaultSize();
+	LONG find_width = sz.cx;
 	rct.left = mainRect.left;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.bottom - sz.cy;
 	rct.bottom = rct.top + sz.cy;
-	m_paneFind.GetParent()->MoveWindow(rct);
+	m_paneFind.FloatPane(rct);
 
-	// Position Properties dialog at middle of bottom
-	sz = m_paneProp.GetFrameSize();
+	// Position Calculator at top right
+	sz = m_paneCalc.GetDefaultSize();
+	LONG calc_width = sz.cx;
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top + 30;
+	rct.bottom = rct.top + (sz.cy*4)/3;
+	m_paneCalc.FloatPane(rct);
+
+	// Float calc tape at bottom right
+	sz = m_paneCalcHist.GetDefaultSize();
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.bottom - sz.cy*2;
+	rct.bottom = mainRect.bottom;
+	m_paneCalcHist.FloatPane(rct);
+
+	// Float Explorer dialog at middle of bottom
+	sz = m_paneExpl.GetDefaultSize();
+	sz.cx *= 3;
 	rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.bottom - sz.cy;
 	rct.bottom = rct.top + sz.cy;
-	m_paneProp.GetParent()->MoveWindow(rct);
+	m_paneExpl.FloatPane(rct);
 
-	// Position Calculator at bottom right
-	sz = m_paneCalc.GetFrameSize();
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy;
-	rct.bottom = rct.top + sz.cy;
-	m_paneCalc.GetParent()->MoveWindow(rct);
+	// Dock Bookmarks at left side
+	rct.left = rct.top = 0;
+	rct.right = find_width;  // make the width same as default width of find dialog
+	rct.bottom = 99;         // anything will do here as it will be resized vertically to fill the window
+	DockPane(&m_paneBookmarks, AFX_IDW_DOCKBAR_LEFT, &rct);
+	m_paneBookmarks.ShowPane(TRUE, FALSE, TRUE);
 
-	// xxx m_paneCalc
+	// Dock Find at the top of the left side
+	m_paneFind.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_TOP);
+	m_paneFind.ShowPane(TRUE, FALSE, TRUE);
 
-	// Position Explorer at top right
-	sz = m_paneExpl.GetFrameSize();
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top;
-	rct.bottom = rct.top + sz.cy;
-	m_paneExpl.GetParent()->MoveWindow(rct);
+	// Dock the Properties pane
+	//m_paneProp.AttachToTabWnd(&m_paneFind, DM_STANDARD, TRUE);
+	m_paneProp.DockToWindow(&m_paneFind, CBRS_ALIGN_TOP);
+	m_paneProp.ShowPane(TRUE, FALSE, TRUE);
+
+	// Dock Calc Tape at right side
+	rct.left = rct.top = 0;
+	rct.right = calc_width;
+	rct.bottom = 99;
+	DockPane(&m_paneCalcHist, AFX_IDW_DOCKBAR_RIGHT, &rct);
+	m_paneCalcHist.ShowPane(TRUE, FALSE, TRUE);
+
+	// Dock Calc above tape
+	m_paneCalc.DockToWindow(&m_paneCalcHist, CBRS_ALIGN_TOP);
+	m_paneCalc.ShowPane(TRUE, FALSE, TRUE);
+
+	//m_paneExpl.ShowPane(TRUE, FALSE, TRUE);
+
+	m_wndCalc.Invalidate();                     // seems to need this to be redrawn properly
+	m_wndProp.Invalidate();
+	m_wndFind.Invalidate();
+
+#if 0
+	// these don't seem to work the way we want
+	m_paneFind.GetWindowRect(&rct);
+	rct.bottom = rct.top + (rct.bottom - rct.top)/2;
+	m_paneFind.DockPane(&m_paneBookmarks, &rct, DM_RECT);
+
+	// Make the left side pane the same width as the default width of find window
+	sz = m_paneFind.GetDefaultSize();
+	actual_rct.right = actual_rct.left + sz.cx;
+	m_paneBookmarks.MovePane(actual_rct, FALSE, dummy);
+
+#endif
 }
 
 void CMainFrame::FixPanes()
@@ -1655,15 +1702,6 @@ BOOL CMainFrame::UpdateBGSearchProgress()
 		if ((ii = pview->GetDocument()->SearchOccurrences()) == -2)
 		{
 			int index = m_wndStatusBar.CommandToIndex(ID_INDICATOR_OCCURRENCES);
-			//COLORREF text_col = RGB(0,0,0);
-			//int hue, luminance, saturation;
-
-			//get_hls(::GetSearchCol(), hue, luminance, saturation);
-			//if (hue != -1)
-			//{
-			//    if (luminance > 50) luminance = 1; else luminance = 99;
-			//    text_col  = get_rgb((hue+50)%100, luminance, 99);
-			//}
 			if (bg_progress_colour_ != pview->GetSearchCol())
 			{
 				bg_progress_colour_ = pview->GetSearchCol();
@@ -1923,7 +1961,7 @@ void CMainFrame::OnUpdateAddrHex(CCmdUI *pCmdUI)
 
 		dc.FillSolidRect(rct, GetSysColor(COLOR_3DFACE));
 		dc.SetBkMode(TRANSPARENT);
-		dc.SetTextColor(::GetHexAddrCol());
+		dc.SetTextColor(::BestHexAddrCol());
 		dc.DrawText(ss, rct, DT_SINGLELINE | DT_CENTER | DT_VCENTER |
 							 DT_NOPREFIX | DT_END_ELLIPSIS);
 #else
@@ -1934,7 +1972,7 @@ void CMainFrame::OnUpdateAddrHex(CCmdUI *pCmdUI)
 		int idx = psb->CommandToIndex(ID_INDICATOR_HEX_ADDR);   // index of the hex addr pane
 
 		// Set pane colour
-		psb->SetPaneTextColor(idx, ::GetHexAddrCol());
+		psb->SetPaneTextColor(idx, ::BestHexAddrCol());
 
 		// Set pane width
 		CClientDC dc(psb);
@@ -1986,7 +2024,7 @@ void CMainFrame::OnUpdateAddrDec(CCmdUI *pCmdUI)
 
 		dc.FillSolidRect(rct, GetSysColor(COLOR_3DFACE));
 		dc.SetBkMode(TRANSPARENT);
-		dc.SetTextColor(::GetDecAddrCol());
+		dc.SetTextColor(::BestDecAddrCol());
 		dc.DrawText(ss, rct, DT_SINGLELINE | DT_CENTER | DT_VCENTER |
 							 DT_NOPREFIX | DT_END_ELLIPSIS);
 #else
@@ -1996,7 +2034,7 @@ void CMainFrame::OnUpdateAddrDec(CCmdUI *pCmdUI)
 		int idx = psb->CommandToIndex(ID_INDICATOR_DEC_ADDR);
 
 		// Set pane colour
-		psb->SetPaneTextColor(idx, ::GetDecAddrCol());
+		psb->SetPaneTextColor(idx, ::BestDecAddrCol());
 
 		// Set pane width
 		CClientDC dc(psb);
@@ -2049,7 +2087,7 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
 				tmp = buf;
 				AddCommas(tmp);
 
-				psb->SetPaneTextColor(idx, ::GetDecAddrCol());
+				psb->SetPaneTextColor(idx, ::BestDecAddrCol());
 				psb->SetTipText(psb->CommandToIndex(ID_INDICATOR_FILE_LENGTH), "Current/total sectors (decimal)");
 			}
 			else
@@ -2068,7 +2106,7 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
 				tmp = buf;
 				AddSpaces(tmp);
 
-				psb->SetPaneTextColor(idx, ::GetHexAddrCol());
+				psb->SetPaneTextColor(idx, ::BestHexAddrCol());
 				psb->SetTipText(psb->CommandToIndex(ID_INDICATOR_FILE_LENGTH), "Current/total sectors (hex)");
 			}
 			ss = "Sector: " + ss + "/" + tmp + " ";
@@ -2092,7 +2130,7 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
 				AddCommas(ss);
 
 				// Set pane colour for decimal addresses
-				psb->SetPaneTextColor(idx, ::GetDecAddrCol());
+				psb->SetPaneTextColor(idx, ::BestDecAddrCol());
 			}
 			else
 			{
@@ -2110,7 +2148,7 @@ void CMainFrame::OnUpdateFileLength(CCmdUI *pCmdUI)
 					ss += "h";
 
 				// Set pane colour for hex addresses
-				psb->SetPaneTextColor(idx, ::GetHexAddrCol());
+				psb->SetPaneTextColor(idx, ::BestHexAddrCol());
 			}
 			if (diff != 0)
 			{
