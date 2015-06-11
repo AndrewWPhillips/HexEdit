@@ -485,6 +485,17 @@ BOOL CHexEditApp::InitInstance()
 		if (m_pDocManager != NULL) delete m_pDocManager;
 		m_pDocManager = new CHexEditDocManager;
 
+		// Parse command line for standard shell commands, DDE, file open
+		// Note: CCommandLineInfo class was overridden with the CCommandLineParser
+		// class - this can open as many files as specified on the command line
+		// but does this in CCommandLineParse::ParseParam rather than storing
+		// the file name for CWinAppEx::ProcessShellCommands (and sets
+		// m_nShellCommand to FileNothing).
+		// NOTE: This was moved before LoadOptions so that the /clean cmd line param
+		//       can have an effect before any options are used that may cause a crash.
+		CCommandLineParser cmdInfo;
+		ParseCommandLine(cmdInfo);
+
 		LoadOptions();
 		InitVersionInfo();
 
@@ -557,6 +568,7 @@ BOOL CHexEditApp::InitInstance()
 		m_pbookmark_list = new CBookmarkList(FILENAME_BOOKMARKS);
 		m_pbookmark_list->ReadList();
 
+		// xxx /clean should clear registry before here
 		// create main MDI Frame window.
 		// NOTE: This triggers a lot of other initialization (see CMainFrame::OnCreate)
 		CMainFrame* pMainFrame = new CMainFrame;
@@ -582,15 +594,6 @@ BOOL CHexEditApp::InitInstance()
 		pMainFrame->ShowWindow(m_nCmdShow);
 		m_pMainWnd->SetFocus();
 //          pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);
-
-		// Parse command line for standard shell commands, DDE, file open
-		// Note: CCommandLineInfo class was overridden with the CCommandLineParser
-		// class - this can open as many files as specified on the command line
-		// but does this in CCommandLineParse::ParseParam rather than storing
-		// the file name for CWinAppEx::ProcessShellCommands (and sets
-		// m_nShellCommand to FileNothing).
-		CCommandLineParser cmdInfo;
-		ParseCommandLine(cmdInfo);
 
 		// Don't create empty document by default
 		if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew)
@@ -1441,12 +1444,20 @@ void CHexEditApp::OnRepairDialogbars()
 	ASSERT(mm != NULL);
 
 	mm->InitDockWindows();
-	mm->m_paneFind.ShowAndUnroll();
-	mm->m_paneBookmarks.ShowAndUnroll();
-	mm->m_paneProp.ShowAndUnroll();
-	mm->m_paneCalc.ShowAndUnroll();
-	mm->m_paneCalcHist.ShowAndUnroll();   // xxx dock to right side of calc?
-	mm->m_paneExpl.ShowAndUnroll();
+
+	//mm->m_paneFind.ShowAndUnroll();
+	//mm->m_paneBookmarks.ShowAndUnroll();
+	//mm->m_paneProp.ShowAndUnroll();
+	//mm->m_paneCalc.ShowAndUnroll();
+	//mm->m_paneCalcHist.ShowAndUnroll();   // xxx dock to right side of calc?
+	//mm->m_paneExpl.ShowAndUnroll();
+
+	//mm->m_paneFind.ShowPane(TRUE, FALSE, TRUE);
+	//mm->m_paneBookmarks.ShowPane(TRUE, FALSE, TRUE);
+	//mm->m_paneProp.ShowPane(TRUE, FALSE, TRUE);
+	//mm->m_paneCalc.ShowPane(TRUE, FALSE, TRUE);
+	//mm->m_paneCalcHist.ShowPane(TRUE, FALSE, TRUE);
+	mm->m_paneExpl.ShowPane(TRUE, FALSE, TRUE);
 }
 
 void CHexEditApp::OnRepairCust()
@@ -4617,7 +4628,7 @@ CHexEditView *GetView()
 	return NULL;
 }
 
-COLORREF GetDecAddrCol()
+COLORREF BestDecAddrCol()
 {
 	CHexEditView *pv = GetView();
 	if (pv == NULL)
@@ -4626,7 +4637,7 @@ COLORREF GetDecAddrCol()
 		return pv->GetDecAddrCol();
 }
 
-COLORREF GetHexAddrCol()
+COLORREF BestHexAddrCol()
 {
 	CHexEditView *pv = GetView();
 	if (pv == NULL)
@@ -4635,7 +4646,7 @@ COLORREF GetHexAddrCol()
 		return pv->GetHexAddrCol();
 }
 
-COLORREF GetSearchCol()
+COLORREF BestSearchCol()
 {
 	CHexEditView *pv = GetView();
 	if (pv == NULL)

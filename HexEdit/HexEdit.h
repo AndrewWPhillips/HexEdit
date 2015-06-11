@@ -976,9 +976,9 @@ extern unsigned char a2i_tab[128];
 extern unsigned char i2a_tab[128];
 
 extern CHexEditView *GetView();
-extern COLORREF GetDecAddrCol();
-extern COLORREF GetHexAddrCol();
-extern COLORREF GetSearchCol();
+extern COLORREF BestDecAddrCol();
+extern COLORREF BestHexAddrCol();
+extern COLORREF BestSearchCol();
 
 extern BOOL SendEmail(int def_type = 0, const char *def_text = NULL, const char *def_name = NULL);
 extern CString reg_code(int send, int flags = 0);

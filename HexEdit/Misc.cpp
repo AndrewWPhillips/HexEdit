@@ -1692,7 +1692,7 @@ bool UncompressAndWriteFile(const char *filename, const unsigned char *data, siz
 	if (inflateInit(&zs) != Z_OK)
 		return false;
 
-	zs.next_in = data;   // input buffer is the whole thing
+	zs.next_in = (unsigned char *)data;   // input buffer is the whole thing
 	zs.avail_in = len;
 	try
 	{
