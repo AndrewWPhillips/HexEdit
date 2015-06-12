@@ -236,7 +236,6 @@
     <ClCompile Include="ResizeCtrl.cpp" />
     <ClCompile Include="SaveDffd.cpp" />
     <ClCompile Include="ScrView.cpp" />
-    <ClCompile Include="Security.cpp" />
     <ClCompile Include="sha1.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -579,7 +578,6 @@
     <ClInclude Include="SaveDffd.h" />
     <ClInclude Include="Scheme.h" />
     <ClInclude Include="ScrView.h" />
-    <ClInclude Include="Security.h" />
     <ClInclude Include="sha1.h" />
     <ClInclude Include="SimpleGraph.h" />
     <ClInclude Include="SimpleSplitter.h" />

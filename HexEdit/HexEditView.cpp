@@ -6534,8 +6534,6 @@ void CHexEditView::view_context(CPoint point)
 	ASSERT(ok);
 	if (!ok) return;
 
-	CHECK_SECURITY(51);
-
 	CMenu *ppop;
 	if (point.x < hex_pos(0))
 	{
@@ -6718,8 +6716,6 @@ void CHexEditView::OnSwap()
 	if (display_.vert_display)
 		return;
 
-	CHECK_SECURITY(32);
-
 	if (display_.char_area && display_.hex_area)
 	{
 		num_entered_ = num_del_ = num_bs_ = 0;  // Turn off any consec edits
@@ -6773,8 +6769,6 @@ void CHexEditView::OnDel()
 	FILE_ADDRESS start, end;
 	GetSelAddr(start, end);
 //      address = pos2addr(GetCaret());
-
-	CHECK_SECURITY(190);
 
 	if (start == end)
 	{
@@ -6939,8 +6933,6 @@ void CHexEditView::OnReadFile()
 	if (dlgFile.DoModal() == IDOK)
 	{
 		aa->current_read_ = dlgFile.GetPathName();
-
-		CHECK_SECURITY(23);
 
 		do_read(aa->current_read_);
 	}
@@ -7129,8 +7121,6 @@ void CHexEditView::OnEditWriteFile()
 
 	aa->current_write_ = dlgFile.GetPathName();
 
-	CHECK_SECURITY(25);
-
 	// Write to the file
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 	if (GetDocument()->WriteData(aa->current_write_, start, end))
@@ -7173,8 +7163,6 @@ void CHexEditView::OnEditAppendFile()
 		return;
 	}
 
-	CHECK_SECURITY(15);
-
 	aa->current_write_ = dlgFile.GetPathName();
 
 	// Write to the file
@@ -7194,7 +7182,6 @@ void CHexEditView::OnEditAppendSameFile()
 	FILE_ADDRESS start, end;
 	GetSelAddr(start, end);
 	ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
-	CHECK_SECURITY(25);
 
 	if (start == end)
 	{
@@ -7256,8 +7243,6 @@ void CHexEditView::OnExportSRecord(UINT nID)
 		return;
 	}
 	theApp.current_export_ = dlgFile.GetPathName();
-
-	CHECK_SECURITY(25);
 
 	if (theApp.import_discon_)
 	{
@@ -7478,7 +7463,6 @@ void CHexEditView::do_motorola(CString file_name)
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-	CHECK_SECURITY(33);
 
 	if (theApp.import_discon_)
 	{
@@ -7642,7 +7626,6 @@ void CHexEditView::do_intel(CString file_name)
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
-	CHECK_SECURITY(32);
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 
 	if (theApp.import_discon_)
@@ -7846,8 +7829,6 @@ void CHexEditView::OnExportIntel()
 		unsigned char *buf = new unsigned char[4096];
 		size_t len;
 
-		CHECK_SECURITY(16);
-
 		FILE_ADDRESS curr;
 		for (curr = start; curr < end; curr += len)
 		{
@@ -7918,7 +7899,6 @@ void CHexEditView::do_hex_text(CString file_name)
 
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
-	CHECK_SECURITY(30);
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
 
 	CStdioFile ff;                      // Text file we are reading from
@@ -8238,8 +8218,6 @@ void CHexEditView::OnExportHexText()
 
 	// Now write to the file
 	CWaitCursor wait;                           // Turn on wait cursor (hourglass)
-	CHECK_SECURITY(48);
-
 	CFile64 ff;
 	CFileException fe;                      // Stores file exception info
 
@@ -8406,8 +8384,6 @@ void CHexEditView::OnEditCut()
 	GetDocument()->Change(mod_delforw, start, end-start,
 							  NULL, 0, this);
 	DisplayCaret();                     // Make sure caret is visible
-
-	CHECK_SECURITY(101);
 
 	aa->SaveToMacro(km_cut);
 }
@@ -9510,7 +9486,6 @@ void CHexEditView::OnEditPaste()
 error_return:
 	if (buf != NULL)
 		delete[] buf;
-	CHECK_SECURITY(49);
 
 	::CloseClipboard();
 	// This actually records even when there were some errors & probably shouldn't
@@ -10121,7 +10096,6 @@ BOOL CHexEditView::do_undo()
 	if (start_addr == end_addr && display_.vert_display)
 		row = pos2row(GetCaret());
 
-	CHECK_SECURITY(191);
 	if (undo_.size() == 0)
 	{
 		// This can only (presumably) happen during a macro
@@ -10425,7 +10399,6 @@ void CHexEditView::OnGraphicToggle()
 	make_change();
 	end_change();
 
-	CHECK_SECURITY(22);
 	theApp.SaveToMacro(km_graphic);
 }
 
@@ -10619,7 +10592,6 @@ void CHexEditView::OnFontInc()
 	if (start_addr == end_addr && display_.vert_display)
 		row = pos2row(GetCaret());
 
-	// Create and install the new font
 	redo_font();
 
 	// Calculate new position (and new total size) based on change in font size
@@ -11037,8 +11009,6 @@ void CHexEditView::do_font(LOGFONT *plf)
 	if (start_addr == end_addr && display_.vert_display)
 		row = pos2row(GetCaret());
 
-	CHECK_SECURITY(9);
-
 	// Create and install the new font
 	redo_font();
 
@@ -11215,8 +11185,6 @@ void CHexEditView::do_autofit(int state /*=-1*/)
 	DoInvalidate();
 
 	aa->SaveToMacro(km_autofit, state);
-
-	CHECK_SECURITY(19);
 }
 
 void CHexEditView::OnUpdateAutofit(CCmdUI* pCmdUI)
@@ -11339,8 +11307,6 @@ void CHexEditView::begin_change()
 		previous_row_ = pos2row(GetCaret());
 	num_entered_ = num_del_ = num_bs_ = 0;      // Stop any editing
 
-	CHECK_SECURITY(21);
-
 	previous_state_ = disp_state_;
 
 	if (pcv_ != NULL)
@@ -11435,7 +11401,6 @@ void CHexEditView::OnDisplayBoth()
 {
 	// Change the current state (storing previous state in undo vector if changed)
 	begin_change();
-	CHECK_SECURITY(50);
 	display_.hex_area = TRUE;
 	display_.char_area = TRUE;
 	display_.vert_display = FALSE;
@@ -11464,7 +11429,6 @@ void CHexEditView::OnDisplayStacked()
 	SetHorzBufferZone(1);
 	make_change();
 	end_change();
-	CHECK_SECURITY(30);
 
 	theApp.SaveToMacro(km_area, 4);
 }
@@ -11513,7 +11477,6 @@ void CHexEditView::OnCharsetAscii()
 	}
 	end_change();
 
-	CHECK_SECURITY(51);
 	theApp.SaveToMacro(km_charset, unsigned __int64(0));
 }
 
@@ -12125,8 +12088,6 @@ void CHexEditView::OnUpdateAscEbc(CCmdUI* pCmdUI)
 
 void CHexEditView::OnControl()
 {
-	CHECK_SECURITY(18);
-
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 //    if (!aa->playing_ && GetFocus() != this) SetFocus(); // Ensure focus does not stay in DlgBar
 	if (!(display_.vert_display || display_.char_area) || display_.char_set == CHARSET_EBCDIC)
@@ -12231,8 +12192,6 @@ void CHexEditView::SetMark(FILE_ADDRESS new_mark)
 
 	// Invalidate where mark now is to change background colour
 	invalidate_addr_range(mark_, mark_ + 1);
-
-	CHECK_SECURITY(41);
 }
 
 void CHexEditView::OnGotoMark()
@@ -13596,8 +13555,7 @@ void CHexEditView::OnEncrypt()
 	else
 	{
 		// Note that CryptoAPI algs (above) the key is set when password
-		// or alg is changed (more efficient) but for internal we set it here
-		// in case other internal use (security) has changed the current key
+		// or alg is changed (more efficient) but for internal we set it here too.
 		::set_key(aa->password_, aa->password_.GetLength());
 
 		// Make sure selection is right size
@@ -13918,8 +13876,7 @@ void CHexEditView::OnDecrypt()
 	else
 	{
 		// Note that CryptoAPI algs (above) the key is set when password
-		// or alg is changed (more efficient) but for internal we set it here
-		// in case other internal use (security) has changed the current key
+		// or alg is changed (more efficient) but for internal we set it here too
 		::set_key(aa->password_, aa->password_.GetLength());
 
 		// Make sure selection is right size

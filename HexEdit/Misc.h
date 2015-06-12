@@ -61,7 +61,6 @@ bool AbortKeyPress();
 CString get_menu_text(CMenu *pmenu,int id);
 void StringToClipboard(const char * str);
 
-#ifndef REGISTER_APP
 void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax);
 void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
 
@@ -70,7 +69,6 @@ bool OutsideMonitor(CRect);
 CRect MonitorMouse();
 CRect MonitorRect(CRect);
 bool NeedsFix(CRect &rect);
-bool CopyAndConvertImage(const char *src, const char *dest);
 
 // Round to nearest integer allowing for -ve values, halves always go away from zero eg -1.5 => -2.0
 inline double fround(double r) { return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5); }
@@ -145,10 +143,8 @@ inline std::ostream &operator<<(std::ostream &ss, const __int64 &ii)
 }
 #endif // #ifndef _LONGLONG
 
-void DummyRegAccess(unsigned int group = 0);
 unsigned long str_hash(const char *str);   // hash value from string
 
-#endif // #ifndef REGISTER_APP
 void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
 
@@ -234,14 +230,10 @@ void * crc_64bit_init(const struct crc_params * par);
 void crc_64bit_update(void *hh, const void *buf, size_t len);
 unsigned __int64 crc_64bit_final(void *hh);
 
-// Encryption routines NOTE: also see RegisterDlg.cpp
+// Blowfish encryption routines
 void set_key(const char *pp, size_t len);
 void encrypt(void *buffer, size_t len);
 void decrypt(void *buffer, size_t len);
-
-char letter_valid(char cc);
-int letter_decode(const char *str, size_t str_len, void *result);
-void letter_encode(const void *buf, size_t len, char *result);
 
 // Memory manipulation
 int next_diff(const void * buf1, const void * buf2, size_t len);

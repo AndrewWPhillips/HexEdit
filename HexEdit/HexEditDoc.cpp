@@ -375,8 +375,6 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	ASSERT(pthread2_ == NULL);       // Must modify loc_ before creating thread (else docdata_ needs to be locked)
 	loc_.push_back(doc_loc(FILE_ADDRESS(0), pfile1_->GetLength()));
 
-	CHECK_SECURITY(195);
-
 	load_icon(lpszPathName);
 	show_icon();
 
@@ -563,8 +561,6 @@ void CHexEditDoc::OnFileClose()
 		theApp.mac_.pop_back();
 	}
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_close);
-
-	CHECK_SECURITY(196);
 }
 
 BOOL CHexEditDoc::SaveModified()
@@ -583,7 +579,6 @@ void CHexEditDoc::OnFileSave()
 		OnSaveDocument(m_strPathName);  // Bypass file inappropriate file stuff for device
 	else
 		CDocument::OnFileSave();
-	CHECK_SECURITY(199);
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_save);
 
 	// Make sure file property page is updated
@@ -595,7 +590,6 @@ void CHexEditDoc::OnFileSaveAs()
 {
 	CDocument::OnFileSaveAs();
 	((CHexEditApp *)AfxGetApp())->SaveToMacro(km_saveas);
-	CHECK_SECURITY(197);
 
 	load_icon(GetPathName());
 	show_icon();

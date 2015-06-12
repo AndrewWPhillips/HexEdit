@@ -544,10 +544,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Security.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\sha1.c"
 				>
 				<FileConfiguration
@@ -982,10 +978,6 @@
 			</File>
 			<File
 				RelativePath=".\ScrView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Security.h"
 				>
 			</File>
 			<File

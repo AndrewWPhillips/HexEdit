@@ -132,19 +132,16 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "stdafx.h"
 #include <MultiMon.h>
 
-#ifndef REGISTER_APP
 #include "HexEdit.h"
 #include "HexEditDoc.h"
 #include "HexEditView.h"
-#endif
+
 #include <ctype.h>
 #include <assert.h>
 #include <locale.h>
 #include <sys/stat.h>           // For _stat()
 #include <sys/utime.h>          // For _utime()
 
-
-#ifndef REGISTER_APP
 #ifdef BOOST_CRC
 #include <boost/crc.hpp>        // For CRCs
 #endif
@@ -159,9 +156,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "zlib/zlib.h"          // For decompression
 
 #include "misc.h"
-#include "Security.h"
 #include "ntapi.h"
-#endif
 
 #ifdef _DEBUG // keep the old code so we can check against the new
 #include "BigInteger.h"        // Used in C# Decimal conversions
@@ -172,8 +167,6 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-#ifndef REGISTER_APP
 
 //-----------------------------------------------------------------------------
 // Routines for loading/saving history lists in the registry
@@ -222,54 +215,6 @@ void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax)
 
 		theApp.WriteProfileString("History", entry, NULL);
 	}
-}
-
-/* Copies an image file from source to dest, converting to a 24-bit .BMP file in the process.
- *  src  = file name of an existing image file
- *  dest = created file
- *         - overwritten if it already exists
- *         - the path folders are created if necessary
- */
-bool CopyAndConvertImage(const char *src, const char *dest)
-{
-	FREE_IMAGE_FORMAT fmt = FreeImage_GetFileType(src);  // Try to work out the file type
-	if (fmt == FIF_UNKNOWN)
-	{
-		fmt = FreeImage_GetFIFFromFilename(src);    // That didn't work so try this
-		if (fmt == FIF_UNKNOWN)
-			return false;
-	}
-
-	// Load image letting FreeImage decide what type it is
-	FIBITMAP * dib, * dib24;
-	if ((dib = FreeImage_Load(fmt, src)) == NULL)
-		return false;
-
-	// We always save as a 24-bit BMP - so first convert to 24 bits
-	dib24 = FreeImage_ConvertTo24Bits(dib);
-	FreeImage_Unload(dib);
-
-	// Save image as a BMP
-	bool retval = true;
-	if (dib24 == NULL ||
-		!::MakeSureDirectoryPathExists(dest) ||
-		!FreeImage_Save(FIF_BMP, dib24, dest))
-	{
-		retval = false;
-	}
-
-	FreeImage_Unload(dib24);
-
-	// Make the file times of the copied file the same as the original file
-	struct _stat status;                // used to get file times of source file
-	if (retval && _stat(src, &status) == 0)
-	{
-		struct _utimbuf times;          // Structure used to change file times
-		times.actime = times.modtime = status.st_mtime;
-		_utime(dest, &times);
-	}
-
-	return retval;
 }
 
 //-----------------------------------------------------------------------------
@@ -599,8 +544,6 @@ CString Decimal2String(const void *pdecimal, CString &sMantissa, CString &sExpon
 		return ss.Left(len - exp) + (exp > 0 ? "." + ss.Right(exp) : "");
 }
 
-#endif  // #ifndef REGISTER_APP
-
 // -------------------------------------------------------------------------
 // Colour routines
 
@@ -837,7 +780,6 @@ bool ConvertToFileTime(time_t tt, FILETIME *ft)
 //-----------------------------------------------------------------------------
 // Make nice looking numbers etc
 
-#ifndef REGISTER_APP
 CString NumScale(double val)
 {
 	double dd = val;
@@ -1487,7 +1429,6 @@ const char * mpz_set_bytes(mpz_ptr p, FILE_ADDRESS addr, int count)
 
 	return NULL;
 }
-#endif  // #ifndef REGISTER_APP
 
 #ifdef _DEBUG
 void test_misc()
@@ -1727,6 +1668,7 @@ bool UncompressAndWriteFile(const char *filename, const unsigned char *data, siz
 	return true;
 }
 
+#if 0  // not used
 // Change a file's "creation" time
 void SetFileCreationTime(const char *filename, time_t tt)
 {
@@ -1752,6 +1694,7 @@ void SetFileAccessTime(const char *filename, time_t tt)
 		::SetFileTime(hh, NULL, &ft, NULL);
 	::CloseHandle(hh);
 }
+#endif
 
 BOOL SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc, const FILETIME * mod)
 {
@@ -1923,7 +1866,6 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
 		return retval;
 }
 
-#ifndef REGISTER_APP
 //-----------------------------------------------------------------------------
 // Multiple monitor handling
 
@@ -2213,338 +2155,6 @@ CString DeviceName(CString name) // TODO get rid of this (use SpecialList::name(
 }
 
 //-----------------------------------------------------------------------------
-// Security funcs
-
-// This is to confuse anyone using regmon to work out what is being done in the registry
-void DummyRegAccess(unsigned int group /*=0*/)
-{
-	static const char * const reg_entries[3][110] =
-	{
-		{
-			".obd\\ShellNew\\Data",
-			".obt\\ShellNew\\Data",
-			".mic\\ShellNew\\Data",
-			".mix\\ShellNew\\Data",
-			".fpx\\ShellNew\\Data",
-			".cdr\\ShellNew\\Data",
-			".tga\\ShellNew\\Data",
-			".hpj\\ShellNew\\NullFile",
-			".hpj\\ShellNew\\Data",
-			".cnt\\ShellNew\\NullFile",
-			".cnt\\ShellNew\\Data",
-			".UDL\\ShellNew\\NullFile",
-			".UDL\\ShellNew\\Data",
-			".UDL\\ShellNew\\NullFile",
-			".UDL\\ShellNew\\Data",
-			".dsn\\ShellNew\\NullFile",
-			".dsn\\ShellNew\\Data",
-			".jod\\ShellNew\\NullFile",
-			".aspz\\ShellNew\\NullFile",
-			".aspz\\ShellNew\\Data",
-			".asaz\\ShellNew\\NullFile",
-			".asaz\\ShellNew\\Data",
-			".cdx\\ShellNew\\NullFile",
-			".cdx\\ShellNew\\Data",
-			".wsc\\ShellNew\\NullFile",
-			".wsc\\ShellNew\\Data",
-			".sct\\ShellNew\\NullFile",
-			".sct\\ShellNew\\Data",
-			".aif\\Content Type",
-			".snd\\Content Type",
-			".mid\\Content Type",
-			".rmi\\Content Type",
-			".avi\\Content Type",
-			".qt\\Content Type",
-			".mov\\Content Type",
-			".mpg\\Content Type",
-			".mp2\\Content Type",
-			".mpe\\Content Type",
-			".mpeg\\ShellNew\\Data",
-			".m1v\\ShellNew\\Data",
-			".mpa\\ShellNew\\NullFile",
-			".mydocs\\ShellNew\\Data",
-			".nfo\\ShellNew\\NullFile",
-			".set\\ShellNew\\NullFile",
-			".qic\\ShellNew\\Data",
-			".acw\\ShellNew\\NullFile",
-			".sam\\AmiProDocument\\ShellNew\\FileName",
-			".shw\\Presentations31.Show\\Data",
-			".shw\\Presentations31.Show\\ShellNew\\FileName",
-			".wb2\\QuattroPro.Notebook.6\\Data",
-			".wb2\\QuattroPro.Notebook.6\\ShellNew\\FileName",
-			".wb2\\QuattroPro.Graph.6\\Data",
-			".wb2\\QuattroPro.Graph.6\\ShellNew\\FileName",
-			".gif\\ShellNew\\NullFile",
-			".gif\\ShellNew\\Data",
-			".jpeg\\ShellNew\\NullFile",
-			".jpeg\\ShellNew\\Data",
-			".png\\ShellNew\\NullFile",
-			".png\\ShellNew\\Data",
-			NULL
-		},
-		{
-			".wmf\\ShellNew\\NullFile",
-			".wmf\\ShellNew\\Data",
-			".htm\\ShellNew\\Data",
-			".html\\ShellNew\\Data",
-			".wk4\\ShellNew\\Data",
-			".wk4\\123Worksheet\\Data",
-			".wk4\\123Worksheet\\ShellNew\\FileName",
-			".wpd\\ShellNew\\Data",
-			".wpd\\WPWin6.1File\\ShellNew\\FileName",
-			".wri\\ShellNew\\Data",
-			".dcx\\ShellNew\\NullFile",
-			".dcx\\ShellNew\\NullFile",
-			".awd\\ShellNew\\NullFile",
-			".xif\\ShellNew\\NullFile",
-			".wif\\ShellNew\\NullFile",
-			".WSH\\ShellNew\\NullFile",
-			".VBS\\ShellNew\\NullFile",
-			"gopher\\EditFlags",
-			"gopher\\shell\\NullFile",
-			"ftp\\EditFlags",
-			"ftp\\shell\\NullFile",
-			"http\\EditFlags",
-			"https\\EditFlags",
-			"Drive\\shell\\Backup\\NullFile",
-			"inffile\\shell\\NullFile",
-			".lnk\\ShellNew\\Command",
-			".reg\\shell\\edit\\Command",
-			".txt\\ShellNew\\NullFile",
-			".css\\Content Type",
-			"CSSfile\\EditFlags",
-			"CSSfile\\DefaultIcon\\NullFile",
-			"InternetShortcut\\IsShortcut",
-			"InternetShortcut\\DefaultIcon\\NullFile",
-			".JS\\ShellNew\\NullFile",
-			".frm\\ShellNew\\NullFile",
-			".frx\\ShellNew\\NullFile",
-			".bas\\ShellNew\\NullFile",
-			".cls\\ShellNew\\NullFile",
-			".vbp\\ShellNew\\NullFile",
-			".ctl\\ShellNew\\NullFile",
-			".ctx\\ShellNew\\NullFile",
-			".dob\\ShellNew\\NullFile",
-			".dox\\ShellNew\\NullFile",
-			".dsr\\ShellNew\\NullFile",
-			".dsx\\ShellNew\\NullFile",
-			".pag\\ShellNew\\NullFile",
-			".pgx\\ShellNew\\NullFile",
-			".vbz\\ShellNew\\NullFile",
-			".vbg\\ShellNew\\NullFile",
-			".vbl\\ShellNew\\NullFile",
-			"MIME\\Database\\Codepage\\932\\BodyCharset",
-			".oca\\ShellNew\\NullFile",
-			".oca\\ShellNew\\Data",
-			".swt\\ShellNew\\NullFile",
-			".swt\\ShellNew\\Data",
-			".vbr\\ShellNew\\NullFile",
-			".vbr\\ShellNew\\Data",
-			".vbw\\ShellNew\\NullFile",
-			".vbw\\ShellNew\\Data",
-			".wct\\ShellNew\\NullFile",
-			".wct\\ShellNew\\Data",
-			".odl\\ShellNew\\NullFile",
-			".odl\\ShellNew\\Data",
-			".idl\\ShellNew\\NullFile",
-			".idl\\ShellNew\\Data",
-			".mdp\\ShellNew\\NullFile",
-			".mdp\\ShellNew\\Data",
-			".dsw\\ShellNew\\NullFile",
-			".dsw\\ShellNew\\Data",
-			".dsp\\ShellNew\\NullFile",
-			".dsp\\ShellNew\\Data",
-			".rc\\ShellNew\\NullFile",
-			".rc\\ShellNew\\Data",
-			".rct\\ShellNew\\NullFile",
-			".rct\\ShellNew\\Data",
-			".bsc\\ShellNew\\NullFile",
-			".bsc\\ShellNew\\Data",
-			".dsm\\ShellNew\\NullFile",
-			".dsm\\ShellNew\\Data",
-			".res\\ShellNew\\NullFile",
-			".res\\ShellNew\\Data",
-			".tlh\\ShellNew\\NullFile",
-			".tlh\\ShellNew\\Data",
-			".tli\\ShellNew\\NullFile",
-			".tli\\ShellNew\\Data",
-			".plg\\ShellNew\\NullFile",
-			".plg\\ShellNew\\Data",
-			".h\\ShellNew\\NullFile",
-			".h\\ShellNew\\Data",
-			".hxx\\ShellNew\\NullFile",
-			".hxx\\ShellNew\\Data",
-			".hpp\\ShellNew\\NullFile",
-			".hpp\\ShellNew\\Data",
-			".c\\ShellNew\\NullFile",
-			".c\\ShellNew\\Data",
-			".cxx\\ShellNew\\NullFile",
-			".cxx\\ShellNew\\Data",
-			".cpp\\ShellNew\\NullFile",
-			".cpp\\ShellNew\\Data",
-			".pdb\\ShellNew\\NullFile",
-			".pdb\\ShellNew\\Data",
-			".idb\\ShellNew\\NullFile",
-			".idb\\ShellNew\\Data",
-			".sbr\\ShellNew\\NullFile",
-			".sbr\\ShellNew\\Data",
-			".obj\\ShellNew\\NullFile",
-			".obj\\ShellNew\\Data",
-			".pch\\ShellNew\\NullFile",
-			".pch\\ShellNew\\Data",
-			NULL
-		},
-		{
-			".ilk\\ShellNew\\NullFile",
-			".ilk\\ShellNew\\Data",
-			".tlb\\ShellNew\\NullFile",
-			".tlb\\ShellNew\\Data",
-			".mdb\\ShellNew\\NullFile",
-			".mdb\\ShellNew\\Data",
-			".mdb\\ShellNew\\Command",
-			".mda\\ShellNew\\NullFile",
-			".mda\\ShellNew\\Data",
-			".mdn\\ShellNew\\NullFile",
-			".mdn\\ShellNew\\Data",
-			".mdz\\ShellNew\\NullFile",
-			".mdz\\ShellNew\\Data",
-			".mdt\\ShellNew\\NullFile",
-			".mdt\\ShellNew\\Data",
-			".ldb\\ShellNew\\NullFile",
-			".ldb\\ShellNew\\Data",
-			".mdw\\ShellNew\\NullFile",
-			".mdw\\ShellNew\\Data",
-			".mat\\ShellNew\\NullFile",
-			".mat\\ShellNew\\Data",
-			".maq\\ShellNew\\Data",
-			".maf\\ShellNew\\NullFile",
-			".maf\\ShellNew\\Data",
-			".mar\\ShellNew\\NullFile",
-			".mar\\ShellNew\\Data",
-			".mam\\ShellNew\\NullFile",
-			".mam\\ShellNew\\Data",
-			".mad\\ShellNew\\NullFile",
-			".mad\\ShellNew\\Data",
-			".mde\\ShellNew\\NullFile",
-			".mde\\ShellNew\\Data",
-			".DIC\\ShellNew\\NullFile",
-			".DIC\\ShellNew\\Data",
-			".zip\\\\ShellNew\\\\ShellNew\\NullFile",
-			".zip\\\\ShellNew\\\\ShellNew\\Data",
-			".xla\\ShellNew\\NullFile",
-			".xla\\ShellNew\\Data",
-			".xlb\\ShellNew\\NullFile",
-			".xlb\\ShellNew\\Data",
-			".xlc\\ShellNew\\NullFile",
-			".xlc\\ShellNew\\Data",
-			".xldz\\ShellNew\\NullFile",
-			".xldz\\ShellNew\\Data",
-			".xlk\\ShellNew\\NullFile",
-			".xlk\\ShellNew\\Data",
-			".xll\\ShellNew\\NullFile",
-			".xll\\ShellNew\\Data",
-			".xlm\\ShellNew\\NullFile",
-			".xlyz\\ShellNew\\Data",
-			".csv\\ShellNew\\NullFile",
-			".xlv\\ShellNew\\NullFile",
-			".xlw\\ShellNew\\NullFile",
-			".slk\\ShellNew\\NullFile",
-			".slk\\ShellNew\\Data",
-			".dif\\ShellNew\\NullFile",
-			".iqy\\ShellNew\\Data",
-			".gra\\ShellNew\\NullFile",
-			".wiz\\ShellNew\\NullFile",
-			".wbk\\ShellNew\\NullFile",
-			".wll\\ShellNew\\NullFile",
-			".wll\\ShellNew\\Data",
-			".exc\\ShellNew\\NullFile",
-			".ofn\\ShellNew\\NullFile",
-			".ofn\\ShellNew\\Command",
-			".msg\\ShellNew\\NullFile",
-			".oft\\ShellNew\\NullFile",
-			".oss\\ShellNew\\NullFile",
-			".fav\\ShellNew\\NullFile",
-			".xnk\\ShellNew\\NullFile",
-			".ocx\\ShellNew\\NullFile",
-			".RLE\\ShellNew\\NullFile",
-			".RLE\\ShellNew\\NullFile",
-			".RLE\\ShellNew\\Data",
-			".IFF\\ShellNew\\NullFile",
-			".IFF\\ShellNew\\NullFile",
-			".LBM\\ShellNew\\NullFile",
-			".LBM\\ShellNew\\NullFile",
-			".ILBM\\ShellNew\\NullFile",
-			".ILBM\\ShellNew\\NullFile",
-			".JIF\\ShellNew\\NullFile",
-			".JIF\\ShellNew\\NullFile",
-			".PIC\\ShellNew\\NullFile",
-			".PIC\\ShellNew\\NullFile",
-			".PSD\\ShellNew\\NullFile",
-			".PSD\\ShellNew\\NullFile",
-			".cfl\\ShellNew\\NullFile",
-			".cc\\ShellNew\\NullFile",
-			".pdf\\ShellNew\\NullFile",
-			".fdf\\ShellNew\\NullFile",
-			".vcp\\ShellNew\\NullFile",
-			".LZH\\ShellNew\\NullFile",
-			".ARJ\\ShellNew\\NullFile",
-			".ARC\\ShellNew\\NullFile",
-			".ARC\\ShellNew\\Data",
-			".TAZ\\ShellNew\\NullFile",
-			"*\\ShellNew\\NullFile",
-			".frm\\ShellNew\\Data",
-			".frx\\ShellNew\\Data",
-			".TZ\\ShellNew\\NullFile",
-			".TZ\\ShellNew\\Data",
-			".UU\\ShellNew\\NullFile",
-			".UUE\\ShellNew\\NullFile",
-			".XXE\\ShellNew\\NullFile",
-			".B64\\ShellNew\\NullFile",
-			".BHX\\ShellNew\\NullFile",
-			".DAT\\ShellNew\\NullFile",
-			".LOG\\ShellNew\\NullFile",
-			".LOG\\ShellNew\\Data",
-			NULL
-		}
-	};
-
-	HKEY hkey;
-	const char * const *pre;
-
-	group = group % 3;                  // Make sure group is 0, 1, or 2
-
-	for (pre = reg_entries[group]; *pre != NULL; ++pre)
-	{
-		// Separate the key name from the sub-key name
-		const char *pp = strrchr(*pre, '\\');
-		ASSERT(pp != NULL);                             // Make sure it had a backslash somewhere
-		char reg_data[128];
-		ASSERT(pp - *pre < sizeof(reg_data)-1);
-		strncpy(reg_data, *pre, pp - *pre);
-		reg_data[pp-*pre] = '\0';
-		++pp;                                                   // Point to sub-key name
-
-		// Open the key
-		if (::RegOpenKey(HKEY_CLASSES_ROOT, reg_data, &hkey) == ERROR_SUCCESS)
-		{
-			// Get the sub-key value
-			DWORD reg_type;                     // The returned registry entry type
-			DWORD reg_size = sizeof(reg_data);
-			(void)::RegQueryValueEx(hkey, pp, NULL, &reg_type, (BYTE *)reg_data, &reg_size);
-			::RegCloseKey(hkey);
-		}
-	}
-}
-
-// This just subtracts 1 from each char in a string
-static void sub1(char *ss)
-{
-	for ( ; *ss != '\0'; ++ss)
-		*ss = *ss - 1;
-}
-#endif  // #ifndef REGISTER_APP
-
-//-----------------------------------------------------------------------------
 // PRNGs
 
 #ifndef BOOST_RAND
@@ -2803,7 +2413,6 @@ unsigned long str_hash(const char *str)
 	return hash;
 }
 
-#ifdef REGISTER_APP  // Only used for reg program now
 unsigned short crc16(const void *buffer, size_t len)
 {
     static const unsigned int poly = 0x8408;
@@ -2831,7 +2440,7 @@ unsigned short crc16(const void *buffer, size_t len)
    
     return (crc);
 }
-#endif
+
 
 //-----------------------------------------------------------------------------
 // CRCs
@@ -3373,84 +2982,6 @@ unsigned short crc_ccitt_aug_final(void *hh)
 	unsigned short retval = *(unsigned short *)hh;
 	delete (unsigned short *)hh;
 	return retval;
-}
-
-
-//-----------------------------------------------------------------------------
-// Activation code stuff
-
-// The following are for storing binary data as alphanumeric characters
-
-static const char letter[33] = "ABCDEFGHJKLMNPQRSTUVWXYZ345679IO";
-
-// Returns the valid letter or 0 if its not allowed
-char letter_valid(char cc)
-{
-	if (cc == '0') cc = 'O';            // Zero -> O
-	else if (cc == '1') cc = 'I';       // One -> I
-	else cc = toupper(cc);              // Make sure it's uppercase
-
-	if (strchr(letter, cc) != NULL)
-		return cc;
-	else
-		return '\0';
-}
-
-// Encode binary data in buf, of length len into result.
-// Note that the buffer pointed to by result must be big enough to hold the result.
-void letter_encode(const void *buf, size_t len, char *result)
-{
-	const unsigned char *pp = (const unsigned char *)buf;
-	const unsigned char *end = pp + len;
-	char *pout = result;
-	int shift, residue;
-
-	for (shift = 3, residue = 0; pp < end; ++pout)
-	{
-		*pout = letter[(residue|(*pp>>shift))&0x1F];
-		residue = *pp /* & ((1<<shift)-1))*/ << (5-shift);
-		shift -= 5;
-		if (shift < 0)
-		{
-			++pp;
-			shift += 8;
-		}
-		else
-			residue = 0;
-	}
-	if (shift != 3)
-		*pout++ = letter[residue&0x1F];
-	*pout = '\0';
-}
-
-// Given a string of letters from the letter array above (ie. a string produced
-// by letter_encode) it generates the unencoded bytes.  It returns the number
-// of bytes produced or -1 if an invalid character was found in the string.
-int letter_decode(const char *str, size_t str_len, void *result)
-{
-	unsigned char *pout = (unsigned char *)result;
-	const char *end = str + str_len;
-	unsigned int value = 0;
-	int bits_left;
-
-	for (value = bits_left = 0; str < end; ++str)
-	{
-		char cc = letter_valid(*str);
-
-		if (cc == '\0')
-			return -1;
-
-		ASSERT(strchr(letter, cc) != NULL);
-		value = (value<<5) | (strchr(letter, cc) - letter);
-
-		bits_left += 5;
-		if (bits_left > 7)
-		{
-			*pout++ = value >> (bits_left-8);
-			bits_left -= 8;
-		}
-	}
-	return pout - (unsigned char *)result;
 }
 
 //-----------------------------------------------------------------------------

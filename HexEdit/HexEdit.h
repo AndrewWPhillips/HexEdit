@@ -77,7 +77,6 @@ typedef __int64 FILE_ADDRESS;
 #define TIME64_T        1   // Show 64 bit time_t in date page - this needs new compiler (VS 2002 or later)
 #define SHADED_TOOLBARS 1   // When this is enabled we need to get rid of "Old Tool Bar" menu items
 
-#define USE_FREE_IMAGE  1   // When this is enabled we need to get rid of EnBitmap.cpp from the project
 #define FILE_PREVIEW    1   // Preview capture and display in file open dialog
 
 // Flags for stuff in development
@@ -220,14 +219,6 @@ class boyer;
 
 extern DWORD hid_last_file_dialog;
 
-#ifndef NO_SECURITY
-extern int quick_check_called;
-extern int get_security_called;
-extern int dummy_to_confuse;
-extern int add_security_called;
-extern int new_check_called;
-#endif
-
 class CHexEditApp : public CWinAppEx
 {
 public:
@@ -250,6 +241,7 @@ public:
 
 	virtual void PreLoadState();
 	virtual void OnAppContextHelp(CWnd* pWndControl, const DWORD dwHelpIDArray[]);
+	void CleanUp();
 
 	// Allow creating of a document from a text string
 	bool no_ask_insert_;                // Turn this on to prevent OnFileNew from prompting with insertion options
@@ -374,7 +366,7 @@ public:
 	//}}AFX_MSG
 	afx_msg void OnHelpWebForum();
 	afx_msg void OnHelpWebHome();
-	afx_msg void OnHelpWebReg();
+	afx_msg void OnHelpWebDonate();
 	afx_msg void OnCompressionSettings();
 	afx_msg void OnFileSaveAll();
 	afx_msg void OnFileCloseAll();
@@ -883,53 +875,10 @@ public:
 	bool UnregisterOpenAll();          // Unregister "Open With HexEdit" (option in registry)
 	bool CallRegHelper(LPCTSTR cmdLine);
 
-#ifndef NO_SECURITY
-	// Security info
-	void AddSecurity(const char *name);
-	void SaveSecurityFile();
-	BOOL GetSecurityFile();
-	bool CheckNewVersion();
-	void OnNewVersion(int, int);         // Called when version number changes
-	int NewCheck();
-	void DeleteSecurityFiles();
-	void CleanUp();                     // Delete security files and reg entries
-
-	time_t init_date_;                  // When HexEdit was 1st run
-
-	int security_type_;                 // 1 = not registered (trial expired)
-										// 2 = not registered but still in 30 day trial
-										// 3 = temp reg
-										// 4 = no longer registered (more than 5 versions old)
-										// 5 = no longer registered (upgradeable),
-										// 6 = reg for current or most recent previous version
-										// -1 = error
-	int days_left_;                     // Days till expiry (if security_type_ == 1 or 2)
-	CString security_name_;             // Name of registered user (if security_type_ == 6)
-	short security_rand_;                // Random number used for checks
-
-	// UPDATE THIS FOR EACH NEW VERSION
-	static const int security_version_; // An incremented version number for the current release
-	int security_licensed_version_;     // Version that current licence is for (may be < security_version_)
-#endif
-
 private:
 	void refresh_display(bool do_all = false);
 	void enable_carets();
 	void disable_carets();
-
-#ifndef NO_SECURITY
-	// Security stuff
-	void GetMystery();
-	int GetMysteryFile(const char * filename);
-	void SaveMyst(const char * filename);
-	void SaveMyst2(const char * filename);
-	bool GetMyst2FileName(CString & filename);
-	int GetSecurity();
-	void SaveTo(const char *filename, const void *pdata, size_t len);
-	bool ReadFrom(const char *filename, void *pdata, size_t len);
-	int QuickCheck();
-	void CheckSecurityActivated();
-#endif
 
 	void OnNewUser();
 	void CopyUserFiles();
@@ -981,32 +930,5 @@ extern COLORREF BestHexAddrCol();
 extern COLORREF BestSearchCol();
 
 extern BOOL SendEmail(int def_type = 0, const char *def_text = NULL, const char *def_name = NULL);
-extern CString reg_code(int send, int flags = 0);
-extern CString user_reg_code(int send, const char *name, int type = 6, int flags = 0, time_t tt = 0);
-
-// This is in a macro to ensure that a simple function call cannot be disabled.
-// This can be inserted in lots of places; a cracker can't be sure he found them all.
-// Also making it hard to check is that the last check is only done occasionally:
-// one in nn times (at random), where nn is the parameter passed to the macro.
-// The idea is that CHECK_SECURITY is called all over the place making it hard for
-// a cracker to find them all.  In often used places use a high value for the param.
-// (nn) so that checks are done rarely.  For less often used places use a low value.
-#ifdef _DEBUG
-#define CHECK_SECURITY(nn) \
-do { \
-	if ((::GetTickCount()>>10)%(nn) == 0 && (((CHexEditApp*)AfxGetApp())->security_type_ < 1 || !theApp.NewCheck())) \
-		TRACE("!!!!!!!!!!!!!!Security check: ABORT!!!!!!!!!!!!\n"); \
-} while(0)
-#else
-#ifdef NO_SECURITY
-#define CHECK_SECURITY(nn) do { } while(0)
-#else
-#define CHECK_SECURITY(nn) \
-do { \
-	if ((::GetTickCount()>>10)%(nn) == 0 && (((CHexEditApp*)AfxGetApp())->security_type_ < 1 || !theApp.NewCheck())) \
-		AfxAbort(); \
-} while(0)
-#endif  // NO_SECURITY
-#endif  // _DEBUG
 
 #endif

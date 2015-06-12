@@ -85,14 +85,6 @@ extern BOOL AFXAPI AfxFullPath(LPTSTR lpszPathOut, LPCTSTR lpszFileIn);
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#ifndef NO_SECURITY
-#include "security.h"
-int quick_check_called = 0;
-int get_security_called = 0;
-int dummy_to_confuse = 0;
-int add_security_called = 0;
-int new_check_called = 0;
-#endif
 extern DWORD hid_last_file_dialog = HIDD_FILE_OPEN;
 const char *CHexEditApp::bin_format_name  = "BinaryData";               // for copy2cb_binary
 const char *CHexEditApp::temp_format_name = "HexEditLargeDataTempFile"; // for copy2cb_file
@@ -196,12 +188,6 @@ const char *CHexEditApp::HexEditSubSubKey = "*\\shell\\HexEdit\\command";
 // The following is used to enable "Open With" file extension associations (so that files can be on Win7 task list).
 const char * CHexEditApp::ProgID = "HexEdit.file";
 
-#ifdef _DEBUG
-const int CHexEditApp::security_version_ = 12; // This is changed for testing of handling of versions (registration etc)
-#else
-const int CHexEditApp::security_version_ = INTERNAL_VERSION;
-#endif
-
 BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 		ON_COMMAND(CG_IDS_TIPOFTHEDAY, ShowTipOfTheDay)
 		//{{AFX_MSG_MAP(CHexEditApp)
@@ -240,10 +226,10 @@ BEGIN_MESSAGE_MAP(CHexEditApp, CWinAppEx)
 		ON_COMMAND(ID_ZLIB_SETTINGS, OnCompressionSettings)
 		ON_COMMAND(ID_HELP_FORUM, OnHelpWebForum)
 		ON_COMMAND(ID_HELP_HOMEPAGE, OnHelpWebHome)
-		ON_COMMAND(ID_HELP_REGISTER, OnHelpWebReg)
+		ON_COMMAND(ID_HELP_DONATE, OnHelpWebDonate)
 		ON_UPDATE_COMMAND_UI(ID_HELP_FORUM, OnUpdateHelpWeb)
 		ON_UPDATE_COMMAND_UI(ID_HELP_HOMEPAGE, OnUpdateHelpWeb)
-		ON_UPDATE_COMMAND_UI(ID_HELP_REGISTER, OnUpdateHelpWeb)
+		ON_UPDATE_COMMAND_UI(ID_HELP_DONATE, OnUpdateHelpWeb)
 
 		// Repair commands
 		ON_COMMAND(ID_REPAIR_COPYUSERFILES, OnRepairFiles)
@@ -305,7 +291,6 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 #ifdef FILE_PREVIEW
 	cleanup_thread_ = NULL;
 #endif
-	security_rand_ = 0;
 
 	// Add a memory allocation hook for debugging purposes
 	// (Does nothing in release version.)
@@ -328,8 +313,6 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	// Pre-allocate room for 128 elts for initial speed
 	mac_.reserve(128);
 #endif
-	security_type_ = -1;                // Init so we can detect if code has been bypassed
-
 	open_disp_state_ = -1;
 
 	// Set up the default colour scheme
@@ -499,10 +482,6 @@ BOOL CHexEditApp::InitInstance()
 		LoadOptions();
 		InitVersionInfo();
 
-#ifndef NO_SECURITY
-		// This must be done after getting version info since theApp.version_ is written to file
-		GetMystery();                   // Get mystery info for later security checks
-#endif
 		if (update_check_)
 		{
 			time_t now = time(NULL);
@@ -615,42 +594,6 @@ BOOL CHexEditApp::InitInstance()
 		if (pSplashThread != NULL)
 			pSplashThread->HideSplash();
 
-#ifndef NO_SECURITY
-		CString ss;
-		switch (GetSecurity())
-		{
-		default:
-			ASSERT(0);
-			/* fall through */
-		case 0:
-			AfxMessageBox("HexEdit has not been installed on this machine");
-			return FALSE;
-		case 1:
-			ss = "Unfortunately, your trial period has expired.";
-			break;
-		case 2:
-			ss.Format("Your trial period expires in %ld days.", long(days_left_));
-			break;
-		case 4:  // really old licence
-			ss = "Unfortunately, you are not licensed to run this version.";
-			break;
-		case 5:  // licence from 2 or more versions ago
-			ss = "You need to upgrade your license to run this version.";
-			break;
-
-		case 3:  // temp licence
-		case 6:  // full licence
-			/* nothing needed here */
-			break;
-		}
-
-		if (!ss.IsEmpty())
-		{
-			CStartup dlg;
-			dlg.text_ = ss;
-			dlg.DoModal();
-		}
-#endif
 		pMainFrame->UpdateWindow();
 
 		// I moved this here (from LoadOptions) as the window sometimes comes up behind and there is
@@ -960,7 +903,7 @@ void CHexEditApp::InitWorkspace()
 		ID_HELP_TUTE3,
 		ID_HELP_FORUM,
 		ID_HELP_HOMEPAGE,
-		ID_HELP_REGISTER,
+		ID_HELP_DONATE,
 		ID_REPAIR_DIALOGBARS,
 		ID_REPAIR_CUST,
 		ID_APP_ABOUT,
@@ -1013,6 +956,7 @@ void CHexEditApp::OnAppExit()
 	CWinAppEx::OnAppExit();
 }
 
+#if 0 // xxx do we need this?
 // Called on 1st run after upgrade to a new version
 void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
 {
@@ -1028,6 +972,7 @@ void CHexEditApp::OnNewVersion(int old_ver, int new_ver)
 		mm->m_wndEditBar.RestoreOriginalstate();
 	}
 }
+#endif
 
 // Called when a user runs HexEdit who has never run it before
 void CHexEditApp::OnNewUser()
@@ -1507,10 +1452,8 @@ void CHexEditApp::OnRepairAll()
 					  "* toolbar, menu and keyboard customizations\n"
 					  "* settings made in the Options dialog\n"
 					  "* previously opened files settings (columns etc)\n"
-					  "* recent file list, bookmarks, highlights etc\n"
-					  "* ALL REGISTRATION INFORMATION WILL BE REMOVED\n\n"
-					  "When complete you will need to restart HexEdit "
-					  "and re-enter your activation code.\n"
+					  "* recent file list, bookmarks, highlights etc\n\n"
+					  "When complete you will need to restart HexEdit.\n"
 					  "\nAre you absolutely sure you want to continue?",
 					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
@@ -1549,8 +1492,6 @@ void CHexEditApp::OnMacroRecord()
 	CHexEditView *pview = GetView();    // The active view (or NULL if none)
 	if (pview != NULL && pview != pview->GetFocus())
 		pview->SetFocus();
-
-	CHECK_SECURITY(206);
 }
 
 void CHexEditApp::OnUpdateMacroRecord(CCmdUI* pCmdUI)
@@ -1566,8 +1507,6 @@ void CHexEditApp::OnMacroPlay()
 {
 	ASSERT(!recording_);
 	macro_play();
-
-	CHECK_SECURITY(207);
 
 	// Set focus to currently active view
 	CHexEditView *pview = GetView();    // The active view (or NULL if none)
@@ -1603,7 +1542,6 @@ void CHexEditApp::OnMultiPlay()
 	CMultiplay dlg;
 	dlg.plays_ = plays_;
 
-	CHECK_SECURITY(208);
 	if (dlg.DoModal() == IDOK)
 	{
 		if (dlg.macro_name_ == DEFAULT_MACRO_NAME)
@@ -1810,11 +1748,6 @@ int CHexEditApp::ExitInstance()
 	afxGlobalData.CleanUp();
 	//::BCGCBCleanUp();
 
-#ifndef NO_SECURITY
-	// Check that recent activation used the correct code
-	CheckSecurityActivated();
-#endif
-
 	if (m_pbookmark_list != NULL)
 	{
 		m_pbookmark_list->WriteList();
@@ -1844,8 +1777,6 @@ int CHexEditApp::ExitInstance()
 		}
 
 		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings
-		::SHDeleteValue(HKEY_LOCAL_MACHINE, "Software\\ECSoftware", "Data");
-		DeleteSecurityFiles();  // Note: FILENAME_BACKGROUND also deleted above
 	}
 
 	return retval;
@@ -1853,33 +1784,6 @@ int CHexEditApp::ExitInstance()
 
 BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 {
-#ifndef NO_SECURITY
-	extern int sec_init;
-	extern int sec_type;
-
-	if (pMsg->message == WM_KEYDOWN && 
-		pMsg->wParam == 'S' &&
-		::GetKeyState(VK_CONTROL) < 0 &&
-		::GetKeyState(VK_SHIFT) < 0)
-	{
-		// Display info about which functions have been called so we can check on what
-		// the crackers have been up to.
-		CString ss;
-		ss.Format("%d %d %d %d %d %d %d %d %d %d",
-				  quick_check_called,
-				  get_security_called,
-				  dummy_to_confuse,
-				  add_security_called,
-				  new_check_called,
-				  sec_init,
-				  sec_type,
-				  security_type_,
-				  security_version_);
-		AfxMessageBox(ss);
-		CHECK_SECURITY(1);
-	}
-#endif
-
 	// The following is necessary to allow controls in the calculator and bookmarks dialog to process
 	// keystrokes normally (eg DEL and TAB keys).  If this is not done CWnd::WalkPreTranslateTree
 	// is called which allows the mainframe window to process accelerator keys.  This problem was noticed
@@ -1914,26 +1818,6 @@ BOOL CHexEditApp::PreTranslateMessage(MSG* pMsg)
 
 	return CWinAppEx::PreTranslateMessage(pMsg);
 }
-
-#ifndef NO_SECURITY
-int CHexEditApp::NewCheck()
-{
-	extern int sec_init;
-	extern int sec_type;
-
-	++new_check_called;
-
-	static int count = 0;
-
-	if (++count > 10 && (sec_init == -1 || sec_type < 1 || sec_type > 10 || security_type_ < 1))
-	{
-		ASSERT(0);      // Catch in debug
-		return 0;
-	}
-
-	return 1;
-}
-#endif
 
 void CHexEditApp::WinHelp(DWORD dwData, UINT nCmd)
 {
@@ -1985,13 +1869,6 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 		pview->check_error();                           // check if read error
 	}
 
-#ifndef NO_SECURITY
-	if (lCount == 1 && !QuickCheck())
-	{
-		ASSERT(0);      // Catch in debug
-		AfxAbort();
-	}
-#endif
 	BOOL tmp1 = mm->UpdateBGSearchProgress();
 	BOOL tmp2 = mm->UpdateBGCompareProgress();
 	if (tmp1 || tmp2)
@@ -2081,8 +1958,6 @@ void CHexEditApp::NewSearch(const unsigned char *pat, const unsigned char *mask,
 							size_t len, BOOL icase, int tt, BOOL ww,
 							int aa, int offset, bool align_rel)
 {
-	CHECK_SECURITY(202);
-
 	CSingleLock s2(&appdata_, TRUE);
 
 	// Save search params for bg search to use
@@ -2769,7 +2644,6 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on un
 void CHexEditApp::SaveOptions()
 {
 	CString ss;
-	CHECK_SECURITY(111);
 
 	// Save general options
 	WriteProfileInt("Options", "SaveExit", save_exit_ ? 1 : 0);
@@ -3288,7 +3162,6 @@ void CHexEditApp::OnProperties()
 	// Save this so that we get it before the page activation "keystroke"
 	// (km_prop_file, km_prop_char, etc)
 	SaveToMacro(km_prop);
-	CHECK_SECURITY(203);
 
 	mm->m_paneProp.ShowAndUnroll();
 	mm->m_wndProp.SetFocus();
@@ -3335,8 +3208,6 @@ void CHexEditApp::display_options(int display_page /* = -1 */, BOOL must_show_pa
 
 	// Load current settings into the property sheet
 	get_options(optSheet.val_);
-
-	CHECK_SECURITY(201);
 
 	optSheet.m_psh.dwFlags &= ~(PSH_HASHELP);      // Turn off help button
 	optSheet.DoModal();
@@ -4336,9 +4207,9 @@ void CHexEditApp::OnHelpWebHome()
 	::BrowseWeb(IDS_WEB_ADDRESS);
 }
 
-void CHexEditApp::OnHelpWebReg()
+void CHexEditApp::OnHelpWebDonate()
 {
-	::BrowseWeb(IDS_WEB_REG_USER);
+	::BrowseWeb(IDS_WEB_DONATE);
 }
 
 void CHexEditApp::OnUpdateHelpWeb(CCmdUI* pCmdUI)
@@ -4731,10 +4602,6 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 			subject = "HEXEDIT REQ: ";
 			text = "TYPE: ENHANCEMENT REQUEST\n";
 			break;
-		case 2:
-			subject = "HEXEDIT BUY: ";
-			text = "TYPE: REGISTRATION REQUEST\n";
-			break;
 		default:
 			subject = "HEXEDIT OTH: ";
 			text = "TYPE: OTHER\n";
@@ -4788,17 +4655,6 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 		text += "\nEMAIL: ";
 		text += dlg.address_;
 		text += "\n";
-
-		CString ss;
-		if (aa->security_type_ == 6)
-			ss.Format("REGISTERED TO: %s\n", aa->security_name_);
-		else if (aa->security_type_ == 5)
-			ss.Format("UPGRADEABLE (REGISTERED TO: %s)\n", aa->security_name_);
-		else if (aa->security_type_ == 4)
-			ss.Format("EARLIER VERSION (REGISTERED TO: %s)\n", aa->security_name_);
-		else
-			ss.Format("UNREGISTERED: Expires in %ld days\n", long(aa->days_left_));
-		text += ss;
 
 		text += dlg.text_;
 
@@ -4900,6 +4756,35 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 	::FreeLibrary(hmapi);
 
 	return retval;
+}
+
+// This is run in response to the /Clean command line option
+void CHexEditApp::CleanUp()
+{
+	HKEY hkey;
+	bool admin = true;           // are we an admin?
+
+	// Remove reg entries ignoring errors since they may not all be there
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+	{
+		::RegDeleteValue(hkey, "Data");
+		::RegCloseKey(hkey);
+	}
+	if (theApp.is_vista_)
+	{
+		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
+		{
+			::RegDeleteValue(hkey, "Data");
+			::RegCloseKey(hkey);
+		}
+	}
+
+	if (admin)
+		TaskMessageBox("Finished!", "HexEdit /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
+//	else
+//		TaskMessageBox("Clean Failed", "When using the /clean option\n"
+//					  "please run as administrator.\n");
+	exit(1);
 }
 
 

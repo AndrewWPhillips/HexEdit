@@ -229,9 +229,6 @@
     <ClCompile Include="ScrView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Security.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1014,9 +1011,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScrView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Security.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sha1.h">
