@@ -27,12 +27,11 @@
 #define IDD_CALC                        117
 #define CG_IDS_TIPOFTHEDAYHELP2         117
 #define IDS_WEB_ADDRESS                 118
-#define IDS_WEB_REG_USER                119
+#define IDS_WEB_DONATE                  119
 #define IDS_WEB_HELP                    120
 #define IDS_WEB_REG_MC                  121
 #define IDS_WEB_UPGRADE                 122
 #define IDS_WEB_FORUMS                  123
-#define IDR_UNUSED                      127
 #define IDR_MAINFRAME                   128
 #define IDR_HEXEDTYPE                   129
 #define IDB_FILE_OPENU                  130
@@ -159,7 +158,6 @@
 #define IDD_OPT_COLOURS                 230
 #define IDB_DOWN                        231
 #define IDB_DOWNU                       231
-#define IDD_REGISTER                    231
 #define IDR_EDITBAR                     232
 #define IDD_ABOUT                       233
 #define IDI_ICON1                       233
@@ -202,7 +200,6 @@
 #define IDR_CONTEXT_BOOKMARKS           255
 #define IDR_MISC                        256
 #define IDR_OPER                        257
-#define IDI_MACRO                       258
 #define IDI_ARROW                       259
 #define IDI_STRUCT                      260
 #define IDI_FOR                         261
@@ -211,7 +208,6 @@
 #define IDI_EVAL                        264
 #define IDI_JUMP                        265
 #define IDI_SWITCH                      266
-#define IDD_STARTUP                     267
 #define IDB_DEVIMAGES                   267
 #define IDD_OPT_WINDISPLAY              268
 #define IDB_SEARCH                      268
@@ -220,7 +216,6 @@
 #define IDD_BOOKMARKS                   271
 #define IDD_NEW_SCHEME                  272
 #define IDD_MACRO_MESSAGE               273
-#define IDD_CLEAR_HIST                  274
 #define IDB_IMAGELIST                   275
 #define IDD_BM_FIND                     276
 #define IDD_DFFD_DATA                   277
@@ -292,9 +287,7 @@
 #define IDB_FLIP_HOT                    318
 #define IDB_HORZ_HOT                    318
 #define ID_REAL_ABS                     318
-#define IDB_FLIP1                       319
 #define ID_REAL_MIN                     319
-#define IDB_FLIP1_HOT                   320
 #define ID_REAL_MAX                     320
 #define ID_REAL_ATOF                    321
 #define IDB_TMP                         322
@@ -626,7 +619,6 @@
 #define ID_FONT_INC                     1087
 #define IDC_REFRESH_SECS                1087
 #define IDC_ENHANCE                     1087
-#define IDC_USER                        1087
 #define IDC_PRINT_SPACE1HALF            1087
 #define IDC_ADDRESS_SPECIFIED           1087
 #define IDC_DFFD_TAB                    1087
@@ -729,7 +721,6 @@
 #define IDC_SHOW_BOOKMARKS              1146
 #define IDC_OP_DISPLAY                  1147
 #define IDC_SCROLL_PAST_ENDS            1147
-#define IDC_REGISTER                    1148
 #define IDC_REVERSE_ZOOM                1148
 #define IDC_LINE1                       1149
 #define IDC_LINE2                       1150
@@ -743,16 +734,9 @@
 #define IDC_DESC_COLOUR                 1156
 #define IDC_SAVEMACRO                   1157
 #define IDC_EMAIL                       1157
-#define IDC_REG_EMAIL                   1157
 #define IDC_MACRODIR                    1158
-#define IDC_REG_CODE                    1158
 #define IDC_DESC_SCHEME                 1158
-#define IDC_DESC_NAME                   1159
-#define IDC_USER_NAME                   1160
-#define IDC_REG_HELP                    1161
-#define IDC_REG_WEB                     1162
 #define IDC_COSTS                       1163
-#define IDC_REG_FORM                    1164
 #define IDC_COLOUR_SELECT               1164
 #define IDC_BIG_ENDIAN_FILE_ACCESS      1164
 #define IDC_DONATE                      1165
@@ -789,7 +773,6 @@
 #define IDC_HEADER_OPTS                 1189
 #define IDC_FOOTER_OPTS                 1190
 #define IDC_NET_RETAIN                  1190
-#define IDC_CLEAR_SEARCH                1190
 #define IDC_DFFD_ON                     1190
 #define IDC_GRID                        1191
 #define IDC_CLEAR_RECENT_FILE           1191
@@ -910,7 +893,6 @@
 #define IDC_RECENT_FILES_HELP2          1302
 #define IDC_RECENT_FILES_SEARCH         1302
 #define IDC_PLAY_HELP                   1303
-#define IDC_CLEAR_HELP                  1304
 #define IDC_BM_FIND_APPEND              1305
 #define IDC_BM_FIND_MESS                1306
 #define IDC_BM_FIND_OVERWRITE           1307
@@ -1001,7 +983,6 @@
 #define IDC_CSRC_ADDRESS                1381
 #define IDC_CSRC_INDENT                 1382
 #define IDC_CSRC_INDENT_SPIN            1383
-#define IDC_ACTIVATE                    1384
 #define IDC_CSRC_ALIGN                  1384
 #define IDC_OPEN_TREE                   1385
 #define IDC_CSRC_FOR                    1385
@@ -1151,7 +1132,6 @@
 #define IDC_FP_EXP_DESC                 1531
 #define IDC_FP_DESC                     1532
 #define IDC_INFO_CATEGORY_SELECT        1533
-#define IDC_LICENCE                     1534
 #define IDC_LINE5                       1535
 #define IDC_FIND_OFFSET                 1536
 #define IDC_GRID_FILTERS                1537
@@ -1420,7 +1400,7 @@
 #define ID_HELP_FORUM                   32886
 #define ID_HELP_FAQ                     32887
 #define ID_HELP_HOMEPAGE                32888
-#define ID_HELP_REGISTER                32889
+#define ID_HELP_DONATE                  32889
 #define ID_VIEW_USER_TOOLBAR1           32901
 #define ID_VIEW_USER_TOOLBAR2           32902
 #define ID_VIEW_USER_TOOLBAR3           32903

@@ -1,15 +1,13 @@
-This directory (including the GridBtnCell_src, GridCtrl_src, NewCellTypes
-GridTreeBtnCell_src, RES, HLP, and HTMLHelp subirectories) contains
-all the files required to build HexEdit 1.0 (HexEdit.exe) and
-its help files.  It includes all the C++ source code (*.cpp and
-*.h files), resource source files (HexEdit.rc, .BMP files etc), and
-help source files (HexEdit.rtf, HexEdit.hpj, etc).
+This directory (including certain subirectories) contains
+all the files required to build HexEdit 4.0 (HexEdit.exe) and
+its installer.  It includes all the C++ source code (*.cpp and
+*.h files), resource source files (HexEdit.rc, etc), etc.
 
-Also included is the Developer Studio project (HexEdit.dsp) which
-stores the options needed by Microsoft Developer Studio 97 and Visual
-C++ 5 to build HexEdit.  Although a makefile is not necessary I also
-generated HexEdit.mak so that you may be able to build HexEdit with
-a different compiler, as long as it supports templates, MFC and STL.
+The help source files are not included as these require RoboHelp,
+but the latest help file (HexEdit.chm) is included.
+
+Also included is the Visual Studio project For VS2010 and later and
+the project file for VS2008 (HexEditVS2008.vcproj and .sln files).
 
 A description of some of the files is provided below.
 
@@ -18,13 +16,8 @@ means of extracting using long file names.  Also you must use any
 options that extract sub-directories, since there are files in the
 RES and HLP sub-directories.
 
-To build HexEdit you will need to incorporate the HexEdit project into
-a project workspace.  The simplest way would be to create a new, blank
-Developer Studio workspace called HexEdit.dsw and add the HexEdit
-project to it.
-
-Note that a prebuilt release of HexEdit 1.0 is available separately
-at the web site http://members.tripod.com/AndrewPhillips.
+Note that a prebuilt release of HexEdit is available separately
+at the web site http://www.hexedit.com.
 
 
 About the Code
