@@ -30,11 +30,7 @@
 
 #include "TipWnd.h"
 #include "expr.h"
-#ifdef USE_FREE_IMAGE
 #include <FreeImage.h>
-#else
-#include "EnBitmap.h"
-#endif
 
 #define DFFD_RESERVED 1000   // Max number of commands on all template open menus (combined total)
 #define NAV_RESERVED  2000   // Max number of commands on nav forward and backward menus (both separate)
@@ -341,11 +337,7 @@ private:
 
 	void move_dlgbar(CGenDockablePane &bar, const CRect &rct);  // move so it does not intersect with rct
 
-#ifdef USE_FREE_IMAGE
 	FIBITMAP *m_dib;
-#else
-	CEnBitmap m_background;         // Background drawn in the client WM_ERASEBKGND event
-#endif
 	int m_background_pos;
 	CBitmap m_search_image;       // Displayed in background search occurrences (status bar) pane
 	COLORREF bg_progress_colour_; // Current search progress bar colour or -1 if no progress bar shown
