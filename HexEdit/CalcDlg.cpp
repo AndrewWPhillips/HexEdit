@@ -445,6 +445,14 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_WM_SIZE()
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+	ON_WM_DRAWITEM()
+	ON_WM_ERASEBKGND()
+	ON_WM_CTLCOLOR()
+	ON_NOTIFY(TTN_SHOW, 0, OnTooltipsShow)
 	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 	ON_MESSAGE(WM_INITDIALOG, HandleInitDialog)
 	ON_BN_CLICKED(IDC_DIGIT_0, OnDigit0)
@@ -516,7 +524,6 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_BN_CLICKED(IDC_UNARY_CUBE, OnUnaryCube)
 	ON_BN_CLICKED(IDC_UNARY_AT, OnUnaryAt)
 	ON_BN_CLICKED(IDC_UNARY_SQUARE_ROOT, OnUnarySquareRoot)
-	ON_WM_DRAWITEM()
 	ON_BN_CLICKED(IDC_8BIT, On8bit)
 	ON_BN_CLICKED(IDC_16BIT, On16bit)
 	ON_BN_CLICKED(IDC_32BIT, On32bit)
@@ -529,8 +536,6 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_BN_CLICKED(IDC_SEL_LEN, OnSelLen)
 	ON_BN_CLICKED(IDC_SEL_LEN_STORE, OnSelLenStore)
 	ON_BN_CLICKED(IDC_ADDOP, OnAdd)
-	ON_WM_DESTROY()
-	ON_WM_HELPINFO()
 
 	// Removed ON_BN_DOUBLECLICKED stuff as d-click now seems to send two
 	// mouse down/up events (as well as a dclick event)
@@ -541,11 +546,6 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	ON_BN_CLICKED(IDC_DEC_HIST, OnGetDecHist)
 	ON_BN_CLICKED(IDC_VARS, OnGetVar)
 	ON_BN_CLICKED(IDC_FUNC, OnGetFunc)
-	ON_WM_SIZE()
-	ON_NOTIFY(TTN_SHOW, 0, OnTooltipsShow)
-	ON_WM_CONTEXTMENU()
-	ON_WM_ERASEBKGND()
-	ON_WM_CTLCOLOR()
 	ON_CBN_SELCHANGE(IDC_EDIT, OnSelHistory)
 	//ON_WM_DELETEITEM()   // OnDeleteItem - message only sent for owner draw list boxes
 	ON_EN_CHANGE(IDC_RADIX, OnChangeRadix)
@@ -941,14 +941,41 @@ void CCalcDlg::make_noise(const char * ss)
 		::Beep(3000,400);
 }
 
+// Return a string representing a radix.
+// IMPORTANT: returns a pointer to a static buffer so don't call this function
+//            more than once in a single expression or save the returned pointer.
+static const char *radix_string(int radix)
+{
+	static char buf[20];
+
+	switch (radix)
+	{
+	case 16:
+		return " [hex]";
+	case 10:
+		return " [dec]";
+	case 8:
+		return " [oct]";
+	case 2:
+		return " [bin]";
+	default:
+		sprintf(buf, " [radix %d]", radix);
+		return buf;
+	}
+}
+
 void CCalcDlg::update_expr()
 {
 	ExprStringType disp = get_expr(true);
-	if (orig_radix_ != radix_)
+	if (state_ > CALCINTEXPR && state_ < CALCOTHER)
 	{
-		ExprStringType strRadix;
-		strRadix.Format(EXPRSTR(" [%d]"), orig_radix_);
-		disp += strRadix;
+		// non-integer expression - if it contains digits then indicate that decimal is in use
+		if (strpbrk(CString(current_str_).GetBuffer(), "0123456789") != NULL)
+			disp += " [dec]";
+	}
+	else if (orig_radix_ != radix_)
+	{
+		disp += radix_string(orig_radix_);
 	}
 
 	// This is the window (readonly text box) where we show the expression
@@ -2398,6 +2425,12 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 		ttc_.RelayEvent(pMsg);
 	}
 
+	if (pMsg->hwnd == edit_.m_hWnd)
+	{
+		// If we are in the edit control then avoid all the key processing below
+		return CDialog::PreTranslateMessage(pMsg);
+	}
+
 	if (pMsg->message == WM_SYSKEYDOWN && pMsg->wParam == VK_F10)
 	{
 		// Handle F10 press
@@ -2406,7 +2439,13 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 	}
 	else if (pMsg->message == WM_CHAR)
 	{
-		if (pMsg->wParam == '\r')
+		if (isprint(pMsg->wParam))
+		{
+			edit_.SetFocus();
+			edit_.SetSel(edit_.GetWindowTextLength(), -1);
+			edit_.SendMessage(WM_CHAR, pMsg->wParam, 1);
+		}
+		else if (pMsg->wParam == '\r')
 		{
 			OnEquals();    // Carriage Return
 			return TRUE;
@@ -2867,14 +2906,14 @@ void CCalcDlg::OnEquals()               // Calculate result
 // where both the expression and the result match.
 void CCalcDlg::add_hist()
 {
-	// Get the expression that generated the result
-	CString strRoll = CString(get_expr(true));
-
-	CString strDrop;
-	if (strRoll.GetLength() <= 100)
-		strDrop = strRoll;
+	// We get the expression that generated the result as a full string to be added
+	// to the tape (history window) and the drop down (history list)
+	CString strTape = CString(get_expr(true));   // string to be added to calc tape window
+	CString strDrop;                             // string to be added to drop down history
+	if (strTape.GetLength() <= 100)
+		strDrop = strTape;
 	else
-		strDrop = strRoll.Left(100) + "...";
+		strDrop = strTape.Left(100) + "...";  // Don't add a really long string to the drop down
 
 	// The first char of the string stores the radix as a char ('2'-'9', 'A'-'Z')
 	char buf[64];
@@ -2892,7 +2931,51 @@ void CCalcDlg::add_hist()
 	edit_.get();   // Get the result string into current_str_
 	int len = current_str_.GetLength();
 
-	mm_->m_wndCalcHist.Add(strRoll + " = " + CString(current_str_));
+	CString strAnswerOrigRadix;                        // result as string in original radix
+	if (state_ >= CALCINTRES && state_ <= CALCINTEXPR)
+	{
+		// Short int result that needs conversion to original radix
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), orig_radix_) + 3;
+		char *numbuf = new char[numlen];
+		numbuf[numlen-1] = '\xCD';
+
+		// Get the number as a string
+		mpz_get_str(numbuf, theApp.hex_ucase_? -orig_radix_ : orig_radix_, current_.get_mpz_t());
+		ASSERT(numbuf[numlen-1] == '\xCD');
+
+		strAnswerOrigRadix = numbuf;
+		delete[] numbuf;
+
+		// Add to the tape (history window)
+		mm_->m_wndCalcHist.Add(strTape + " = " + 
+							   strAnswerOrigRadix +
+							   //CString(radix_ == orig_radix_ ? "" : radix_string(orig_radix_)) );
+							   CString(radix_string(orig_radix_)) );
+	}
+	else
+	{
+		CString strType;
+		switch (state_)
+		{
+		case CALCREALEXPR:
+		case CALCREALRES:
+			strType = " [REAL (dec)]";
+			break;
+		case CALCDATEEXPR:
+		case CALCDATERES:
+			strType = " [DATE]";
+			break;
+		case CALCSTREXPR:
+		case CALCSTRRES:
+			strType = " [STRING]";
+			break;
+		case CALCBOOLEXPR:
+		case CALCBOOLRES:
+			strType = " [BOOLEAN]";
+			break;
+		}
+		mm_->m_wndCalcHist.Add(strTape + " = " + (CString)current_str_ + strType);
+	}
 
 	if (len < 2000 && state_ > CALCINTLIT)
 	{
@@ -2905,24 +2988,14 @@ void CCalcDlg::add_hist()
 		*pResult += current_str_.Left(2000);
 		*pResult += " ...";
 	}
-	else if (len < 2000 && radix_ == orig_radix_)
+	else if (len < 2000 && radix_ != orig_radix_)
 	{
 		// Short int result in original radix
-		*pResult += current_str_;
+		*pResult += strAnswerOrigRadix;
 	}
-	else if (len < 2000)
+	else if (len < 2000 && radix_ == orig_radix_)
 	{
-		// Short int result that needs conversion to original radix
-		int numlen = mpz_sizeinbase(current_.get_mpz_t(), orig_radix_) + 3;
-		char *numbuf = new char[numlen];
-		numbuf[numlen-1] = '\xCD';
-
-		// Get the number as a string
-		mpz_get_str(numbuf, theApp.hex_ucase_? -orig_radix_ : orig_radix_, current_.get_mpz_t());
-		ASSERT(numbuf[numlen-1] == '\xCD');
-
-		*pResult += numbuf;
-		delete[] numbuf;
+		*pResult += current_str_;
 	}
 	else
 	{
@@ -3100,33 +3173,18 @@ void CCalcDlg::set_right()
 		right_ = "***";
 	else if (radix_ == orig_radix_ || state_ > CALCINTLIT)
 		right_ = current_str_;
-	else if (orig_radix_ == 10)
+	else
 	{
-		// We started in decimal so convert right_ to decimal (so all lietrals are the same radix)
-		int numlen = mpz_sizeinbase(current_.get_mpz_t(), 10) + 3;
+		// Add number in original radix
+		int numlen = mpz_sizeinbase(current_.get_mpz_t(), orig_radix_) + 3;
 		char *numbuf = new char[numlen];
 		numbuf[numlen-1] = '\xCD';
 
 		// Get the number as a string
-		mpz_get_str(numbuf, 10, current_.get_mpz_t());
+		mpz_get_str(numbuf, theApp.hex_ucase_? -orig_radix_ : orig_radix_, current_.get_mpz_t());
 		ASSERT(numbuf[numlen-1] == '\xCD');
 
 		right_ = numbuf;
-		delete[] numbuf;
-	}
-	else
-	{
-		// Store other values as hex with leading "0x"
-		right_ = "0x";
-		int numlen = mpz_sizeinbase(current_.get_mpz_t(), 16) + 3;
-		char *numbuf = new char[numlen];
-		numbuf[numlen-1] = '\xCD';
-
-		// Get the number as a string
-		mpz_get_str(numbuf, theApp.hex_ucase_? -16 : 16, current_.get_mpz_t());
-		ASSERT(numbuf[numlen-1] == '\xCD');
-
-		right_ += numbuf;
 		delete[] numbuf;
 	}
 }
