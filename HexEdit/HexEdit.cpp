@@ -547,7 +547,6 @@ BOOL CHexEditApp::InitInstance()
 		m_pbookmark_list = new CBookmarkList(FILENAME_BOOKMARKS);
 		m_pbookmark_list->ReadList();
 
-		// xxx /clean should clear registry before here
 		// create main MDI Frame window.
 		// NOTE: This triggers a lot of other initialization (see CMainFrame::OnCreate)
 		CMainFrame* pMainFrame = new CMainFrame;
@@ -1746,7 +1745,6 @@ int CHexEditApp::ExitInstance()
 		delete pboyer_;
 
 	afxGlobalData.CleanUp();
-	//::BCGCBCleanUp();
 
 	if (m_pbookmark_list != NULL)
 	{
@@ -1762,7 +1760,10 @@ int CHexEditApp::ExitInstance()
 	int retval = CWinAppEx::ExitInstance();
 
 	if (delete_reg_settings_ || delete_all_settings_)
+	{
 		::SHDeleteKey(HKEY_CURRENT_USER, "Software\\ECSoftware\\HexEdit");  // user settings
+		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings
+	}
 
 	if (delete_all_settings_)
 	{
@@ -1775,8 +1776,6 @@ int CHexEditApp::ExitInstance()
 			remove(data_path + FILENAME_BOOKMARKS);
 			remove(data_path + FILENAME_BACKGROUND);
 		}
-
-		::SHDeleteKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\HexEdit");  // machine settings
 	}
 
 	return retval;
@@ -4405,7 +4404,9 @@ void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLas
 	{
 		if (bFlag && CString("clean").CompareNoCase(pszParam) == 0)
 		{
-			theApp.CleanUp();
+			// IF /cleanup found then delete registry settings and exit
+			theApp.delete_reg_settings_ = TRUE;
+			theApp.ExitInstance();
 			exit(0);
 		}
 		else if (bFlag)
@@ -4757,34 +4758,3 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 
 	return retval;
 }
-
-// This is run in response to the /Clean command line option
-void CHexEditApp::CleanUp()
-{
-	HKEY hkey;
-	bool admin = true;           // are we an admin?
-
-	// Remove reg entries ignoring errors since they may not all be there
-	if (::RegOpenKey(HKEY_LOCAL_MACHINE, "Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
-	{
-		::RegDeleteValue(hkey, "Data");
-		::RegCloseKey(hkey);
-	}
-	if (theApp.is_vista_)
-	{
-		if (::RegOpenKey(HKEY_CURRENT_USER, "Software\\Classes\\VirtualStore\\MACHINE\\Software\\ECSoftware\\", &hkey) == ERROR_SUCCESS)
-		{
-			::RegDeleteValue(hkey, "Data");
-			::RegCloseKey(hkey);
-		}
-	}
-
-	if (admin)
-		TaskMessageBox("Finished!", "HexEdit /clean operation completed succesfully.", 0, 0, MAKEINTRESOURCE(IDI_INFO));
-//	else
-//		TaskMessageBox("Clean Failed", "When using the /clean option\n"
-//					  "please run as administrator.\n");
-	exit(1);
-}
-
-
