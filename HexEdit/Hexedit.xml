@@ -91,15 +91,15 @@ On-line help is 2nd to none including several tutorials.</Char_Desc_2000>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
-			<Application_Info_URL>http://www.hexeditpro.com/</Application_Info_URL>
-			<Application_Order_URL>http://www.hexeditpro.com/register.html</Application_Order_URL>
-			<Application_Screenshot_URL>http://www.hexeditpro.com/images/mark.png</Application_Screenshot_URL>
+			<Application_Info_URL>http://www.hexedit.com/</Application_Info_URL>
+			<Application_Order_URL>http://www.hexedit.com/register.html</Application_Order_URL>
+			<Application_Screenshot_URL>http://www.hexedit.com/images/mark.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.hexedit.com/images/icon.gif</Application_Icon_URL>
-			<Application_XML_File_URL>http://www.hexeditpro.com/hexeditpro.xml</Application_XML_File_URL>
+			<Application_XML_File_URL>http://www.hexedit.com/hexedit.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://www.hexedit.com/Downloads/HexEditPro4_0.zip</Primary_Download_URL>
-			<Secondary_Download_URL>http://www.hexeditpro.com/Downloads/HexEditPro4_0.zip</Secondary_Download_URL>
+			<Primary_Download_URL>http://www.hexedit.com/Downloads/HexEdit4_5.zip</Primary_Download_URL>
+			<Secondary_Download_URL>http://www.hexedit.com/Downloads/HexEdit4_5.zip</Secondary_Download_URL>
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
 		</Download_URLs>
