@@ -391,6 +391,9 @@
     <ClCompile Include="CalcHist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CompareList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource.hm">
@@ -1167,6 +1170,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalcHist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompareList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

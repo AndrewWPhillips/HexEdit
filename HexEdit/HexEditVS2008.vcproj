@@ -292,6 +292,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CompareList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CompareView.cpp"
 				>
 			</File>
@@ -750,6 +754,10 @@
 			</File>
 			<File
 				RelativePath=".\ChildFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CompareList.h"
 				>
 			</File>
 			<File
@@ -1600,11 +1608,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Install\ReadMe.txt"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\ReadMe.txt"
+				RelativePath=".\Install\ReadMe.txt"
 				>
 			</File>
 			<File

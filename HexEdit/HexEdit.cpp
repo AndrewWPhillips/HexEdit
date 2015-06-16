@@ -1389,19 +1389,10 @@ void CHexEditApp::OnRepairDialogbars()
 
 	mm->InitDockWindows();
 
-	//mm->m_paneFind.ShowAndUnroll();
-	//mm->m_paneBookmarks.ShowAndUnroll();
-	//mm->m_paneProp.ShowAndUnroll();
-	//mm->m_paneCalc.ShowAndUnroll();
-	//mm->m_paneCalcHist.ShowAndUnroll();   // xxx dock to right side of calc?
 	//mm->m_paneExpl.ShowAndUnroll();
-
-	//mm->m_paneFind.ShowPane(TRUE, FALSE, TRUE);
-	//mm->m_paneBookmarks.ShowPane(TRUE, FALSE, TRUE);
-	//mm->m_paneProp.ShowPane(TRUE, FALSE, TRUE);
-	//mm->m_paneCalc.ShowPane(TRUE, FALSE, TRUE);
-	//mm->m_paneCalcHist.ShowPane(TRUE, FALSE, TRUE);
 	mm->m_paneExpl.ShowPane(TRUE, FALSE, TRUE);
+	mm->m_paneFind.ShowPane(TRUE, FALSE, TRUE);
+	mm->m_paneCompareList.ShowPane(TRUE, FALSE, TRUE);
 }
 
 void CHexEditApp::OnRepairCust()
@@ -1850,6 +1841,7 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 	mm->m_wndCalc.SendMessage(WM_KICKIDLE);
 	mm->m_wndCalcHist.SendMessage(WM_KICKIDLE);
 	mm->m_wndExpl.SendMessage(WM_KICKIDLE);
+	mm->m_wndCompareList.SendMessage(WM_KICKIDLE);
 
 	// Allow docs to check if their background processing has completed
 	POSITION posn = m_pDocTemplate->GetFirstDocPosition();

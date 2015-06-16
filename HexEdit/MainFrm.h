@@ -27,6 +27,7 @@
 #include "CalcDlg.h"
 #include "CalcHist.h"
 #include "Explorer.h"
+#include "CompareList.h"
 
 #include "TipWnd.h"
 #include "expr.h"
@@ -123,6 +124,8 @@ public:
 	CExplorerWnd m_wndExpl;             // Explorer dialog/bar
 	void UpdateExplorer(LPCTSTR ff = NULL) { m_wndExpl.Update(ff); }
 	CGenDockablePane m_paneExpl;        // Docking pane that holds m_wndExpl
+	CCompareListDlg m_wndCompareList;   // List of diffs in comparison
+	CGenDockablePane m_paneCompareList; // Docking pane that holds m_wndCompareList
 
 	CMFCToolBarImages	m_UserImages;
 	CString m_strImagesFileName;
@@ -288,6 +291,7 @@ public:
 		move_dlgbar(m_paneCalc, rct);
 		move_dlgbar(m_paneCalcHist, rct);
 		move_dlgbar(m_paneExpl, rct);
+		move_dlgbar(m_paneCompareList, rct);
 	}
 	void redraw_background() { m_wndClientArea.Invalidate(); }
 

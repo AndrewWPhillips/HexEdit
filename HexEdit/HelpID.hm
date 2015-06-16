@@ -46,6 +46,7 @@
 #define HIDD_OPEN_SPECIAL_HELP        0x01088
 #define HIDD_CLEAR_HIST_HELP          0x01090
 #define HIDD_BOOKMARKS_HELP           0x010A0
+#define HIDD_COMPARE_LIST_HELP        0x010A8
 #define HIDD_RECENT_FILES_HELP        0x010B0
 #define HIDD_NEW_SCHEME_HELP          0x010C0
 #define HIDD_CSRC_HELP                0x010D0

@@ -498,6 +498,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneExpl.InitialUpdate(&m_wndExpl);
 		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
 
+		if (!m_paneCompareList.Create("Compare List", this, CSize(200, 250), TRUE, IDD_COMPARE_LIST_PARENT, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI) ||
+			!m_wndCompareList.Create(&m_paneCompareList) )
+		{
+			return FALSE; // failed to create
+		}
+		m_paneCompareList.InitialUpdate(&m_wndCompareList);
+		m_paneCompareList.EnableDocking(CBRS_ALIGN_ANY);
+
 		if (theApp.GetProfileInt("MainFrame", "WindowState", -1) == -1)
 		{
 			// If this is the first run then set positions of docking windows
@@ -1041,6 +1049,7 @@ void CMainFrame::InitDockWindows()
 	m_paneCalc.Hide();
 	m_paneCalcHist.Hide();
 	m_paneExpl.Hide();
+	m_paneCompareList.Hide();
 
 	// get the main window rectangle to position floating pane
 	CSize sz;
@@ -1066,6 +1075,7 @@ void CMainFrame::InitDockWindows()
 	// Float Find dialog at bottom left
 	sz = m_paneFind.GetDefaultSize();
 	LONG find_width = sz.cx;
+	sz.cy = (sz.cy*6)/5;
 	rct.left = mainRect.left;
 	rct.right = rct.left + sz.cx;
 	rct.top = mainRect.bottom - sz.cy;
@@ -1098,6 +1108,14 @@ void CMainFrame::InitDockWindows()
 	rct.bottom = rct.top + sz.cy;
 	m_paneExpl.FloatPane(rct);
 
+	// Float compare list at middle right
+	sz = m_paneCompareList.GetDefaultSize();
+	rct.left = mainRect.right - sz.cx;
+	rct.right = rct.left + sz.cx;
+	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2 + 30;
+	rct.bottom = rct.top + sz.cy;
+	m_paneCompareList.FloatPane(rct);
+
 	// Dock Bookmarks at left side
 	rct.left = rct.top = 0;
 	rct.right = find_width;  // make the width same as default width of find dialog
@@ -1110,8 +1128,8 @@ void CMainFrame::InitDockWindows()
 	m_paneFind.ShowPane(TRUE, FALSE, TRUE);
 
 	// Dock the Properties pane
-	//m_paneProp.AttachToTabWnd(&m_paneFind, DM_STANDARD, TRUE);
-	m_paneProp.DockToWindow(&m_paneFind, CBRS_ALIGN_TOP);
+	m_paneProp.AttachToTabWnd(&m_paneFind, DM_STANDARD, TRUE);
+	//m_paneProp.DockToWindow(&m_paneFind, CBRS_ALIGN_TOP);
 	m_paneProp.ShowPane(TRUE, FALSE, TRUE);
 
 	// Dock Calc Tape at right side
@@ -1127,9 +1145,15 @@ void CMainFrame::InitDockWindows()
 
 	//m_paneExpl.ShowPane(TRUE, FALSE, TRUE);
 
-	m_wndCalc.Invalidate();                     // seems to need this to be redrawn properly
+	// Dock compare list?
+	m_paneCompareList.AttachToTabWnd(&m_paneBookmarks, DM_STANDARD, TRUE);
+	m_paneCompareList.ShowPane(TRUE, FALSE, TRUE);
+	//m_paneCompareList.Hide();
+	m_paneBookmarks.ShowPane(TRUE, FALSE, TRUE); // Show bookmarks tab before compare list
+
+	m_wndCalc.Invalidate();                      // seems to need this to be redrawn properly
 	m_wndProp.Invalidate();
-	m_wndFind.Invalidate();
+	//m_wndFind.Invalidate();
 
 #if 0
 	// these don't seem to work the way we want
@@ -1141,7 +1165,6 @@ void CMainFrame::InitDockWindows()
 	sz = m_paneFind.GetDefaultSize();
 	actual_rct.right = actual_rct.left + sz.cx;
 	m_paneBookmarks.MovePane(actual_rct, FALSE, dummy);
-
 #endif
 }
 
@@ -1163,6 +1186,8 @@ void CMainFrame::FixPanes()
 		m_paneProp.Hide();
 	if (m_paneExpl.IsFloating())
 		m_paneExpl.Hide();
+	if (m_paneCompareList.IsFloating())
+		m_paneCompareList.Hide();
 }
 
 void CMainFrame::move_dlgbar(CGenDockablePane &bar, const CRect &rct)
@@ -1439,6 +1464,8 @@ void CMainFrame::OnDockableToggle()
 		m_paneCalcHist.EnableDocking(0);
 		m_paneExpl.Float();
 		m_paneExpl.EnableDocking(0);
+		m_paneCompareList.Float();
+		m_paneCompareList.EnableDocking(0);
 	}
 	else
 	{
@@ -1449,6 +1476,7 @@ void CMainFrame::OnDockableToggle()
 		m_paneCalc.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneCalcHist.EnableDocking(CBRS_ALIGN_ANY);
 		m_paneExpl.EnableDocking(CBRS_ALIGN_ANY);
+		m_paneCompareList.EnableDocking(CBRS_ALIGN_ANY);
 	}
 }
 

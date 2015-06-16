@@ -91,9 +91,9 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)HexEditPro.exe</OutputFile>
+      <OutputFile>$(OutDir)HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>$(IntDir)HexEditPro.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -140,11 +140,11 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)HexEditPro.exe</OutputFile>
+      <OutputFile>$(OutDir)HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(IntDir)HexEditPro.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -177,6 +177,7 @@
     <ClCompile Include="CalcHist.cpp" />
     <ClCompile Include="CFile64.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
+    <ClCompile Include="CompareList.cpp" />
     <ClCompile Include="CompareView.cpp" />
     <ClCompile Include="CompressDlg.cpp" />
     <ClCompile Include="Control.cpp" />
@@ -522,6 +523,7 @@
     <ClInclude Include="CalcHist.h" />
     <ClInclude Include="CFile64.h" />
     <ClInclude Include="ChildFrm.h" />
+    <ClInclude Include="CompareList.h" />
     <ClInclude Include="CompareView.h" />
     <ClInclude Include="CompressDlg.h" />
     <ClInclude Include="Control.h" />
