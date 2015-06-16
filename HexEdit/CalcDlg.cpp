@@ -2439,13 +2439,7 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 	}
 	else if (pMsg->message == WM_CHAR)
 	{
-		if (isprint(pMsg->wParam))
-		{
-			edit_.SetFocus();
-			edit_.SetSel(edit_.GetWindowTextLength(), -1);
-			edit_.SendMessage(WM_CHAR, pMsg->wParam, 1);
-		}
-		else if (pMsg->wParam == '\r')
+		if (pMsg->wParam == '\r')
 		{
 			OnEquals();    // Carriage Return
 			return TRUE;
@@ -2468,6 +2462,13 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 		else if (pMsg->wParam == '\x10')
 		{
 			OnMemAdd();  // ^P
+			return TRUE;
+		}
+		else if (isprint(pMsg->wParam))
+		{
+			edit_.SetFocus();
+			edit_.SetSel(edit_.GetWindowTextLength(), -1);
+			edit_.SendMessage(WM_CHAR, pMsg->wParam, 1);
 			return TRUE;
 		}
 	}

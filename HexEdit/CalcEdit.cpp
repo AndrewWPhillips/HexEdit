@@ -255,7 +255,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 
 	// evaluate the expression
 	int ac;
-	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(CString(pp_->current_str_), 0 /*unused*/, ac /*unused*/, pp_->radix_, side_effects);
+	CHexExpr::value_t vv = pp_->mm_->expr_.evaluate(CString(pp_->current_str_), 0 /*unused*/, ac /*unused*/, pp_->orig_radix_, side_effects);
 
 	CALCSTATE retval = side_effects ? CALCERROR : CALCOTHER;
 	pp_->current_ = 0;                 // default to zero in case of error etc
