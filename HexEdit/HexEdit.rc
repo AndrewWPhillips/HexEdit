@@ -2298,7 +2298,6 @@ BEGIN
     CONTROL         "OneNote Style",IDC_TABCOLOUR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,52,77,10,0,HIDC_TABCOLOUR
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,55,71,201,1
     LTEXT           "Modeless dialogs",IDC_STATIC,9,67,55,8
-    CONTROL         "Allow to dock",IDC_DLG_DOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,80,76,10,0,HIDC_DLG_DOCK
     CONTROL         "Undocked dialogs move out of the way",IDC_DLG_MOVE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,80,137,10,0,HIDC_DLG_MOVE
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,36,99,220,1

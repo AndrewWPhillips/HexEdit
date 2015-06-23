@@ -1,24 +1,11 @@
 // HexEdit.cpp : Defines the class behaviors for the application. 
 //
-// Copyright (c) 2012 by Andrew W. Phillips. 
+// Copyright (c) 2015 by Andrew W. Phillips
 //
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
-//
-
-// Note: Removed Stingray stuff: SECWorkSheet, SECWorkBook, SECDialogBar, SECStatusBar
-//       SetTabIcon(), SetWorkbookMode(), m_hIcon, secall.h, secres.h, secres.rc
 
 #include "stdafx.h"
 //#include <vld.h>                // For visual leak detector
@@ -73,8 +60,6 @@
 #include "Misc.h"
 #include "Splasher.h"       // For splash window
 #include "UpdateChecker.h"  // For checking for updates
-
-#include "BigInteger.h"  // xxx
 
 // The following is not in a public header
 extern BOOL AFXAPI AfxFullPath(LPTSTR lpszPathOut, LPCTSTR lpszFileIn);
@@ -581,7 +566,7 @@ BOOL CHexEditApp::InitInstance()
 		if (!ProcessShellCommand(cmdInfo))
 				return FALSE;
 
-		pMainFrame->FixPanes();  // workaround for BCG bug
+		//pMainFrame->FixPanes();  // workaround for BCG bug
 #ifdef _DEBUG
 		// This avoids all sorts of confusion when testing/debugging
 		// due to toolbars being restored to a previous state.
@@ -2199,7 +2184,7 @@ bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = TRUE; // xxx default to on un
 	k_abbrev_ = GetProfileInt("Options", "KAbbrev", 1);
 	if (k_abbrev_ < 0) k_abbrev_ = 1;
 
-	dlg_dock_ = GetProfileInt("MainFrame", "DockableDialogs", 0) > 0 ? TRUE : FALSE;
+	dlg_dock_ = TRUE; //GetProfileInt("MainFrame", "DockableDialogs", 0) > 0 ? TRUE : FALSE;
 	dlg_move_ = GetProfileInt("MainFrame", "FloatDialogsMove", 1) ? TRUE : FALSE;
 	nice_addr_ = GetProfileInt("Options", "NiceAddresses", 1) ? TRUE : FALSE;
 	sel_len_tip_ = GetProfileInt("Options", "SelLenTip", 1) ? TRUE : FALSE;
@@ -2666,7 +2651,7 @@ void CHexEditApp::SaveOptions()
 	WriteProfileInt("Options", "SyncTreeWithExplorerFolder", sync_tree_ ? 1 : 0);
 	WriteProfileInt("Options", "CustomExplorerContextMenu", custom_explorer_menu_ ? 1 : 0);
 
-	WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
+	//WriteProfileInt("MainFrame", "DockableDialogs", dlg_dock_ ? 1 : 0);
 	WriteProfileInt("MainFrame", "FloatDialogsMove", dlg_move_ ? 1 : 0);
 	WriteProfileInt("Options", "UpperCaseHex", hex_ucase_ ? 1 : 0);
 	WriteProfileInt("Options", "KAbbrev", k_abbrev_);
@@ -3301,7 +3286,7 @@ void CHexEditApp::get_options(struct OptValues &val)
 	val.tabicons_ = tabicons_;
 	val.tabclose_ = tabclose_;
 	val.tabcolour_ = tabcolour_;
-	val.dlg_dock_ = dlg_dock_;
+	//val.dlg_dock_ = dlg_dock_;
 	val.dlg_move_ = dlg_move_;
 	val.hex_ucase_ = hex_ucase_;
 	val.k_abbrev_ = min(k_abbrev_, 3);  // may need to increase this if we add more options (eg Tera, etc)
@@ -3594,8 +3579,8 @@ void CHexEditApp::set_options(struct OptValues &val)
 		mm->m_wndProp.Update(GetView());  // may need to update file sizes
 	}
 
-	if (dlg_dock_ != val.dlg_dock_)
-		mm->OnDockableToggle();
+	//if (dlg_dock_ != val.dlg_dock_)
+	//	mm->OnDockableToggle();
 	dlg_move_ = val.dlg_move_;
 
 	if (large_cursor_ != val.large_cursor_)

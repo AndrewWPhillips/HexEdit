@@ -1,20 +1,10 @@
 // MainFrm.cpp : implementation of the CMainFrame class
 //
-// Copyright (c) 1999-2010 by Andrew W. Phillips.
+// Copyright (c) 2015 by Andrew W. Phillips
 //
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
-//
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
 
 #include "stdafx.h"
@@ -186,8 +176,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 		ON_COMMAND(ID_VIEW_PROPERTIES, OnViewProperties)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_PROPERTIES, OnUpdateViewProperties)
 
-		ON_COMMAND(ID_DIALOGS_DOCKABLE, OnDockableToggle)
-		ON_UPDATE_COMMAND_UI(ID_DIALOGS_DOCKABLE, OnUpdateDockableToggle)
+		//ON_COMMAND(ID_DIALOGS_DOCKABLE, OnDockableToggle)
+		//ON_UPDATE_COMMAND_UI(ID_DIALOGS_DOCKABLE, OnUpdateDockableToggle)
 
 		ON_COMMAND_EX(ID_VIEW_STATUS_BAR, OnPaneCheck)
 		ON_UPDATE_COMMAND_UI(ID_INDICATOR_COMPARES, OnUpdateCompares)
@@ -506,12 +496,79 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_paneCompareList.InitialUpdate(&m_wndCompareList);
 		m_paneCompareList.EnableDocking(CBRS_ALIGN_ANY);
 
-		if (theApp.GetProfileInt("MainFrame", "WindowState", -1) == -1)
+		bool bFirstRun = theApp.GetProfileInt("MainFrame", "WindowState", -1) == -1;
+
+		if (bFirstRun)
+			ShowWindow(SW_SHOWMAXIMIZED);  // If this is the first run then set positions of docking windows
+
+		// get the main window rectangle to position floating panes
+		CSize sz;
+		CRect mainRect;
+		GetWindowRect(&mainRect);   // get main window in order to set float positions
+
+		// Position Properties dialog at top left
+		sz = m_paneProp.GetDefaultSize();
+		rct.left = mainRect.left;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.top + 60;
+		rct.bottom = rct.top + sz.cy;
+		m_paneProp.FloatPane(rct);
+
+		// Float bookmarks in middle of left side
+		sz = m_paneBookmarks.GetDefaultSize();
+		rct.left = mainRect.left;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2 + 30;
+		rct.bottom = rct.top + sz.cy;
+		m_paneBookmarks.FloatPane(rct);
+
+		// Float Find dialog at bottom left
+		sz = m_paneFind.GetDefaultSize();
+		sz.cy = (sz.cy*6)/5;
+		rct.left = mainRect.left;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.bottom - sz.cy;
+		rct.bottom = rct.top + sz.cy;
+		m_paneFind.FloatPane(rct);
+
+		// Position Calculator at top right
+		sz = m_paneCalc.GetDefaultSize();
+		rct.left = mainRect.right - sz.cx;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.top + 30;
+		rct.bottom = rct.top + (sz.cy*4)/3;
+		m_paneCalc.FloatPane(rct);
+
+		// Float calc tape at bottom right
+		sz = m_paneCalcHist.GetDefaultSize();
+		rct.left = mainRect.right - sz.cx;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.bottom - sz.cy*2;
+		rct.bottom = mainRect.bottom;
+		m_paneCalcHist.FloatPane(rct);
+
+		// Float Explorer dialog at middle of bottom
+		sz = m_paneExpl.GetDefaultSize();
+		sz.cx *= 3;
+		rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.bottom - sz.cy;
+		rct.bottom = rct.top + sz.cy;
+		m_paneExpl.FloatPane(rct);
+
+		// Float compare list at middle right
+		sz = m_paneCompareList.GetDefaultSize();
+		rct.left = mainRect.right - sz.cx;
+		rct.right = rct.left + sz.cx;
+		rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2 + 30;
+		rct.bottom = rct.top + sz.cy;
+		m_paneCompareList.FloatPane(rct);
+
+		if (bFirstRun)
 		{
-			// If this is the first run then set positions of docking windows
-			ShowWindow(SW_SHOWMAXIMIZED);
+			InitDockWindows();
+			m_paneExpl.Hide();
 		}
-		InitDockWindows();
 
 		// Get extra command images (without creating a toolbar)
 #if SHADED_TOOLBARS
@@ -1054,67 +1111,11 @@ void CMainFrame::InitDockWindows()
 	// get the main window rectangle to position floating pane
 	CSize sz;
 	CRect mainRect, rct;
-	GetWindowRect(&mainRect);   // get main window in order to set float positions
 
-	// Position Properties dialog at top left
-	sz = m_paneProp.GetDefaultSize();
-	rct.left = mainRect.left;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top + 60;
-	rct.bottom = rct.top + sz.cy;
-	m_paneProp.FloatPane(rct);
-
-	// Float bookmarks in middle of left side
-	sz = m_paneBookmarks.GetDefaultSize();
-	rct.left = mainRect.left;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2 + 30;
-	rct.bottom = rct.top + sz.cy;
-	m_paneBookmarks.FloatPane(rct);
-
-	// Float Find dialog at bottom left
 	sz = m_paneFind.GetDefaultSize();
 	LONG find_width = sz.cx;
-	sz.cy = (sz.cy*6)/5;
-	rct.left = mainRect.left;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy;
-	rct.bottom = rct.top + sz.cy;
-	m_paneFind.FloatPane(rct);
-
-	// Position Calculator at top right
 	sz = m_paneCalc.GetDefaultSize();
 	LONG calc_width = sz.cx;
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top + 30;
-	rct.bottom = rct.top + (sz.cy*4)/3;
-	m_paneCalc.FloatPane(rct);
-
-	// Float calc tape at bottom right
-	sz = m_paneCalcHist.GetDefaultSize();
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy*2;
-	rct.bottom = mainRect.bottom;
-	m_paneCalcHist.FloatPane(rct);
-
-	// Float Explorer dialog at middle of bottom
-	sz = m_paneExpl.GetDefaultSize();
-	sz.cx *= 3;
-	rct.left = mainRect.left + mainRect.Size().cx/2 - sz.cx/2;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.bottom - sz.cy;
-	rct.bottom = rct.top + sz.cy;
-	m_paneExpl.FloatPane(rct);
-
-	// Float compare list at middle right
-	sz = m_paneCompareList.GetDefaultSize();
-	rct.left = mainRect.right - sz.cx;
-	rct.right = rct.left + sz.cx;
-	rct.top = mainRect.top + mainRect.Size().cy/2 - sz.cy/2 + 30;
-	rct.bottom = rct.top + sz.cy;
-	m_paneCompareList.FloatPane(rct);
 
 	// Dock Bookmarks at left side
 	rct.left = rct.top = 0;
@@ -1127,10 +1128,9 @@ void CMainFrame::InitDockWindows()
 	m_paneFind.DockToWindow(&m_paneBookmarks, CBRS_ALIGN_TOP);
 	m_paneFind.ShowPane(TRUE, FALSE, TRUE);
 
-	// Dock the Properties pane
+	// Dock the Properties pane with Find pane
 	m_paneProp.AttachToTabWnd(&m_paneFind, DM_STANDARD, TRUE);
 	//m_paneProp.DockToWindow(&m_paneFind, CBRS_ALIGN_TOP);
-	m_paneProp.ShowPane(TRUE, FALSE, TRUE);
 
 	// Dock Calc Tape at right side
 	rct.left = rct.top = 0;
@@ -1143,29 +1143,18 @@ void CMainFrame::InitDockWindows()
 	m_paneCalc.DockToWindow(&m_paneCalcHist, CBRS_ALIGN_TOP);
 	m_paneCalc.ShowPane(TRUE, FALSE, TRUE);
 
-	//m_paneExpl.ShowPane(TRUE, FALSE, TRUE);
-
-	// Dock compare list?
+	// Dock compare list and Explorer on Bookmarks
+	m_paneExpl.AttachToTabWnd(&m_paneBookmarks, DM_STANDARD, TRUE);
+	m_paneExpl.ShowPane(TRUE, FALSE, TRUE);
 	m_paneCompareList.AttachToTabWnd(&m_paneBookmarks, DM_STANDARD, TRUE);
 	m_paneCompareList.ShowPane(TRUE, FALSE, TRUE);
-	//m_paneCompareList.Hide();
-	m_paneBookmarks.ShowPane(TRUE, FALSE, TRUE); // Show bookmarks tab before compare list
 
 	m_wndCalc.Invalidate();                      // seems to need this to be redrawn properly
 	m_wndProp.Invalidate();
 	//m_wndFind.Invalidate();
 
-#if 0
-	// these don't seem to work the way we want
-	m_paneFind.GetWindowRect(&rct);
-	rct.bottom = rct.top + (rct.bottom - rct.top)/2;
-	m_paneFind.DockPane(&m_paneBookmarks, &rct, DM_RECT);
-
-	// Make the left side pane the same width as the default width of find window
-	sz = m_paneFind.GetDefaultSize();
-	actual_rct.right = actual_rct.left + sz.cx;
-	m_paneBookmarks.MovePane(actual_rct, FALSE, dummy);
-#endif
+	m_paneProp.ShowPane(TRUE, FALSE, TRUE);
+	m_paneBookmarks.ShowPane(TRUE, FALSE, TRUE);
 }
 
 void CMainFrame::FixPanes()
@@ -1445,6 +1434,7 @@ void CMainFrame::OnMacro(UINT nID)
 		theApp.play_macro_file(mac[ii]);
 }
 
+#if 0
 void CMainFrame::OnDockableToggle()
 {
 	theApp.dlg_dock_ = !theApp.dlg_dock_;
@@ -1484,6 +1474,7 @@ void CMainFrame::OnUpdateDockableToggle(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(theApp.dlg_dock_);
 }
+#endif
 
 void CMainFrame::OnWindowNew()
 {
