@@ -1,20 +1,10 @@
 // Misc.cpp : miscellaneous routines
 //
-// Copyright (c) 2012 by Andrew W. Phillips.
+// Copyright (c) 2015 by Andrew W. Phillips
 //
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
-//
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
 
 /*
@@ -158,10 +148,6 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include "misc.h"
 #include "ntapi.h"
 
-#ifdef _DEBUG // keep the old code so we can check against the new
-#include "BigInteger.h"        // Used in C# Decimal conversions
-#endif
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -232,181 +218,6 @@ void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax)
 // 10000000000000000000000000000  27   -> 10.000000000000000000000000000
 // 12345678901234567890123456789  0    -> 12345678901234567890123456789
 // 1                              -27  -> 0.000000000000000000000000001
-
-#ifdef _DEBUG
-// Old conversion routine just used to double check nothing is broken - remove later
-static bool StringToDecimal(const char *ss, void *presult)
-{
-	// View the decimal (result) as four 32 bit integers
-	BigInteger::Unit *dd = (BigInteger::Unit *)presult;
-
-	BigInteger mant;            // Mantisssa - initially zero
-	BigInteger ten(10L);        // Just used to multiply values by 10
-	int exp = 0;                // Exponent
-	bool dpseen = false;        // decimal point seen yet?
-	bool neg = false;           // minus sign seen?
-
-	// Scan the characters of the value
-	const char *pp;
-	for (pp = ss; *pp != '\0'; ++pp)
-	{
-		if (*pp == '-')
-		{
-			if (pp != ss)
-				return false;      // minus sign not at start
-			neg = true;
-		}
-		else if (isdigit(*pp))
-		{
-			BigInteger::Mul(mant, ten, mant);
-			BigInteger::Add(mant, BigInteger(long(*pp - '0')), mant);
-			if (dpseen) ++exp;  // Keep track of digits after decimal pt
-		}
-		else if (*pp == '.')
-		{
-			if (dpseen)
-				return false;    // more than one decimal point
-			dpseen = true;
-		}
-		else if (*pp == 'e' || *pp == 'E')
-		{
-			char *end;
-			exp -= strtol(pp+1, &end, 10);
-			pp = end;
-			break;
-		}
-		else
-			return false;       // unexpected character
-	}
-	if (*pp != '\0')
-		return false;           // extra characters after end
-
-	if (exp < -28 || exp > 28)
-		return false;          // exponent outside valid range
-
-	// Adjust mantissa for -ve exponent
-	if (exp < 0)
-	{
-		BigInteger tmp;
-		BigInteger::Exp(ten, BigInteger(long(-exp)), tmp);
-		BigInteger::Mul(mant, tmp, mant);
-		exp = 0;
-	}
-
-	// Check for mantissa too big.
-	BigInteger::Unit dmax[4];
-	dmax[0] = dmax[1] = dmax[2] = ~0UL;
-	dmax[3] = 0UL;
-	BigInteger max_mant(dmax, 4); 
-	if (mant > max_mant)
-		return false;
-	else if (mant == BigInteger(0L))
-		exp = 0;
-
-	// Set integer part
-	dd[2] = mant.GetUnit(2);
-	dd[1] = mant.GetUnit(1);
-	dd[0] = mant.GetUnit(0);
-
-	// Set exponent and sign
-	dd[3] = exp << 16;
-	if (neg && !mant.IsZero())
-		dd[3] |= 0x80000000;
-
-	return true;
-}
-
-static CString DecimalToString(const void *pdecimal, CString &sMantissa, CString &sExponent)
-{
-	// View the decimal as four 32 bit integers
-	const BigInteger::Unit *dd = (const BigInteger::Unit *)pdecimal;
-
-	// Get the 96 bit integer part (mantissa) adding a top unit of zero
-	BigInteger::Unit tmp[4];
-	memcpy(tmp, (const BigInteger::Unit *)pdecimal, sizeof(tmp));
-	tmp[3] = 0;             // need this so we always get an unsigned mantissa
-
-	// Convert the mantissa to a string
-	BigInteger big(tmp, 4);
-	big.ToString(sMantissa.GetBuffer(64), 10);
-	sMantissa.ReleaseBuffer();
-
-	// Get the exponent
-	int exp = (dd[3] >> 16) & 0xFF;
-	sExponent.Format("%d", - exp);
-
-	// Check that unused bits are zero and that exponent is within range
-	if ((dd[3] & 0x0000FFFF) != 0 || exp > 28)
-		return CString("Invalid Decimal");
-
-	// Create a string in which we insert a decimal point
-	CString ss = sMantissa;
-	int len = ss.GetLength();
-
-	if (exp >= len)
-	{
-		// Add leading zeroes
-		ss = CString('0', exp - len + 1) + ss;
-		len = exp + 1;
-	}
-
-	// if any bit of the very last byte is on then assume the value is -ve
-	if ((dd[3] & 0xFF000000) != 0)
-	{
-		// Add -ve sign to mantissa and return value with sign and decimal point
-		sMantissa.Insert(0, '-');
-		return "-" + ss.Left(len - exp) + (exp > 0 ? "." + ss.Right(exp) : "");
-	}
-	else
-		return ss.Left(len - exp) + (exp > 0 ? "." + ss.Right(exp) : "");
-}
-
-// Check converting to then from decimal gives expected results
-static void TestToFromDecimal(const char * in, const char * out, const char * mant, const char * exp)
-{
-	unsigned char dec[16];  // the Decimal value (128 bits)
-	unsigned char dec2[16];
-
-	ASSERT(String2Decimal(in, dec));
-	ASSERT(StringToDecimal(in, dec2));
-	ASSERT(memcmp(dec, dec2, sizeof(dec)) == 0); // Ensure new func gives same result
-
-	CString ss, mm, ee;
-	ss = Decimal2String(dec, mm, ee);
-	ASSERT(strcmp(out, ss) == 0 && strcmp(mant, mm) == 0 && strcmp(exp, ee) == 0);
-}
-
-// Test Decimal conversion routines
-void TestDecimalRoutines()
-{
-	TestToFromDecimal("0",    "0",   "0", "0");
-	TestToFromDecimal("0.0",  "0",   "0", "0");
-	TestToFromDecimal("-0",   "0",   "0", "0");
-	TestToFromDecimal("1",    "1",   "1", "0");
-	TestToFromDecimal("1.0","1.0",  "10","-1");
-	TestToFromDecimal("-1.", "-1",  "-1", "0");
-	TestToFromDecimal("-1.0", "-1.0",  "-10", "-1");
-	TestToFromDecimal("1.2345678901234567890123456789", "1.2345678901234567890123456789", "12345678901234567890123456789", "-28");
-
-	TestToFromDecimal("79228162514264337593543950335", "79228162514264337593543950335", "79228162514264337593543950335", "0");
-	TestToFromDecimal("-79228162514264337593543950335", "-79228162514264337593543950335", "-79228162514264337593543950335", "0");
-	TestToFromDecimal("7.9228162514264337593543950335", "7.9228162514264337593543950335", "79228162514264337593543950335", "-28");
-	TestToFromDecimal("-7.9228162514264337593543950335", "-7.9228162514264337593543950335", "-79228162514264337593543950335", "-28");
-	TestToFromDecimal("0.0000000000000000000000000001", "0.0000000000000000000000000001", "1", "-28");
-	TestToFromDecimal("-0.0000000000000000000000000001", "-0.0000000000000000000000000001", "-1", "-28");
-
-	unsigned char dec[16];  // Decimal value (128 bits)
-	ASSERT(String2Decimal("79228162514264337593543950336", dec) == false);
-	ASSERT(String2Decimal("100000000000000000000000000000", dec) == false);
-	ASSERT(String2Decimal("0.00000000000000000000000000009", dec) == false);
-	ASSERT(String2Decimal("0.0.1", dec) == false);
-	ASSERT(String2Decimal("1-", dec) == false);
-	ASSERT(String2Decimal("--1", dec) == false);
-	ASSERT(String2Decimal("1A", dec) == false);
-	ASSERT(String2Decimal("A", dec) == false);
-}
-
-#endif
 
 bool String2Decimal(const char *ss, void *presult)
 {

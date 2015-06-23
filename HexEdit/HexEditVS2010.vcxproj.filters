@@ -49,9 +49,6 @@
     <ClCompile Include="BGstats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BigInteger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Bin2Src.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -822,9 +819,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BCGMisc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BigInteger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bin2Src.h">

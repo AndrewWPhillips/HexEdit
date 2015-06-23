@@ -166,7 +166,6 @@
     <ClCompile Include="BGPreview.cpp" />
     <ClCompile Include="BGSearch.cpp" />
     <ClCompile Include="BGstats.cpp" />
-    <ClCompile Include="BigInteger.cpp" />
     <ClCompile Include="Bin2Src.cpp" />
     <ClCompile Include="Bookmark.cpp" />
     <ClCompile Include="BookmarkDlg.cpp" />
@@ -512,7 +511,6 @@
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="AvoidableDialog.h" />
     <ClInclude Include="BCGMisc.h" />
-    <ClInclude Include="BigInteger.h" />
     <ClInclude Include="Bin2Src.h" />
     <ClInclude Include="Bookmark.h" />
     <ClInclude Include="BookmarkDlg.h" />
