@@ -1,3 +1,14 @@
+// CFile64.cpp - Implements CFile64 nd CFileNC classes
+//
+// Copyright (c) 2015 by Andrew W. Phillips based on original class by Sam Blackburn
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
+// CFile64 is similar to MFC's CFile class but supports file sizes more than 32 bits
+// CFileNC is a non-cached variation suitable for working with raw disk files
+
 #include "stdafx.h"
 #include "CFile64.h"
 #include "SpecialList.h"
@@ -6,15 +17,6 @@
 #include "ntapi.h"      // Our header for NT native API funcs/structures
 
 #pragma hdrstop
-
-/*
-** Author: Samuel R. Blackburn
-**
-** $Workfile: CFile64.cpp $
-** $Revision: 1 $
-** $Modtime: 1/17/00 9:02a $
-** $Reuse Tracing Code: 1001 $
-*/
 
 #if defined( _DEBUG ) && ! defined( WFC_STL )
 #undef THIS_FILE

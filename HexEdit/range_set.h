@@ -1,7 +1,7 @@
 #ifndef RANGE_SET_H
 #define RANGE_SET_H
 
-// Copyright 1999-2012 (c) Andrew W. Phillips
+// Copyright 1999-2015 (c) Andrew W. Phillips
 // You can freely use this software for any purpose
 // as long as you preserve this copyright notice.
 

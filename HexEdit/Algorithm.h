@@ -1,3 +1,12 @@
+// Algorithm.h - CAlgorithm accepts and encryption algorithm
+//
+// Copyright (c) 2015 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
+
 #if !defined(AFX_ALGORITHM_H__BB3DB185_9861_4A0C_A2CC_0E93997C9A7B__INCLUDED_)
 #define AFX_ALGORITHM_H__BB3DB185_9861_4A0C_A2CC_0E93997C9A7B__INCLUDED_
 

@@ -5,27 +5,6 @@
 #include <winioctl.h>
 #include <map>
 
-/*
-** Author: Samuel R. Blackburn
-**
-** $Workfile: CFile64.hpp $
-** $Revision: 2 $
-** $Modtime: 1/26/00 6:03p $
-** $Reuse Tracing Code: 1001 $
-*/
-
-/*
-** NOTICE NOTICE NOTICE
-**
-** Many of the things you will see in this class go against the coding
-** standards as well as good coding practices. The reason for this is we
-** are trying to make a CFile drop-in replacement. This means we have to
-** minimize the damage a replacement will make. So, we have to duplicate
-** the bad habits of Microsoft. Where possible, we will do the right thing.
-** One obvious break point will be using LONGLONG instead of DWORD for
-** things like file position.
-*/
-
 #if ! defined( FILE_ATTRIBUTE_ENCRYPTED )
 #define FILE_ATTRIBUTE_ENCRYPTED (0x00000040)
 #endif

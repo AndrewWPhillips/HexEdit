@@ -1,28 +1,16 @@
 // DFFDData.h
 //
-// Copyright (c) 2004-2010 by Andrew W. Phillips.
+// Copyright (c) 2015 by Andrew W. Phillips
 //
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
-//
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
 
 #if !defined(AFX_DFFDDATA_H__34A0C1CD_8F7E_4BBB_A2A8_5C19F91CDE13__INCLUDED_)
 #define AFX_DFFDDATA_H__34A0C1CD_8F7E_4BBB_A2A8_5C19F91CDE13__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 
 #include "XMLTree.h"
 

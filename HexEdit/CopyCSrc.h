@@ -1,11 +1,12 @@
+// CopyCSrc.h : header file
+//
+
 #if !defined(AFX_COPYCSRC_H__2F30ECE7_0758_4E2F_AAFF_A76FB85F3C4D__INCLUDED_)
 #define AFX_COPYCSRC_H__2F30ECE7_0758_4E2F_AAFF_A76FB85F3C4D__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-// CopyCSrc.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CCopyCSrc dialog

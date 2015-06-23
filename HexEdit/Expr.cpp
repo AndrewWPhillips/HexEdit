@@ -1,29 +1,17 @@
 // expr.cpp : Handles C-like expression evaluation
 //
+// Copyright (c) 2015 by Andrew W. Phillips
 //
-// Copyright (c) 2002-2012 by Andrew W. Phillips.
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
-//
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
-//
-
-// Expressions support 4 data types: int (64 bit), real (double = 64 bit), boolean, date.
+// Expressions support 5 data types: int (64 bit), real (double = 64 bit), boolean, date, string (Unicode).
 // Type checking is stricter than C/C++.  Variables (including
 // multi-dimensional arrays) are supported through a map.  Arrays are allocated on
 // an element by element basis and so may be slow.  All integer arithmetic is done
 // in 64-bit so this also may be slow.  Integer (including characters like 'a'),
-// real, and boolean (TRUE/FALSE) constants are handled.
+// real, boolean (TRUE/FALSE), and string constants are handled.
 //
 // The precedence of operators is:
 // , (comma operator)

@@ -1,5 +1,10 @@
 // DirDialog.cpp - implements class CDirDialog
-
+// Copyright (c) 2015 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
 // The CDirDialog class implements a directory selection dialog by deriving from the file
 // selection dialog class (CFileDialog).  This dialog has the advantages of the standard
 // file open dialog (resizeable, ability to create/delete directories etc) but is

@@ -1,4 +1,10 @@
-// HexPrintDialog.cpp : implementation file
+// HexPrintDialog.cpp : implements a variation of CPrintDialog
+//
+// Copyright (c) 2015 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
 
 #include "stdafx.h"

@@ -1,20 +1,10 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 1998-2012 by Andrew W. Phillips.
+// Copyright (c) 2015 by Andrew W. Phillips
 //
-// No restrictions are placed on the noncommercial use of this code,
-// as long as this text (from the above copyright notice to the
-// disclaimer below) is preserved.
-//
-// This code may be redistributed as long as it remains unmodified
-// and is not sold for profit without the author's written consent.
-//
-// This code, or any part of it, may not be used in any software that
-// is sold for profit, without the author's written consent.
-//
-// DISCLAIMER: This file is provided "as is" with no expressed or
-// implied warranty. The author accepts no liability for any damage
-// or loss of business that this product may cause.
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
 
 #if !defined(HEXEDIT_H__INCLUDED_)
@@ -40,7 +30,7 @@
 //#define INTERNAL_VERSION 10             // version 3.4
 //#define INTERNAL_VERSION 11             // version 3.5
 //#define INTERNAL_VERSION 12             // version 4.0 and 3.6
-#define INTERNAL_VERSION 13             // version 4.1
+#define INTERNAL_VERSION 13             // version 4.5
 
 // may need to adjust this depending on how many versions there were in last 2 years
 #define UPGRADE_DIFF 4   // diff between current version and version before which an upgrade is invalid

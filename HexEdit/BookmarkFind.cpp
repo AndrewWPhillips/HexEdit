@@ -1,4 +1,10 @@
-// BookmarkFind.cpp : implementation file
+// BookmarkFind.cpp : implements CBookmarkFind dialog
+//
+// Copyright (c) 2015 by Andrew W. Phillips.
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
 //
 // Asks if user wants to overwrite or append to set of bookmarks with the same
 // prefix when using the bookmark all option of the Find dialog.
