@@ -2414,19 +2414,57 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 		ttc_.RelayEvent(pMsg);
 	}
 
-	if (pMsg->hwnd == edit_.m_hWnd)
+	if (pMsg->message == WM_KEYDOWN)
 	{
-		// If we are in the edit control then avoid all the key processing below
-		return CDialog::PreTranslateMessage(pMsg);
+		if (pMsg->wParam > VK_F1 && pMsg->wParam <= VK_F12)
+		{
+			switch(pMsg->wParam)
+			{
+			case VK_F5:
+				OnHex();
+				break;
+			case VK_F6:
+				OnDecimal();
+				break;
+			case VK_F7:
+				OnOctal();
+				break;
+			case VK_F8:
+				OnBinary();
+				break;
+			case VK_F9:
+				On64bit();
+				break;
+// F10 is a system key (see WM_SYSKEYDOWN below)
+//            case VK_F10:
+//                On32bit();
+//                break;
+			case VK_F11:
+				On16bit();
+				break;
+			case VK_F12:
+				On8bit();
+				break;
+		   }
+		   return TRUE;
+		}
 	}
-
-	if (pMsg->message == WM_SYSKEYDOWN && pMsg->wParam == VK_F10)
+	else if (pMsg->message == WM_SYSKEYDOWN && pMsg->wParam == VK_F10)
 	{
 		// Handle F10 press
 		On32bit();
 		return TRUE;
 	}
-	else if (pMsg->message == WM_CHAR)
+
+	// Check if we are in an edit control to avoid confusing things with WM_CHAR handling
+	if (pMsg->hwnd == edit_.m_hWnd ||
+		pMsg->hwnd == GetDlgItem(IDC_BITS)->m_hWnd ||
+		pMsg->hwnd == GetDlgItem(IDC_RADIX)->m_hWnd)
+	{
+		return CDialog::PreTranslateMessage(pMsg);  // Just do base class handling
+	}
+
+	if (pMsg->message == WM_CHAR)
 	{
 		if (pMsg->wParam == '\r')
 		{
@@ -2455,45 +2493,12 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 		}
 		else if (isprint(pMsg->wParam))
 		{
+			// Typing a digit (or any printable char) anywhere in the calculator adds the char to
+			// the calculator edit control and sets focus to allow more typing/editing in the control.
 			edit_.SetFocus();
 			edit_.SetSel(edit_.GetWindowTextLength(), -1);
 			edit_.SendMessage(WM_CHAR, pMsg->wParam, 1);
 			return TRUE;
-		}
-	}
-	else if (pMsg->message == WM_KEYDOWN)
-	{
-		if (pMsg->wParam > VK_F1 && pMsg->wParam <= VK_F12)
-		{
-			switch(pMsg->wParam)
-			{
-			case VK_F5:
-				OnHex();
-				break;
-			case VK_F6:
-				OnDecimal();
-				break;
-			case VK_F7:
-				OnOctal();
-				break;
-			case VK_F8:
-				OnBinary();
-				break;
-			case VK_F9:
-				On64bit();
-				break;
-// F10 is a system key (see WM_SYSKEYDOWN above)
-//            case VK_F10:
-//                On32bit();
-//                break;
-			case VK_F11:
-				On16bit();
-				break;
-			case VK_F12:
-				On8bit();
-				break;
-		   }
-		   return TRUE;
 		}
 	}
 
