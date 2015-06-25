@@ -408,10 +408,12 @@
 #define IDD_OPT_FOLDERS                 441
 #define IDI_INFO                        442
 #define IDI_CROSS                       443
+#define IDD_COMPARE_LIST_PARENT         444
 #define IDR_CONTEXT_OFFSET_HANDLE       445
 #define IDR_CONTEXT_GROUP_BY_HANDLE     446
 #define IDR_CONTEXT_ROWSIZE_HANDLE      447
 #define IDR_CONTEXT_RULER               448
+#define IDD_CALC_HIST_PARENT            449
 #define ID_MACRO_FIRST                  450
 #define ID_MACRO_LAST                   470
 #define IDC_INFO                        500
@@ -438,10 +440,8 @@
 #define IDR_CONTEXT_PREVW               522
 #define IDR_CONTEXT_COMPARE             523
 #define IDD_PROP_BITMAP                 525
-#define IDD_CALC_HIST_PARENT            526
-#define IDD_CALC_HIST                   527
-#define IDD_COMPARE_LIST_PARENT          528
-#define IDD_COMPARE_LIST                529
+#define IDD_CALC_HIST                   526
+#define IDD_COMPARE_LIST                527
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1301,7 +1301,7 @@
 #define IDC_BMP_DESC_DISK               1702
 #define IDC_CALC_HIST_CLEAR             1703
 #define IDC_CALC_HIST_TEXT              1704
-#define IDC_DIFFS                       1707
+#define IDC_GRID_DIFFS                  1710
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1865,7 +1865,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
 #define _APS_NEXT_COMMAND_VALUE         39230
-#define _APS_NEXT_CONTROL_VALUE         1708
+#define _APS_NEXT_CONTROL_VALUE         1711
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
