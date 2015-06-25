@@ -25,6 +25,7 @@ class CBookmarkDlg : public CDialog
 {
 public:
 	// Number the different types of columns we can display
+	// Note: these columns must match the heading strings in InitColumnHeadings
 	enum
 	{
 		COL_NAME,                           // Name of the bookmark

@@ -67,12 +67,11 @@
 #define HIDC_CHAR_HEX                   0x8132042a    // IDD_PROP_CHAR [English (United States)]
 #define HIDC_CHAR_OCTAL                 0x8132042c    // IDD_PROP_CHAR [English (United States)]
 #define HIDC_CLEAR                      0x80750411    // IDD_CALC
-#define HIDC_CLEAR_BOOKMARKS            0x811204a8    // IDD_CLEAR_HIST
+#define HIDC_CLEAR_BOOKMARKS            0x811204a8    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_CLEAR_ENTRY                0x80750410    // IDD_CALC
 #define HIDC_CLEAR_HIST                 0x819b041b    // IDD_OPT_HISTORY [English (United States)]
-#define HIDC_CLEAR_ON_EXIT              0x811204a9    // IDD_CLEAR_HIST
-#define HIDC_CLEAR_RECENT_FILE          0x811204a7    // IDD_CLEAR_HIST
-#define HIDC_CLEAR_SEARCH               0x811204a6    // IDD_CLEAR_HIST
+#define HIDC_CLEAR_ON_EXIT              0x811204a9    // IDD_OPT_HISTORY [English (United States)]
+#define HIDC_CLEAR_RECENT_FILE          0x811204a7    // IDD_OPT_HISTORY [English (United States)]
 #define HIDC_CLIPBOARD_AREA             0x81390661    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_CLIPBOARD_AUTO             0x81390660    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_CLIPBOARD_BINARY_CHAR      0x8139065e    // IDD_OPT_WORKEDIT [English (United States)]
@@ -351,7 +350,6 @@
 #define HIDC_INFO_KEYWORDS              0x81270603    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INFO_VIEW_TIME             0x81270606    // IDD_PROP_INFO [English (United States)]
 #define HIDC_INSERT                     0x813604b2    // IDD_OPT_WINEDIT [English (United States)]
-#define HIDC_INSTALL_CODE               0x80e70437    // IDD_REGISTER
 #define HIDC_INTELLIGENT_UNDO           0x81390416    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_INT_ABBREV                 0x819a0623    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_INVALID_CHAR               0x80eb065c    // IDD_OPT_WORKDISPLAY [English (United States)]
@@ -361,7 +359,6 @@
 #define HIDC_LOADMACRO                  0x80a90483    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_LSL                        0x80750431    // IDD_CALC
 #define HIDC_LSR                        0x80750432    // IDD_CALC
-#define HIDC_MACHINE                    0x80e7043e    // IDD_REGISTER
 #define HIDC_MACRODIR                   0x80a90486    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_MACRO_COMMENT              0x80ea0484    // IDD_MACROSAVE
 #define HIDC_MACRO_NAME                 0x80ea0483    // IDD_MACROSAVE
@@ -452,10 +449,6 @@
 #define HIDC_REFRESH_PLAYS              0x80a90440    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_REFRESH_PROPS              0x80a9045b    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_REFRESH_SECS               0x80a9043f    // IDD_OPT_MACRO [English (United States)]
-#define HIDC_REGISTER                   0x80e5047c    // IDD_EMAIL
-#define HIDC_REG_CODE                   0x80e70486    // IDD_REGISTER
-#define HIDC_REG_EMAIL                  0x80ec0485    // IDD_STARTUP
-#define HIDC_REG_FORM                   0x80ec048c    // IDD_STARTUP
 #define HIDC_RELATIVE                   0x809605f8    // IDD_FIND_HEX [English (United States)]
 #define HIDC_REMOVE                     0x80e6044e    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_REMOVE_FILES               0x810e04c8    // IDD_RECENT_FILES
@@ -555,8 +548,6 @@
 #define HIDC_UNDO_MERGE                 0x813904c6    // IDD_OPT_WORKEDIT [English (United States)]
 #define HIDC_UP                         0x80e60479    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_UPDATE                     0x809e0622    // IDD_OPT_SYSTEM [English (United States)]
-#define HIDC_USER                       0x80e7043f    // IDD_REGISTER
-#define HIDC_USER_NAME                  0x80e70488    // IDD_REGISTER
 #define HIDC_VALIDATE                   0x810e044f    // IDD_RECENT_FILES
 #define HIDC_VALUES_CUSTOM              0x813005a8    // IDD_TPARSE
 #define HIDC_VALUES_SAVE                0x813005b3    // IDD_TPARSE

@@ -687,7 +687,7 @@ public:
 	// Explorer window options
 	wipe_t wipe_type_;                  // option for WipeFile saying what wipe pattern(s) to write
 	BOOL show_not_indexed_;             // Show not indexed attr as "N" else show "I" when indexed
-	BOOL sync_tree_;                    // When folder of list control is chnaged the tree control is updated to show it
+	BOOL sync_tree_;                    // When folder of list control is changed the tree control is updated to show it
 	BOOL custom_explorer_menu_;         // Show custom context menu in Explorer window
 
 	// History list options

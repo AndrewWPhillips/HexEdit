@@ -48,6 +48,20 @@ enum mod_type
 
 enum view_t { none, splitter, tabbed };
 
+// Hint objects (passed to views via OnUpdate)
+// CHexHint - file has been modified
+// CUndoHint - undo all view (not file) changes
+// CRemoveHint - discard undo info back to last file modification
+// CBGSearchHint - bg search data has changed
+// CBGAerialHint - aerial view bitmap has changed
+// CBGPreviewHint - preview bitmap has changed
+// CDFFDHint - template has changed
+// CSaveStateHint - tell tree view to save its state
+// CRestoreStateHint - tell tree view to try to restore its state
+// CCompHint - file compare data has changed
+// CTrackHint - change tracking info has changed
+// CBookmarkHint - a bookmark has been set/cleared
+
 // This object is passed to view OnUpdate() functions as the (3rd) hint
 // parameter.  It is used by the view to tell what parts of its display
 // (if any) need to be updated.
@@ -599,16 +613,10 @@ private:
 	int base_type_;  // Determines what we compare against 0=orig file, 1=mem blk, 2=temp file
 
 	// There are 3 types of changes we track: insertions, deletions and replacements.
-	// All the chnages of a certain type are stored in 2 vectors (address and length)
+	// All the changes of a certain type are stored in 2 vectors (address and length)
 	std::vector<FILE_ADDRESS> replace_addr_, replace_len_;
 	std::vector<FILE_ADDRESS> insert_addr_, insert_len_;
 	std::vector<FILE_ADDRESS> delete_addr_, delete_len_;
-
-	//// The following pairs store all the replacement, insertion and deletion points
-	//// for change tracking.  The first of the pair is the address, the 2nd is the length.
-	//std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > replace_pair_;
-	//std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > insert_pair_;
-	//std::vector<pair<FILE_ADDRESS, FILE_ADDRESS> > delete_pair_;
 
 	void load_icon(LPCTSTR lpszPathName); // Load icon based on file ext. into hicon_
 	void show_icon();           // Show icon in child frame windows of views
