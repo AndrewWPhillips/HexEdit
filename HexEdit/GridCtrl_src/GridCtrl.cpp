@@ -5168,10 +5168,16 @@ void CGridCtrl::ExpandColsNice(BOOL bExpandFixed /*=TRUE*/, UINT nAutoSizeStyle 
     int total_width = 0;
     for (col = 0; col < GetColumnCount(); col++)
     {
+		if (m_arColWidths[col] == 0)   // skip hidden columns
+			continue;
+
+		int new_width;
         if (col == last_col && fixed_width + var_width < rect.Width())
-            m_arColWidths[col] = rect.Width() - total_width;  // if expanding set last adjustable column to match window width exactly
+            new_width = rect.Width() - total_width;  // if expanding set last adjustable column to match window width exactly
         else if ((col >= GetFixedColumnCount() || bExpandFixed) && m_arColWidths[col] > 0)
-            m_arColWidths[col] = int(min_size[col] * factor);
+            new_width = int(min_size[col] * factor);
+		if (OnResizeColumn(col, new_width))
+			m_arColWidths[col] = new_width;
 
         total_width += m_arColWidths[col];                    // keep track of width of all 
     }

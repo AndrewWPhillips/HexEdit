@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // Grid column headings (array indices need to match the column enum)
-static char *headingLong[] =
+static char *headingLong[CCompareListDlg::COL_LAST+1] =
 {
 	"Original Type",
 	"Orig Addr hex",
@@ -36,7 +36,7 @@ static char *headingLong[] =
 	NULL
 };
 
-static char *heading[] =
+static char *heading[CCompareListDlg::COL_LAST+1] =
 {
 	"Orig Type",
 	"Addr . hex",
@@ -49,7 +49,7 @@ static char *heading[] =
 	NULL
 };
 
-static char *headingShort[] =
+static char *headingShort[CCompareListDlg::COL_LAST+1] =
 {
 	"Type",
 	"Addr",
@@ -62,7 +62,7 @@ static char *headingShort[] =
 	NULL
 };
 
-static char *headingTiny[] =
+static char *headingTiny[CCompareListDlg::COL_LAST+1] =
 {
 	"T",
 	"A",
@@ -83,44 +83,43 @@ BEGIN_MESSAGE_MAP(CGridCtrlComp, CGridCtrl)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CGridCtrlComp message handlers
-void CGridCtrlComp::OnLButtonUp(UINT nFlags, CPoint point)
+// CGridCtrlComp methods
+
+BOOL CGridCtrlComp::OnResizeColumn(int col, UINT size)
 {
-	// When columns resized allow for Column headings to be changed to fit
-	int col_resize = -1;
-	if (m_MouseMode == MOUSE_SIZING_COL)
-		col_resize = m_LeftClickDownCell.col;
-
-	CGridCtrl::OnLButtonUp(nFlags, point);
-
-	if (col_resize != -1)
-		FixHeading(col_resize);
+	if (size > 0)
+		FixHeading(col, size);
+	return TRUE;
 }
 
-void CGridCtrlComp::FixHeading(int col)
+void CGridCtrlComp::FixHeading(int col, UINT size)
 {
-	int col_id = GetItemData(0, col);
-	int col_width = GetColumnWidth(col);
+	if (col < 0 || col >= CCompareListDlg::COL_LAST)
+	{
+		assert(0);
+		return;
+	}
 
-	if (col_width > 96)
+	if (size > 96)
 	{
-		SetItemText(0, col, headingLong[col_id]);
+		SetItemText(0, col, headingLong[col]);
 	}
-	else if (col_width > 70)
+	else if (size > 70)
 	{
-		SetItemText(0, col, heading[col_id]);
+		SetItemText(0, col, heading[col]);
 	}
-	else if (col_width > 33)
+	else if (size > 33)
 	{
-		SetItemText(0, col, headingShort[col_id]);
+		SetItemText(0, col, headingShort[col]);
 	}
 	else
 	{
-		SetItemText(0, col, headingTiny[col_id]);
+		SetItemText(0, col, headingTiny[col]);
 	}
 }
 
-////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// CCompareListDlg
 
 static DWORD id_pairs[] = { 
 	0,0
@@ -131,6 +130,9 @@ CCompareListDlg::CCompareListDlg() : CDialog()
 	help_hwnd_ = (HWND)0;
 	m_first = true;
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// CCompareListDlg methods
 
 BOOL CCompareListDlg::Create(CWnd *pParentWnd)
 {
@@ -157,7 +159,6 @@ BOOL CCompareListDlg::Create(CWnd *pParentWnd)
 	grid_.SetSingleRowSelection(TRUE);
 	grid_.SetFixedRowCount(1);
 
-	InitColumnHeadings();
 	grid_.SetColumnResize();
 
 	grid_.EnableRowHide(FALSE);
@@ -212,6 +213,7 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	if (m_first)
 	{
 		m_first = false;
+		InitColumnHeadings();
 	}
 
 	// Display context help for ctrl set up in OnHelpInfo
@@ -242,7 +244,6 @@ void CCompareListDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
 }
-
 
 void CCompareListDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
@@ -290,7 +291,7 @@ void CCompareListDlg::InitColumnHeadings()
 
 	CString strWidths = theApp.GetProfileString("File-Settings", 
 												"CompareListsColumns",
-												"20,20,,20,,20,,20");
+												"20,20,,20,,,,");
 
 	int curr_col = grid_.GetFixedColumnCount();
 	bool all_hidden = true;

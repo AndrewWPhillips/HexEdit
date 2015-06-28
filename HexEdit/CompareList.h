@@ -18,10 +18,11 @@ class CGridCtrlComp : public CGridCtrl
 	DECLARE_DYNCREATE(CGridCtrlComp)
 
 public:
-	void FixHeading(int col);
+	void FixHeading(int col, UINT size);
 
 protected:
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	virtual BOOL OnResizeColumn(int col, UINT size);
+	//afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -32,6 +33,7 @@ private:
 
 class CCompareListDlg : public CDialog
 {
+public:
 	// Number the different columns we can display
 	// Note these columns must match the heading strings in InitColumnHeadings
 	enum
