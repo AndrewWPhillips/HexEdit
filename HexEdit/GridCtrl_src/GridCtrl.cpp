@@ -4856,8 +4856,11 @@ BOOL CGridCtrl::SetColumnWidth(int nCol, int width)
     if (nCol < 0 || nCol >= m_nCols || width < 0)
         return FALSE;
 
-    m_arColWidths[nCol] = width;
-    m_col_size[nCol] = width;
+	if (OnResizeColumn(nCol, width))
+	{
+		m_arColWidths[nCol] = width;
+		m_col_size[nCol] = width;
+	}
     ResetScrollBars();
 
     return TRUE;
@@ -4929,7 +4932,8 @@ BOOL CGridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/,
     if (GetVirtualMode())
         SendCacheHintToParent(CCellRange(-1,-1,-1,-1));
 
-    m_arColWidths[nCol] = nWidth;
+	if (OnResizeColumn(nCol, nWidth))
+		m_arColWidths[nCol] = nWidth;
     m_col_size[nCol] = -1;                     // Go back into fit to cell width mode
 
     ReleaseDC(pDC);
@@ -5056,7 +5060,7 @@ void CGridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
                         GetTextRect(nRow, nCol, &rect_text);
                         size.cx += __min(rect_cell.Height(), rect_text.Height());
                     }
-                    if (size.cx >(int) m_arColWidths[nCol])
+                    if (size.cx >(int) m_arColWidths[nCol] && OnResizeColumn(nCol, size.cx))
                         m_arColWidths[nCol] = size.cx;
                     if (size.cy >(int) m_arRowHeights[nRow])
                         m_arRowHeights[nRow] = size.cy;

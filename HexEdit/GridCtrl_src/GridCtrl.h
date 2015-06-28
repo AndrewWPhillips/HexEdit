@@ -784,6 +784,7 @@ protected:
     void SelectRows(CCellID currentCell, BOOL bForceRedraw=FALSE, BOOL bSelectCells=TRUE);
     void SelectCells(CCellID currentCell, BOOL bForceRedraw=FALSE, BOOL bSelectCells=TRUE);
     void OnSelecting(const CCellID& currentCell);
+	virtual BOOL OnResizeColumn(int col, UINT size) { return TRUE; }
 
     // Generated message map functions
     //{{AFX_MSG(CGridCtrl)
