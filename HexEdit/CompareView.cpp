@@ -674,13 +674,13 @@ void CCompareView::OnDraw(CDC* pDC)
 		} // end ruler drawing
 	}
 
+#ifndef TEST_CLIPPING
 	// Mask out the ruler so we don't get top of topmost line drawn into it.
 	// Doing it this way allows the address of the top line to be drawn
 	// higher (ie into ruler area) without being clipped.
 	// Note that we currently only use bdr_top_ (for the ruler) but if
 	// other borders are used similarly we would need to clip them too.
 	// Note: This needs to be done after drawing the ruler.
-#ifndef TEST_CLIPPING
 	if (!pDC->IsPrinting())
 	{
 		CRect rct;

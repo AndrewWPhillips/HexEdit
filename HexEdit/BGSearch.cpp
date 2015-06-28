@@ -810,7 +810,7 @@ UINT CHexEditDoc::RunSearchThread()
 				{
 					find_total_ = 0;
 					search_fin_ = true;
-					TRACE1("+++ BGSearch: finished search of %p\n", this);
+					TRACE("+++ BGSearch: finished search of %p\n", this);
 					break;
 				}
 				start = to_search_.front().first;
@@ -818,6 +818,7 @@ UINT CHexEditDoc::RunSearchThread()
 				end = to_search_.front().second;
 				if (end < 0) end = file_len;
 			}
+			//TRACE("+++ BGSearch: search %d to %d\n", int(start), int(end));
 
 			// We need to extend the search a little for wholeword searches since even though the pattern match
 			// does not change the fact that a match is discarded due to the "alphabeticity" of characters at
@@ -852,12 +853,12 @@ UINT CHexEditDoc::RunSearchThread()
 					// Check for any file insertions/deletions
 					while (!to_adjust_.empty())
 					{
-						TRACE("+++ Adjusting already found\n");
+						//TRACE("+++ Adjusting already found\n");
 						FixFound(to_adjust_.front().start_, 
 								 to_adjust_.front().end_,
 								 to_adjust_.front().address_,
 								 to_adjust_.front().adjust_);
-						TRACE("+++ Finished adjusting\n");
+						//TRACE("+++ Finished adjusting\n");
 
 						if (start >= to_adjust_.front().address_)
 						{
@@ -884,6 +885,7 @@ UINT CHexEditDoc::RunSearchThread()
 					// Get a buffer full (plus an extra char for wholeword test at end of buffer)
 					got = GetData(search_buf_, size_t(min(FILE_ADDRESS(buf_len), end - addr_buf)) + 1, addr_buf, 2);
 					ASSERT(got == min(buf_len, end - addr_buf) || got == min(buf_len, end - addr_buf) + 1);
+					//TRACE1("+++ BGSearch: got %d\n", int(got));
 
 					if (wholeword)
 					{
@@ -951,6 +953,7 @@ UINT CHexEditDoc::RunSearchThread()
 						goto stop_search;
 
 					found_.insert(addr_buf + (pp - search_buf_));
+					//TRACE("+++ added %d (count is now %d)\n", int(addr_buf + (pp - search_buf_)), int(found_.size()));
 
 					if (tt == 1)
 						alpha_before = isalnum(*pp) != 0;

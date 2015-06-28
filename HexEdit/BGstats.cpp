@@ -354,14 +354,14 @@ UINT CHexEditDoc::RunStatsThread()
 			CSingleLock sl(&docdata_, TRUE);
 			stats_state_ = WAITING;
 		}
-		TRACE("+++ BGstats: waiting [lock=%d recurse=%d]\n", docdata_.m_sect.LockCount, docdata_.m_sect.RecursionCount);
+		//TRACE("+++ BGstats: waiting [lock=%d recurse=%d]\n", docdata_.m_sect.LockCount, docdata_.m_sect.RecursionCount);
 		DWORD wait_status = ::WaitForSingleObject(HANDLE(start_stats_event_), INFINITE);
 		docdata_.Lock();
 		stats_state_ = SCANNING;
 		docdata_.Unlock();
 		start_stats_event_.ResetEvent();      // Force ourselves to wait
 		ASSERT(wait_status == WAIT_OBJECT_0);
-		TRACE("+++ BGstats: got event for %p\n", this);
+		//TRACE("+++ BGstats: got event for %p\n", this);
 
 		if (StatsProcessStop())
 			continue;
@@ -505,11 +505,11 @@ bool CHexEditDoc::StatsProcessStop()
 	switch (stats_command_)
 	{
 	case STOP:                      // stop scan and wait
-		TRACE("+++ BGstats: stop for %p\n", this);
+		//TRACE("+++ BGstats: stop for %p\n", this);
 		retval = true;
 		break;
 	case DIE:                       // terminate this thread
-		TRACE("+++ BGstats: killed thread for %p\n", this);
+		//TRACE("+++ BGstats: killed thread for %p\n", this);
 		stats_state_ = DYING;
 		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
 		delete[] stats_buf_;

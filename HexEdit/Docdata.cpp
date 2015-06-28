@@ -491,7 +491,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 				}
 #else
 				// Invalidate area of change (for deletions/insertions displayed bit towards EOF is invalidated below)
-				CBGSearchHint bgsh(address - aa->pboyer_->length() + 1, address + clen);
+				CBGSearchHint bgsh(address - aa->pboyer_->length() + 1, address + (clen == 0 ? 1 : clen));
 				UpdateAllViews(NULL, 0, &bgsh);
 #endif
 			}
@@ -516,7 +516,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 		}
 		else
 		{
-			to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), address + clen));
+			to_search_.push_back(pair<FILE_ADDRESS, FILE_ADDRESS>(address - (aa->pboyer_->length() - 1), address + (clen <= 0 ? 1 : clen)));
 			find_total_ += clen + aa->pboyer_->length() - 1;
 		}
 

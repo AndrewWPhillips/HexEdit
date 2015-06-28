@@ -2202,6 +2202,7 @@ void CHexEditView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 			// Occurrences in area ph->start_ to ph->end_ have been added or removed
 			// probably due to bytes being inserted or deleted at caret.
+			//TRACE("\\\\\\ BG search update from %d to %d\n", int(ph->start_), int(ph->end_));
 
 			// Get latest set of search occurrences
 			get_search_in_range(GetScroll());
@@ -10328,6 +10329,7 @@ BOOL CHexEditView::do_undo()
 		mark_ = undo_.back().address;
 		if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 		{
+			// If mark moved (undone) and current search is relative to mark => restart bg search
 			GetDocument()->StopSearch();
 			GetDocument()->base_addr_ = GetSearchBase();
 			GetDocument()->StartSearch();
@@ -12175,6 +12177,7 @@ void CHexEditView::SetMark(FILE_ADDRESS new_mark)
 	mark_ = new_mark;
 	if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 	{
+		// mark moved and current search is relative to mark so restart bg search
 		GetDocument()->StopSearch();
 		GetDocument()->base_addr_ = GetSearchBase();
 		GetDocument()->StartSearch();
@@ -12302,6 +12305,7 @@ void CHexEditView::OnSwapMark()
 	invalidate_addr_range(mark_, mark_ + 1);            // force draw of new mark
 	if (theApp.align_rel_ && mark_ != GetDocument()->base_addr_)
 	{
+		// mark moved and current search is relative to mark so restart bg search
 		GetDocument()->StopSearch();
 		GetDocument()->base_addr_ = GetSearchBase();
 		GetDocument()->StartSearch();
