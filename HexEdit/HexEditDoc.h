@@ -689,6 +689,7 @@ public:
 	static long     __stdcall fi_tell(fi_handle handle);
 
 	// Compare stuff (implemented in BGCompare.cpp)
+	enum diff_t { Deletion = -1, Replacement = 0, Insertion = 1, Equal = 9};
 	void AddCompView(CHexEditView *pview);
 	void RemoveCompView();
 	bool IsCompWaiting();     // is compare thread in wait state?
@@ -700,6 +701,8 @@ public:
 	view_t GetCompareFile(view_t view_type, bool & auto_sync, bool & auto_scroll, CString & filename, bool bForcePrompt = false);
 	int CompareDifferences(int rr = 0);
 	int CompareProgress();
+
+	FILE_ADDRESS GetCompAddress(FILE_ADDRESS addr, bool other = false);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetFirstDiff(int rr = 0);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetPrevDiff(FILE_ADDRESS from, int rr = 0);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextDiff(FILE_ADDRESS from, int rr = 0);
@@ -1005,7 +1008,6 @@ private:
 		friend class CHexEditDoc;
 
 	public:
-		enum Type { Deletion = -1, Replacement = 0, Insertion = 1, };
 		void Reset(const CTime &tm)
 		{
 			m_insert_A.clear();   m_insert_B.clear();   m_insert_len.clear();

@@ -287,6 +287,78 @@ int CHexEditDoc::CompareProgress()
 	return 1 + int((comp_progress_ * 99)/length_);  // 1-100 (don't start at zero)
 }
 
+// Given an address in compare view get the corresponding address in the orig (or other way around if other is true)
+FILE_ADDRESS CHexEditDoc::GetCompAddress(FILE_ADDRESS addr, bool other /* = false */)
+{
+	diff_t dtype = CHexEditDoc::Equal;
+	FILE_ADDRESS thisAddr = 0;          // address of difference in this file
+	FILE_ADDRESS otherAddr = 0;         // address of corresponding diff in other file
+	FILE_ADDRESS otherLen = 0;          // length of difference in other file
+
+	const std::vector<FILE_ADDRESS> * replace_addr;
+	const std::vector<FILE_ADDRESS> * replace_other;
+	const std::vector<FILE_ADDRESS> * replace_len;
+	const std::vector<FILE_ADDRESS> * insert_addr;
+	const std::vector<FILE_ADDRESS> * delete_other;
+	const std::vector<FILE_ADDRESS> * insert_len;
+	const std::vector<FILE_ADDRESS> * delete_addr;
+	const std::vector<FILE_ADDRESS> * insert_other;
+	//const std::vector<FILE_ADDRESS> * delete_len;   // not needed
+	if (other)
+	{
+		replace_addr = &comp_[0].m_replace_B;
+		replace_other= &comp_[0].m_replace_A;
+		replace_len  = &comp_[0].m_replace_len;
+		insert_addr  = &comp_[0].m_insert_B;
+		delete_other = &comp_[0].m_delete_A;
+		insert_len   = &comp_[0].m_delete_len;   // size of insertion in B == size of deletion in A
+		delete_addr  = &comp_[0].m_delete_B;
+		insert_other = &comp_[0].m_insert_A;
+	}
+	else
+	{
+		replace_addr = &comp_[0].m_replace_A;
+		replace_other= &comp_[0].m_replace_B;
+		replace_len  = &comp_[0].m_replace_len;
+		insert_addr  = &comp_[0].m_insert_A;
+		delete_other = &comp_[0].m_delete_B;
+		insert_len   = &comp_[0].m_insert_len;
+		delete_addr  = &comp_[0].m_delete_A;
+		insert_other = &comp_[0].m_insert_B;
+	}
+
+	std::vector<FILE_ADDRESS>::const_iterator pNext = std::lower_bound(replace_addr->begin(), replace_addr->end(), addr);
+	if (pNext != replace_addr->begin())
+	{
+		// Get info from previous entry
+		dtype = CHexEditDoc::Replacement;
+		int idx = (pNext - replace_addr->begin()) - 1;
+		thisAddr = (*replace_addr)[idx];
+		otherAddr = (*replace_other)[idx];
+		otherLen = addr - thisAddr;
+	}
+	pNext = std::lower_bound(insert_addr->begin(), insert_addr->end(), addr);
+	if (pNext != insert_addr->begin() && *(pNext-1) > otherAddr)
+	{
+		dtype = CHexEditDoc::Insertion;
+		int idx = (pNext - insert_addr->begin()) - 1;
+		thisAddr = (*insert_addr)[idx];
+		otherAddr = (*delete_other)[idx];
+		otherLen = 0;
+	}
+	pNext = std::lower_bound(delete_addr->begin(), delete_addr->end(), addr);
+	if (pNext != delete_addr->end() && *pNext == addr)
+	{
+		dtype = CHexEditDoc::Deletion;
+		int idx = (pNext - delete_addr->begin());
+		thisAddr = (*delete_addr)[idx];
+		otherAddr = (*insert_other)[idx];
+		otherLen = addr - thisAddr;
+	}
+
+	return otherAddr + len;
+}
+
 // GetFirstDiff returns the first difference in the original file.
 //   rr = revision to look at (must be zero unless doing a self-compare)
 // returns a pair of numbers representing the type of difference and location in the original file
