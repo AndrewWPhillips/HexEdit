@@ -1612,6 +1612,7 @@ void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 		astart = GetDocument()->CompLength();
 	if (aend < 0 || aend > GetDocument()->CompLength())
 		aend = astart;
+	if (astart == -1) return;  // no compare file open (yet)
 
 	FILE_ADDRESS pstart, pend;
 	GetSelAddr(pstart, pend);
@@ -1627,6 +1628,9 @@ void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 
 		if (phev_->AutoSyncCompare())
 		{
+			astart = GetDocument()->GetCompAddress(astart);
+			aend   = GetDocument()->GetCompAddress(aend);
+
 			phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
 			phev_->MoveWithDesc("Compare Auto-sync", astart, aend, -1, -1, FALSE, FALSE, row);
 			phev_->SetAutoSyncCompare(true);
@@ -1901,14 +1905,11 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 	CScrView::OnLButtonUp(nFlags, point);
 	if (phev_->AutoSyncCompare())
 	{
-		FILE_ADDRESS start_addr, end_addr, hev_start, hev_end;
+		FILE_ADDRESS start_addr, end_addr;
 		GetSelAddr(start_addr, end_addr);
-		phev_->GetSelAddr(hev_start, hev_end);
-		if (start_addr == hev_start && end_addr == hev_end)
-			return;
-		// Make sure new selection is not past EOF of hex view file
-		if (start_addr > GetDocument()->length()) start_addr = GetDocument()->length();
-		if (end_addr > GetDocument()->length()) end_addr = GetDocument()->length();
+		start_addr = GetDocument()->GetCompAddress(start_addr);
+		end_addr   = GetDocument()->GetCompAddress(end_addr);
+
 		phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
 		phev_->MoveWithDesc("Compare Auto-sync", start_addr, end_addr);
 		phev_->SetAutoSyncCompare(true);
