@@ -695,6 +695,8 @@ public:
 	void StartComp();
 	void StopComp();
 	void DoCompNew(view_t view_type);
+
+	clock_t LastCompareFinishTime() const { return comp_clock_; }
 	view_t GetCompareFile(view_t view_type, bool & auto_sync, bool & auto_scroll, CString & filename, bool bForcePrompt = false);
 	int CompareDifferences(int rr = 0);
 	int CompareProgress();
@@ -727,6 +729,23 @@ public:
 	{
 		return make_pair(&comp_[rr].m_delete_A, &comp_[rr].m_delete_len);
 	}
+
+	void GetCompareData(const std::vector<FILE_ADDRESS> **p_insert_A, const std::vector<FILE_ADDRESS> **p_insert_B, const std::vector<FILE_ADDRESS> **p_insert_len,
+						const std::vector<FILE_ADDRESS> **p_delete_A, const std::vector<FILE_ADDRESS> **p_delete_B, const std::vector<FILE_ADDRESS> **p_delete_len,
+						const std::vector<FILE_ADDRESS> **p_replace_A, const std::vector<FILE_ADDRESS> **p_replace_B, const std::vector<FILE_ADDRESS> **p_replace_len)
+	{
+		*p_insert_A = &comp_[0].m_insert_A;
+		*p_insert_B = &comp_[0].m_insert_B;
+		*p_insert_len = &comp_[0].m_insert_len;
+		*p_delete_A = &comp_[0].m_delete_A;
+		*p_delete_B = &comp_[0].m_delete_B;
+		*p_delete_len = &comp_[0].m_delete_len;
+		*p_replace_A = &comp_[0].m_replace_A;
+		*p_replace_B = &comp_[0].m_replace_B;
+		*p_replace_len = &comp_[0].m_replace_len;
+	}
+	FILE_ADDRESS CompLength() const { if (pfile1_compare_ == NULL) return -1; else return pfile1_compare_->GetLength(); }
+
 	CString GetCompFileName();
 	bool OrigFileHasChanged();
 	bool CompFileHasChanged();
@@ -960,7 +979,6 @@ private:
 	// Also see data_file4_ (above)
 	CFile64 *pfile1_compare_, *pfile4_compare_;   // The file we are comparing with (for fg + bg threads)
 	CString compFileName_;      // Name of file comparing with (or last compare file)
-	FILE_ADDRESS CompLength() const { if (pfile4_compare_ == NULL) return -1; else return pfile4_compare_->GetLength(); }
 	size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
 	bool CreateCompThread();  // Create background thread which does the compare
 	void KillCompThread();    // Kill background thread ASAP
@@ -977,6 +995,7 @@ private:
 	enum BG_STATE   comp_state_;
 	enum BG_COMMAND comp_command_;
 	bool comp_fin_;             // Flags that the bg scan is finished and the view needs updating
+	clock_t comp_clock_;        // Remember when the last compare finished so we don't update the compare list unnecissarily
 	unsigned char *comp_bufa_, *comp_bufb_; // Buffers used for holding data from both files
 
 	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress

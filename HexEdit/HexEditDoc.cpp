@@ -150,6 +150,7 @@ CHexEditDoc::CHexEditDoc()
 	search_fin_ = false; clear_found_ = false;
 	aerial_fin_ = false;
 	comp_fin_   = false;
+	comp_clock_ = 0;
 #ifndef NDEBUG
 	// Make default capacity for undo_ vector small to force reallocation sooner.
 	// This increases likelihood of catching bugs related to reallocation.
@@ -1395,7 +1396,11 @@ void CHexEditDoc::CheckBGProcessing()
 	aerial_fin_ = false;
 
 	comp_finished = comp_fin_;
-	comp_fin_ = false;
+	if (comp_finished)
+	{
+		comp_clock_ = clock();          // remember when this compare change cam through
+		comp_fin_ = false;
+	}
 
 	preview_load_finished = preview_fin_;
 	preview_fin_ = false;                // prevent us sending the update hint more than once

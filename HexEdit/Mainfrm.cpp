@@ -16,6 +16,7 @@
 #include "ChildFrm.h"
 #include "HexEditDoc.h"
 #include "HexEditView.h"
+#include "CompareView.h"
 #include "MainFrm.h"
 #include "Bookmark.h"
 #include "BookmarkDlg.h"
@@ -4700,18 +4701,30 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 		CView * pview;
 		CHexEditView * pHEView;
 
-		// For self-compare we know recent changes by comparing with the copied version of the file, but we also keep
-		// track of older changes (as the file can be continually modified) until they disappear after a period of time.
-		// We need to check if we are doing a self-compare and a 4 extra commands for "All" Differences.
 		if ((pwind = ((CMainFrame *)AfxGetMainWnd())->MDIGetActive()) == NULL ||
-			(pview = pwind->GetActiveView()) == NULL ||
-			! pview->IsKindOf(RUNTIME_CLASS(CHexEditView)) ||
-			(pHEView = DYNAMIC_DOWNCAST(CHexEditView, pview)) == NULL )
+			(pview = pwind->GetActiveView()) == NULL)
 		{
 			ASSERT(0); // do nothing (except assert) if we could not get the view
 		}
+		else if (pview->IsKindOf(RUNTIME_CLASS(CCompareView)))
+		{
+			// Compare view has normal difference items
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_FIRST, NULL, -1, "First Difference"), idx+1);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_PREV,  NULL, -1, "Previous Difference"), idx+2);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_NEXT,  NULL, -1, "Next Difference"), idx+3);
+			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_LAST,  NULL, -1, "Last Difference"), idx+4);
+		}
+		else if (! pview->IsKindOf(RUNTIME_CLASS(CHexEditView)) ||
+		         (pHEView = DYNAMIC_DOWNCAST(CHexEditView, pview)) == NULL )
+		{
+			; // no special compare commands for other views
+		}
 		else if (pHEView->CompareWithSelf())
 		{
+			// For self-compare we know recent changes by comparing with the copied version of the file, but we also keep
+			// track of older changes (as the file can be continually modified) until they disappear after a period of time.
+			// We need to check if we are doing a self-compare and a 4 extra commands for "All" Differences.
+
 			// Display normal difference items as "Recent" items
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_FIRST, NULL, -1, "Recent First Difference"), idx+1);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_PREV,  NULL, -1, "Recent Previous Difference"), idx+2);
@@ -4727,7 +4740,7 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 		}
 		else
 		{
-			// Display normal difference items
+			// Display normal difference items for normal compare
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_FIRST, NULL, -1, "First Difference"), idx+1);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_PREV,  NULL, -1, "Previous Difference"), idx+2);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_NEXT,  NULL, -1, "Next Difference"), idx+3);

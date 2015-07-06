@@ -24,7 +24,8 @@
 // - diff length files -  bit past end is not updated properly when top of block is off top of screen
 // - next/prev difference do not always do anything
 // - next preview does not work for last diff
-// - last does not select the block past eof when files are doifferent length
+// - last does not select the block past eof when files are different length
+// Todo:
 // - cut/copy in compare view
 
 extern CHexEditApp theApp;
@@ -1607,9 +1608,9 @@ void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 {
 	ASSERT((astart & ~0x3fffFFFFffffFFFF) == 0); // Make sure top 2 bits not on
 
-	if (astart < 0 || astart > GetDocument()->length())
-		astart = GetDocument()->length();
-	if (aend < 0 || aend > GetDocument()->length())
+	if (astart < 0 || astart > GetDocument()->CompLength())
+		astart = GetDocument()->CompLength();
+	if (aend < 0 || aend > GetDocument()->CompLength())
 		aend = astart;
 
 	FILE_ADDRESS pstart, pend;
@@ -2019,7 +2020,7 @@ void CCompareView::OnCompNext()
 	GetSelAddr(start, end);
 
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(end);
-	if (locn.first  < GetDocument()->length())
+	if (locn.first  < GetDocument()->CompLength())
 	{
 		FILE_ADDRESS len = abs(int(locn.second));
 		MoveToAddress(locn.first, locn.first + len);
@@ -2037,7 +2038,7 @@ void CCompareView::OnUpdateCompNext(CCmdUI* pCmdUI)
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(end);
-	pCmdUI->Enable(locn.first < GetDocument()->length());
+	pCmdUI->Enable(locn.first < GetDocument()->CompLength());
 }
 
 // Command to go to last recent difference in compare view
