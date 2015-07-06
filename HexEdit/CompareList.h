@@ -8,6 +8,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "HexEditDoc.h"
 #include "ResizeCtrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -85,9 +86,8 @@ protected:
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 private:
-	enum diff_t { DEL = -1, REPLACE, INS, EQUAL = 9, };
 	void FillGrid(CHexEditDoc * pdoc);
-	void AddRow(diff_t type, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp);
+	void AddRow(CHexEditDoc::diff_t type, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp);
 	//void AddRow(std::pair<FILE_ADDRESS, FILE_ADDRESS> next);
 
 	bool m_first;                       // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)

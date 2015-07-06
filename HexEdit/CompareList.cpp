@@ -10,7 +10,7 @@
 #include "stdafx.h"
 
 #include "HexEdit.h"
-#include "HexEditDoc.h"
+//#include "HexEditDoc.h"
 #include "HexEditView.h"
 #include "CompareView.h"
 #include "MainFrm.h"
@@ -473,7 +473,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 
 	for (addrA = addrB = 0; addrA < endA || addrB < endB; )
 	{
-		diff_t next_diff = EQUAL;
+		CHexEditDoc::diff_t next_diff = CHexEditDoc::Deletion;
 		FILE_ADDRESS newA = endA;
 		FILE_ADDRESS newB = endB;
 		FILE_ADDRESS len;
@@ -484,7 +484,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 			newA = (*p_replace_A)[curr_replace];
 			newB = (*p_replace_B)[curr_replace];
 			len  = (*p_replace_len)[curr_replace];
-			next_diff = REPLACE;
+			next_diff = CHexEditDoc::Replacement;
 		}
 		if (curr_insert < p_insert_A->size() &&
 			(*p_insert_A)[curr_insert] <= newA)
@@ -492,7 +492,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 			newA = (*p_insert_A)[curr_insert];
 			newB = (*p_delete_B)[curr_insert];
 			len  = (*p_insert_len)[curr_insert];
-			next_diff = INS;
+			next_diff = CHexEditDoc::Insertion;
 		}
 		if (curr_delete < p_delete_A->size() &&
 			(*p_delete_A)[curr_delete] <= newA)
@@ -500,16 +500,16 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 			newA = (*p_delete_A)[curr_delete];
 			newB = (*p_insert_B)[curr_delete];
 			len  = (*p_delete_len)[curr_delete];
-			next_diff = DEL;
+			next_diff = CHexEditDoc::Deletion;
 		}
 
 		if (newA > addrA)
 		{
 			// There are matching blocks before the next difference
 			ASSERT(newA - addrA == newB - addrB);       // if they are the same they must have the same length
-			AddRow(EQUAL, addrA, newA - addrA, addrB);
+			AddRow(CHexEditDoc::Equal, addrA, newA - addrA, addrB);
 		}
-		if (next_diff == EQUAL)
+		if (next_diff == CHexEditDoc::Equal)
 			break;                                      // we ran out of differences
 
 		// Add the row for the found difference
@@ -520,16 +520,16 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 		addrB = newB;
 		switch (next_diff)
 		{
-		case DEL:
+		case CHexEditDoc::Deletion:
 			++curr_delete;
 			addrB += len;
 			break;
-		case REPLACE:
+		case CHexEditDoc::Replacement:
 			++curr_replace;
 			addrA += len;
 			addrB += len;
 			break;
-		case INS:
+		case CHexEditDoc::Insertion:
 			++curr_insert;
 			addrA += len;
 			break;
@@ -537,7 +537,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 	}
 }
 
-void CCompareListDlg::AddRow(diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp)
+void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp)
 {
 	char disp[128];                                         // for generating displayed text
 	int fcc = grid_.GetFixedColumnCount();
@@ -554,17 +554,18 @@ void CCompareListDlg::AddRow(diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FI
 	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
 	switch (typ)
 	{
-	case EQUAL:
-		item.strText = "Equal";
-		break;
-	case DEL:
+	case CHexEditDoc::Deletion:
 		item.strText = "Deleted";
 		break;
-	case REPLACE:
+	case CHexEditDoc::Replacement:
 		item.strText = "Replaced";
 		break;
-	case INS:
+	case CHexEditDoc::Insertion:
 		item.strText = "Inserted";
+		break;
+
+	case CHexEditDoc::Equal:
+		item.strText = "Equal";
 		break;
 	}
 	item.crFgClr = CLR_DEFAULT;
@@ -631,17 +632,18 @@ void CCompareListDlg::AddRow(diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FI
 	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
 	switch (typ)
 	{
-	case EQUAL:
-		item.strText = "Equal";
+	case CHexEditDoc::Deletion:
+		item.strText = "Inserted";  // Deletion in orig == insertion in compare
 		break;
-	case DEL:
-		item.strText = "Inserted";
-		break;
-	case REPLACE:
+	case CHexEditDoc::Replacement:
 		item.strText = "Replaced";
 		break;
-	case INS:
-		item.strText = "Deleted";
+	case CHexEditDoc::Insertion:
+		item.strText = "Deleted";  // Insertion in orig == deletion in compare file
+		break;
+
+	case CHexEditDoc::Equal:
+		item.strText = "Equal";
 		break;
 	}
 	item.crFgClr = CLR_DEFAULT;
