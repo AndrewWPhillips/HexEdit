@@ -426,15 +426,18 @@ BOOL CFileOpenDialog::CHookWnd::OnNotify(WPARAM, LPARAM lParam, LRESULT* pResult
 
 		// Work out the full path
 		CString strPath = m_pOwner->GetFolderPath();
-		CString strFull;
-		strFull.Format(_T("%s%s%s%s"), strPath, strPath[strPath.GetLength()-1] == '\\' ? "" : "\\", fname, fext);
+		if (!strPath.IsEmpty())
+		{
+			CString strFull;
+			strFull.Format(_T("%s%s%s%s"), strPath, strPath[strPath.GetLength()-1] == '\\' ? "" : "\\", fname, fext);
 
-		// If a different file was selected try to preview it
-		if (m_pOwner->m_strPreview.CompareNoCase(strFull) != 0)
-        {
-			m_pOwner->m_strPreview = strFull;
-            m_pOwner->UpdatePreview();
-        }
+			// If a different file was selected try to preview it
+			if (m_pOwner->m_strPreview.CompareNoCase(strFull) != 0)
+        	{
+				m_pOwner->m_strPreview = strFull;
+	            m_pOwner->UpdatePreview();
+    	    }
+		}
     }
 
     *pResult = 0;
