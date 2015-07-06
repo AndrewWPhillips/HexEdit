@@ -10,6 +10,9 @@
 #include "stdafx.h"
 
 #include "HexEdit.h"
+#include "HexEditDoc.h"
+#include "HexEditView.h"
+#include "CompareView.h"
 #include "MainFrm.h"
 #include "CompareList.h"
 #include <HtmlHelp.h>
@@ -39,12 +42,12 @@ static char *headingLong[CCompareListDlg::COL_LAST+1] =
 static char *heading[CCompareListDlg::COL_LAST+1] =
 {
 	"Orig Type",
-	"Addr . hex",
-	"Addr . dec",
-	"Len - hex",
-	"Len - dec",
-	"Addr . hex",
-	"Addr . dec",
+	"Orig Addr",
+	"Orig Addr",
+	"Length hex",
+	"Length dec",
+	"Comp Addr",
+	"Comp Addr",
 	"Comp Type",
 	NULL
 };
@@ -197,32 +200,35 @@ void CCompareListDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CCompareListDlg, CDialog)
-	//ON_WM_DESTROY()
+	ON_WM_DESTROY()
 	ON_WM_HELPINFO()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 	//ON_MESSAGE_VOID(WM_INITIALUPDATE, OnInitialUpdate)
-	//ON_WM_ERASEBKGND()
 	//ON_WM_CTLCOLOR()
+	ON_NOTIFY(NM_DBLCLK, IDC_GRID_DIFFS, OnGridDoubleClick)
 	ON_NOTIFY(NM_RCLICK, IDC_GRID_DIFFS, OnGridRClick)
 END_MESSAGE_MAP()
 
 // Message handlers
-LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
+void CCompareListDlg::OnDestroy()
 {
-	if (m_first)
+	if (grid_.m_hWnd != 0)
 	{
-		m_first = false;
-		InitColumnHeadings();
+		// Save column widths
+		CString strWidths;
+
+		for (int ii = grid_.GetFixedColumnCount(); ii < grid_.GetColumnCount(); ++ii)
+		{
+			CString ss;
+			ss.Format("%ld,", long(grid_.GetUserColumnWidth(ii)));
+			strWidths += ss;
+		}
+
+		theApp.WriteProfileString("File-Settings", "CompareListsColumns", strWidths);
 	}
 
-	// Display context help for ctrl set up in OnHelpInfo
-	if (help_hwnd_ != (HWND)0)
-	{
-		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
-		help_hwnd_ = (HWND)0;
-	}
-	return FALSE;
+	CDialog::OnDestroy();
 }
 
 void CCompareListDlg::OnHelp()
@@ -242,7 +248,99 @@ BOOL CCompareListDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void CCompareListDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
+	// Don't show context menu if right-click on grid top row (used to display column menu)
+	if (pWnd->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
+	{
+		grid_.ScreenToClient(&point);
+		CCellID cell = grid_.GetCellFromPt(point);
+		if (cell.row == 0)
+			return;
+	}
+
 	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
+}
+
+LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
+{
+	if (m_first)
+	{
+		m_first = false;
+		InitColumnHeadings();
+	}
+
+	// Display context help for ctrl set up in OnHelpInfo
+	if (help_hwnd_ != (HWND)0)
+	{
+		theApp.HtmlHelpWmHelp(help_hwnd_, id_pairs);
+		help_hwnd_ = (HWND)0;
+	}
+
+	CHexEditView * pview;
+	CHexEditDoc * pdoc;
+	if ((pview = GetView()) != NULL &&                 // active view
+		(pdoc = pview->GetDocument()) != NULL &&       // all view should have a doc!
+		pdoc->CompareDifferences() >= 0 &&             // file comparison active and finished
+		(pview != phev_ || pdoc->LastCompareFinishTime() != last_change_) // info has changed since last time
+	   )
+	{
+		last_change_ = pdoc->LastCompareFinishTime();
+
+		// Clear the list and rebuild it
+		grid_.SetRowCount(grid_.GetFixedRowCount());
+
+		FillGrid(pdoc);
+	}
+	phev_ = pview;                                          // remember which view we are looking at
+	return FALSE;
+}
+
+void CCompareListDlg::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
+{
+	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
+
+	if (pItem->iRow < grid_.GetFixedRowCount())
+		return;                         // Don't do anything for header rows
+
+	// Do a sanity check on the current view
+	if (phev_ != GetView() && phev_->pcv_ != NULL)
+	{
+		ASSERT(0);
+		return;
+	}
+
+	CCellRange sel = grid_.GetSelectedCellRange();
+	if (sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow())
+	{
+		FILE_ADDRESS addr, len = 0;     // bytes to select
+		int row = sel.GetMinRow();
+		CString ss;
+		char cType = 'E';
+
+		bool sync_saved = phev_->AutoSyncCompare();
+		phev_->SetAutoSyncCompare(false);                               // since we set selection in both view we don't want this
+
+		// We need the type of the difference in order to set the length correctly for insertions deletions
+		ss = (CString)grid_.GetItemText(row, COL_ORIG_TYPE);
+		if (!ss.IsEmpty()) cType = ss[0];                               // First char of type string (E,R,I,D)
+
+		// Get length of difference
+		ss = (CString)grid_.GetItemText(row, COL_LEN_HEX);
+		ss.Replace(" ", "");
+		len = ::_strtoi64(ss, NULL, 16);
+
+		// Get location in compare file and move the selection
+		ss = (CString)grid_.GetItemText(row, COL_COMP_HEX);
+		ss.Replace(" ", "");
+		addr = ::_strtoi64(ss, NULL, 16);
+		phev_->pcv_->MoveToAddress(addr, addr + (cType == 'I' ? 0 : len));  // I (insertion) is a deletion in the compare file
+
+		ss = (CString)grid_.GetItemText(row, COL_ORIG_HEX);
+		ss.Replace(" ", "");
+		addr = ::_strtoi64(ss, NULL, 16);
+		phev_->MoveToAddress(addr, addr + (cType == 'D' ? 0 : len));    // for D (deletion) len is zero
+
+		phev_->SetAutoSyncCompare(sync_saved);                          // restore sync setting
+	}
 }
 
 void CCompareListDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
@@ -258,8 +356,8 @@ void CCompareListDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 		mm.CreatePopupMenu();
 
 		// Add a menu item for each column
-		for (int ii = 0; heading[ii] != NULL; ++ii)
-			mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(ii+fcc)>0?MF_CHECKED:0), ii+1, heading[ii]);
+		for (int ii = 0; headingLong[ii] != NULL; ++ii)
+			mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(ii+fcc)>0?MF_CHECKED:0), ii+1, headingLong[ii]);
 
 		// Work out where to display the popup menu
 		CRect rct;
@@ -291,7 +389,7 @@ void CCompareListDlg::InitColumnHeadings()
 
 	CString strWidths = theApp.GetProfileString("File-Settings", 
 												"CompareListsColumns",
-												"20,20,,20,,,,");
+												"20,20,,,,,,");
 
 	int curr_col = grid_.GetFixedColumnCount();
 	bool all_hidden = true;
@@ -315,10 +413,26 @@ void CCompareListDlg::InitColumnHeadings()
 		GV_ITEM item;
 		item.row = 0;                                       // top row is header
 		item.col = curr_col;                                // column we are changing
-		item.mask = GVIF_PARAM|GVIF_FORMAT|GVIF_TEXT;       // change data+centered+text
+		item.mask = GVIF_PARAM|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR; // change data+centered+text+colour
 		item.lParam = ii;                                   // data that says what's in this column
 		item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;  // centre the heading
 		item.strText = heading[ii];                         // text of the heading
+		switch (ii)
+		{
+		case COL_ORIG_HEX:
+		case COL_LEN_HEX:
+		case COL_COMP_HEX:
+			item.crFgClr = ::BestHexAddrCol();
+			break;
+		case COL_ORIG_DEC:
+		case COL_LEN_DEC:
+		case COL_COMP_DEC:
+			item.crFgClr = ::BestDecAddrCol();
+			break;
+		default:
+			item.crFgClr = CLR_DEFAULT;
+			break;
+		}
 		grid_.SetItem(&item);
 
 		++curr_col;
@@ -330,4 +444,206 @@ void CCompareListDlg::InitColumnHeadings()
 		grid_.SetColumnWidth(grid_.GetFixedColumnCount(), 10);
 		grid_.AutoSizeColumn(grid_.GetFixedColumnCount(), GVS_BOTH);
 	}
+}
+
+void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
+{
+	// Get the compare data from the document
+	const std::vector<FILE_ADDRESS> *p_replace_A;
+	const std::vector<FILE_ADDRESS> *p_replace_B;
+	const std::vector<FILE_ADDRESS> *p_replace_len;
+	const std::vector<FILE_ADDRESS> *p_insert_A;
+	const std::vector<FILE_ADDRESS> *p_delete_B;
+	const std::vector<FILE_ADDRESS> *p_insert_len;
+	const std::vector<FILE_ADDRESS> *p_delete_A;
+	const std::vector<FILE_ADDRESS> *p_insert_B;
+	const std::vector<FILE_ADDRESS> *p_delete_len;
+	pdoc->GetCompareData(&p_insert_A, &p_insert_B, &p_insert_len,
+						 &p_delete_A, &p_delete_B, &p_delete_len,
+						 &p_replace_A, &p_replace_B, &p_replace_len);
+
+	ASSERT(p_replace_A->size() == p_replace_B->size() && p_replace_A->size() == p_replace_len->size());
+	ASSERT(p_insert_A->size() == p_delete_B->size() && p_insert_A->size() == p_insert_len->size());
+	ASSERT(p_delete_A->size() == p_insert_B->size() && p_delete_A->size() == p_delete_len->size());
+
+	FILE_ADDRESS addrA, addrB;                              // current address in original and compare file
+	FILE_ADDRESS endA = pdoc->length();                     // length of original file
+	FILE_ADDRESS endB = pdoc->CompLength();
+	int curr_replace = 0, curr_insert = 0, curr_delete = 0; // current indices into the arrays
+
+	for (addrA = addrB = 0; addrA < endA || addrB < endB; )
+	{
+		diff_t next_diff = EQUAL;
+		FILE_ADDRESS newA = endA;
+		FILE_ADDRESS newB = endB;
+		FILE_ADDRESS len;
+
+		// Find next difference by checking replacements, insertions and deletions
+		if (curr_replace < p_replace_A->size())
+		{
+			newA = (*p_replace_A)[curr_replace];
+			newB = (*p_replace_B)[curr_replace];
+			len  = (*p_replace_len)[curr_replace];
+			next_diff = REPLACE;
+		}
+		if (curr_insert < p_insert_A->size() &&
+			(*p_insert_A)[curr_insert] <= newA)
+		{
+			newA = (*p_insert_A)[curr_insert];
+			newB = (*p_delete_B)[curr_insert];
+			len  = (*p_insert_len)[curr_insert];
+			next_diff = INS;
+		}
+		if (curr_delete < p_delete_A->size() &&
+			(*p_delete_A)[curr_delete] <= newA)
+		{
+			newA = (*p_delete_A)[curr_delete];
+			newB = (*p_insert_B)[curr_delete];
+			len  = (*p_delete_len)[curr_delete];
+			next_diff = DEL;
+		}
+
+		if (newA > addrA)
+		{
+			// There are matching blocks before the next difference
+			ASSERT(newA - addrA == newB - addrB);       // if they are the same they must have the same length
+			AddRow(EQUAL, addrA, newA - addrA, addrB);
+		}
+		if (next_diff == EQUAL)
+			break;                                      // we ran out of differences
+
+		// Add the row for the found difference
+		AddRow(next_diff, newA, len, newB);
+
+		// Move to the next one
+		addrA = newA;
+		addrB = newB;
+		switch (next_diff)
+		{
+		case DEL:
+			++curr_delete;
+			addrB += len;
+			break;
+		case REPLACE:
+			++curr_replace;
+			addrA += len;
+			addrB += len;
+			break;
+		case INS:
+			++curr_insert;
+			addrA += len;
+			break;
+		}
+	}
+}
+
+void CCompareListDlg::AddRow(diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp)
+{
+	char disp[128];                                         // for generating displayed text
+	int fcc = grid_.GetFixedColumnCount();
+
+	GV_ITEM item;
+	item.row = grid_.GetRowCount();
+	grid_.SetRowCount(item.row + 1);                        // append a row
+
+	// Set item attributes that are the same for each field (column)
+	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR;
+	item.nState = GVIS_READONLY;
+
+	item.col = fcc + COL_ORIG_TYPE;
+	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
+	switch (typ)
+	{
+	case EQUAL:
+		item.strText = "Equal";
+		break;
+	case DEL:
+		item.strText = "Deleted";
+		break;
+	case REPLACE:
+		item.strText = "Replaced";
+		break;
+	case INS:
+		item.strText = "Inserted";
+		break;
+	}
+	item.crFgClr = CLR_DEFAULT;
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_ORIG_HEX;
+	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
+	if (theApp.hex_ucase_)
+		sprintf(disp, "%I64X", orig);
+	else
+		sprintf(disp, "%I64x", orig);
+	item.strText = disp;
+	::AddSpaces(item.strText);
+	item.crFgClr = ::BestHexAddrCol();
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_ORIG_DEC;
+	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
+	sprintf(disp, "%I64d", orig);
+	item.strText = disp;
+	::AddCommas(item.strText);
+	item.crFgClr = ::BestDecAddrCol();
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_LEN_HEX;
+	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
+	if (theApp.hex_ucase_)
+		sprintf(disp, "%I64X", len);
+	else
+		sprintf(disp, "%I64x", len);
+	item.strText = disp;
+	::AddSpaces(item.strText);
+	item.crFgClr = ::BestHexAddrCol();
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_LEN_DEC;
+	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
+	sprintf(disp, "%I64d", len);
+	item.strText = disp;
+	::AddCommas(item.strText);
+	item.crFgClr = ::BestDecAddrCol();
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_COMP_HEX;
+	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
+	if (theApp.hex_ucase_)
+		sprintf(disp, "%I64X", comp);
+	else
+		sprintf(disp, "%I64x", comp);
+	item.strText = disp;
+	::AddSpaces(item.strText);
+	item.crFgClr = ::BestHexAddrCol();
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_COMP_DEC;
+	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
+	sprintf(disp, "%I64d", comp);
+	item.strText = disp;
+	::AddCommas(item.strText);
+	item.crFgClr = ::BestDecAddrCol();
+	grid_.SetItem(&item);
+
+	item.col = fcc + COL_COMP_TYPE;
+	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
+	switch (typ)
+	{
+	case EQUAL:
+		item.strText = "Equal";
+		break;
+	case DEL:
+		item.strText = "Inserted";
+		break;
+	case REPLACE:
+		item.strText = "Replaced";
+		break;
+	case INS:
+		item.strText = "Deleted";
+		break;
+	}
+	item.crFgClr = CLR_DEFAULT;
+	grid_.SetItem(&item);
 }

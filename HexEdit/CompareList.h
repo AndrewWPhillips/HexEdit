@@ -69,13 +69,14 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 	// Generated message map functions
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	afx_msg void OnHelp();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnHelp();
 	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	//afx_msg void OnInitialUpdate();
-	//afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	//afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 	afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* pResult);
 
 	DECLARE_MESSAGE_MAP()
@@ -84,8 +85,16 @@ protected:
 	HWND help_hwnd_;                    // HWND of window for which context help is pending (usually 0)
 
 private:
+	enum diff_t { DEL = -1, REPLACE, INS, EQUAL = 9, };
+	void FillGrid(CHexEditDoc * pdoc);
+	void AddRow(diff_t type, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp);
+	//void AddRow(std::pair<FILE_ADDRESS, FILE_ADDRESS> next);
+
 	bool m_first;                       // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;              // Used to move controls around when the window is resized
+
+	CHexEditView *phev_;                // ptr to hex view that we are displaying changes for
+	clock_t last_change_;               // time that last chnage was made to the compare info for this view
 };
 
 //{{AFX_INSERT_LOCATION}}
