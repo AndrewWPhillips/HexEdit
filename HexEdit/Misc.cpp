@@ -529,6 +529,15 @@ COLORREF same_hue(COLORREF col, int sat, int lum /* = -1 */)
 	return get_rgb(hue, luminance, saturation);
 }
 
+// Returns a colour of contrasting hue but same luminance & saturation.
+COLORREF opp_hue(COLORREF col)
+{
+	int hue, luminance, saturation;
+	get_hls(col, hue, luminance, saturation);
+
+	return get_rgb((hue+50)%100, luminance, saturation);
+}
+
 // -------------------------------------------------------------------------
 // Time routines
 

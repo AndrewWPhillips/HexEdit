@@ -23,6 +23,7 @@ void get_hls(COLORREF rgb, int &hue, int &lightness, int &saturation);
 COLORREF get_rgb(int hue, int luminance, int saturation);
 COLORREF tone_down(COLORREF col, COLORREF bg_col, double amt = 0.75);
 COLORREF same_hue(COLORREF col, int sat, int lum = -1);
+COLORREF opp_hue(COLORREF col);
 COLORREF add_contrast(COLORREF col, COLORREF bg_col);
 
 // Date/time
