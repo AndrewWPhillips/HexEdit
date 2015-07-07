@@ -336,6 +336,7 @@ public:
 	COLORREF GetHexAddrCol() { return hex_addr_col_; }
 	COLORREF GetSearchCol() { return search_col_; }
 	COLORREF GetCompareCol() { return comp_col_; }
+	COLORREF GetCompareBgCol()  { return comp_bg_col_; }
 	COLORREF GetHighlightCol() { return hi_col_; }
 	COLORREF GetMarkCol() { return mark_col_; }
 	COLORREF GetBookmarkCol() { return bm_col_; }

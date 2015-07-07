@@ -172,8 +172,6 @@ BOOL CCompareListDlg::Create(CWnd *pParentWnd)
 	grid_.SetEditable(FALSE);
 	grid_.SetFixedColumnSelection(FALSE);
 	grid_.SetFixedRowSelection(FALSE);
-	//FillGrid();
-
 	//grid_.ExpandColsNice(FALSE);
 
 	// Set up resizer control
@@ -288,9 +286,10 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		// Clear the list and rebuild it
 		grid_.SetRowCount(grid_.GetFixedRowCount());
 
+		phev_ = pview;                                 // FillGrid needs to access the view
 		FillGrid(pdoc);
 	}
-	phev_ = pview;                                          // remember which view we are looking at
+	phev_ = pview;                                     // remember which view we are looking at
 	return FALSE;
 }
 
@@ -471,6 +470,10 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 	FILE_ADDRESS endB = pdoc->CompLength();
 	int curr_replace = 0, curr_insert = 0, curr_delete = 0; // current indices into the arrays
 
+	// Work out some field colours
+	//inverse_col_ = ::opp_hue(phev_->GetCompareCol());
+	inverse_bg_col_ = ::opp_hue(phev_->GetCompareBgCol());
+
 	for (addrA = addrB = 0; addrA < endA || addrB < endB; )
 	{
 		CHexEditDoc::diff_t next_diff = CHexEditDoc::Deletion;
@@ -539,6 +542,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 
 void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp)
 {
+	ASSERT(phev_ != NULL);
 	char disp[128];                                         // for generating displayed text
 	int fcc = grid_.GetFixedColumnCount();
 
@@ -547,29 +551,42 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 	grid_.SetRowCount(item.row + 1);                        // append a row
 
 	// Set item attributes that are the same for each field (column)
-	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR;
+	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR|GVIF_BKCLR;
 	item.nState = GVIS_READONLY;
 
 	item.col = fcc + COL_ORIG_TYPE;
 	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
+	item.crFgClr = CLR_DEFAULT;
+	item.crBkClr = CLR_DEFAULT;
 	switch (typ)
 	{
 	case CHexEditDoc::Deletion:
 		item.strText = "Deleted";
+		item.crFgClr = phev_->GetCompareCol();
+		item.crBkClr = inverse_bg_col_;
 		break;
 	case CHexEditDoc::Replacement:
 		item.strText = "Replaced";
+		item.crFgClr = phev_->GetCompareCol();
+		item.crBkClr = phev_->GetBackgroundCol();
 		break;
 	case CHexEditDoc::Insertion:
 		item.strText = "Inserted";
+		//item.crFgClr = inverse_col_;
+		item.crBkClr = phev_->GetCompareBgCol();
 		break;
 
 	case CHexEditDoc::Equal:
 		item.strText = "Equal";
 		break;
 	}
-	item.crFgClr = CLR_DEFAULT;
 	grid_.SetItem(&item);
+
+	// Set background back to the default for the rest of the fields
+	if (typ == CHexEditDoc::Equal)
+		item.crBkClr = CLR_DEFAULT;
+	else
+		item.crBkClr = phev_->GetBackgroundCol();
 
 	item.col = fcc + COL_ORIG_HEX;
 	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
@@ -579,7 +596,7 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 		sprintf(disp, "%I64x", orig);
 	item.strText = disp;
 	::AddSpaces(item.strText);
-	item.crFgClr = ::BestHexAddrCol();
+	item.crFgClr = phev_->GetHexAddrCol();
 	grid_.SetItem(&item);
 
 	item.col = fcc + COL_ORIG_DEC;
@@ -587,7 +604,7 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 	sprintf(disp, "%I64d", orig);
 	item.strText = disp;
 	::AddCommas(item.strText);
-	item.crFgClr = ::BestDecAddrCol();
+	item.crFgClr = phev_->GetDecAddrCol();
 	grid_.SetItem(&item);
 
 	item.col = fcc + COL_LEN_HEX;
@@ -598,7 +615,7 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 		sprintf(disp, "%I64x", len);
 	item.strText = disp;
 	::AddSpaces(item.strText);
-	item.crFgClr = ::BestHexAddrCol();
+	item.crFgClr = phev_->GetHexAddrCol();
 	grid_.SetItem(&item);
 
 	item.col = fcc + COL_LEN_DEC;
@@ -606,7 +623,7 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 	sprintf(disp, "%I64d", len);
 	item.strText = disp;
 	::AddCommas(item.strText);
-	item.crFgClr = ::BestDecAddrCol();
+	item.crFgClr = phev_->GetDecAddrCol();
 	grid_.SetItem(&item);
 
 	item.col = fcc + COL_COMP_HEX;
@@ -617,7 +634,7 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 		sprintf(disp, "%I64x", comp);
 	item.strText = disp;
 	::AddSpaces(item.strText);
-	item.crFgClr = ::BestHexAddrCol();
+	item.crFgClr = phev_->GetHexAddrCol();
 	grid_.SetItem(&item);
 
 	item.col = fcc + COL_COMP_DEC;
@@ -625,27 +642,34 @@ void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_AD
 	sprintf(disp, "%I64d", comp);
 	item.strText = disp;
 	::AddCommas(item.strText);
-	item.crFgClr = ::BestDecAddrCol();
+	item.crFgClr = phev_->GetDecAddrCol();
 	grid_.SetItem(&item);
 
 	item.col = fcc + COL_COMP_TYPE;
 	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
+	item.crFgClr = CLR_DEFAULT;
+	item.crBkClr = CLR_DEFAULT;
 	switch (typ)
 	{
 	case CHexEditDoc::Deletion:
 		item.strText = "Inserted";  // Deletion in orig == insertion in compare
+		//item.crFgClr = inverse_col_;
+		item.crBkClr = phev_->GetCompareBgCol();
 		break;
 	case CHexEditDoc::Replacement:
 		item.strText = "Replaced";
+		item.crFgClr = phev_->GetCompareCol();
+		item.crBkClr = phev_->GetBackgroundCol();
 		break;
 	case CHexEditDoc::Insertion:
 		item.strText = "Deleted";  // Insertion in orig == deletion in compare file
+		item.crFgClr = phev_->GetCompareCol();
+		item.crBkClr = inverse_bg_col_;
 		break;
 
 	case CHexEditDoc::Equal:
 		item.strText = "Equal";
 		break;
 	}
-	item.crFgClr = CLR_DEFAULT;
 	grid_.SetItem(&item);
 }
