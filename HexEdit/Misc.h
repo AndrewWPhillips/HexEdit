@@ -137,11 +137,10 @@ void rand_good_seed(unsigned long seed);
 unsigned long rand_good();
 
 // All in one CRCs
-unsigned short crc_ccitt(const void *buf, size_t len);
 unsigned long crc_32(const void *buffer, size_t len);
 
-#ifdef BOOST_CRC
-// Use the following for CRC calcs that are too big to do all at once
+// All CRCs use Boost now and are split into init/update/final to allow
+// processing of any size selections
 unsigned short crc_16(const void *buffer, size_t len);  // Boost crc 16
 void * crc_16_init();
 void crc_16_update(void * handle, const void *buf, size_t len);
@@ -156,15 +155,9 @@ void * crc_ccitt_f_init();
 void crc_ccitt_f_update(void *, const void *buf, size_t len);
 unsigned short crc_ccitt_f_final(void *);
 
-/* no longer used
-void * crc_ccitt_aug_init();
-void crc_ccitt_aug_update(void * handle, const void *buf, size_t len);
-unsigned short crc_ccitt_aug_final(void * handle);
-*/
 void * crc_ccitt_t_init();
 void crc_ccitt_t_update(void *, const void *buf, size_t len);
 unsigned short crc_ccitt_t_final(void *);
-#endif
 
 void * crc_32_init();
 void crc_32_update(void * handle, const void *buf, size_t len);
