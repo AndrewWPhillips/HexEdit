@@ -587,7 +587,6 @@ BEGIN
             MENUITEM "C&RC 16",                     ID_CRC16
             MENUITEM "CRC CCIT&T",                  ID_CRC_CCITT_T
             MENUITEM "CRC CCITT &F",                ID_CRC_CCITT_F
-            MENUITEM "CRC CCITT &AUG",              ID_CRC_CCITT_AUG
             MENUITEM "CRC 32",                      ID_CRC32
             MENUITEM "CRC 32 MPEG2",                ID_CRC32_MPEG2
             MENUITEM "&CRC...",                     ID_CRC_GENERAL
@@ -3375,7 +3374,6 @@ BEGIN
     ID_CHECKSUM32           "Stores the 32 bit checksum in the calculator\n32 Bit Checksum"
     ID_CHECKSUM64           "Stores the 64 bit checksum in the calculator\n64 Bit Checksum"
     ID_CRC_CCITT_F          "Stores alternative CCITT (16 bit) CRC in the calculator\nCRC CCITT F"
-    ID_CRC_CCITT_AUG        "Stores Augment CCITT (16 bit) CRC in the calculator\nCRC CCITT AUG"
     ID_CRC_XMODEM           "Stores XMODEM (16 bit) CRC in the calculator\nCRC XMODEM"
     ID_RECENT_FILES         "Open the Recent Files Dialog\nRecent File Dialog"
     ID_MAKE_FAVOURITE       "Add to Favorites category so that file name always appears on Windows Taskbar Jump List\nMake Favorite"

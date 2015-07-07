@@ -1342,9 +1342,6 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				case CHECKSUM_CRC_CCITT_F:
 					pv_->OnCrcCcittF();
 					break;
-				case CHECKSUM_CRC_CCITT_AUG:
-					pv_->OnCrcCcittAug();
-					break;
 				case CHECKSUM_CRC_CCITT_T:
 					pv_->OnCrcCcittT();
 					break;

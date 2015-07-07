@@ -2233,35 +2233,6 @@ unsigned long str_hash(const char *str)
 	return hash;
 }
 
-unsigned short crc16(const void *buffer, size_t len)
-{
-    static const unsigned int poly = 0x8408;
-    unsigned char *pdata = (unsigned char *)buffer;
-    unsigned char ii;
-    unsigned int data;
-    unsigned int crc = 0xffff;
-   
-    if (len == 0)
-        return 0;
-   
-    do
-    {
-        for (ii = 0, data = *pdata++; ii < 8; ii++, data >>= 1)
-        {
-            if ((crc & 0x0001) ^ (data & 0x0001))
-                crc = (crc >> 1) ^ poly;
-            else  crc >>= 1;
-        }
-    } while (--len);
-   
-    crc = ~crc;
-    data = crc;
-    crc = (crc << 8) | (data >> 8 & 0xff);
-   
-    return (crc);
-}
-
-
 //-----------------------------------------------------------------------------
 // CRCs
 
@@ -2726,83 +2697,7 @@ unsigned __int64 crc_64bit_final(void *hh)
 	delete pcrc;
 	return retval;
 }
-
 #endif
-
-// Apparently the following is the common but incorrect implementation
-#define           poly     0x1021          /* crc-ccitt mask */ 
-
-void * crc_ccitt_aug_init()
-{
-	unsigned short * hh = new unsigned short;
-	*hh = -1;
-	return hh;
-}
-
-void crc_ccitt_aug_update(void * hh, const void *buf, size_t len)
-{
-	const unsigned char *cp = (const unsigned char *)buf;
-	const unsigned char *end = cp + len;
-
-	unsigned short ii, vv, xor_flag; 
-
-	for ( ; cp < end; ++cp)
-	{
-		/* 
-		Align test bit with leftmost bit of the message byte. 
-		*/ 
-		vv = 0x80; 
-
-		for (ii = 0; ii < 8; ++ii)
-		{ 
-			if (*(unsigned short *)hh & 0x8000)
-				xor_flag= 1; 
-			else 
-				xor_flag= 0; 
-			*(unsigned short *)hh = *(unsigned short *)hh << 1; 
-
-			if (*cp & vv)
-			{ 
-				/* 
-				Append next bit of message to end of CRC if it is not zero. 
-				The zero bit placed there by the shift above need not be 
-				changed if the next bit of the message is zero. 
-				*/ 
-				*(unsigned short *)hh = *(unsigned short *)hh + 1; 
-			} 
-
-			if (xor_flag)
-				*(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
-
-			/* 
-			Align test bit with next bit of the message byte. 
-			*/ 
-			vv = vv >> 1; 
-		} 
-	}
-}
-
-unsigned short crc_ccitt_aug_final(void *hh)
-{
-	unsigned short ii, xor_flag; 
-
-	// Augment message
-	for (ii = 0; ii < 16; ++ii)
-	{ 
-		if (*(unsigned short *)hh & 0x8000)
-			xor_flag= 1; 
-		else 
-			xor_flag= 0; 
-		*(unsigned short *)hh = *(unsigned short *)hh << 1; 
-
-		if (xor_flag)
-			*(unsigned short *)hh = *(unsigned short *)hh ^ poly; 
-	}
-
-	unsigned short retval = *(unsigned short *)hh;
-	delete (unsigned short *)hh;
-	return retval;
-}
 
 //-----------------------------------------------------------------------------
 // Encryption

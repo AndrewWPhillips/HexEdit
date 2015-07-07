@@ -1490,7 +1490,6 @@
 #define ID_CHECKSUM32                   32993
 #define ID_CHECKSUM64                   32994
 #define ID_CRC_CCITT_F                  32995
-#define ID_CRC_CCITT_AUG                32996
 #define ID_CRC_XMODEM                   32997
 #define ID_RECENT_FILES                 32998
 #define ID_BANNED                       32999

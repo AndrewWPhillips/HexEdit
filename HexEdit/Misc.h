@@ -156,10 +156,11 @@ void * crc_ccitt_f_init();
 void crc_ccitt_f_update(void *, const void *buf, size_t len);
 unsigned short crc_ccitt_f_final(void *);
 
+/* no longer used
 void * crc_ccitt_aug_init();
 void crc_ccitt_aug_update(void * handle, const void *buf, size_t len);
 unsigned short crc_ccitt_aug_final(void * handle);
-
+*/
 void * crc_ccitt_t_init();
 void crc_ccitt_t_update(void *, const void *buf, size_t len);
 unsigned short crc_ccitt_t_final(void *);

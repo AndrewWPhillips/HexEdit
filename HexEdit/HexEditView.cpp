@@ -241,7 +241,6 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_COMMAND(ID_CRC32_MPEG2, OnCrc32Mpeg2)
 	ON_COMMAND(ID_CRC_GENERAL, OnCrcGeneral)
 	ON_COMMAND(ID_CRC_CCITT_F, OnCrcCcittF)
-	ON_COMMAND(ID_CRC_CCITT_AUG, OnCrcCcittAug)
 	ON_COMMAND(ID_CRC_CCITT_T, OnCrcCcittT)
 	ON_COMMAND(ID_CRC_XMODEM, OnCrcXmodem)
 	ON_COMMAND(ID_BOOKMARKS_HIDE, OnBookmarksHide)
@@ -293,7 +292,6 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_CRC32_MPEG2, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_GENERAL, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_F, OnUpdateByteNZ)
-	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_AUG, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_CCITT_T, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_CRC_XMODEM, OnUpdateByteNZ)
 	ON_UPDATE_COMMAND_UI(ID_COPY_CCHAR, OnUpdateClipboard)
@@ -14724,9 +14722,6 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	case CHECKSUM_CRC_CCITT_F:
 		hh = crc_ccitt_f_init();
 		break;
-	case CHECKSUM_CRC_CCITT_AUG:
-		hh = crc_ccitt_aug_init();
-		break;
 	case CHECKSUM_CRC_CCITT_T:
 		hh = crc_ccitt_t_init();
 		break;
@@ -14791,9 +14786,6 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		case CHECKSUM_CRC_CCITT_F:
 			crc_ccitt_f_update(hh, buf, len);
 			break;
-		case CHECKSUM_CRC_CCITT_AUG:
-			crc_ccitt_aug_update(hh, buf, len);
-			break;
 		case CHECKSUM_CRC_CCITT_T:
 			crc_ccitt_t_update(hh, buf, len);
 			break;
@@ -14848,9 +14840,6 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		break;
 	case CHECKSUM_CRC_CCITT_F:
 		val = T(crc_ccitt_f_final(hh));
-		break;
-	case CHECKSUM_CRC_CCITT_AUG:
-		val = T(crc_ccitt_aug_final(hh));
 		break;
 	case CHECKSUM_CRC_CCITT_T:
 		val = T(crc_ccitt_t_final(hh));
@@ -14934,11 +14923,6 @@ void CHexEditView::OnCrc16()
 void CHexEditView::OnCrcCcittF()
 {
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_F, "CRC CCITT F");
-}
-
-void CHexEditView::OnCrcCcittAug()
-{
-	DoChecksum<unsigned short>(this, CHECKSUM_CRC_CCITT_AUG, "CRC CCITT AUG");
 }
 
 void CHexEditView::OnCrcCcittT()
