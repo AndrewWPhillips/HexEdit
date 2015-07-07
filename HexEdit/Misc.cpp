@@ -133,9 +133,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <sys/utime.h>          // For _utime()
 
 #include <boost/crc.hpp>        // For CRCs
-#ifdef BOOST_RAND
 #include <boost/random/mersenne_twister.hpp>
-#endif
 
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
@@ -1973,170 +1971,8 @@ CString DeviceName(CString name) // TODO get rid of this (use SpecialList::name(
 }
 
 //-----------------------------------------------------------------------------
-// PRNGs
+// Just use Boost PRNG now (good and fast)
 
-#ifndef BOOST_RAND
-// Mersenne Twist PRNG
-#if 1
-// constants for MT11213A:
-#define MERS_N 351
-#define MERS_M 175
-#define MERS_R 19
-#define MERS_U 11
-#define MERS_S 7
-#define MERS_T 15
-#define MERS_L 17
-#define MERS_A 0xE4BD75F5
-#define MERS_B 0x655E5280
-#define MERS_C 0xFFD58000
-#else
-// constants for MT19937:
-#define MERS_N 624
-#define MERS_M 397
-#define MERS_R 31
-#define MERS_U 11
-#define MERS_S 7
-#define MERS_T 15
-#define MERS_L 18
-#define MERS_A 0x9908B0DF
-#define MERS_B 0x9D2C5680
-#define MERS_C 0xEFC60000
-#endif
-
-static int rand1_ind;                           // Index into rand1_state array
-static unsigned long rand1_state[MERS_N];       // State vector
-#ifdef _DEBUG
-static bool rand1_init = false;
-#endif
-
-static void rand1_seed(unsigned long seed)
-{
-	for (rand1_ind = 0; rand1_ind < MERS_N; rand1_ind++)
-	{
-		seed = seed * 29943829 - 1;
-		rand1_state[rand1_ind] = seed;
-	}
-#ifdef _DEBUG
-	rand1_init = true;
-#endif
-}
-
-static unsigned long rand1()
-{
-	ASSERT(rand1_init);
-
-	unsigned long retval;
-
-	if (rand1_ind >= MERS_N)
-	{
-		const unsigned long LOWER_MASK = (1LU << MERS_R) - 1;
-		const unsigned long UPPER_MASK = -1L  << MERS_R;
-		int kk, km;
-		for (kk=0, km=MERS_M; kk < MERS_N-1; kk++)
-		{
-			retval = (rand1_state[kk] & UPPER_MASK) | (rand1_state[kk+1] & LOWER_MASK);
-			rand1_state[kk] = rand1_state[km] ^ (retval >> 1) ^ (-(signed long)(retval & 1) & MERS_A);
-			if (++km >= MERS_N) km = 0;
-		}
-
-		retval = (rand1_state[MERS_N-1] & UPPER_MASK) | (rand1_state[0] & LOWER_MASK);
-		rand1_state[MERS_N-1] = rand1_state[MERS_M-1] ^ (retval >> 1) ^ (-(signed long)(retval & 1) & MERS_A);
-		rand1_ind = 0;
-	}
-
-	retval = rand1_state[rand1_ind++];
-	retval ^=  retval >> MERS_U;
-	retval ^= (retval << MERS_S) & MERS_B;
-	retval ^= (retval << MERS_T) & MERS_C;
-	retval ^=  retval >> MERS_L;
-
-	return retval;
-}
-
-// RANROT PRNG
-
-#define RANROT_KK  17
-#define RANROT_JJ  10
-#define RANROT_R1  13
-#define RANROT_R2   9
-
-static int rand2_p1, rand2_p2;
-static unsigned long randbuffer[RANROT_KK];
-#ifdef _DEBUG
-static unsigned long randbufcopy[RANROT_KK*2];
-#endif
-
-static void rand2_seed(unsigned long seed)
-{
-	for (int ii = 0; ii < RANROT_KK; ++ii)
-	{
-		seed = seed*2891336453 + 1;
-		randbuffer[ii] = seed;
-	}
-
-	rand2_p1 = 0;
-	rand2_p2 = RANROT_JJ;
-
-#ifdef _DEBUG
-	memcpy (randbufcopy, randbuffer, RANROT_KK*sizeof(long));
-	memcpy (randbufcopy + RANROT_KK, randbuffer, RANROT_KK*sizeof(long));
-#endif
-}
-
-static unsigned long rand2()
-{
-	unsigned long retval = randbuffer[rand2_p1] = _lrotl(randbuffer[rand2_p2], RANROT_R1) +
-												  _lrotl(randbuffer[rand2_p1], RANROT_R2);
-
-	if (--rand2_p1 < 0) rand2_p1 = RANROT_KK - 1;
-	if (--rand2_p2 < 0) rand2_p2 = RANROT_KK - 1;
-
-#ifdef _DEBUG
-	if (randbuffer[rand2_p1] == randbufcopy[0] &&
-		memcmp(randbuffer, randbufcopy + RANROT_KK - rand2_p1, RANROT_KK*sizeof(long)) == 0)
-	{
-		// self-test failed
-		if ((rand2_p2 + RANROT_KK - rand2_p1) % RANROT_KK != RANROT_JJ)
-			ASSERT(0);                  // Apparently not initialised
-		else
-			TRACE("RANROT PRNG returned to initial state!\n");
-	}
-#endif
-
-	return retval;
-}
-
-#define RAND_GOOD_SIZE  17
-static bool rand_good_init = false;
-static unsigned long rand_good_val[RAND_GOOD_SIZE];
-
-static void rand_good_fill()
-{
-	// Fill up the array with random numbers from rand2
-	for (int ii = 0; ii < RAND_GOOD_SIZE; ++ii)
-		rand_good_val[ii] = rand2();
-	rand_good_init = true;
-}
-
-void rand_good_seed(unsigned long seed)
-{
-	rand1_seed(seed);
-	rand2_seed(seed);
-	rand_good_fill();
-}
-
-unsigned long rand_good()
-{
-	if (!rand_good_init)
-		rand_good_fill();
-
-//    return __int64(rand1())<<32 | __int64(rand2());
-	size_t ind = rand1()%RAND_GOOD_SIZE;        // Use rand1 to work out the index
-	unsigned long retval = rand_good_val[ind];  // Save the current value there
-	rand_good_val[ind] = rand2();               // Get the next value
-	return retval;
-}
-#else // BOOST_RAND
 static boost::mt19937 rng;
 
 void rand_good_seed(unsigned long seed)
@@ -2148,8 +1984,6 @@ unsigned long rand_good()
 {
 	return rng();
 }
-
-#endif // BOOST_RAND
 
 //-----------------------------------------------------------------------------
 // Memory
