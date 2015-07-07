@@ -1193,38 +1193,6 @@ UINT CHexEditDoc::RunCompThread()
 		if (CompProcessStop())
 			continue;
 
-#if _DEBUG /// xxx TODO: remove after testing
-		{
-			CSingleLock sl(&docdata_, TRUE); // Protect shared data access
-
-			comp_[0].m_replace_A.push_back(10);
-			comp_[0].m_replace_B.push_back(10);
-			comp_[0].m_replace_len.push_back(15);
-
-			comp_[0].m_replace_A.push_back(55);
-			comp_[0].m_replace_B.push_back(35);
-			comp_[0].m_replace_len.push_back(15);
-
-			comp_[0].m_replace_A.push_back(70);
-			comp_[0].m_replace_B.push_back(80);
-			comp_[0].m_replace_len.push_back(15);
-
-			comp_[0].m_insert_A.push_back(25);
-			comp_[0].m_delete_B.push_back(25);
-			comp_[0].m_insert_len.push_back(20);
-
-			comp_[0].m_delete_A.push_back(70);
-			comp_[0].m_insert_B.push_back(50);
-			comp_[0].m_delete_len.push_back(30);
-
-			comp_[0].m_delete_A.push_back(100);
-			comp_[0].m_insert_B.push_back(110);
-			comp_[0].m_delete_len.push_back(13);
-
-			comp_[0].Final();
-			comp_fin_ = true;
-		}
-#else
 		comp_progress_ = 0;
 		FILE_ADDRESS addr = 0;
 		CompResult result;
@@ -1314,7 +1282,7 @@ UINT CHexEditDoc::RunCompThread()
 		}
 		delete[] comp_bufa_; comp_bufa_ = NULL;
 		delete[] comp_bufb_; comp_bufb_ = NULL;
-#endif
+
 		ASSERT(comp_[0].m_replace_A.size() == comp_[0].m_replace_B.size());
 		ASSERT(comp_[0].m_replace_A.size() == comp_[0].m_replace_len.size());
 	}
