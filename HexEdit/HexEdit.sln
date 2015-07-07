@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexEditVS2010", "HexEditVS2010.vcxproj", "{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexEdit", "HexEdit.vcxproj", "{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaskbarDemo", "..\..\..\tmp\web\TaskbarDemo_Solution\TaskbarDemo\TaskbarDemo.vcxproj", "{2B9553BD-8A28-4462-B4B9-A66F9965B627}"
 EndProject
