@@ -3962,8 +3962,12 @@ void CHexEditView::show_pos(FILE_ADDRESS address /*=-1*/, BOOL no_dffd /*=FALSE*
 		pdfv_->SelectAt(address);
 	if (pav_ != NULL && display_.auto_sync_aerial)
 		pav_->ShowPos(address);
-	if (pcv_ != NULL && display_.auto_sync_comp)
-		pcv_->MoveToAddress(address, end);
+	if (pcv_ != NULL && GetDocument()->CompareDifferences() > -1 && display_.auto_sync_comp)
+	{
+		display_.auto_sync_comp = 0;        // turn off to stop problems
+		pcv_->MoveToAddress(GetDocument()->GetCompAddress(address), GetDocument()->GetCompAddress(end));
+		display_.auto_sync_comp = 1;        // turn back on
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -702,7 +702,7 @@ public:
 	int CompareDifferences(int rr = 0);
 	int CompareProgress();
 
-	FILE_ADDRESS GetCompAddress(FILE_ADDRESS addr, bool other = false);
+	FILE_ADDRESS GetCompAddress(FILE_ADDRESS addr, bool comp2orig = false);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetFirstDiff(int rr = 0);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetPrevDiff(FILE_ADDRESS from, int rr = 0);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextDiff(FILE_ADDRESS from, int rr = 0);

@@ -1628,8 +1628,8 @@ void CCompareView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 
 		if (phev_->AutoSyncCompare())
 		{
-			astart = GetDocument()->GetCompAddress(astart);
-			aend   = GetDocument()->GetCompAddress(aend);
+			astart = GetDocument()->GetCompAddress(astart, true);
+			aend   = GetDocument()->GetCompAddress(aend, true);
 
 			phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
 			phev_->MoveWithDesc("Compare Auto-sync", astart, aend, -1, -1, FALSE, FALSE, row);
@@ -1907,8 +1907,8 @@ void CCompareView::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		FILE_ADDRESS start_addr, end_addr;
 		GetSelAddr(start_addr, end_addr);
-		start_addr = GetDocument()->GetCompAddress(start_addr);
-		end_addr   = GetDocument()->GetCompAddress(end_addr);
+		start_addr = GetDocument()->GetCompAddress(start_addr, true);
+		end_addr   = GetDocument()->GetCompAddress(end_addr, true);
 
 		phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
 		phev_->MoveWithDesc("Compare Auto-sync", start_addr, end_addr);
