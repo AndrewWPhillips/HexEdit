@@ -629,7 +629,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 					 !IsDevice() && 
 					 aa->backup(lpszPathName, length_);
 
-#ifdef INPLACE_MOVE    // In place save does not require only overtype changes
+#ifdef INPLACE_MOVE    // In place save does not require "only overtype" changes
 	if (!do_backup && pfile1_ != NULL && lpszPathName == pfile1_->GetFilePath())
 #else
 	if (!do_backup && only_over() && lpszPathName == pfile1_->GetFilePath())

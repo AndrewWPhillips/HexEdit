@@ -13589,7 +13589,7 @@ void CHexEditView::OnEncrypt()
 
 		VERIFY(GetDocument()->GetData(buf, len, start_addr) == len);
 
-		::encrypt(buf, len);
+		::encrypt(buf, len);  // built-in (Blowfish) encryption
 
 		GetDocument()->Change(mod_replace, start_addr, len, buf, 0, this);
 	}
