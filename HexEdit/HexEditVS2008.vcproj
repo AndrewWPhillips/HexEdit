@@ -248,10 +248,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\BigInteger.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Bin2Src.cpp"
 				>
 			</File>
@@ -710,10 +706,6 @@
 			</File>
 			<File
 				RelativePath=".\BCGMisc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BigInteger.h"
 				>
 			</File>
 			<File
