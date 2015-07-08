@@ -389,7 +389,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 {
 	ASSERT(rr >= 0 && rr < comp_.size());
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = -1;
+	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -442,6 +442,8 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 		}
 	}
 
+	if (retval.first == LONGLONG_MAX)
+		retval.first = -1;           // signal not found
 	return retval;
 }
 
@@ -452,7 +454,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiffAll()
 {
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = -1;
+	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -486,6 +488,8 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiffAll()
 		}
 	}
 
+	if (retval.first == LONGLONG_MAX)
+		retval.first = -1;           // signal not found
 	return retval;
 }
 
@@ -658,7 +662,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 {
 	ASSERT(rr >= 0 && rr < comp_.size());
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = length_;                            // default to "not found"
+	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -697,7 +701,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 
 	if ((idx = AddressAt(*insert_addr, from)) < insert_addr->size())
 	{
-		if ((*insert_addr)[idx] <= retval.first)
+		if ((*insert_addr)[idx] < retval.first)
 		{
 			retval.first  = (*insert_addr)[idx];
 			retval.second = - (*insert_len)[idx];      // use -ve length to indicate insertion
@@ -706,13 +710,15 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 
 	if ((idx = AddressAt(*delete_addr, from)) < delete_addr->size())
 	{
-		if ((*delete_addr)[idx] <= retval.first)
+		if ((*delete_addr)[idx] < retval.first)
 		{
 			retval.first = (*delete_addr)[idx];
 			retval.second = 0;                                  // use zero length to indicate a deletion
 		}
 	}
 
+	if (retval.first == LONGLONG_MAX)
+		retval.first = -1;           // signal not found
 	return retval;
 }
 
@@ -724,7 +730,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from)
 {
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = length_;
+	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;
 
@@ -765,6 +771,8 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextDiffAll(FILE_ADDRESS f
 		}
 	}
 
+	if (retval.first == LONGLONG_MAX)
+		retval.first = -1;           // signal not found
 	return retval;
 }
 
@@ -881,7 +889,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetLastDiffAll()
 
 		if (!comp_[rr].m_delete_A.empty())
 		{
-			if (comp_[rr].m_delete_A.back() < retval.first)
+			if (comp_[rr].m_delete_A.back() > retval.first)
 			{
 				retval.first = comp_[rr].m_delete_A.back();
 				retval.second = 0;                        // use zero length to indicate a deletion
@@ -1193,6 +1201,38 @@ UINT CHexEditDoc::RunCompThread()
 		if (CompProcessStop())
 			continue;
 
+#ifdef _DEBUG
+		{
+			CSingleLock sl(&docdata_, TRUE); // Protect shared data access
+
+			comp_[0].m_replace_A.push_back(10);
+			comp_[0].m_replace_B.push_back(10);
+			comp_[0].m_replace_len.push_back(15);
+
+			comp_[0].m_replace_A.push_back(55);
+			comp_[0].m_replace_B.push_back(35);
+			comp_[0].m_replace_len.push_back(15);
+
+			comp_[0].m_replace_A.push_back(70);
+			comp_[0].m_replace_B.push_back(80);
+			comp_[0].m_replace_len.push_back(15);
+
+			comp_[0].m_insert_A.push_back(25);
+			comp_[0].m_delete_B.push_back(25);
+			comp_[0].m_insert_len.push_back(20);
+
+			comp_[0].m_delete_A.push_back(70);
+			comp_[0].m_insert_B.push_back(50);
+			comp_[0].m_delete_len.push_back(30);
+
+			comp_[0].m_delete_A.push_back(100);
+			comp_[0].m_insert_B.push_back(110);
+			comp_[0].m_delete_len.push_back(13);
+
+			comp_[0].Final();
+			comp_fin_ = true;
+		}
+#else
 		comp_progress_ = 0;
 		FILE_ADDRESS addr = 0;
 		CompResult result;
@@ -1282,6 +1322,7 @@ UINT CHexEditDoc::RunCompThread()
 		}
 		delete[] comp_bufa_; comp_bufa_ = NULL;
 		delete[] comp_bufb_; comp_bufb_ = NULL;
+#endif
 
 		ASSERT(comp_[0].m_replace_A.size() == comp_[0].m_replace_B.size());
 		ASSERT(comp_[0].m_replace_A.size() == comp_[0].m_replace_len.size());

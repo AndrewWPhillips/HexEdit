@@ -17269,8 +17269,8 @@ void CHexEditView::OnCompNext()
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
 
-	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiff(end);
-	if (locn.first  < GetDocument()->length())
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiff(start < end ? end - 1 : end);
+	if (locn.first  > -1)
 	{
 		FILE_ADDRESS len = abs(int(locn.second));
 		MoveToAddress(locn.first, locn.first + len);
@@ -17287,8 +17287,8 @@ void CHexEditView::OnUpdateCompNext(CCmdUI* pCmdUI)
 
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
-	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiff(end);
-	pCmdUI->Enable(locn.first < GetDocument()->length());
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiff(start < end ? end - 1 : end);
+	pCmdUI->Enable(locn.first  > -1);
 }
 
 // Command to go to last recent difference in compare view
@@ -17352,7 +17352,7 @@ void CHexEditView::OnCompAllNext()
 	GetSelAddr(start, end);
 
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextDiffAll(end);
-	if (locn.first  < GetDocument()->length())
+	if (locn.first > -1)
 	{
 		FILE_ADDRESS len = abs(int(locn.second));
 		MoveToAddress(locn.first, locn.first + len);

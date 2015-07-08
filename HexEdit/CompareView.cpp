@@ -13,7 +13,7 @@
 #include "HexEditView.h"
 #include "CompareView.h"
 
-// xxx TBD TODO
+// xxx TBD
 // Testing:
 // - new file not saved to disk
 // - new file self-compare
@@ -23,9 +23,9 @@
 // Bugs:
 // - diff length files -  bit past end is not updated properly when top of block is off top of screen
 // - next/prev difference do not always do anything
-// - next preview does not work for last diff
 // - last does not select the block past eof when files are different length
 // Todo:
+// - first/prev/next/last diff - select in list
 // - cut/copy in compare view
 
 extern CHexEditApp theApp;
@@ -65,7 +65,7 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
 		ON_UPDATE_COMMAND_UI(ID_COMP_ALL_NEXT, OnUpdateDisable)
 		ON_UPDATE_COMMAND_UI(ID_COMP_ALL_LAST, OnUpdateDisable)
 
-		// Display stuff that would be confusing
+		// Disable stuff that would be confusing
 		ON_UPDATE_COMMAND_UI(ID_AUTOFIT, OnUpdateDisable)
 
 		// Printing
@@ -2020,8 +2020,8 @@ void CCompareView::OnCompNext()
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
 
-	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(end);
-	if (locn.first  < GetDocument()->CompLength())
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(start < end ? end - 1 : end);
+	if (locn.first > -1)
 	{
 		FILE_ADDRESS len = abs(int(locn.second));
 		MoveToAddress(locn.first, locn.first + len);
@@ -2038,8 +2038,8 @@ void CCompareView::OnUpdateCompNext(CCmdUI* pCmdUI)
 
 	FILE_ADDRESS start, end;  // current selection
 	GetSelAddr(start, end);
-	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(end);
-	pCmdUI->Enable(locn.first < GetDocument()->CompLength());
+	std::pair<FILE_ADDRESS, FILE_ADDRESS> locn = GetDocument()->GetNextOtherDiff(start < end ? end - 1 : end);
+	pCmdUI->Enable(locn.first > -1);
 }
 
 // Command to go to last recent difference in compare view
