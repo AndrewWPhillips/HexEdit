@@ -82,8 +82,26 @@ static char *headingTiny[CCompareListDlg::COL_LAST+1] =
 IMPLEMENT_DYNCREATE(CGridCtrlComp, CGridCtrl)
 
 BEGIN_MESSAGE_MAP(CGridCtrlComp, CGridCtrl)
-	ON_WM_LBUTTONUP()
+	//ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CGridCtrlComp message handlers
+
+//void CGridCtrlComp::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+//{
+//	CGridCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+//}
+
+BOOL CGridCtrlComp::PreTranslateMessage(MSG* pMsg)
+{
+	if ((pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP) && pMsg->wParam == VK_RETURN)
+	{
+		return TRUE;  // if we don't trap and ignore the return key then the grid control is somehow made invisible
+	}
+
+	return CGridCtrl::PreTranslateMessage(pMsg);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CGridCtrlComp methods

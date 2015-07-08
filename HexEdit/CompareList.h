@@ -20,10 +20,12 @@ class CGridCtrlComp : public CGridCtrl
 
 public:
 	void FixHeading(int col, UINT size);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 protected:
 	virtual BOOL OnResizeColumn(int col, UINT size);
-	//afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+
+	//afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -74,6 +76,8 @@ protected:
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnHelp();
+	//afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	//afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg LRESULT OnKickIdle(WPARAM, LPARAM);
 	//afx_msg void OnInitialUpdate();
 	//afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
