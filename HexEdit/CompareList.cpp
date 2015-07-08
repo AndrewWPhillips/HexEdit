@@ -264,6 +264,7 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	{
 		m_first = false;
 		InitColumnHeadings();
+		grid_.ExpandColsNice(FALSE);
 	}
 
 	// Display context help for ctrl set up in OnHelpInfo
@@ -282,14 +283,20 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	   )
 	{
 		last_change_ = pdoc->LastCompareFinishTime();
+		phev_ = pview;
 
 		// Clear the list and rebuild it
 		grid_.SetRowCount(grid_.GetFixedRowCount());
-
-		phev_ = pview;                                 // FillGrid needs to access the view
 		FillGrid(pdoc);
 	}
-	phev_ = pview;                                     // remember which view we are looking at
+	else if (pview == NULL && phev_ != NULL)
+	{
+		last_change_ = 0;
+		phev_ = NULL;
+
+		// Clear the list
+		grid_.SetRowCount(grid_.GetFixedRowCount());
+	}
 	return FALSE;
 }
 
