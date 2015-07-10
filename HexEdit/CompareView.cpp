@@ -19,14 +19,12 @@
 // - new file self-compare
 // - device file self-compare
 // - stacked mode auto-sync
-// - self-compare fade
-// Bugs:
-// - diff length files -  bit past end is not updated properly when top of block is off top of screen
-// - next/prev difference do not always do anything
-// - last does not select the block past eof when files are different length
 // Todo:
 // - first/prev/next/last diff - select in list
-// - cut/copy in compare view
+// - self-compare fade
+// - select all
+// - goto command?
+// - open separately (unless self-compare)
 
 extern CHexEditApp theApp;
 
@@ -696,8 +694,7 @@ void CCompareView::OnDraw(CDC* pDC)
 
 	ASSERT(GetDocument()->ResultCount() > 0);
 
-#if 0  // noty quite ready
-	if (GetDocument()->CompareDifferences() > 0)
+	if (GetDocument()->CompareDifferences() > 0 && !pDC->IsPrinting())
 	{
 		CSingleLock sl(&(GetDocument()->docdata_), TRUE); // Protect shared data access to the returned vectors
 
@@ -718,7 +715,6 @@ void CCompareView::OnDraw(CDC* pDC)
 							line_height, char_width, char_width_w,	phev_->comp_col_,
 							true, (pDC->IsPrinting() ? phev_->print_text_height_ : phev_->text_height_)/8);
 	}
-#endif
 
 	unsigned char buf[CHexEditView::max_buf];  // Holds bytes for current line being displayed
 	size_t last_col = 0;                     // Number of bytes in buf to display
@@ -1450,6 +1446,126 @@ void CCompareView::draw_bg(CDC* pDC, const CRectAp &doc_rect, bool neg_x, bool n
 	pDC->SelectObject(psaved_pen);
 	pDC->SelectObject(psaved_brush);
 	return;
+}
+
+void CCompareView::draw_deletions(CDC* pDC, const vector<FILE_ADDRESS> & addr, const vector<FILE_ADDRESS> & len, 
+								  FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
+								  const CRectAp &doc_rect, bool neg_x, bool neg_y,
+								  int line_height, int char_width, int char_width_w,
+								  COLORREF colour)
+{
+	ASSERT(addr.size() == len.size());               // there should be equal numbers of addresses and lengths
+
+	COLORREF prev_col = pDC->SetTextColor(phev_->bg_col_);  // so digit or * is visible on coloured background
+
+	int ii;
+	// Skip blocks above the top of the display area
+	// [This needs to be a binary search in case we get a large number of compare diffs]
+	for (ii = 0; ii < addr.size(); ++ii)
+		if (addr[ii] >= first_virt)
+			break;
+
+	for ( ; ii < addr.size(); ++ii)
+	{
+		// Check if we are now past the end of the display area
+		if (addr[ii] > last_virt)
+			break;
+
+		CRect draw_rect;
+
+		draw_rect.top = int(((addr[ii] + phev_->offset_)/phev_->rowsize_) * line_height - 
+							doc_rect.top + bdr_top_);
+		draw_rect.bottom = draw_rect.top + line_height;
+		if (neg_y)
+		{
+			draw_rect.top = -draw_rect.top;
+			draw_rect.bottom = -draw_rect.bottom;
+		}
+
+		if (!phev_->display_.vert_display && phev_->display_.hex_area)
+		{
+			draw_rect.left = hex_pos(int((addr[ii] + phev_->offset_)%phev_->rowsize_), char_width) - 
+								char_width - doc_rect.left + bdr_left_;
+			draw_rect.right = draw_rect.left + char_width;
+			if (neg_x)
+			{
+				draw_rect.left = -draw_rect.left;
+				draw_rect.right = -draw_rect.right;
+			}
+			pDC->FillSolidRect(&draw_rect, colour);
+			char cc = (len[ii] > 9 || !phev_->display_.delete_count) ? '*' : '0' + char(len[ii]);
+			pDC->DrawText(&cc, 1, &draw_rect, DT_CENTER | DT_TOP | DT_NOPREFIX | DT_SINGLELINE);
+		}
+		if (phev_->display_.vert_display || phev_->display_.char_area)
+		{
+			draw_rect.left = char_pos(int((addr[ii] + phev_->offset_)%phev_->rowsize_), char_width, char_width_w) - 
+								doc_rect.left + bdr_left_ - 2;
+			draw_rect.right = draw_rect.left + char_width_w/5+1;
+			if (neg_x)
+			{
+				draw_rect.left = -draw_rect.left;
+				draw_rect.right = -draw_rect.right;
+			}
+			pDC->FillSolidRect(&draw_rect, colour);
+		}
+	}
+
+	pDC->SetTextColor(prev_col);   // restore text colour
+}
+
+void CCompareView::draw_backgrounds(CDC* pDC,
+									const vector<FILE_ADDRESS> & addr, const vector<FILE_ADDRESS> & len, 
+									FILE_ADDRESS first_virt, FILE_ADDRESS last_virt,
+									const CRectAp &doc_rect, bool neg_x, bool neg_y,
+									int line_height, int char_width, int char_width_w,
+									COLORREF colour, bool merge /*=true*/, int draw_height /*=-1*/)
+{
+	ASSERT(addr.size() == len.size());                                 // arrays should be equal size
+	FILE_ADDRESS first_addr = max(0, first_virt);                      // First address to actually display
+	FILE_ADDRESS last_addr  = min(GetDocument()->CompLength(), last_virt); // One past last address actually displayed
+
+	int ii;
+	if (!ScrollUp())
+	{
+		// Skip blocks above the top of the display area
+		// [This needs to be a binary search in case we get a large number of compare diffs]
+		for (ii = 0; ii < addr.size(); ++ii)
+			if (addr[ii] + len[ii] > first_virt)
+				break;
+
+		for ( ; ii < addr.size(); ++ii)
+		{
+			// Check if we are now past the end of the display area
+			if (addr[ii] > last_virt)
+				break;
+
+			draw_bg(pDC, doc_rect, neg_x, neg_y,
+					line_height, char_width, char_width_w, colour,
+					max(addr[ii], first_addr), 
+					min(addr[ii] + len[ii], last_addr),
+					merge, draw_height);
+		}
+	}
+	else
+	{
+		// Starting at end skip blocks below the display area
+		// [This needs to be a binary search in case we get a large number of compare diffs]
+		for (ii = addr.size() - 1; ii >= 0; ii--)
+			if (addr[ii] < last_virt)
+				break;
+
+		for ( ; ii >= 0; ii--)
+		{
+			if (addr[ii] + len[ii] <= first_virt)
+				break;
+
+			draw_bg(pDC, doc_rect, neg_x, neg_y,
+					line_height, char_width, char_width_w, colour,
+					max(addr[ii], first_addr), 
+					min(addr[ii] + len[ii], last_addr),
+					merge, draw_height);
+		}
+	}
 }
 
 // Move scroll or caret position in response to a key press.

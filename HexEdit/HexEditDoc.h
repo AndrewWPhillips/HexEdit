@@ -733,6 +733,19 @@ public:
 		return make_pair(&comp_[rr].m_delete_A, &comp_[rr].m_delete_len);
 	}
 
+	pair<const std::vector<FILE_ADDRESS> *, const std::vector<FILE_ADDRESS> *> CompReplacements()
+	{
+		return make_pair(&comp_[0].m_replace_B, &comp_[0].m_replace_len);
+	}
+	pair<const std::vector<FILE_ADDRESS> *, const std::vector<FILE_ADDRESS> *> CompInsertions()
+	{
+		return make_pair(&comp_[0].m_insert_B, &comp_[0].m_delete_len);
+	}
+	pair<const std::vector<FILE_ADDRESS> *, const std::vector<FILE_ADDRESS> *> CompDeletions()
+	{
+		return make_pair(&comp_[0].m_delete_B, &comp_[0].m_insert_len);
+	}
+
 	void GetCompareData(const std::vector<FILE_ADDRESS> **p_insert_A, const std::vector<FILE_ADDRESS> **p_insert_B, const std::vector<FILE_ADDRESS> **p_insert_len,
 						const std::vector<FILE_ADDRESS> **p_delete_A, const std::vector<FILE_ADDRESS> **p_delete_B, const std::vector<FILE_ADDRESS> **p_delete_len,
 						const std::vector<FILE_ADDRESS> **p_replace_A, const std::vector<FILE_ADDRESS> **p_replace_B, const std::vector<FILE_ADDRESS> **p_replace_len)
