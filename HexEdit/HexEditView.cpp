@@ -8415,12 +8415,23 @@ void CHexEditView::OnUpdateClipboard(CCmdUI* pCmdUI)
 		pCmdUI->Enable(start != end);
 }
 
-bool CHexEditView::CopyToClipboard()
+bool CHexEditView::CopyToClipboard(bool fromCompFile /*=false*/)
 {
 	// Get the addresses of the selection
 	FILE_ADDRESS start, end;
-	GetSelAddr(start, end);
-	ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
+	if (fromCompFile)
+	{
+		ASSERT(pcv_ != NULL);
+		if (pcv_ == NULL) return false;
+
+		pcv_->GetSelAddr(start, end);
+		ASSERT(start >= 0 && start <= end && end <= GetDocument()->CompLength());
+	}
+	else
+	{
+		GetSelAddr(start, end);
+		ASSERT(start >= 0 && start <= end && end <= GetDocument()->length());
+	}
 
 	// Clipboard setup and error checking
 	if (!copy2cb_init(start, end))
@@ -8441,7 +8452,7 @@ bool CHexEditView::CopyToClipboard()
 	else if (cb_text == CB_TEXT_AUTO)
 	{
 		// If binary data use hex text else use binary+chars
-		cb_text = is_binary(start, end) ? CB_TEXT_HEXTEXT : CB_TEXT_BIN_CHARS;
+		cb_text = is_binary(start, end, fromCompFile) ? CB_TEXT_HEXTEXT : CB_TEXT_BIN_CHARS;
 	}
 	else if (cb_text == CB_TEXT_AREA)
 	{
@@ -8458,7 +8469,7 @@ bool CHexEditView::CopyToClipboard()
 		if (cb_text == CB_TEXT_HEXTEXT)
 		{
 			// Text is hex text (eg 3 chars per byte "ABC" -> " 61 62 63")
-			if (copy2cb_hextext(start, end) && copy2cb_flag_text_is_hextext())
+			if (copy2cb_hextext(start, end, fromCompFile) && copy2cb_flag_text_is_hextext())
 				some_succeeded = true;
 			else
 				some_failed = true;
@@ -8466,13 +8477,13 @@ bool CHexEditView::CopyToClipboard()
 		else
 		{
 			// Text as actual chars (if valid) including char set conversion
-			if (copy2cb_text(start, end))
+			if (copy2cb_text(start, end, fromCompFile))
 				some_succeeded = true;
 			else
 				some_failed = true;
 
 			// And also as binary
-			if (copy2cb_binary(start, end))
+			if (copy2cb_binary(start, end, fromCompFile))
 				some_succeeded = true;
 			else
 				use_file = true;   // Possibly too big error - so use temp file format
@@ -8481,6 +8492,9 @@ bool CHexEditView::CopyToClipboard()
 	}
 	if (use_file)
 	{
+		if (fromCompFile)
+			return false;     // we can't handle writing to a temp file from the compare file (yet?)
+
 		// Store all the data as binary in a (semi) temporary file.
 		strTemp = copy2cb_file(start, end);
 		if (!strTemp.IsEmpty())
@@ -8579,7 +8593,7 @@ bool CHexEditView::copy2cb_init(FILE_ADDRESS start, FILE_ADDRESS end)
 // Invalid text characters (eg nul byte) are not copied.
 // If current display mode is EBCDIC then the characters are converted from
 // EBCDIC to ASCII as they are added.
-bool CHexEditView::copy2cb_text(FILE_ADDRESS start, FILE_ADDRESS end)
+bool CHexEditView::copy2cb_text(FILE_ADDRESS start, FILE_ADDRESS end, bool fromCompFile /*=false*/)
 {
 	// Get windows memory to allow data to be put on clipboard
 	HANDLE hh;                                      // Windows handle for memory
@@ -8600,7 +8614,10 @@ bool CHexEditView::copy2cb_text(FILE_ADDRESS start, FILE_ADDRESS end)
 	for (curr = start; curr < end; curr += len)
 	{
 		len = min(clipboard_buf_len, int(end - curr));
-		VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+		if (fromCompFile)
+			VERIFY(GetDocument()->GetCompData(buf, len, curr) == len);
+		else
+			VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 		// Copy all characters in buffer to clipboard memory (unless nul)
 		unsigned char *end_buf = buf + len;
 		if (display_.char_set != CHARSET_EBCDIC)
@@ -8741,7 +8758,7 @@ CString CHexEditView::copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end)
 // simply consisting of a length (32-bit integer) followed by the bytes.
 // May return false due to errors such as insufficient memory, whence
 // a message has been shown to the user and mac_error_ has been set.
-bool CHexEditView::copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end)
+bool CHexEditView::copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end, bool fromCompFile /*=false*/)
 {
 	HANDLE hh;                                      // Windows handle for memory
 	unsigned char *pp;                              // Actual pointer to the memory
@@ -8764,7 +8781,10 @@ bool CHexEditView::copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end)
 	*pl = long(end - start);
 
 	// Copy the data from the document to the global memory
-	VERIFY(GetDocument()->GetData(pp+4, size_t(end - start), start) == end - start);
+	if (fromCompFile)
+		VERIFY(GetDocument()->GetCompData(pp+4, size_t(end - start), start) == end - start);
+	else
+		VERIFY(GetDocument()->GetData(pp+4, size_t(end - start), start) == end - start);
 
 	if (::SetClipboardData(bin_format, hh) == NULL)
 	{
@@ -8782,7 +8802,7 @@ bool CHexEditView::copy2cb_binary(FILE_ADDRESS start, FILE_ADDRESS end)
 
 // Copy to clipboard as hex text, ie, each byte is stored as
 // 2 hex digits + also includes spaces etc.
-bool CHexEditView::copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end)
+bool CHexEditView::copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end, bool fromCompFile /*=false*/)
 {
 	// Work out the amount of memory needed (may be slightly more than needed).
 	FILE_ADDRESS mem_needed = hex_text_size(start, end);
@@ -8811,7 +8831,10 @@ bool CHexEditView::copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end)
 	FILE_ADDRESS curr;
 	for (curr = start; curr < end; )
 	{
-		VERIFY(GetDocument()->GetData(&cc, 1, curr) == 1);
+		if (fromCompFile)
+			VERIFY(GetDocument()->GetCompData(&cc, 1, curr) == 1);
+		else
+			VERIFY(GetDocument()->GetData(&cc, 1, curr) == 1);
 		*pp++ = hex[(cc>>4)&0xF];
 		*pp++ = hex[cc&0xF];
 		*pp++ = ' ';
@@ -8843,7 +8866,7 @@ bool CHexEditView::copy2cb_hextext(FILE_ADDRESS start, FILE_ADDRESS end)
 	return true;
 }
 
-bool CHexEditView::is_binary(FILE_ADDRESS start, FILE_ADDRESS end)
+bool CHexEditView::is_binary(FILE_ADDRESS start, FILE_ADDRESS end, bool fromCompFile /*=false*/)
 {
 	unsigned char buf[8192];
 	size_t len;
@@ -8851,7 +8874,10 @@ bool CHexEditView::is_binary(FILE_ADDRESS start, FILE_ADDRESS end)
 	{
 		// Get the next buffer full from the document
 		len = size_t(min(sizeof(buf), end - curr));
-		VERIFY(GetDocument()->GetData(buf, len, curr) == len);
+		if (fromCompFile)
+			VERIFY(GetDocument()->GetCompData(buf, len, curr) == len);
+		else
+			VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 
 		// For now we only consider data with a null byte to be binary
 		// since the clipboard can actually have any other character
