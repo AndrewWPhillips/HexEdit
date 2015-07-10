@@ -1495,6 +1495,9 @@ IDR_CONTEXT_COMPARE MENU
 BEGIN
     POPUP "Compare Context"
     BEGIN
+        MENUITEM "&Copy",                       ID_EDIT_COPY
+        MENUITEM "Select A&ll",                 ID_SELECT_ALL
+        MENUITEM SEPARATOR
         MENUITEM "&Auto Sync",                  ID_COMP_AUTO_SYNC
         MENUITEM "Auto &Scroll",                ID_COMP_AUTO_SCROLL
         MENUITEM SEPARATOR

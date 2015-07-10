@@ -126,6 +126,9 @@ protected:
 	afx_msg void OnUpdateCompNext(CCmdUI* pCmdUI);
 	afx_msg void OnCompLast();
 	afx_msg void OnUpdateCompLast(CCmdUI* pCmdUI);
+	afx_msg void OnEditCopy();
+	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);
+	afx_msg void OnSelectAll();
 
 	DECLARE_MESSAGE_MAP()
 

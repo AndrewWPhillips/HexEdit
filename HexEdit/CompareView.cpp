@@ -54,6 +54,10 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_COMP_NEXT, OnUpdateCompNext)
 	ON_UPDATE_COMMAND_UI(ID_COMP_LAST, OnUpdateCompLast)
 
+	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateEditCopy)
+	ON_COMMAND(ID_SELECT_ALL, OnSelectAll)
+
 	// These are here to simply disable inappropriate commands to prevent them
 	// being passed on to the "owner" hex view (see OnCmdMsg).
 
@@ -72,6 +76,8 @@ BEGIN_MESSAGE_MAP(CCompareView, CScrView)
 		ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, OnUpdateDisable)
 
 		// Editing
+		ON_UPDATE_COMMAND_UI(ID_COPY_CCHAR, OnUpdateDisable)
+		ON_UPDATE_COMMAND_UI(ID_COPY_HEX, OnUpdateDisable)
 		ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateDisable)
 		ON_UPDATE_COMMAND_UI(ID_EDIT_CUT, OnUpdateDisable)
 		ON_UPDATE_COMMAND_UI(ID_PASTE_ASCII, OnUpdateDisable)
@@ -2172,4 +2178,33 @@ void CCompareView::OnCompLast()
 void CCompareView::OnUpdateCompLast(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(GetDocument()->CompareDifferences() > 0);
+}
+
+void CCompareView::OnEditCopy()
+{
+	ASSERT(phev_ != NULL);
+	phev_->CopyToClipboard(true);
+}
+
+// Update handler that turns on certain user interface options (Copy etc) if there
+// is a selection -- ie. there is something available to be placed on the clipboard
+void CCompareView::OnUpdateEditCopy(CCmdUI* pCmdUI)
+{
+	// Is there any text selected?
+	CPointAp start, end;
+	GetSel(start, end);
+	pCmdUI->Enable(start != end);
+}
+
+void CCompareView::OnSelectAll()
+{
+	SetSel(addr2pos(0), addr2pos(GetDocument()->CompLength()));
+
+	if (phev_->AutoSyncCompare())
+	{
+		// select all of orig too if autosync is on
+		phev_->SetAutoSyncCompare(false);  // avoid inf. recursion
+		phev_->MoveToAddress(0, GetDocument()->length());
+		phev_->SetAutoSyncCompare(true);
+	}
 }
