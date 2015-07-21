@@ -1988,6 +1988,8 @@ unsigned long rand_good()
 //-----------------------------------------------------------------------------
 // Memory
 
+#if 0  // we don't need this yet (and I am not sure how useful it is compared with Compare16() below)
+
 // Compare two blocks of memory to find the first different byte.  (This is 
 // similar to memcmp but returns the number of bytes the same.)
 // Parameters:
@@ -2050,6 +2052,151 @@ int next_diff(const void * buf1, const void * buf2, size_t len)
 	}
 
 	return -1;
+}
+#endif
+
+// Compare16:
+//    Performs a fast memory comparison (using SSE2 instructions) by comparing 16 bytes at a time.
+//    Note that memcmp() is no good since we need to know the first byte that is different (+ 25% slower).
+//    
+// Parameters:
+//    buf1, buf2 = the buffers to compare
+//    buflen = how far to look
+//
+// Return value:
+//    The number of bytes up to the first difference OR
+//    buflen if both buffers are the same
+size_t Compare16(const unsigned char * buf1, const unsigned char * buf2, size_t buflen)
+{
+	assert((int)buf1 % 16 == 0 && (int)buf2 % 16 == 0);                 // ensure correct memory alignment
+
+	__m128i *pchunk1;
+	__m128i *pchunk2;
+	__m128i *pend = (__m128i *)(buf1 + buflen);
+	__m128i cmp;                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
+
+	for (pchunk1 = (__m128i *)buf1, pchunk2 = (__m128i *)buf2; pchunk1 < pend; ++pchunk1, ++pchunk2)
+	{
+		cmp = _mm_cmpeq_epi32(*pchunk1, *pchunk2);                       // PCMPEQD
+		if (_mm_movemask_ps(_mm_castsi128_ps(cmp)) != 0xF)               // MOVMSKPS - note that all 4 bits on (0xF)  means that all dwords compared equal
+		{
+			// There is at least one difference in the 16 bytes - find the first diff. byte
+			const unsigned char *p1 = (const unsigned char *)pchunk1;
+			const unsigned char *p2 = (const unsigned char *)pchunk2;
+			int ii;
+			for (ii = 0; *p1 == *p2 && ii < 16; ++ii)
+			{
+				++p1;
+				++p2;
+			}
+			assert(ii < 16);                                            // else we have done something wrong (or PCMPEQD did not work)
+			return p1 - buf1;
+		}
+	}
+
+	return buflen;
+}
+
+// Search4:
+//    Performs a fast search through memory comparing 16 bytes at a time (using SSE2 instructions) and looking
+//    for 4 different patterns of 4 bytes. That is if we are searching for the first letters of the alphabet it
+//    will look for "abcd", "bcde", "cdef", and "defg" (and thence check for the correct match length) - so the
+//    bytes "cdefghijklm" will be matched even though they do not start with "abcd".
+//
+// Parameters:
+//    buf = the buffer to search - should be aligned on a 16-byte boundary
+//    buflen = length of the buffer
+//    to_find = what to look for - alignment not important but must have at least 7 bytes
+//    to_find_len - length of the to_find buffer - needs to be at least 7 and probably min_match + 3
+//    ret_offset = returned offset into to_find which indicates which of the 4 search patterns was matched
+//               - possible values are 0, 1, 2, 3
+//    min_match = minimum number of matching bytes before we consider it to be a match - needs to be at least 10
+//
+// Return value:
+//    Pointer into buf where the match was found or NULL if nothing was found
+//    Note that the first byte pointed to may be any of the first 4 bytes of to_find as indicated byt ret_offset
+const unsigned char * Search4(const unsigned char * buf, size_t buflen, const unsigned char * to_find, size_t to_find_len, int &ret_offset, int min_match /*=10*/)
+{
+	assert((int)buf % 16 == 0);     // ensure correct memory alignment
+	assert(min_match >= 10);        // this is a requirement due to the way the search is performed
+	assert(to_find_len > 7);        // probably should be at least min_match + 3
+
+	// Set up the search patterns
+	__m128i pat[4];
+	pat[0].m128i_u32[0] = pat[0].m128i_u32[1] = pat[0].m128i_u32[2] = pat[0].m128i_u32[3] = *(unsigned __int32 *)(to_find+0);
+	pat[1].m128i_u32[0] = pat[1].m128i_u32[1] = pat[1].m128i_u32[2] = pat[1].m128i_u32[3] = *(unsigned __int32 *)(to_find+1);
+	pat[2].m128i_u32[0] = pat[2].m128i_u32[1] = pat[2].m128i_u32[2] = pat[2].m128i_u32[3] = *(unsigned __int32 *)(to_find+2);
+	pat[3].m128i_u32[0] = pat[3].m128i_u32[1] = pat[3].m128i_u32[2] = pat[3].m128i_u32[3] = *(unsigned __int32 *)(to_find+3);
+
+	__m128i * pp, cmp;
+	ret_offset = -1;
+	int which_dword = -1;       // bottom 4 bits are a mask which says which copy (or copies) of the pattern were matched
+	const unsigned char * retval = NULL;
+
+	//timer t(true);
+
+	for (pp = (__m128i *)buf; (unsigned char *)pp < buf + buflen; ++pp)
+	{
+		for (int pnum = 0; pnum < 4; ++pnum)
+		{
+			cmp = _mm_cmpeq_epi32(pat[pnum], *pp);                           // PCMPEQD
+			if (which_dword = _mm_movemask_ps(_mm_castsi128_ps(cmp)))        // MOVMSKPS
+			{
+				// We found 1 (or more) matches of this (pnum) pattern in this (pp to pp+15) chunk
+				// Now we need to check if any match meets the length requirements
+				const unsigned char * match;
+
+				// Check each match (indicated by the bottom 4 bits of which_dword)
+				for (int which = 0; which < 4; ++which, which_dword >>= 1)
+				{
+					int offset, idx;
+
+					if ((which_dword & 0x1) == 0)
+						continue;
+
+					// Get address of the dword we matched
+					match = (const unsigned char *)pp + which*4;
+
+					// Scan backwards from there since we can match up to 3 bytes past start of where the bytes are actually the same
+					for (offset = pnum; offset > 0; offset--)
+					{
+						if (*(match-1) == to_find[offset-1])
+							match--;
+						else
+							break;
+					}
+
+					// NOW: the pointer 'match' points to start of matched bytes and 'offset' is corresponding offset into to_find
+
+					// Scan forwad to check that there are enough macthing bytes
+					for (idx = 0; idx < min_match && offset+idx < to_find_len; ++idx)
+					{
+						if (match[idx] != to_find[offset+idx])
+							break;                            // diff found so break
+					}
+
+					if (idx < min_match)
+						continue;                             // not enough matchers
+
+					// We found a match! Now check if it is before any previously found match in this chunk
+					if (retval == NULL || match < retval)
+					{
+						retval = match;
+						ret_offset = offset;
+					}
+				}
+			}
+		}
+
+		if (retval != NULL)
+			break;                                          // stop searching when we found a long enough match
+	}
+
+	//t.stop();
+	//printf("%g  %d\n", (double)t.elapsed(), (int)ret_offset); 
+	assert((unsigned char *)pp < buf + buflen);
+	assert(retval < buf + buflen);
+	return retval;
 }
 
 // Returns a 32-bit hash value given a string.  Fast with a good
