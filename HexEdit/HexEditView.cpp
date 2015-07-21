@@ -16156,6 +16156,8 @@ template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, 
 	// This speeds up NOT operation somewhat (though disk is normally limiting factor).
 	// Note that we can only do this easily for NOT as it is the only operation
 	// that does not need byte order reversal for big-endian and has an SSE2 instruction.
+	// Also note that if the length is no divisible by 16 then the last few bytes are
+	// handled by the old code (see case unary_not: below).
 	if (op == unary_not)
 	{
 		__m128i all_on = _mm_set1_epi8 ('\xFF');

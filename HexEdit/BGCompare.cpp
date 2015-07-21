@@ -389,7 +389,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 {
 	ASSERT(rr >= 0 && rr < comp_.size());
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
+	retval.first = LLONG_MAX;                          // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -442,7 +442,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 		}
 	}
 
-	if (retval.first == LONGLONG_MAX)
+	if (retval.first == LLONG_MAX)
 		retval.first = -1;           // signal not found
 	return retval;
 }
@@ -454,7 +454,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiffAll()
 {
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
+	retval.first = LLONG_MAX;                       // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -488,7 +488,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiffAll()
 		}
 	}
 
-	if (retval.first == LONGLONG_MAX)
+	if (retval.first == LLONG_MAX)
 		retval.first = -1;           // signal not found
 	return retval;
 }
@@ -662,7 +662,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 {
 	ASSERT(rr >= 0 && rr < comp_.size());
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
+	retval.first = LLONG_MAX;                          // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -717,7 +717,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 		}
 	}
 
-	if (retval.first == LONGLONG_MAX)
+	if (retval.first == LLONG_MAX)
 		retval.first = -1;           // signal not found
 	return retval;
 }
@@ -730,7 +730,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextDiffAll(FILE_ADDRESS from)
 {
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = LONGLONG_MAX;                       // default value indicates "not found"
+	retval.first = LLONG_MAX;                          // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;
 
@@ -771,7 +771,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetNextDiffAll(FILE_ADDRESS f
 		}
 	}
 
-	if (retval.first == LONGLONG_MAX)
+	if (retval.first == LLONG_MAX)
 		retval.first = -1;           // signal not found
 	return retval;
 }
