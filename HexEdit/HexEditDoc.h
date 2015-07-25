@@ -995,6 +995,7 @@ private:
 	// Also see data_file4_ (above)
 	CFile64 *pfile1_compare_, *pfile4_compare_;   // The file we are comparing with (for fg + bg threads)
 	CString compFileName_;      // Name of file comparing with (or last compare file)
+	int compMinMatch_;          // Min number of match bytes when searching for insertions/deletions (min 10, or 0 if insertions/deletions not allowed)
 	size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
 	bool CreateCompThread();  // Create background thread which does the compare
 	void KillCompThread();    // Kill background thread ASAP

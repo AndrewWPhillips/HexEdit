@@ -2134,7 +2134,7 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 	const unsigned char * retval = NULL;
 
 	//timer t(true);
-
+	// xxx what happens if buflen is not a multiple of 16 (sizeof(__m128i))
 	for (pp = (__m128i *)buf; (unsigned char *)pp < buf + buflen; ++pp)
 	{
 		for (int pnum = 0; pnum < 4; ++pnum)
@@ -2168,8 +2168,8 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 
 					// NOW: the pointer 'match' points to start of matched bytes and 'offset' is corresponding offset into to_find
 
-					// Scan forwad to check that there are enough macthing bytes
-					for (idx = 0; idx < min_match && offset+idx < to_find_len; ++idx)
+					// Scan forwad to check that there are enough matching bytes
+					for (idx = 0; idx < min_match && offset+idx < to_find_len; ++idx)  // xxx need to check that match+idx is not past end of buffer
 					{
 						if (match[idx] != to_find[offset+idx])
 							break;                            // diff found so break

@@ -15,6 +15,7 @@
 #include "HexFileList.h"
 #include "Dialog.h"
 #include "NewCompare.h"
+#include "Misc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -72,6 +73,8 @@ void CHexEditDoc::DoCompNew(view_t view_type)
 		(*ppv)->OnCompHide();
 
 	ASSERT(cv_count_ == 0 && pthread4_ == NULL);  // we should have closed all compare views and hence killed the compare thread
+
+	compMinMatch_ = 10; // xxx need to get this from dlg (0 = no insert/delete)
 
 	// Now open the compare view and start the background compare.
 	// (DoCompSplit/DoCompTab create the new view and send WM_INITIALUPDATE
@@ -389,7 +392,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 {
 	ASSERT(rr >= 0 && rr < comp_.size());
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = LLONG_MAX;                          // default value indicates "not found"
+	retval.first = LLONG_MAX;                           // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -454,7 +457,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_first_diff(bool other, in
 std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::GetFirstDiffAll()
 {
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> retval;
-	retval.first = LLONG_MAX;                       // default value indicates "not found"
+	retval.first = LLONG_MAX;                          // default value indicates "not found"
 
 	if (pthread4_ == NULL) return retval;              // no background compare is happening
 
@@ -1201,7 +1204,7 @@ UINT CHexEditDoc::RunCompThread()
 		if (CompProcessStop())
 			continue;
 
-#ifdef _DEBUG
+#if  0
 		{
 			CSingleLock sl(&docdata_, TRUE); // Protect shared data access
 
@@ -1234,15 +1237,26 @@ UINT CHexEditDoc::RunCompThread()
 		}
 #else
 		comp_progress_ = 0;
-		FILE_ADDRESS addr = 0;
 		CompResult result;
 		result = comp_[0];
 
 		// Get buffers for each source
-		const int buf_size = 8192;   // xxx may need to be dynamic later (based on sync length)
+		const size_t buf_size = 8192;   // xxx may need to be dynamic later (based on sync length)
 		ASSERT(comp_bufa_ == NULL && comp_bufb_ == NULL);
-		comp_bufa_ = new unsigned char[buf_size];
-		comp_bufb_ = new unsigned char[buf_size];
+		ASSERT(compMinMatch_ >= 10 && compMinMatch_ < 64+4);
+
+		// We need buffers aligned on 16-byte boundaries for SSE2 instructions
+		comp_bufa_ = (unsigned char *)_aligned_malloc(buf_size + (compMinMatch_ - 4), 16);
+		comp_bufb_ = (unsigned char *)_aligned_malloc(buf_size + (compMinMatch_ - 4), 16);
+		if (comp_bufa_ == NULL || comp_bufb_ == NULL)
+		{
+			comp_fin_ = true;
+			TRACE("+++ BGCompare: _aligned_malloc error in %p\n", this);
+			continue;
+		}
+		size_t gota = 0, gotb = 0;             // Current amount of data obtained from each file (at addra, addrb)
+		FILE_ADDRESS addra = 0, addrb = 0;     // Address of byte at start of buffers (comp_bufa_, comp_bufb_)
+		FILE_ADDRESS cumulative_replace = 0;   // Keeps track of a long differrence - treated as a replacement
 
 		// Keep looping until we are finished processing blocks or we receive a command to stop etc
 		for (;;)
@@ -1251,64 +1265,147 @@ UINT CHexEditDoc::RunCompThread()
 			if (CompProcessStop())
 				break;   // stop processing and go back to WAITING state
 
-			int gota, gotb;  // Amount of data obtained from each file
-
 			// Get the next chunks
-			gota = GetData    (comp_bufa_, buf_size, addr, 4);
-			gotb = GetCompData(comp_bufb_, buf_size, addr, true);
+			// xxx what if gota or gotb > buf_size - can occur I think
+			gota = GetData    (comp_bufa_ + gota, buf_size - gota, addra + gota, 4);
+			gotb = GetCompData(comp_bufb_ + gotb, buf_size - gotb, addrb + gotb, true);
 
-			int pos = 0, endpos = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
+			size_t to_check = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
+			size_t same = ::Compare16(comp_bufa_, comp_bufb_, to_check);
 
-			// Process this block into same/different sections
-			while (pos < endpos)
+			// If we have encountered a difference then we need to scan forward to find the next same bit
+			if (same < to_check)
 			{
-				// TODO xxx get rid of memcmp and byte compares - we can do 32-bit compares
-				// for speed and so we know where the scan stopped (even REPE/REPNE + CMPSD)
-				// First see if the (rest of the) block is the same
-				if (memcmp(comp_bufa_ + pos, comp_bufb_ + pos, endpos-pos) == 0)
+				// Move unchecked pieces of buffer down so they're 16-byte aligned
+				addra += same;
+				addrb += same;
+				gota -= same;
+				gotb -= same;
+				memmove(comp_bufa_, comp_bufa_+same, gota);
+				memmove(comp_bufb_, comp_bufb_+same, gotb);
+
+				// Top up the buffers
+				gota += GetData    (comp_bufa_ + gota, buf_size - gota + (compMinMatch_ - 4), addra + gota, 4);
+				gotb += GetCompData(comp_bufb_ + gotb, buf_size - gotb + (compMinMatch_ - 4), addrb + gotb, true);
+
+				const unsigned char * pfound;     // Pointer to the found bytes (in whichever buffer was searched)
+				const unsigned char * pa, * pb;   // if found these point into the resepective buffers
+				size_t best, next;                // best (closest) found so far, and next offset to check
+				int offset;                       // 0, 1, 2, or 3 dep on which pattern we match
+
+				// We gradually move through both buffers searching if the patterns of bytes in one buffer 
+				// matches anything further forward in the other buffer.  Note that Search4() effectively
+				// performs 4 searches at once by finding any pattern starting with the next 4 bytes, and
+				// the returned value (offset) from Search4() indicates which of the 4 patterns was found.
+				for (next = 0, best = buf_size; next < best; next += 4)
 				{
-					// The rest of the block is the same
-					pos = endpos;
-					break;
+					// Search in buffer a for any pattern starting at any of the first 4 bytes of buffer b
+					size_t search_len = std::min(gota, best) - next;         // restrict search to anything closer than best so far
+					if (next < gota &&
+					    (pfound = ::Search4(comp_bufa_ + next, search_len, comp_bufb_ + next, gotb - next, offset, compMinMatch_)) != NULL &&
+					    pfound - comp_bufa_ < best)
+					{
+						// remember that this is the closest match found so far
+						best = pfound - comp_bufa_;
+						// Remember where in both buffers that the match was found
+						pa = pfound;
+						pb = comp_bufb_ + next + offset;
+					}
+
+					// Now scan buffer b for the 4 patterns from the next position in buffer a
+					search_len = std::min(gotb, best) - next;
+					if (next < gotb &&
+					    (pfound = ::Search4(comp_bufb_ + next, search_len, comp_bufa_ + next, gota - next, offset, compMinMatch_)) != NULL &&
+					    pfound - comp_bufb_ < best)
+					{
+						best = pfound - comp_bufb_;
+						pa = comp_bufa_ + next + offset;
+						pb = pfound;
+					}
 				}
-				// Find out where the difference starts
-				for ( ; pos < endpos; ++pos)
-					if (comp_bufa_[pos] != comp_bufb_[pos])
-						break;
 
-				result.m_replace_A.push_back(addr + pos);
-				result.m_replace_B.push_back(addr + pos);
+				if (best == buf_size)
+				{
+					// No match so add to current "replace" block
+					size_t diff = std::min(gota, gotb);
+					cumulative_replace += diff;
+					addra += diff;
+					addrb += diff;
+					gota -= diff;
+					gotb -= diff;
+					continue;
+				}
 
-				ASSERT(pos < endpos);   // must have found a difference
-				for ( ; pos < endpos; ++pos)
-					if (comp_bufa_[pos] == comp_bufb_[pos])
-						break;
+				size_t lena = pa - comp_bufa_;
+				size_t lenb = pb - comp_bufb_;
+				size_t replace_len = std::min(lena, lenb);
 
-				result.m_replace_len.push_back(int(addr + pos - result.m_replace_A.back()));
+				if (cumulative_replace > 0 || replace_len > 0)
+				{
+					// Replace block
+					result.m_replace_A.push_back(addra - cumulative_replace);
+					result.m_replace_B.push_back(addrb - cumulative_replace);
+					result.m_replace_len.push_back(cumulative_replace + replace_len);
+					addra += replace_len;
+					addrb += replace_len;
+					cumulative_replace = 0;
+				}
+
+				if (lena < lenb)
+				{
+					// Deletion from a == insertion in b
+					result.m_delete_A.push_back(addra);
+					result.m_insert_B.push_back(addrb);
+					result.m_delete_len.push_back(lenb - lena);
+				}
+				else if (lenb < lena)
+				{
+					// Insertion in a == deletion from b
+					result.m_insert_A.push_back(addra);
+					result.m_delete_B.push_back(addrb);
+					result.m_insert_len.push_back(lena - lenb);
+				}
+
+				// Move the part of the buffer after the difference down
+				addra += lena;
+				addrb += lenb;
+				gota -= lena;
+				gotb -= lenb;
+				memmove(comp_bufa_, comp_bufa_+lena, gota);
+				memmove(comp_bufb_, comp_bufb_+lenb, gotb);
+				continue;
+
+			}  // end if difference
+			else if (cumulative_replace > 0)
+			{
+				result.m_replace_A.push_back(addra - cumulative_replace);
+				result.m_replace_B.push_back(addrb - cumulative_replace);
+				result.m_replace_len.push_back(cumulative_replace);
+				cumulative_replace = 0;
 			}
 
-			addr += std::min(gota, gotb);
-			if (gota < gotb)
+			if (gota < buf_size || gotb < buf_size)
 			{
-				gotb -= gota;
-				gota = 0;
+				// We have reached the end of one or both files
+				if (gota < gotb)
+				{
+					gotb -= gota;
+					gota = 0;
 
-				result.m_delete_A.push_back(addr);
-				result.m_insert_B.push_back(addr);
-				result.m_delete_len.push_back(gotb);
-			}
-			else if (gotb < gota)
-			{
-				gota -= gotb;
-				gotb = 0;
+					result.m_delete_A.push_back(addra + same);
+					result.m_insert_B.push_back(addrb + same);
+					result.m_delete_len.push_back(CompLength() - (addrb + same));  // to EOF of compare file
+				}
+				else if (gotb < gota)
+				{
+					gota -= gotb;
+					gotb = 0;
 
-				result.m_insert_A.push_back(addr);
-				result.m_delete_B.push_back(addr);
-				result.m_insert_len.push_back(gota);
-			}
+					result.m_insert_A.push_back(addra + same);
+					result.m_delete_B.push_back(addrb + same);
+					result.m_insert_len.push_back(length_ - (addra + same)); // to eof
+				}
 
-			if (gota <= 0 || gotb <= 0)
-			{
 				// We save the results of the compare along with when it was done
 				result.Final();
 
