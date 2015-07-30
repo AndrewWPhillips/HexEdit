@@ -150,6 +150,11 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#ifdef min  // avoid corruption of std::min/std::max
+#undef min
+#undef max
+#endif
+
 //-----------------------------------------------------------------------------
 // Routines for loading/saving history lists in the registry
 
@@ -2057,7 +2062,7 @@ int next_diff(const void * buf1, const void * buf2, size_t len)
 
 // Compare16:
 //    Performs a fast memory comparison (using SSE2 instructions) by comparing 16 bytes at a time.
-//    Note that memcmp() is no good since we need to know the first byte that is different (+ 25% slower).
+//    We can't use memcmp() as we need to know where the difference occurs (and memcmp is a bit slower too :).
 //    
 // Parameters:
 //    buf1, buf2 = the buffers to compare
@@ -2070,9 +2075,10 @@ size_t Compare16(const unsigned char * buf1, const unsigned char * buf2, size_t 
 {
 	assert((int)buf1 % 16 == 0 && (int)buf2 % 16 == 0);                 // ensure correct memory alignment
 
+	size_t whole_len = buflen - buflen%16;                              // length rounded down to multiple of chunk size
 	__m128i *pchunk1;
 	__m128i *pchunk2;
-	__m128i *pend = (__m128i *)(buf1 + buflen);
+	__m128i *pend = (__m128i *)(buf1 + whole_len);
 	__m128i cmp;                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
 
 	for (pchunk1 = (__m128i *)buf1, pchunk2 = (__m128i *)buf2; pchunk1 < pend; ++pchunk1, ++pchunk2)
@@ -2094,7 +2100,26 @@ size_t Compare16(const unsigned char * buf1, const unsigned char * buf2, size_t 
 		}
 	}
 
+	// Scan anything extra after the last whole chunk
+	const unsigned char * p1, * p2;
+	for (p1 = buf1 + whole_len, p2 = buf2 + whole_len; p1 < buf1 + buflen; ++p1, ++p2)
+	{
+		if (*p1 != *p2)
+			return p1 - buf1;
+	}
+
 	return buflen;
+}
+
+// Search memory for another chunk of memory (like strstr). Returns a pointer to the first byte or NULL if not found.
+// Note: This may not be efficient - needs to be optimised (and inlined?) if used to search large blocks of memory
+static const unsigned char * memmem(const unsigned char * buf, size_t buflen, const unsigned char * to_find, size_t to_find_len)
+{
+	for (const unsigned char * pp = buf; pp < buf + buflen - to_find_len; ++pp)
+		if (memcmp(pp, to_find, to_find_len) == 0)
+			return pp;
+
+	return NULL;
 }
 
 // Search4:
@@ -2115,11 +2140,12 @@ size_t Compare16(const unsigned char * buf1, const unsigned char * buf2, size_t 
 // Return value:
 //    Pointer into buf where the match was found or NULL if nothing was found
 //    Note that the first byte pointed to may be any of the first 4 bytes of to_find as indicated byt ret_offset
-const unsigned char * Search4(const unsigned char * buf, size_t buflen, const unsigned char * to_find, size_t to_find_len, int &ret_offset, int min_match /*=10*/)
+const unsigned char * Search4(const unsigned char * buf, size_t buflen, const unsigned char * to_find, size_t max_back, size_t max_forw, int &ret_offset, int min_match /*=10*/)
 {
-	assert((int)buf % 16 == 0);     // ensure correct memory alignment
-	assert(min_match >= 10);        // this is a requirement due to the way the search is performed
-	assert(to_find_len > 7);        // probably should be at least min_match + 3
+	static const size_t chunk_size = sizeof(__m128i);
+	assert((int)buf % chunk_size == 0); // ensure correct memory alignment
+	assert(min_match >= 7);            // this is a requirement due to the way the search is performed
+	assert(max_back + max_forw >= 7);
 
 	// Set up the search patterns
 	__m128i pat[4];
@@ -2128,14 +2154,15 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 	pat[2].m128i_u32[0] = pat[2].m128i_u32[1] = pat[2].m128i_u32[2] = pat[2].m128i_u32[3] = *(unsigned __int32 *)(to_find+2);
 	pat[3].m128i_u32[0] = pat[3].m128i_u32[1] = pat[3].m128i_u32[2] = pat[3].m128i_u32[3] = *(unsigned __int32 *)(to_find+3);
 
-	__m128i * pp, cmp;
-	ret_offset = -1;
+	__m128i * pp, *endbuf, cmp;
+	ret_offset = -99;
 	int which_dword = -1;       // bottom 4 bits are a mask which says which copy (or copies) of the pattern were matched
 	const unsigned char * retval = NULL;
 
 	//timer t(true);
-	// xxx what happens if buflen is not a multiple of 16 (sizeof(__m128i))
-	for (pp = (__m128i *)buf; (unsigned char *)pp < buf + buflen; ++pp)
+	endbuf = (__m128i *)(buf + (buflen - buflen%chunk_size));
+	assert((int)endbuf % chunk_size == 0);
+	for (pp = (__m128i *)buf; pp < endbuf; ++pp)
 	{
 		for (int pnum = 0; pnum < 4; ++pnum)
 		{
@@ -2144,45 +2171,38 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 			{
 				// We found 1 (or more) matches of this (pnum) pattern in this (pp to pp+15) chunk
 				// Now we need to check if any match meets the length requirements
-				const unsigned char * match;
+				const unsigned char * pmatch, * ppat;
 
 				// Check each match (indicated by the bottom 4 bits of which_dword)
 				for (int which = 0; which < 4; ++which, which_dword >>= 1)
 				{
-					int offset, idx;
-
 					if ((which_dword & 0x1) == 0)
 						continue;
 
 					// Get address of the dword we matched
-					match = (const unsigned char *)pp + which*4;
+					pmatch = (const unsigned char *)pp + which*4;
+					ppat = to_find + pnum;
 
-					// Scan backwards from there since we can match up to 3 bytes past start of where the bytes are actually the same
-					for (offset = pnum; offset > 0; offset--)
+					// Scan backwards from match since we can be up to 3 bytes past where the bytes are actually the same
+					for (int ii = 0; ii < 3; ++ii)
 					{
-						if (*(match-1) == to_find[offset-1])
-							match--;
-						else
+						if (pmatch <= buf || ppat <= to_find - max_back || *(pmatch-1) != *(ppat-1))
 							break;
+						pmatch--;
+						ppat--;
 					}
 
-					// NOW: the pointer 'match' points to start of matched bytes and 'offset' is corresponding offset into to_find
+					if ((to_find + max_forw) - ppat < min_match)
+						continue;                             // not enough bytes to compare
 
-					// Scan forwad to check that there are enough matching bytes
-					for (idx = 0; idx < min_match && offset+idx < to_find_len; ++idx)  // xxx need to check that match+idx is not past end of buffer
-					{
-						if (match[idx] != to_find[offset+idx])
-							break;                            // diff found so break
-					}
-
-					if (idx < min_match)
-						continue;                             // not enough matchers
+					if (memcmp(pmatch, ppat, min_match) != 0)
+						continue;                            // difference found before match length
 
 					// We found a match! Now check if it is before any previously found match in this chunk
-					if (retval == NULL || match < retval)
+					if (retval == NULL || pmatch < retval)
 					{
-						retval = match;
-						ret_offset = offset;
+						retval = pmatch;
+						ret_offset = ppat - to_find;
 					}
 				}
 			}
@@ -2192,10 +2212,49 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 			break;                                          // stop searching when we found a long enough match
 	}
 
+	// If buflen is not multiple of 16 we need to check the bit past the last "chunk" without using SSE2
+	size_t len = (buf + buflen) - (unsigned char *)endbuf;
+	if (retval == NULL && len >= min_match)
+	{
+		const unsigned char * pmatch, * ppat;
+		for (int pnum = 0; pnum < 4; ++pnum)
+		{
+			pmatch = (unsigned char *)endbuf;
+			for (;;)
+			{
+				ppat = to_find + pnum;
+				pmatch = memmem(pmatch, len, ppat, min_match - 3);
+				if (pmatch == NULL)
+					break;  // not found
+
+				// scan backwards up to 3 bytes for real start of match
+				int ii;
+				for (ii = 0; ii < 3; ++ii)
+				{
+					if (pmatch <= buf || ppat <= to_find - max_back || *(pmatch-1) != *(ppat-1))
+						break;
+					pmatch--;
+					ppat--;
+				}
+
+				// Check we have enough matching bytes
+				if (memcmp(pmatch, ppat, min_match) == 0)
+				{
+					if (retval == NULL || pmatch < retval)
+					{
+						retval = pmatch;
+						ret_offset = ppat - to_find;
+					}
+					break;
+				}
+				pmatch += ii + 1;    // skip past this (too short) match
+			} // for (;;)
+		}
+	}
+
 	//t.stop();
-	//printf("%g  %d\n", (double)t.elapsed(), (int)ret_offset); 
-	assert((unsigned char *)pp < buf + buflen);
-	assert(retval < buf + buflen);
+	//printf("%g  %d\n", (double)t.elapsed(), (int)ret_offset);
+	assert(retval == NULL || retval < buf + buflen);
 	return retval;
 }
 

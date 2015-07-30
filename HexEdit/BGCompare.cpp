@@ -74,7 +74,8 @@ void CHexEditDoc::DoCompNew(view_t view_type)
 
 	ASSERT(cv_count_ == 0 && pthread4_ == NULL);  // we should have closed all compare views and hence killed the compare thread
 
-	compMinMatch_ = 10; // xxx need to get this from dlg (0 = no insert/delete)
+	compMinMatch_ = 7; // xxx need to get this from dlg (0 = no insert/delete)
+	// xxx also can be garbage when re-open a file - need to store in hexfilelist
 
 	// Now open the compare view and start the background compare.
 	// (DoCompSplit/DoCompTab create the new view and send WM_INITIALUPDATE
@@ -1243,7 +1244,7 @@ UINT CHexEditDoc::RunCompThread()
 		// Get buffers for each source
 		const size_t buf_size = 8192;   // xxx may need to be dynamic later (based on sync length)
 		ASSERT(comp_bufa_ == NULL && comp_bufb_ == NULL);
-		ASSERT(compMinMatch_ >= 10 && compMinMatch_ < 64+4);
+		ASSERT(compMinMatch_ >= 7 && compMinMatch_ < 64+4);
 
 		// We need buffers aligned on 16-byte boundaries for SSE2 instructions
 		comp_bufa_ = (unsigned char *)_aligned_malloc(buf_size + (compMinMatch_ - 4), 16);
@@ -1266,9 +1267,9 @@ UINT CHexEditDoc::RunCompThread()
 				break;   // stop processing and go back to WAITING state
 
 			// Get the next chunks
-			// xxx what if gota or gotb > buf_size - can occur I think
-			gota = GetData    (comp_bufa_ + gota, buf_size - gota, addra + gota, 4);
-			gotb = GetCompData(comp_bufb_ + gotb, buf_size - gotb, addrb + gotb, true);
+			// xxx what if gota or gotb > buf_size - can occur I think after insert/replace due to (compMinMatch_ - 4)
+			gota += GetData    (comp_bufa_ + gota, buf_size - gota, addra + gota, 4);
+			gotb += GetCompData(comp_bufb_ + gotb, buf_size - gotb, addrb + gotb, true);
 
 			size_t to_check = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
 			size_t same = ::Compare16(comp_bufa_, comp_bufb_, to_check);
@@ -1299,10 +1300,14 @@ UINT CHexEditDoc::RunCompThread()
 				// the returned value (offset) from Search4() indicates which of the 4 patterns was found.
 				for (next = 0, best = buf_size; next < best; next += 4)
 				{
+					size_t next16 = next - next%16;   // zero bottom 4 bits - this is used to ensure that the buffer searched is always 16-byte aligned
+
 					// Search in buffer a for any pattern starting at any of the first 4 bytes of buffer b
-					size_t search_len = std::min(gota, best) - next;         // restrict search to anything closer than best so far
+					const unsigned char * to_search = comp_bufa_ + next16;
+					size_t search_len = std::min(gota, best) - next16;         // restrict search to anything closer than best so far
+// xxx check gotb-next less than 7
 					if (next < gota &&
-					    (pfound = ::Search4(comp_bufa_ + next, search_len, comp_bufb_ + next, gotb - next, offset, compMinMatch_)) != NULL &&
+					    (pfound = ::Search4(to_search, search_len, comp_bufb_ + next, next, gotb - next, offset, compMinMatch_)) != NULL &&
 					    pfound - comp_bufa_ < best)
 					{
 						// remember that this is the closest match found so far
@@ -1313,9 +1318,10 @@ UINT CHexEditDoc::RunCompThread()
 					}
 
 					// Now scan buffer b for the 4 patterns from the next position in buffer a
-					search_len = std::min(gotb, best) - next;
+					to_search = comp_bufb_ + next16;
+					search_len = std::min(gotb, best) - next16;
 					if (next < gotb &&
-					    (pfound = ::Search4(comp_bufb_ + next, search_len, comp_bufa_ + next, gota - next, offset, compMinMatch_)) != NULL &&
+					    (pfound = ::Search4(to_search, search_len, comp_bufa_ + next, next, gota - next, offset, compMinMatch_)) != NULL &&
 					    pfound - comp_bufb_ < best)
 					{
 						best = pfound - comp_bufb_;
@@ -1348,6 +1354,10 @@ UINT CHexEditDoc::RunCompThread()
 					result.m_replace_len.push_back(cumulative_replace + replace_len);
 					addra += replace_len;
 					addrb += replace_len;
+					gota -= replace_len;
+					gotb -= replace_len;
+					lena -= replace_len;
+					lenb -= replace_len;
 					cumulative_replace = 0;
 				}
 
@@ -1417,8 +1427,8 @@ UINT CHexEditDoc::RunCompThread()
 				break;                          // falls out to wait state
 			}
 		}
-		delete[] comp_bufa_; comp_bufa_ = NULL;
-		delete[] comp_bufb_; comp_bufb_ = NULL;
+		_aligned_free(comp_bufa_); comp_bufa_ = NULL;
+		_aligned_free(comp_bufb_); comp_bufb_ = NULL;
 #endif
 
 		ASSERT(comp_[0].m_replace_A.size() == comp_[0].m_replace_B.size());
@@ -1443,8 +1453,8 @@ bool CHexEditDoc::CompProcessStop()
 		TRACE1("+++ BGCompare: killed thread for %p\n", this);
 		comp_state_ = DYING;
 		sl.Unlock();                // we need this here as AfxEndThread() never returns so d'tor is not called
-		delete[] comp_bufa_; comp_bufa_ = NULL;
-		delete[] comp_bufb_; comp_bufb_ = NULL;
+		_aligned_free(comp_bufa_); comp_bufa_ = NULL;
+		_aligned_free(comp_bufb_); comp_bufb_ = NULL;
 		AfxEndThread(1);            // kills thread (no return)
 		break;                      // Avoid warning
 	case NONE:                      // nothing needed here - just continue scanning

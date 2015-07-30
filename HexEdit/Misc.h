@@ -220,7 +220,7 @@ void decrypt(void *buffer, size_t len);
 // Memory manipulation
 //int next_diff(const void * buf1, const void * buf2, size_t len);
 size_t Compare16(const unsigned char * buf1, const unsigned char * buf2, size_t buflen);
-const unsigned char * Search4(const unsigned char * buf, size_t buflen, const unsigned char * to_find, size_t to_find_len, int &ret_offset, int min_match = 10);
+const unsigned char * Search4(const unsigned char * buf, size_t buflen, const unsigned char * to_find, size_t back_len, size_t to_find_len, int &ret_offset, int min_match = 10);
 
 // flip_bytes is typically used to switch between big- and little-endian byte order but
 // works with any number of bytes (including an odd number whence middle byte not moved)
