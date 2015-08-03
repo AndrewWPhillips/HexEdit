@@ -2144,10 +2144,11 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 {
 	static const size_t chunk_size = sizeof(__m128i);
 	assert((int)buf % chunk_size == 0); // ensure correct memory alignment
-	assert(min_match >= 7);            // this is a requirement due to the way the search is performed
-	assert(max_back + max_forw >= 7);
+	assert(min_match >= 7);             // this is a requirement due to the way the search is performed
 
 	// Set up the search patterns
+	if (max_forw < 7)
+		return NULL;                    // we need 7 bytes to fill our 4 patterns
 	__m128i pat[4];
 	pat[0].m128i_u32[0] = pat[0].m128i_u32[1] = pat[0].m128i_u32[2] = pat[0].m128i_u32[3] = *(unsigned __int32 *)(to_find+0);
 	pat[1].m128i_u32[0] = pat[1].m128i_u32[1] = pat[1].m128i_u32[2] = pat[1].m128i_u32[3] = *(unsigned __int32 *)(to_find+1);
@@ -2156,7 +2157,7 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 
 	__m128i * pp, *endbuf, cmp;
 	ret_offset = -99;
-	int which_dword = -1;       // bottom 4 bits are a mask which says which copy (or copies) of the pattern were matched
+	int which_dword = 0;                // bottom 4 bits are a mask which says which copy (or copies) of the pattern were matched
 	const unsigned char * retval = NULL;
 
 	//timer t(true);
@@ -2193,10 +2194,10 @@ const unsigned char * Search4(const unsigned char * buf, size_t buflen, const un
 					}
 
 					if ((to_find + max_forw) - ppat < min_match)
-						continue;                             // not enough bytes to compare
+						continue;       // not enough bytes to compare
 
 					if (memcmp(pmatch, ppat, min_match) != 0)
-						continue;                            // difference found before match length
+						continue;       // difference found before match length
 
 					// We found a match! Now check if it is before any previously found match in this chunk
 					if (retval == NULL || pmatch < retval)

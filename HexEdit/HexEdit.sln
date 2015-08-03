@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexEdit", "HexEdit.vcxproj", "{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaskbarDemo", "..\..\..\tmp\web\TaskbarDemo_Solution\TaskbarDemo\TaskbarDemo.vcxproj", "{2B9553BD-8A28-4462-B4B9-A66F9965B627}"
@@ -19,7 +19,18 @@ Global
 		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Debug|Win32.Build.0 = Debug|Win32
 		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Release|Win32.ActiveCfg = Release|Win32
 		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Release|Win32.Build.0 = Release|Win32
-
+		{2B9553BD-8A28-4462-B4B9-A66F9965B627}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2B9553BD-8A28-4462-B4B9-A66F9965B627}.Debug|Win32.Build.0 = Debug|Win32
+		{2B9553BD-8A28-4462-B4B9-A66F9965B627}.Release|Win32.ActiveCfg = Release|Win32
+		{2B9553BD-8A28-4462-B4B9-A66F9965B627}.Release|Win32.Build.0 = Release|Win32
+		{693C04BF-0B38-4CDE-857F-789F135CD35F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{693C04BF-0B38-4CDE-857F-789F135CD35F}.Debug|Win32.Build.0 = Debug|Win32
+		{693C04BF-0B38-4CDE-857F-789F135CD35F}.Release|Win32.ActiveCfg = Release|Win32
+		{693C04BF-0B38-4CDE-857F-789F135CD35F}.Release|Win32.Build.0 = Release|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Debug|Win32.Build.0 = Debug|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Release|Win32.ActiveCfg = Release|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

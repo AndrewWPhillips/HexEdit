@@ -501,7 +501,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 
 	for (addrA = addrB = 0; addrA < endA || addrB < endB; )
 	{
-		CHexEditDoc::diff_t next_diff = CHexEditDoc::Deletion;
+		CHexEditDoc::diff_t next_diff = CHexEditDoc::Equal;
 		FILE_ADDRESS newA = endA;
 		FILE_ADDRESS newB = endB;
 		FILE_ADDRESS len;

@@ -74,8 +74,7 @@ void CHexEditDoc::DoCompNew(view_t view_type)
 
 	ASSERT(cv_count_ == 0 && pthread4_ == NULL);  // we should have closed all compare views and hence killed the compare thread
 
-	compMinMatch_ = 7; // xxx need to get this from dlg (0 = no insert/delete)
-	// xxx also can be garbage when re-open a file - need to store in hexfilelist
+	compMinMatch_ = 11; // xxx need to get this from dlg (0 = no insert/delete)
 
 	// Now open the compare view and start the background compare.
 	// (DoCompSplit/DoCompTab create the new view and send WM_INITIALUPDATE
@@ -1267,9 +1266,14 @@ UINT CHexEditDoc::RunCompThread()
 				break;   // stop processing and go back to WAITING state
 
 			// Get the next chunks
-			// xxx what if gota or gotb > buf_size - can occur I think after insert/replace due to (compMinMatch_ - 4)
-			gota += GetData    (comp_bufa_ + gota, buf_size - gota, addra + gota, 4);
-			gotb += GetCompData(comp_bufb_ + gotb, buf_size - gotb, addrb + gotb, true);
+			if (gota >= buf_size)
+				gota = buf_size;
+			else
+				gota += GetData    (comp_bufa_ + gota, buf_size - gota, addra + gota, 4);
+			if (gotb >= buf_size)
+				gotb = buf_size;
+			else
+				gotb += GetCompData(comp_bufb_ + gotb, buf_size - gotb, addrb + gotb, true);
 
 			size_t to_check = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
 			size_t same = ::Compare16(comp_bufa_, comp_bufb_, to_check);
@@ -1381,8 +1385,8 @@ UINT CHexEditDoc::RunCompThread()
 				addrb += lenb;
 				gota -= lena;
 				gotb -= lenb;
-				memmove(comp_bufa_, comp_bufa_+lena, gota);
-				memmove(comp_bufb_, comp_bufb_+lenb, gotb);
+				memmove(comp_bufa_, comp_bufa_ + replace_len + lena, gota);
+				memmove(comp_bufb_, comp_bufb_ + replace_len + lenb, gotb);
 				continue;
 
 			}  // end if difference
@@ -1426,6 +1430,13 @@ UINT CHexEditDoc::RunCompThread()
 				comp_fin_ = true;
 				break;                          // falls out to wait state
 			}
+
+			// Skip the bits that compared equal
+			assert(gota == gotb); // ?
+			addra += to_check;
+			addrb += to_check;
+			gota -= to_check;
+			gotb -= to_check;
 		}
 		_aligned_free(comp_bufa_); comp_bufa_ = NULL;
 		_aligned_free(comp_bufb_); comp_bufb_ = NULL;
