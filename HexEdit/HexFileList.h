@@ -41,6 +41,7 @@ public:
 					 PREVIEWFILENAME,                     // used for preview thumbnails (not to be confused with bitmap file preview)
 					 PREVIEWVIEW, PREVIEWZOOM,            // used for preview of a file (no relationship to PREVIEWFILENAME) - currently just bitmap files
 					   PREVIEWX, PREVIEWY, PREVIEWBG,     // position (when zooomed in) and background type (for bitmaps with alpha channel)
+					 COMPMINMATCH, COMPMAXDIST,           // more compare params used by bg compare - (ie used by CHexEditDoc not CCompareView)
 	};
 
 // Attributes

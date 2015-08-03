@@ -696,6 +696,7 @@ public:
 	void StartComp();
 	void StopComp();
 	void DoCompNew(view_t view_type);
+	int GetCompMinMatch() { return compMinMatch_; }
 
 	clock_t LastCompareFinishTime() const { return comp_clock_; }
 	view_t GetCompareFile(view_t view_type, bool & auto_sync, bool & auto_scroll, CString & filename, bool bForcePrompt = false);

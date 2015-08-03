@@ -1269,6 +1269,7 @@ void CHexEditView::StoreOptions()
 
 		pfl->SetData(ii, CHexFileList::DOC_FLAGS, GetDocument()->doc_flags());
 		pfl->SetData(ii, CHexFileList::FORMAT, GetDocument()->GetFormatFileName());
+		pfl->SetData(ii, CHexFileList::COMPMINMATCH, (long long)GetDocument()->GetCompMinMatch());
 
 		FILE_ADDRESS start_addr, end_addr;
 		GetSelAddr(start_addr, end_addr);

@@ -130,6 +130,7 @@ CHexEditDoc::CHexEditDoc()
 	pthread4_ = NULL;
 	cv_count_ = 0;
 	bCompSelf_ = false;
+	compMinMatch_ = 11;
 
 	// BG stats thread
 	pthread5_ = NULL;
@@ -379,6 +380,7 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		dffd_edit_mode_ = (flags & 0x2) != 0;
 		view_time_ = timer(atof(pfl->GetData(recent_file_index, CHexFileList::VIEW_TIME)));
 		edit_time_ = timer(atof(pfl->GetData(recent_file_index, CHexFileList::EDIT_TIME)));
+		compMinMatch_ = atoi(pfl->GetData(recent_file_index, CHexFileList::COMPMINMATCH));
 	}
 
 	if (CanDoSearch())
