@@ -424,7 +424,7 @@ static int hue2rgb(int n1, int n2, int hue)
 		return n1 + ((n2-n1)*((hlsmax*2)/3 - hue) + hlsmax/12)/(hlsmax/6);
 	else
 		return n1;
-} 
+}
 
 COLORREF get_rgb(int hue,int luminance, int saturation)
 {
@@ -1993,118 +1993,130 @@ unsigned long rand_good()
 //-----------------------------------------------------------------------------
 // Memory
 
-#if 0  // we don't need this yet (and I am not sure how useful it is compared with Compare16() below)
+static const int SZCHK = sizeof(__m128i);                     // Size of a chunk used by SSE2 instructions (128 bits or 16 bytes)
 
-// Compare two blocks of memory to find the first different byte.  (This is 
-// similar to memcmp but returns the number of bytes the same.)
-// Parameters:
-//   pp, qq = pointers to the blocks of memory to compare
-//   len = max number of bytes to compare
-// Returns:
-//   the number of bytes up to the difference OR
-//   -1 if all bytes are the same
-// Notes:
-//   The code is optimized to do 8-byte compares for a 64-bit processor.
-//   Best performance is when both pp and qq have the same 8-byte alignment.
-//   However, even if pp and qq have different alignements better performance 
-//   is obtained if 8-byte reads are done from one of the buffers - this is the 
-//   reason for skipping up to 7 bytes at the start of the comparison.
-//   Under MS C++ version 15 (VS2008) this gives comparable speed to memcmp()
-//   when both buffers start on a 4-byte boundary but much better performance
-//   in all other situations.  (The other problem is that memcmp does not say 
-//   where in the buffers the difference was found.)
-//   This code would be even faster compiled for a 64-bit processor since a
-//   comparison between two __int64 values would be a single instruction, etc.
-int next_diff(const void * buf1, const void * buf2, size_t len)
-{
-	const unsigned char * pp = (const unsigned char *)buf1;
-	const unsigned char * qq = (const unsigned char *)buf2;
-
-	// Check up to 7 initial bytes (until pp and/or qq is aligned on a 8-byte boundary)
-	while (((int)pp % 8) != 0 && len > 0)
-	{
-		if (*pp != *qq)
-			return pp - (const unsigned char *)buf1;
-		++pp, ++qq;
-		len--;
-	}
-
-	// Check most of the buffers 8 bytes at a time (best if qq is also 8 byte aligned)
-	div_t len8 = div(len, 8);
-	const unsigned __int64 * pend = (const unsigned __int64 *)pp + len8.quot;
-
-	while ((const unsigned __int64 *)pp < pend)
-	{
-		if (*((const unsigned __int64 *)pp) != *((const unsigned __int64 *)qq))
-		{
-			// This 8-byte value is different - work out which byte it was
-			while (*pp == *qq)
-				++pp, ++qq;
-
-			return pp - (const unsigned char *)buf1;
-		}
-
-		pp += 8;
-		qq += 8;
-	}
-
-	// Check up to 7 bytes at the end
-	while (len8.rem--)
-	{
-		if (*pp != *qq)
-			return pp - (const unsigned char *)buf1;
-		++pp, ++qq;
-	}
-
-	return -1;
-}
-#endif
-
-// Compare16:
-//    Performs a fast memory comparison (using SSE2 instructions) by comparing 16 bytes at a time.
-//    We can't use memcmp() as we need to know where the difference occurs (and memcmp is a bit slower too :).
-//    
+// FindFirstDiff:
+//    Quickly find the first byte that is different in two buffers.
+//
 // Parameters:
 //    buf1, buf2 = the buffers to compare
 //    buflen = how far to look
 //
+// Notes:
+//    IMPORTANT - buf1, and buf2 must have the same 16-byte alignment, though the actual
+//    first byte does not have to be on a 16-byte boundary (ie: buf1%16 == buf2%16).
+//
 // Return value:
 //    The number of bytes up to the first difference OR
 //    buflen if both buffers are the same
-size_t Compare16(const unsigned char * buf1, const unsigned char * buf2, size_t buflen)
+size_t FindFirstDiff(const unsigned char * buf1, const unsigned char * buf2, size_t buflen)
 {
-	assert((int)buf1 % 16 == 0 && (int)buf2 % 16 == 0);                 // ensure correct memory alignment
+	assert((int)buf1 % SZCHK == (int)buf2 % SZCHK);         // ensure same memory alignment
 
-	size_t whole_len = buflen - buflen%16;                              // length rounded down to multiple of chunk size
-	__m128i *pchunk1;
-	__m128i *pchunk2;
-	__m128i *pend = (__m128i *)(buf1 + whole_len);
-	__m128i cmp;                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
+	// Work out where to start the SSE2 compare by rounding up to next 16-byte memory chunk
+	__m128i * pchunk1 = (__m128i *)((((int)buf1 + SZCHK-1)/SZCHK)*SZCHK);
+	assert((int)pchunk1 % SZCHK == 0);
 
-	for (pchunk1 = (__m128i *)buf1, pchunk2 = (__m128i *)buf2; pchunk1 < pend; ++pchunk1, ++pchunk2)
+	const unsigned char * p1, * p2;
+
+	// Check up to 15 bytes before the first 16-byte aligned chunk
+	for (p1 = buf1, p2 = buf2; p1 < (const unsigned char *)pchunk1; ++p1, ++p2)
 	{
-		cmp = _mm_cmpeq_epi32(*pchunk1, *pchunk2);                       // PCMPEQD
-		if (_mm_movemask_ps(_mm_castsi128_ps(cmp)) != 0xF)               // MOVMSKPS - note that all 4 bits on (0xF)  means that all dwords compared equal
+		if (*p1 != *p2)
+			return p1 - buf1;
+	}
+
+	__m128i * pchunk2 = (__m128i *)((((int)buf2 + SZCHK-1)/SZCHK)*SZCHK);
+	assert((int)pchunk2 % SZCHK == 0);
+
+	const unsigned char * pend = buf1 + buflen;
+	assert((const unsigned char *)pchunk1 <= pend);
+
+	__m128i cmp;                                                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
+
+	for ( ; (const unsigned char *)pchunk1 < pend - SZCHK; ++pchunk1, ++pchunk2)
+	{
+		cmp = _mm_cmpeq_epi32(*pchunk1, *pchunk2);              // PCMPEQD
+		if (_mm_movemask_ps(_mm_castsi128_ps(cmp)) != 0xF)      // MOVMSKPS
 		{
 			// There is at least one difference in the 16 bytes - find the first diff. byte
-			const unsigned char *p1 = (const unsigned char *)pchunk1;
-			const unsigned char *p2 = (const unsigned char *)pchunk2;
-			int ii;
-			for (ii = 0; *p1 == *p2 && ii < 16; ++ii)
+			for (p1 = (const unsigned char *)pchunk1, p2 = (const unsigned char *)pchunk2; *p1 == *p2; ++p1, ++p2)
 			{
-				++p1;
-				++p2;
+				; // nothing required in the loop body
 			}
-			assert(ii < 16);                                            // else we have done something wrong (or PCMPEQD did not work)
+			assert(p1 - (const unsigned char *)pchunk1 < SZCHK); // else we have done something wrong (or PCMPEQD did not work)
 			return p1 - buf1;
 		}
 	}
 
-	// Scan anything extra after the last whole chunk
-	const unsigned char * p1, * p2;
-	for (p1 = buf1 + whole_len, p2 = buf2 + whole_len; p1 < buf1 + buflen; ++p1, ++p2)
+	// Check up to 15 bytes past the last 16-byte aligned chunk
+	for (p1 = (const unsigned char *)pchunk1, p2 = (const unsigned char *)pchunk2; p1 < pend; ++p1, ++p2)
 	{
 		if (*p1 != *p2)
+			return p1 - buf1;
+	}
+
+	return buflen;
+}
+
+// FindFirstSame:
+//    Quickly find the first byte that is the same in two buffers.
+//
+// Parameters:
+//    buf1, buf2 = the buffers to compare
+//    buflen = how far to look
+//
+// Notes:
+//    IMPORTANT - buf1, and buf2 must have the same 16-byte alignment, though the actual
+//    first byte does not have to be on a 16-byte boundary (ie: buf1%16 == buf2%16).
+//
+// Return value:
+//    The number of bytes up to the first byte that is the same OR
+//    buflen if all bytes at corresponding position in both buffers are different
+size_t FindFirstSame(const unsigned char * buf1, const unsigned char * buf2, size_t buflen)
+{
+	assert((int)buf1 % SZCHK == (int)buf2 % SZCHK);         // ensure same memory alignment
+
+	// Work out where to start the SSE2 compare by rounding up to next 16-byte memory chunk
+	__m128i * pchunk1 = (__m128i *)((((int)buf1 + SZCHK-1)/SZCHK)*SZCHK);
+	assert((int)pchunk1 % SZCHK == 0);
+
+	const unsigned char * p1, * p2;
+
+	// Check up to 15 bytes before the first 16-byte aligned chunk
+	for (p1 = buf1, p2 = buf2; p1 < (const unsigned char *)pchunk1; ++p1, ++p2)
+	{
+		if (*p1 == *p2)
+			return p1 - buf1;
+	}
+
+	__m128i * pchunk2 = (__m128i *)((((int)buf2 + SZCHK-1)/SZCHK)*SZCHK);
+	assert((int)pchunk2 % SZCHK == 0);
+
+	const unsigned char * pend = buf1 + buflen;
+	assert((const unsigned char *)pchunk1 <= pend);
+
+	__m128i cmp;                                                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
+
+	for ( ; (const unsigned char *)pchunk1 < pend - SZCHK; ++pchunk1, ++pchunk2)
+	{
+		cmp = _mm_cmpeq_epi32(*pchunk1, *pchunk2);              // PCMPEQD
+		if (_mm_movemask_ps(_mm_castsi128_ps(cmp)) != 0)        // MOVMSKPS
+		{
+			// There is at least one difference in the 16 bytes - find the first diff. byte
+			for (p1 = (const unsigned char *)pchunk1, p2 = (const unsigned char *)pchunk2; *p1 != *p2; ++p1, ++p2)
+			{
+				; // nothing required in the loop body
+			}
+			assert(p1 - (const unsigned char *)pchunk1 < SZCHK); // else we have done something wrong (or PCMPEQD did not work)
+			return p1 - buf1;
+		}
+	}
+
+	// Check up to 15 bytes past the last 16-byte aligned chunk
+	for (p1 = (const unsigned char *)pchunk1, p2 = (const unsigned char *)pchunk2; p1 < pend; ++p1, ++p2)
+	{
+		if (*p1 == *p2)
 			return p1 - buf1;
 	}
 
@@ -2135,7 +2147,7 @@ static const unsigned char * memmem(const unsigned char * buf, size_t buflen, co
 //    to_find_len - length of the to_find buffer - needs to be at least 7 and probably min_match + 3
 //    ret_offset = returned offset into to_find which indicates which of the 4 search patterns was matched
 //               - possible values are 0, 1, 2, 3
-//    min_match = minimum number of matching bytes before we consider it to be a match - needs to be at least 10
+//    min_match = minimum number of matching bytes before we consider it to be a match - needs to be at least 7
 //
 // Return value:
 //    Pointer into buf where the match was found or NULL if nothing was found

@@ -1276,18 +1276,49 @@ UINT CHexEditDoc::RunCompThread()
 				gotb += GetCompData(comp_bufb_ + gotb, buf_size - gotb, addrb + gotb, true);
 
 			size_t to_check = std::min(gota, gotb);   // The bytes of comp_bufa_/comp_bufb_ to compare
-			size_t same = ::Compare16(comp_bufa_, comp_bufb_, to_check);
+			size_t diff = ::FindFirstDiff(comp_bufa_, comp_bufb_, to_check);
+
+			if (diff > 0 && cumulative_replace > 0)
+			{
+				// Difference just happened to finish exactly at end of last read block
+				result.m_replace_A.push_back(addra - cumulative_replace);
+				result.m_replace_B.push_back(addrb - cumulative_replace);
+				result.m_replace_len.push_back(cumulative_replace);
+				cumulative_replace = 0;
+			}
 
 			// If we have encountered a difference then we need to scan forward to find the next same bit
-			if (same < to_check)
+			if (diff < to_check && compMinMatch_ == 0)
+			{
+				// No insertions/deletions (compMinMatch_ == 0) so this diff is marked as a replacment
+				while (diff < to_check)
+				{
+					size_t same = ::FindFirstSame(comp_bufa_ + diff, comp_bufb_ + diff, to_check - diff);
+					if (same >= to_check)
+					{
+						assert(same == to_check);
+						cumulative_replace += same - diff;
+						break;
+					}
+
+					// Add this replacement block
+					assert(diff == 0 || cumulative_replace == 0);
+					result.m_replace_A.push_back(addra + diff - cumulative_replace);
+					result.m_replace_B.push_back(addrb + diff - cumulative_replace);
+					result.m_replace_len.push_back(same - diff + cumulative_replace);
+
+					diff = ::FindFirstDiff(comp_bufa_ + same, comp_bufb_ + same, to_check - same);
+				}
+			}
+			else if (diff < to_check)
 			{
 				// Move unchecked pieces of buffer down so they're 16-byte aligned
-				addra += same;
-				addrb += same;
-				gota -= same;
-				gotb -= same;
-				memmove(comp_bufa_, comp_bufa_+same, gota);
-				memmove(comp_bufb_, comp_bufb_+same, gotb);
+				addra += diff;
+				addrb += diff;
+				gota -= diff;
+				gotb -= diff;
+				memmove(comp_bufa_, comp_bufa_+diff, gota);
+				memmove(comp_bufb_, comp_bufb_+diff, gotb);
 
 				// Top up the buffers
 				gota += GetData    (comp_bufa_ + gota, buf_size - gota + (compMinMatch_ - 4), addra + gota, 4);
@@ -1337,12 +1368,12 @@ UINT CHexEditDoc::RunCompThread()
 				if (best == buf_size)
 				{
 					// No match so add to current "replace" block
-					size_t diff = std::min(gota, gotb); // xxx min buf_size or %16 xxx
-					cumulative_replace += diff;
-					addra += diff;
-					addrb += diff;
-					gota -= diff;
-					gotb -= diff;
+					size_t diff_len = std::min(gota, gotb); // xxx min buf_size or %16 xxx
+					cumulative_replace += diff_len;
+					addra += diff_len;
+					addrb += diff_len;
+					gota -= diff_len;
+					gotb -= diff_len;
 					continue;
 				}
 
@@ -1390,34 +1421,27 @@ UINT CHexEditDoc::RunCompThread()
 				continue;
 
 			}  // end if difference
-			else if (cumulative_replace > 0)
-			{
-				result.m_replace_A.push_back(addra - cumulative_replace);
-				result.m_replace_B.push_back(addrb - cumulative_replace);
-				result.m_replace_len.push_back(cumulative_replace);
-				cumulative_replace = 0;
-			}
 
 			if (gota < buf_size || gotb < buf_size)
 			{
-				// We have reached the end of one or both files
+				// We have reached the end of one or both files  
 				if (gota < gotb)
 				{
 					gotb -= gota;
 					gota = 0;
 
-					result.m_delete_A.push_back(addra + same);
-					result.m_insert_B.push_back(addrb + same);
-					result.m_delete_len.push_back(CompLength() - (addrb + same));  // to EOF of compare file
+					result.m_delete_A.push_back(addra + diff);
+					result.m_insert_B.push_back(addrb + diff);
+					result.m_delete_len.push_back(CompLength() - (addrb + diff));  // to EOF of compare file
 				}
 				else if (gotb < gota)
 				{
 					gota -= gotb;
 					gotb = 0;
 
-					result.m_insert_A.push_back(addra + same);
-					result.m_delete_B.push_back(addrb + same);
-					result.m_insert_len.push_back(length_ - (addra + same)); // to eof
+					result.m_insert_A.push_back(addra + diff);
+					result.m_delete_B.push_back(addrb + diff);
+					result.m_insert_len.push_back(length_ - (addra + diff)); // to eof
 				}
 
 				// We save the results of the compare along with when it was done
@@ -1432,7 +1456,6 @@ UINT CHexEditDoc::RunCompThread()
 			}
 
 			// Skip the bits that compared equal
-			assert(gota == gotb); // ?
 			addra += to_check;
 			addrb += to_check;
 			gota -= to_check;
