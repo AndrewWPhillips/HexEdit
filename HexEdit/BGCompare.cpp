@@ -1337,7 +1337,7 @@ UINT CHexEditDoc::RunCompThread()
 				if (best == buf_size)
 				{
 					// No match so add to current "replace" block
-					size_t diff = std::min(gota, gotb);
+					size_t diff = std::min(gota, gotb); // xxx min buf_size or %16 xxx
 					cumulative_replace += diff;
 					addra += diff;
 					addrb += diff;
