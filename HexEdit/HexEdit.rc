@@ -4911,7 +4911,7 @@ BEGIN
     PUSHBUTTON      "Help",IDC_RECENT_FILES_HELP,317,160,56,14,WS_GROUP
 END
 
-IDD_NEW_COMPARE DIALOGEX 0, 0, 219, 134
+IDD_NEW_COMPARE DIALOGEX 0, 0, 219, 176
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Compare With"
@@ -4923,17 +4923,22 @@ BEGIN
     EDITTEXT        IDC_COMPARE_FILENAME,39,22,124,14,ES_AUTOHSCROLL | ES_OEMCONVERT,0,HIDC_COMPARE_FILENAME
     PUSHBUTTON      "Browse...",IDC_COMPARE_BROWSE,165,23,44,14,0,0,HIDC_COMPARE_BROWSE
     LTEXT           "Show other file in:",IDC_COMPARE_COMMENT,9,43,189,8
-    CONTROL         "Split window (in view to the right of hex view)",IDC_COMPARE_SPLIT,
+    CONTROL         "Split window (panel to the right of the main view)",IDC_COMPARE_SPLIT,
                     "Button",BS_AUTORADIOBUTTON | WS_GROUP,23,54,157,10
-    CONTROL         "Tabbed window (tab at bottom of window)",IDC_COMPARE_TABBED,
+    CONTROL         "Tabbed window (tab at bottom of the window)",IDC_COMPARE_TABBED,
                     "Button",BS_AUTORADIOBUTTON,23,66,148,10
+    CONTROL         "Detect insertions and deletions",IDC_COMPARE_INSDEL,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,84,179,10
+    LTEXT           "Minimum match length:",IDC_COMPARE_STATIC1,23,99,73,8
+    EDITTEXT        IDC_COMPARE_MINMATCH,112,96,51,14,ES_AUTOHSCROLL | ES_OEMCONVERT,0,HIDC_COMPARE_MINMATCH
+    CONTROL         "Spin1",IDC_COMPARE_MINMATCH_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,160,97,10,14
     CONTROL         "Auto sync - maintain same cursor position/selection",IDC_COMPARE_AUTOSYNC,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,82,177,10
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,118,179,10
     CONTROL         "Auto scroll - keep display aligned (scroll bar position)",IDC_COMPARE_AUTOSCROLL,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,96,179,10
-    PUSHBUTTON      "&Help",IDC_COMPARE_HELP,9,112,50,14,WS_GROUP
-    DEFPUSHBUTTON   "Compare",IDOK,104,112,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,159,112,50,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,132,179,10
+    PUSHBUTTON      "&Help",IDC_COMPARE_HELP,9,153,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Compare",IDOK,104,153,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,159,153,50,14
 END
 
 IDD_CALC_HIST DIALOGEX 0, 0, 100, 50

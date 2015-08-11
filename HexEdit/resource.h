@@ -1287,10 +1287,10 @@
 #define IDC_COMPARE_COMMENT             1685
 #define IDC_COMPARE_HELP                1686
 #define IDC_COMPARE_BROWSE              1687
-#define IDC_DISPLAY_TEMPLATE            1690
-#define IDC_DISPLAY_AERIAL              1691
-#define IDC_DISPLAY_COMP                1692
-#define IDC_DISPLAY_PREVW               1693
+#define IDC_COMPARE_INSDEL              1688
+#define IDC_COMPARE_MINMATCH            1689
+#define IDC_COMPARE_MINMATCH_SPIN       1690
+#define IDC_COMPARE_STATIC1             1691
 #define IDC_BMP_FORMAT                  1695
 #define IDC_BMP_BPP                     1696
 #define IDC_BMP_WIDTH                   1697
@@ -1301,7 +1301,11 @@
 #define IDC_BMP_DESC_DISK               1702
 #define IDC_CALC_HIST_CLEAR             1703
 #define IDC_CALC_HIST_TEXT              1704
-#define IDC_GRID_DIFFS                  1710
+#define IDC_DISPLAY_TEMPLATE            1705
+#define IDC_DISPLAY_AERIAL              1706
+#define IDC_DISPLAY_COMP                1707
+#define IDC_DISPLAY_PREVW               1708
+#define IDC_GRID_DIFFS                  1712
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1864,7 +1868,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
 #define _APS_NEXT_COMMAND_VALUE         39230
-#define _APS_NEXT_CONTROL_VALUE         1711
+#define _APS_NEXT_CONTROL_VALUE         1713
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

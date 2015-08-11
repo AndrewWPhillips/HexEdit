@@ -19,6 +19,8 @@ CNewCompare::CNewCompare(CWnd* pParent /*=NULL*/)
 	: CHexDialog(CNewCompare::IDD, pParent)
 {
 	compare_type_ = compare_display_ = 0;
+	insdel_ = 0;
+	minmatch_ = 10;
 	auto_sync_ = auto_scroll_ = 1;
 }
 
@@ -32,23 +34,32 @@ void CNewCompare::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_COMPARE_SELF, compare_type_);
 	DDX_Text(pDX, IDC_COMPARE_FILENAME, file_name_);
 	DDX_Radio(pDX, IDC_COMPARE_SPLIT, compare_display_);
+	DDX_Check(pDX, IDC_COMPARE_INSDEL, insdel_);
+	DDX_Text(pDX, IDC_COMPARE_MINMATCH, minmatch_);
+	DDV_MinMaxUInt(pDX, minmatch_, 7, 64);
 	DDX_Check(pDX, IDC_COMPARE_AUTOSYNC, auto_sync_);
 	DDX_Check(pDX, IDC_COMPARE_AUTOSCROLL, auto_scroll_);
 	//DDX_Text(pDX, IDC_COMPARE_COMMENT, comment_);
 	DDX_Control(pDX, IDC_COMPARE_FILENAME, ctl_file_name_);
 	DDX_Control(pDX, IDC_COMPARE_BROWSE, ctl_browse_);
 	DDX_Control(pDX, IDC_COMPARE_COMMENT, ctl_comment_);
+	DDX_Control(pDX, IDC_COMPARE_STATIC1, ctl_static1_);
+	DDX_Control(pDX, IDC_COMPARE_MINMATCH, ctl_minmatch_);
 }
 
 BEGIN_MESSAGE_MAP(CNewCompare, CHexDialog)
 	ON_BN_CLICKED(IDC_COMPARE_SELF, &CNewCompare::OnBnClickedCompareSelf)
 	ON_BN_CLICKED(IDC_COMPARE_FILE, &CNewCompare::OnBnClickedCompareFile)
 	ON_BN_CLICKED(IDC_COMPARE_BROWSE, &CNewCompare::OnBnClickedAttachmentBrowse)
+	ON_BN_CLICKED(IDC_COMPARE_INSDEL, &CNewCompare::OnBnClickedInsDel)
 END_MESSAGE_MAP()
 
 BOOL CNewCompare::OnInitDialog()
 {
 	CHexDialog::OnInitDialog();
+
+	ASSERT(GetDlgItem(IDC_COMPARE_MINMATCH_SPIN) != NULL);
+	((CSpinButtonCtrl *)GetDlgItem(IDC_COMPARE_MINMATCH_SPIN))->SetRange(7, 64);
 
 	// Make sure when dialog is resized that the controls move to sensible places
 	resizer_.Create(this);
@@ -114,6 +125,8 @@ void CNewCompare::fix_controls()
 		ctl_comment_.SetWindowText("Show previous version of file in:");
 	else
 		ctl_comment_.SetWindowText("Show file, to be compared with, in:");
+	ctl_static1_.EnableWindow(insdel_ == 1);
+	ctl_minmatch_.EnableWindow(insdel_ == 1);
 }
 
 // CNewCompare message handlers
@@ -144,4 +157,10 @@ void CNewCompare::OnBnClickedAttachmentBrowse()
 		file_name_ = dlgFile.GetPathName();
 		UpdateData(FALSE);
 	}
+}
+
+void CNewCompare::OnBnClickedInsDel()
+{
+	UpdateData();
+	fix_controls();
 }

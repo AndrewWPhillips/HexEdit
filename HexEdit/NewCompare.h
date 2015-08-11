@@ -27,11 +27,15 @@ private:
 	CEdit ctl_file_name_;
 	CButton ctl_browse_;
 	CStatic ctl_comment_;
+	CStatic ctl_static1_;
+	CEdit ctl_minmatch_;
 
 public:
 	int compare_type_;    // 0 = self, 1 = another file
 	CString file_name_;   // name of file (if compare_type_ == 1)
 	int compare_display_; // 0 = split window, 1 = tabbed
+	int insdel_;          // detect inserions/deltions (0/1)
+	UINT minmatch_;       // min match when searching for insertions/deletions
 	int auto_sync_;       // auto sync (0/1)
 	int auto_scroll_;     // auto scroll (0/1)
 
@@ -41,4 +45,5 @@ public:
 	afx_msg void OnBnClickedCompareSelf();
 	afx_msg void OnBnClickedCompareFile();
 	afx_msg void OnBnClickedAttachmentBrowse();
+	afx_msg void OnBnClickedInsDel();
 };
