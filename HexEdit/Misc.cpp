@@ -2100,8 +2100,8 @@ size_t FindFirstSame(const unsigned char * buf1, const unsigned char * buf2, siz
 
 	for ( ; (const unsigned char *)pchunk1 < pend - SZCHK; ++pchunk1, ++pchunk2)
 	{
-		cmp = _mm_cmpeq_epi32(*pchunk1, *pchunk2);              // PCMPEQD
-		if (_mm_movemask_ps(_mm_castsi128_ps(cmp)) != 0)        // MOVMSKPS
+		cmp = _mm_cmpeq_epi8(*pchunk1, *pchunk2);               // PCMPEQB
+		if (_mm_movemask_epi8(cmp) != 0)                        // PMOVMSKB
 		{
 			// There is at least one difference in the 16 bytes - find the first diff. byte
 			for (p1 = (const unsigned char *)pchunk1, p2 = (const unsigned char *)pchunk2; *p1 != *p2; ++p1, ++p2)
