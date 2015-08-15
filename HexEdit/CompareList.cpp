@@ -294,27 +294,44 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 
 	CHexEditView * pview;
 	CHexEditDoc * pdoc;
-	if ((pview = GetView()) != NULL &&                 // active view
-		(pdoc = pview->GetDocument()) != NULL &&       // all view should have a doc!
-		pdoc->CompareDifferences() >= 0 &&             // file comparison active and finished
-		(pview != phev_ || pdoc->LastCompareFinishTime() != last_change_) // info has changed since last time
-	   )
+	if ((pview = GetView()) != NULL &&                 // we have an active view
+		(pdoc = pview->GetDocument()) != NULL)         // all views should have a doc!
 	{
-		last_change_ = pdoc->LastCompareFinishTime();
-		phev_ = pview;
+		if (pview != phev_ || pdoc->LastCompareFinishTime() != last_change_)
+		{
+			CString mess;
+			last_change_ = pdoc->LastCompareFinishTime();
+			phev_ = pview;
 
-		// Clear the list and rebuild it
-		grid_.SetRowCount(grid_.GetFixedRowCount());
-		FillGrid(pdoc);
+			// Clear the list in preparation for redrawing
+			grid_.SetRowCount(grid_.GetFixedRowCount());
+
+			int diffs = pdoc->CompareDifferences();
+
+			if (diffs >= 10000)
+			{
+				AddMessage("Too many differences for list");
+			}
+			else if (diffs >= 0)
+			{
+				FillGrid(pdoc);
+			}
+			else if (diffs == -4)
+			{
+				mess.Format("%d%% complete", pdoc->CompareProgress());
+				AddMessage(mess);
+			}
+		}
 	}
 	else if (pview == NULL && phev_ != NULL)
 	{
 		last_change_ = 0;
 		phev_ = NULL;
 
-		// Clear the list
+		// Clear the list as there is now no active view
 		grid_.SetRowCount(grid_.GetFixedRowCount());
 	}
+
 	return FALSE;
 }
 
@@ -562,6 +579,32 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 			addrA += len;
 			break;
 		}
+	}
+}
+
+void CCompareListDlg::AddMessage(const char * mess)
+{
+	int fcc = grid_.GetFixedColumnCount();
+
+	GV_ITEM item;
+	item.row = grid_.GetRowCount();
+	grid_.SetRowCount(item.row + 1);                        // append a row
+
+	// Set item attributes that are the same for each field (column)
+	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR|GVIF_BKCLR;
+	item.nState = GVIS_READONLY;
+	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
+	item.crFgClr = CLR_DEFAULT;
+	item.crBkClr = CLR_DEFAULT;
+
+	item.col = fcc + COL_ORIG_TYPE;
+	item.strText = mess;
+	grid_.SetItem(&item);
+
+	item.strText = "";
+	for (++item.col; item.col < fcc + COL_LAST; ++item.col)
+	{
+		grid_.SetItem(&item);
 	}
 }
 

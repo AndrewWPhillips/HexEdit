@@ -130,7 +130,7 @@ CHexEditDoc::CHexEditDoc()
 	pthread4_ = NULL;
 	cv_count_ = 0;
 	bCompSelf_ = false;
-	compMinMatch_ = 11;
+	compMinMatch_ = 0;
 
 	// BG stats thread
 	pthread5_ = NULL;
@@ -1400,7 +1400,7 @@ void CHexEditDoc::CheckBGProcessing()
 	comp_finished = comp_fin_;
 	if (comp_finished)
 	{
-		comp_clock_ = clock();          // remember when this compare change cam through
+		comp_clock_ = clock();          // remember when this compare change came through
 		comp_fin_ = false;
 	}
 

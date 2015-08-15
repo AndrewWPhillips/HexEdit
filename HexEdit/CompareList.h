@@ -93,6 +93,7 @@ private:
 	void FillGrid(CHexEditDoc * pdoc);
 	void AddRow(CHexEditDoc::diff_t type, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp);
 	//void AddRow(std::pair<FILE_ADDRESS, FILE_ADDRESS> next);
+	void AddMessage(const char * mess);
 
 	bool m_first;                       // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
 	CResizeCtrl m_resizer;              // Used to move controls around when the window is resized
