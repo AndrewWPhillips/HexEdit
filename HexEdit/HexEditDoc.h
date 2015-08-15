@@ -689,7 +689,7 @@ public:
 	static long     __stdcall fi_tell(fi_handle handle);
 
 	// Compare stuff (implemented in BGCompare.cpp)
-	enum diff_t { Deletion = -1, Replacement = 0, Insertion = 1, Equal = 9};
+	enum diff_t { Deletion = -1, Replacement = 0, Insertion = 1, Equal = 9, };
 	void AddCompView(CHexEditView *pview);
 	void RemoveCompView();
 	bool IsCompWaiting();     // is compare thread in wait state?
@@ -996,7 +996,7 @@ private:
 	// Also see data_file4_ (above)
 	CFile64 *pfile1_compare_, *pfile4_compare_;   // The file we are comparing with (for fg + bg threads)
 	CString compFileName_;      // Name of file comparing with (or last compare file)
-	int compMinMatch_;          // Min number of match bytes when searching for insertions/deletions (min 10, or 0 if insertions/deletions not allowed)
+	int compMinMatch_;          // Min number of match bytes when searching for insertions/deletions (min 7, or 0 if insertions/deletions not allowed)
 	size_t GetCompData(unsigned char *buf, size_t len, FILE_ADDRESS loc, bool use_bg = false);  // bytes from compare file
 	bool CreateCompThread();  // Create background thread which does the compare
 	void KillCompThread();    // Kill background thread ASAP
@@ -1014,7 +1014,7 @@ private:
 	enum BG_COMMAND comp_command_;
 	bool comp_fin_;             // Flags that the bg scan is finished and the view needs updating
 	clock_t comp_clock_;        // Remember when the last compare finished so we don't update the compare list unnecissarily
-	unsigned char *comp_bufa_, *comp_bufb_; // Buffers used for holding data from both files
+	unsigned char *comp_bufa_, *comp_bufb_; // Buffers used for holding data from both files (only used by background thread)
 
 	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress
 
