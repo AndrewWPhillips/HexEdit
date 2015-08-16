@@ -2018,9 +2018,12 @@ size_t FindFirstDiff(const unsigned char * buf1, const unsigned char * buf2, siz
 	assert((int)pchunk1 % SZCHK == 0);
 
 	const unsigned char * p1, * p2;
+	const unsigned char * pend = (const unsigned char *)pchunk1;
+	if (pend > buf1 + buflen)
+		pend = buf1 + buflen;
 
 	// Check up to 15 bytes before the first 16-byte aligned chunk
-	for (p1 = buf1, p2 = buf2; p1 < (const unsigned char *)pchunk1; ++p1, ++p2)
+	for (p1 = buf1, p2 = buf2; p1 < pend; ++p1, ++p2)
 	{
 		if (*p1 != *p2)
 			return p1 - buf1;
@@ -2029,8 +2032,7 @@ size_t FindFirstDiff(const unsigned char * buf1, const unsigned char * buf2, siz
 	__m128i * pchunk2 = (__m128i *)((((int)buf2 + SZCHK-1)/SZCHK)*SZCHK);
 	assert((int)pchunk2 % SZCHK == 0);
 
-	const unsigned char * pend = buf1 + buflen;
-	assert((const unsigned char *)pchunk1 <= pend);
+	pend = buf1 + buflen;
 
 	__m128i cmp;                                                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
 
@@ -2082,9 +2084,12 @@ size_t FindFirstSame(const unsigned char * buf1, const unsigned char * buf2, siz
 	assert((int)pchunk1 % SZCHK == 0);
 
 	const unsigned char * p1, * p2;
+	const unsigned char * pend = (const unsigned char *)pchunk1;
+	if (pend > buf1 + buflen)
+		pend = buf1 + buflen;
 
 	// Check up to 15 bytes before the first 16-byte aligned chunk
-	for (p1 = buf1, p2 = buf2; p1 < (const unsigned char *)pchunk1; ++p1, ++p2)
+	for (p1 = buf1, p2 = buf2; p1 < pend; ++p1, ++p2)
 	{
 		if (*p1 == *p2)
 			return p1 - buf1;
@@ -2093,8 +2098,7 @@ size_t FindFirstSame(const unsigned char * buf1, const unsigned char * buf2, siz
 	__m128i * pchunk2 = (__m128i *)((((int)buf2 + SZCHK-1)/SZCHK)*SZCHK);
 	assert((int)pchunk2 % SZCHK == 0);
 
-	const unsigned char * pend = buf1 + buflen;
-	assert((const unsigned char *)pchunk1 <= pend);
+	pend = buf1 + buflen;
 
 	__m128i cmp;                                                // holds result of comparing 16 bytes where each DWORD is either all bits on or off
 
