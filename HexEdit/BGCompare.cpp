@@ -1310,8 +1310,8 @@ UINT CHexEditDoc::RunCompThread()
 						diff = same + ::FindFirstDiff(comp_bufa_ + same, comp_bufb_ + same, to_check - same);
 					}
 
-					addra += gota;
-					addrb += gotb;
+					addra += to_check;
+					addrb += to_check;
 					gota = 0;
 					gotb = 0;
 					continue;
@@ -1444,7 +1444,7 @@ UINT CHexEditDoc::RunCompThread()
 					cumulative_replace = 0;
 				}
 
-				// We have reached the end of one or both files  
+				// We have reached the end of one or both files
 				if (gota < gotb)
 				{
 					gotb -= gota;
