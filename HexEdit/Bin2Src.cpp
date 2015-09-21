@@ -372,7 +372,7 @@ int Bin2Src::get_unit_width() const
 	{
 	case STRING:
 		return 4;   // worst case \xFF  [backslash, x, 2 hex digits]
-		
+
 	case CHAR:
 		return 8;  // worst case '\xFF', [includes 2 apostrophes, comma, space
 
@@ -406,7 +406,7 @@ int Bin2Src::get_unit_width() const
 		}
 		break;
 	}
-	
+
 	ASSERT(0);      // we should not get here but if we use worst case of 8 output characters per byte
 	return size_*8;
 }

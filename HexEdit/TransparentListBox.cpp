@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CTransparentListBox message handlers
 
-void CTransparentListBox::PreSubclassWindow() 
+void CTransparentListBox::PreSubclassWindow()
 {
 	CListBox::PreSubclassWindow();
 
@@ -112,7 +112,7 @@ void CTransparentListBox::ResetContent(BOOL bInvalidate)
 {
 	CListBox::ResetContent();
 //   Default();
-	if ( bInvalidate ) 
+	if ( bInvalidate )
 	{
 		Invalidate();
 		UpdateWindow();
@@ -134,7 +134,7 @@ int CTransparentListBox::AddString(CString Text,DWORD ItemData,BOOL Enabled)
       DC->SelectObject(oldFont);
       ReleaseDC(DC);
    }
-   
+
    int Index = CListBox::AddString(Text);
    CListBox::SetItemData(Index,ItemData);
    return Index;
@@ -162,7 +162,7 @@ int CTransparentListBox::InsertString(int Index,CString Text, DWORD ItemData,BOO
 
 
 
-BOOL CTransparentListBox::OnEraseBkgnd(CDC* pDC) 
+BOOL CTransparentListBox::OnEraseBkgnd(CDC* pDC)
 {
    if (!m_HasBackGround)
    {
@@ -183,7 +183,7 @@ BOOL CTransparentListBox::OnEraseBkgnd(CDC* pDC)
          pParent->ReleaseDC(pDC);
       }
    }
-   
+
    return TRUE;
 
 }
@@ -269,7 +269,7 @@ void CTransparentListBox::DrawItem(CDC &Dc,int Index,CRect &Rect,BOOL Selected)
    memdc.SelectObject(oldbmp);
 }
 
-void CTransparentListBox::OnPaint() 
+void CTransparentListBox::OnPaint()
 {
    CPaintDC dc(this); // device context for painting
 
@@ -297,7 +297,7 @@ void CTransparentListBox::OnPaint()
    Rect.left = 0;
    Rect.bottom = Rect.top + GetItemHeight(0);
    Rect.right = Width;
-   
+
    int size = GetCount();
    for (int i = GetTopIndex(); i < size && Rect.top <= Height;++i)
    {
@@ -310,7 +310,7 @@ void CTransparentListBox::OnPaint()
    MemDC.SelectObject(pOldMemBmp);
 }
 
-void CTransparentListBox::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CTransparentListBox::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
    SetRedraw(FALSE);
    CListBox::OnVScroll(nSBCode,nPos,pScrollBar);
@@ -377,7 +377,7 @@ void CTransparentListBox::OnMove(int x, int y)
    Invalidate();
    UpdateWindow();
    ShowWindow(SW_SHOW);
-   
+
 }
 
 void CTransparentListBox::OnSize(UINT nType, int cx, int cy)

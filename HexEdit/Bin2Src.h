@@ -16,7 +16,7 @@
 
 class CHexEditDoc;
 
-class Bin2Src  
+class Bin2Src
 {
 public:
 	enum lang { NOLANG, C, };

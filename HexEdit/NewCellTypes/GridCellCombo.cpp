@@ -15,9 +15,9 @@
 // file may be redistributed unmodified by any means PROVIDING it is 
 // not sold for profit without the authors written consent, and 
 // providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -59,7 +59,7 @@ CComboEdit::~CComboEdit()
 }
 
 // Stoopid win95 accelerator key problem workaround - Matt Weagle.
-BOOL CComboEdit::PreTranslateMessage(MSG* pMsg) 
+BOOL CComboEdit::PreTranslateMessage(MSG* pMsg)
 {
 	// Make sure that the keystrokes continue to the appropriate handlers
 	if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP)
@@ -67,7 +67,7 @@ BOOL CComboEdit::PreTranslateMessage(MSG* pMsg)
 		::TranslateMessage(pMsg);
 		::DispatchMessage(pMsg);
 		return TRUE;
-	}	
+	}
 
 	// Catch the Alt key so we don't choke if focus is going to an owner drawn button
 	if (pMsg->message == WM_SYSCHAR)
@@ -87,16 +87,16 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CComboEdit message handlers
 
-void CComboEdit::OnKillFocus(CWnd* pNewWnd) 
+void CComboEdit::OnKillFocus(CWnd* pNewWnd)
 {
 	CEdit::OnKillFocus(pNewWnd);
-	
+
     CInPlaceList* pOwner = (CInPlaceList*) GetOwner();  // This MUST be a CInPlaceList
     if (pOwner)
-        pOwner->EndEdit();	
+        pOwner->EndEdit();
 }
 
-void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 		 nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -112,9 +112,9 @@ void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (nChar == VK_ESCAPE) 
+	if (nChar == VK_ESCAPE)
 	{
         CWnd* pOwner = GetOwner();
         if (pOwner)
@@ -139,7 +139,7 @@ void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 CInPlaceList::CInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
                            int nRow, int nColumn, 
-                           COLORREF crFore, COLORREF crBack,
+                           COLORREF crFore, COLORREF crBack, 
 						   CStringArray& Items, CString sInitText, 
 						   UINT nFirstChar)
 {
@@ -150,7 +150,7 @@ CInPlaceList::CInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 	m_sInitText = sInitText;
  	m_nRow		= nRow;
  	m_nCol      = nColumn;
- 	m_nLastChar = 0; 
+ 	m_nLastChar = 0;
 	m_bExitOnArrows = FALSE; //(nFirstChar != VK_LBUTTON);	// If mouse click brought us here,
 
 	// Create the combobox
@@ -161,7 +161,7 @@ CInPlaceList::CInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 	if (!Create(dwComboStyle, rect, pParent, nID)) return;
 
 	// Add the strings
-	for (int i = 0; i < Items.GetSize(); i++) 
+	for (int i = 0; i < Items.GetSize(); i++)
 		AddString(Items[i]);
 
 	SetFont(pParent->GetFont());
@@ -180,7 +180,7 @@ CInPlaceList::CInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 	SetHorizontalExtent(0); // no horz scrolling
 
 	// Set the initial text to m_sInitText
-    if (::IsWindow(m_hWnd) && SelectString(-1, m_sInitText) == CB_ERR) 
+    if (::IsWindow(m_hWnd) && SelectString(-1, m_sInitText) == CB_ERR)
 		SetWindowText(m_sInitText);		// No text selected, so restore what was there before
 
     ShowDropDown();
@@ -192,16 +192,16 @@ CInPlaceList::CInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
  	    SetFocus();
         switch (nFirstChar)
         {
-            case VK_LBUTTON: 
+            case VK_LBUTTON:
             case VK_RETURN:   m_edit.SetSel((int)_tcslen(m_sInitText), -1); return;
             case VK_BACK:     m_edit.SetSel((int)_tcslen(m_sInitText), -1); break;
-            case VK_DOWN: 
-            case VK_UP:   
+            case VK_DOWN:
+            case VK_UP:
             case VK_RIGHT:
-            case VK_LEFT:  
-            case VK_NEXT:  
-            case VK_PRIOR: 
-            case VK_HOME:  
+            case VK_LEFT:
+            case VK_NEXT:
+            case VK_PRIOR:
+            case VK_HOME:
             case VK_END:      m_edit.SetSel(0,-1); return;
             default:          m_edit.SetSel(0,-1);
         }
@@ -220,24 +220,24 @@ void CInPlaceList::EndEdit()
     CString str;
     if (::IsWindow(m_hWnd))
         GetWindowText(str);
- 
+
     // Send Notification to parent
     GV_DISPINFO dispinfo;
 
     dispinfo.hdr.hwndFrom = GetSafeHwnd();
     dispinfo.hdr.idFrom   = GetDlgCtrlID();
     dispinfo.hdr.code     = GVN_ENDLABELEDIT;
- 
+
     dispinfo.item.mask    = LVIF_TEXT|LVIF_PARAM;
     dispinfo.item.row     = m_nRow;
     dispinfo.item.col     = m_nCol;
     dispinfo.item.strText = str;
-    dispinfo.item.lParam  = (LPARAM) m_nLastChar; 
- 
+    dispinfo.item.lParam  = (LPARAM) m_nLastChar;
+
     CWnd* pOwner = GetOwner();
     if (IsWindow(pOwner->GetSafeHwnd()))
         pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo );
- 
+
     // Close this window (PostNcDestroy will delete this)
     if (::IsWindow(m_hWnd))
         PostMessage(WM_CLOSE, 0, 0);
@@ -263,7 +263,7 @@ int CInPlaceList::GetCorrectDropWidth()
         int nLength = dc.GetTextExtent(str).cx + nScrollWidth;
         nWidth = max(nWidth, nLength);
     }
-    
+
     // Add margin space to the calculations
     nWidth += dc.GetTextExtent("0").cx;
 
@@ -277,23 +277,23 @@ int CInPlaceList::GetCorrectDropWidth()
 
 /*
 // Fix by Ray (raybie@Exabyte.COM)
-void CInPlaceList::OnSelendOK() 
+void CInPlaceList::OnSelendOK()
 {
-    int iIndex = GetCurSel(); 
-    if( iIndex != CB_ERR) 
-    { 
-        CString strLbText; 
-        GetLBText( iIndex, strLbText); 
- 
-        if (!((GetStyle() & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)) 
-           m_edit.SetWindowText( strLbText); 
-    } 
- 
-    GetParent()->SetFocus(); 	
+    int iIndex = GetCurSel();
+    if( iIndex != CB_ERR)
+    {
+        CString strLbText;
+        GetLBText( iIndex, strLbText);
+
+        if (!((GetStyle() & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST))
+           m_edit.SetWindowText( strLbText);
+    }
+
+    GetParent()->SetFocus();
 }
 */
 
-void CInPlaceList::PostNcDestroy() 
+void CInPlaceList::PostNcDestroy()
 {
 	CComboBox::PostNcDestroy();
 
@@ -316,17 +316,17 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CInPlaceList message handlers
 
-UINT CInPlaceList::OnGetDlgCode() 
+UINT CInPlaceList::OnGetDlgCode()
 {
     return DLGC_WANTALLKEYS;
 }
 
-void CInPlaceList::OnDropdown() 
+void CInPlaceList::OnDropdown()
 {
     SetDroppedWidth(GetCorrectDropWidth());
 }
 
-void CInPlaceList::OnKillFocus(CWnd* pNewWnd) 
+void CInPlaceList::OnKillFocus(CWnd* pNewWnd)
 {
 	CComboBox::OnKillFocus(pNewWnd);
 
@@ -341,7 +341,7 @@ void CInPlaceList::OnKillFocus(CWnd* pNewWnd)
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
-void CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 		 nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -357,9 +357,9 @@ void CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 // Need to keep a lookout for Tabs, Esc and Returns.
-void CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (nChar == VK_ESCAPE) 
+	if (nChar == VK_ESCAPE)
 		SetWindowText(m_sInitText);	// restore previous text
 
 	if (nChar == VK_TAB || nChar == VK_RETURN || nChar == VK_ESCAPE)
@@ -372,7 +372,7 @@ void CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CComboBox::OnKeyUp(nChar, nRepCnt, nFlags);
 }
 
-HBRUSH CInPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/) 
+HBRUSH CInPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/)
 {
     /*
     static CBrush brush(m_crBackClr);
@@ -380,13 +380,13 @@ HBRUSH CInPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/)
     pDC->SetBkMode(TRANSPARENT);
     return (HBRUSH) brush.GetSafeHandle();
     */
-	
+
 	// TODO: Return a non-NULL brush if the parent's handler should not be called
 	return NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CGridCellCombo 
+// CGridCellCombo
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -401,9 +401,9 @@ CGridCellCombo::CGridCellCombo() : CGridCell()
 BOOL CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
     m_bEditing = TRUE;
-    
+
     // CInPlaceList auto-deletes itself
-    m_pEditWnd = new CInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol, 
+    m_pEditWnd = new CInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol,
                                   GetTextClr(), GetBackClr(), m_Strings, (CString)GetText(), nChar);
 
     return TRUE;
@@ -447,7 +447,7 @@ BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
             ScrollRect.left   = rect.right - sizeScroll.cx;
             ScrollRect.bottom = rect.top + sizeScroll.cy;
 
-            // Do the draw 
+            // Do the draw
             pDC->DrawFrameControl(ScrollRect, DFC_SCROLL, DFCS_SCROLLDOWN);
 
             // Adjust the remaining space in the cell
@@ -471,7 +471,7 @@ BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
 
 // For setting the strings that will be displayed in the drop list
 void CGridCellCombo::SetOptions(CStringArray& ar)
-{ 
+{
     m_Strings.RemoveAll();
     for (int i = 0; i < ar.GetSize(); i++)
         m_Strings.Add(ar[i]);

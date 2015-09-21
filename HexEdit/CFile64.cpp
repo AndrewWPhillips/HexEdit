@@ -2235,6 +2235,6 @@ void CFileNC::Close()
 
 // TBD: TODO checks/fixes:
 // Flush allowed on FILE_FLAG_NO_BUFFERING files?
-// Make sure GetFileTitle, GetFileName, GetInformation, 
+// Make sure GetFileTitle, GetFileName, GetInformation,
 // GetStatus, GetFileSize, SetEndOfFile, SetStatus not called for device file?
 // Test they still work on normal file

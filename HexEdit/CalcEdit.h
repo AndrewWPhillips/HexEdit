@@ -11,15 +11,15 @@
 //
 
 enum CALCSTATE {
-	CALCERROR,         // The last operation generated an error, E is displayed in the status 
+	CALCERROR,         // The last operation generated an error, E is displayed in the status
 	CALCOVERFLOW,      // Integer result that overflowed the current bits, O is displayed in the status
 	CALCINTRES,        // Final integer result eg: after = button pressed
-	CALCINTUNARY,      // Computed integer from unary operation, eg: INC button 
+	CALCINTUNARY,      // Computed integer from unary operation, eg: INC button
 	CALCINTBINARY,     // Computed integer from binary operation, eg + button
 	CALCINTLIT  =10,   // User has entered/is entering an integer literal, eg: "1,234"
 	CALCINTEXPR =20,   // User has entered/is entering an integer expression, eg "N + 2"
 	CALCREALEXPR,      // User entered real expression, eg "1 / 2.0"
-	CALCDATEEXPR,      // User entered date expression, eg "now()" 
+	CALCDATEEXPR,      // User entered date expression, eg "now()"
 	CALCSTREXPR,       // User entered string expression, eg: "left(str, 1)"
 	CALCBOOLEXPR,      // User entered Boolean expression, eg "N > 2"
 	CALCOTHER   =30,   // User has entered something else, probably an incomplete expression, eg: "N +"
@@ -121,7 +121,7 @@ protected:
 private:
 	void add_sep();
 
-	// We only really need this is OnKillFocus but keep it in case it comes in handy 
+	// We only really need this is OnKillFocus but keep it in case it comes in handy
 	DWORD sel_;
 
 	bool in_edit_;

@@ -222,7 +222,7 @@ int CHexEditDoc::GetDiskBmpInfo(CString &format, CString &bpp, CString &width, C
 	return 0;
 }
 
-// Sends a message for the thread to kill itself then tides up shared members 
+// Sends a message for the thread to kill itself then tidies up shared members. 
 void CHexEditDoc::KillPreviewThread()
 {
 	ASSERT(pthread6_ != NULL);

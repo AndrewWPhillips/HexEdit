@@ -43,7 +43,7 @@ enum FOLDER_LOCN
 	FL_LAST,           // folder of last folder used (open for open_locn_, save for save_locn_)
 	FL_BOTH,           // folder of last open or save
 	FL_SPECIFIED,      // use explicitly specified folder (open_folder_ or save_folder_)
-};  
+};
 
 // These values correspond to the radio buttons for cb_text_type_
 enum CB_TEXT_TYPE      // defines how text data is written to the clipboard
@@ -1247,7 +1247,7 @@ protected:
 	CPreviewPage previewPage_;
 	CExplorerPage explorerPage_;
 	CFiltersPage filtersPage_;
-	CBackupPage backupPage_; 
+	CBackupPage backupPage_;
 	CPrintGeneralPage printGeneralPage_;
 	CPrintDecorationsPage printDecorationsPage_;
 	CMacroPage macroPage_;

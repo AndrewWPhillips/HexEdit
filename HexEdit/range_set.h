@@ -713,7 +713,7 @@ public:
 						   const range_set &rs2)
 	{
 		range_t::const_iterator p1, p2;
-		for (p1 = rs1.range_.begin(), p2 = rs2.range_.begin(); 
+		for (p1 = rs1.range_.begin(), p2 = rs2.range_.begin();
 			 p1 != rs1.range_.end() && p2 != rs2.range_.end();
 			 ++p1, ++p2)
 		{

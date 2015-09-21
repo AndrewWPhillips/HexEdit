@@ -137,7 +137,7 @@ void CEmailDlg::OnOK()
 	CDialog::OnOK();
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_TO, HIDC_TO,
 	IDC_SUBJECT, HIDC_SUBJECT,
 	IDC_BUG, HIDC_BUG,
@@ -153,7 +153,7 @@ static DWORD id_pairs[] = {
 	IDC_ADDRESS, HIDC_ADDRESS,
 	IDOK, HID_EMAIL_SEND,
 	IDC_EMAIL_HELP, HIDC_HELP_BUTTON,
-	0,0 
+	0,0
 };
 
 BOOL CEmailDlg::OnHelpInfo(HELPINFO* pHelpInfo)

@@ -21,7 +21,7 @@ public:
 
 	BOOL Create(CWnd* pParent, CRect rct, UINT nID = AFX_IDW_PANE_FIRST);
 	BOOL CreatePane(int nIndex, CWnd* pPaneWnd, DWORD dwStyle, DWORD dwExStyle, LPCTSTR lpszClassName = NULL);
-	
+
 	int GetPaneCount() const							{ return m_nPanes; }
 	void SetPane(int nIndex, CWnd* pPaneWnd);
 	CWnd* GetPane(int nIndex) const;
@@ -39,7 +39,7 @@ protected:
 	void RecalcLayout();
 	void ResizePanes();
 	void InvertTracker();
-	
+
 	//{{AFX_MSG(CSimpleSplitter)
 	afx_msg void OnPaint();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -58,7 +58,7 @@ protected:
 	int m_nMinSize, m_nBarThickness;
 
 	int m_nTrackIndex, m_nTracker, m_nTrackerLength, m_nTrackerMouseOffset;
-	
+
 	CWnd** m_pane;
 	int *m_size, *m_orig;
 };

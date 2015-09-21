@@ -1440,7 +1440,7 @@ end_of_background_drawing:
 					}
 					else if (buf[jj] < 32 && display_.char_set != CHARSET_EBCDIC && display_.char_set != CHARSET_OEM)
 					{
-						// Control characters are diplayed the same for all char sets except for 
+						// Control characters are diplayed the same for all char sets except for
 						//  - EBCDIC (some chars < 32 may not be graphical) and 
 						//  - OEM (there are graphic characters for chars < 32)
 						if (display_.control == 0)
@@ -1623,7 +1623,7 @@ end_of_background_drawing:
 				else if (buf[kk] < 32 && display_.char_set != CHARSET_EBCDIC && display_.char_set != CHARSET_OEM)
 				{
 					// Control characters are diplayed the same for all char sets except for
-					//  - EBCDIC (some chars < 32 may not be graphical) and 
+					//  - EBCDIC (some chars < 32 may not be graphical) and
 					//  - OEM (there are graphic characters for chars < 32)
 					if (display_.control == 0)
 					{

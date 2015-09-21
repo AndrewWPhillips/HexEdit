@@ -233,7 +233,7 @@ BEGIN_MESSAGE_MAP(CSimpleGraph, CWnd)
 END_MESSAGE_MAP()
 
 // CSimpleGraph message handlers
-void CSimpleGraph::OnPaint() 
+void CSimpleGraph::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -307,7 +307,7 @@ LRESULT CSimpleGraph::OnMouseHover(WPARAM, LPARAM lp)
 		track_mouse(TME_LEAVE);
 		return 0;  // return 0 to say we processed it
 	}
-	
+
 	return 1;
 }
 

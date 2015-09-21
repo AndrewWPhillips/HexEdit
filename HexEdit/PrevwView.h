@@ -1,6 +1,6 @@
 // PrevwView.h - interface for CPrevwView
 
-#ifndef PREVWVIEW_INCLUDED_ 
+#ifndef PREVWVIEW_INCLUDED_
 #define PREVWVIEW_INCLUDED_  1
 
 #if _MSC_VER > 1000

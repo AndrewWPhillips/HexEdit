@@ -99,7 +99,7 @@ public:
                                         //  CGridTreeCellBase-derived class
     // returns:  success / fail
 
-    int InsertTreeBranch(  
+    int InsertTreeBranch(
                    const unsigned char* apucTreeLevelAry,    // Tree Level data array --
                                        //  must have aiNbrElements of entries
                    int aiNbrElements,  // NUmber of tree elements to add

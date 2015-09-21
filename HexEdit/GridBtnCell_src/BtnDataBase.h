@@ -32,8 +32,8 @@ public:
             if (plf != NULL)
             {
                 m_plfFont = new LOGFONT;
-                if (m_plfFont) 
-                    memcpy(m_plfFont, plf, sizeof(LOGFONT)); 
+                if (m_plfFont)
+                    memcpy(m_plfFont, plf, sizeof(LOGFONT));
             }
             else
                 m_plfFont = NULL;
@@ -57,7 +57,7 @@ public:
     virtual LOGFONT* GetFont(int /* nRow */, int /* nCol */) const
         {
             if (m_plfFont)
-                return (LOGFONT*) m_plfFont; 
+                return (LOGFONT*) m_plfFont;
             else
                 return GetGrid()->GetDefaultCell(FALSE, FALSE)->GetFont();
         }

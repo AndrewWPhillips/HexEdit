@@ -60,7 +60,7 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
 			VERIFY(m_strTip.LoadString(CG_IDS_FILE_ABSENT));
 			return;
 		}
-	} 
+	}
 
 	// If the timestamp in the INI file is different from the timestamp of
 	// the tips file, then we know that the tips file has been modified
@@ -82,7 +82,7 @@ CTipDlg::CTipDlg(CWnd* pParent /*=NULL*/)
 	{
 		AfxMessageBox(CG_IDP_FILE_CORRUPT);
 	}
-	else 
+	else
 	{
 		GetNextTipString(m_strTip);
 	}
@@ -93,7 +93,7 @@ CTipDlg::~CTipDlg()
 	// This destructor is executed whether the user had pressed the escape key
 	// or clicked on the close button. If the user had pressed the escape key,
 	// it is still required to update the filepos in the ini file with the 
-	// latest position so that we don't repeat the tips! 
+	// latest position so that we don't repeat the tips!
 
 	// But make sure the tips file existed in the first place....
 	if (m_pStream != NULL)
@@ -146,8 +146,8 @@ void CTipDlg::GetNextTipString(CString& strNext)
 			// This behavior is same as VC++ Tips file
 			if (fseek(m_pStream, 0, SEEK_SET) != 0)
 				AfxMessageBox(CG_IDP_FILE_CORRUPT);
-		} 
-		else 
+		}
+		else
 		{
 			if (*lpsz != ' ' && *lpsz != '\t' && 
 				*lpsz != '\n' && *lpsz != ';')

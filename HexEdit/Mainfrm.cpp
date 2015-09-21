@@ -1757,7 +1757,7 @@ void CMainFrame::OnUpdateOccurrences(CCmdUI *pCmdUI)
 			AddCommas(ss);
 
 			// Prefix with the number of the current occurrence if there are not too many
-			if (ii > 0 && ii < 100000)   // only try to get the current occurrence 
+			if (ii > 0 && ii < 100000)   // only try to get the current occurrence
 			{
 				CString ss2;
 				ss2.Format("%d", pview->CurrentSearchOccurrence());

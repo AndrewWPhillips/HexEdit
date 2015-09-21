@@ -544,7 +544,7 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialog)
 	END_MESSAGE_MAP()
 
 // Control ID and corresp help ID - used for popup context help
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_EDIT, HIDC_EDIT,
 	IDC_OP_DISPLAY, HIDC_OP_DISPLAY,
 	IDC_BIG_ENDIAN_FILE_ACCESS, HIDC_BIG_ENDIAN_FILE_ACCESS,
@@ -1427,7 +1427,7 @@ void CCalcDlg::calc_binary()
 			state_ = CALCOVERFLOW;
 		}
 		else
-			mpz_pow_ui(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_si()); 
+			mpz_pow_ui(current_.get_mpz_t(), previous_.get_mpz_t(), current_.get_si());
 		break;
 	case binop_gtr:
 	case binop_gtr_old:
@@ -1591,7 +1591,7 @@ void CCalcDlg::change_bits(int bits)
 
 void CCalcDlg::setup_resizer()
 {
-	// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT 
+	// Add all the controls and proportional change to  LEFT, TOP, WIDTH, HEIGHT.
 	// NOTE: Don't allow resize vertically of IDC_EDIT as it stuffs up the combo drop down list window size
 	m_resizer.Add(IDC_EDIT, 0, 0, 100, 0);        // edit control resizes with width
 	m_resizer.Add(IDC_EXPR, 0, 0, 100, 0);        // displays the expression that produced the current calculator value
@@ -2269,7 +2269,7 @@ void CCalcDlg::OnSize(UINT nType, int cx, int cy)   // WM_SIZE
 BOOL CCalcDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
-	// and then disappear when mouse up event is seen.  The only soln I could
+	// and then disappear when mouse up event is seen.  The only soln I could 
 	// find after a lot of experimenetation is to do it later (in OnKickIdle).
 //	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
 	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
@@ -2661,7 +2661,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 
 	add_hist();
 	// xxx make sure it also gets added to hex or dec jump list
-	edit_.put();  
+	edit_.put();
 
 	CString ss;
 	edit_.GetWindowText(ss);

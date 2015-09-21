@@ -324,7 +324,7 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 			pp_->current_str_ = "##Invalid date##";
 		else
 		{
-			// Convert the date to an expression that evaluates to that date.  Since we don't have date
+			// Convert the date to an expression that evaluates to that date.  Since we don't have date 
 			// literals we need to use a function and a date string.  Thence we can put the expression 
 			// back into the calc edit box and it will evaluates to the same date.
 			COleDateTime odt;
@@ -535,7 +535,7 @@ error_return:
 	return retval;
 }
 
-// When the edit box is displaying a result (eg, state_ == CALCINTRES etc)
+// When the edit box is displaying a result (eg, state_ == CALCINTRES etc) 
 // this changes the state_ to allow editing (eg CALCINTLIT) and also gives the 
 // option to clear the edit box in preparation for a new value being entered.
 void CCalcEdit::clear_result(bool clear /* = true */)
@@ -606,7 +606,7 @@ void CCalcEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 			SetSel(start-2, end);
 		}
 	}
-	
+
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
 
 	// Update internals (state_, current_ etc) from the current edit box text
@@ -731,7 +731,7 @@ BEGIN_MESSAGE_MAP(CCalcListBox, CListBox)
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
-void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point) 
+void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CRect rectClient;
 	GetClientRect(&rectClient);
@@ -861,7 +861,7 @@ void CCalcListBox::OnMouseMove(UINT nFlags, CPoint point)
 	CListBox::OnMouseMove(nFlags, point);
 }
 
-void CCalcListBox::OnTimer(UINT id) 
+void CCalcListBox::OnTimer(UINT id)
 {
 	if (id == CCALCLISTBOX_TIMER_ID)
 	{
@@ -893,7 +893,7 @@ BEGIN_MESSAGE_MAP(CCalcComboBox, CComboBox)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
+HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	if (pp_ != NULL && listbox_.pp_ == NULL)
 		listbox_.pp_ = pp_;
@@ -906,7 +906,7 @@ HBRUSH CCalcComboBox::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return CComboBox::OnCtlColor(pDC, pWnd, nCtlColor);
 }
 
-void CCalcComboBox::OnDestroy() 
+void CCalcComboBox::OnDestroy()
 {
 	if (listbox_.GetSafeHwnd() != NULL)
 		listbox_.UnsubclassWindow();

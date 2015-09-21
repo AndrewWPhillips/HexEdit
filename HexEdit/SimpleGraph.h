@@ -10,7 +10,7 @@ class CSimpleGraph : public CWnd
 public:
 	CSimpleGraph();
 
-	void SetData(FILE_ADDRESS, std::vector<FILE_ADDRESS> val, std::vector<COLORREF> col); 
+	void SetData(FILE_ADDRESS, std::vector<FILE_ADDRESS> val, std::vector<COLORREF> col);
 
 protected:
 	afx_msg void OnPaint();

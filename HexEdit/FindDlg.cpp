@@ -1597,10 +1597,10 @@ void CFindSheet::OnApplyNow()
 	PostMessage(WM_RESIZEPAGE);
 }
 
-BOOL CFindSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL CFindSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMHDR* pNMHDR = (LPNMHDR) lParam;
-	
+
 	// The sheet resizes the page whenever it is activated
 	// so we need to resize it to what we want
 	if (pNMHDR->code == TCN_SELCHANGE)
@@ -1764,7 +1764,7 @@ void CSimplePage::OnFindNext()
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-static DWORD id_pairs1[100] = { 
+static DWORD id_pairs1[100] = {
 	IDC_FIND_DESC, HIDC_FIND_COMBINED_STRING,
 	IDC_FIND_COMBINED_STRING, HIDC_FIND_COMBINED_STRING,
 	IDC_FIND_MESSAGE, HIDC_FIND_MESSAGE,
@@ -1778,7 +1778,7 @@ static DWORD id_pairs1[100] = {
 	IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
 	IDC_FIND_MATCH_CASE, HIDC_FIND_MATCH_CASE,
 	IDC_FIND_WHOLE_WORD, HIDC_FIND_WHOLE_WORD,
-	0,0 
+	0,0
 };
 
 void CSimplePage::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -2071,7 +2071,7 @@ void CHexPage::OnBookmarkAll()
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
 }
 
-static DWORD id_pairs2[100] = { 
+static DWORD id_pairs2[100] = {
 	IDC_FIND_HEX_STRING, HIDC_FIND_HEX_STRING,
 	IDC_FIND_MASK_DESC, HIDC_FIND_MASK,
 	IDC_FIND_MASK, HIDC_FIND_MASK,
@@ -2092,7 +2092,7 @@ static DWORD id_pairs2[100] = {
 	IDC_OFFSET, HIDC_OFFSET,
 	IDC_OFFSET_SPIN, HIDC_OFFSET,
 	IDC_RELATIVE, HIDC_RELATIVE,
-	0,0 
+	0,0
 };
 
 void CHexPage::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -2355,7 +2355,7 @@ void CTextPage::OnBookmarkAll()
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
 }
 
-static DWORD id_pairs3[100] = { 
+static DWORD id_pairs3[100] = {
 	IDC_FIND_TEXT_STRING, HIDC_FIND_TEXT_STRING,
 	IDC_FIND_ALLOW_WILDCARD, HIDC_FIND_ALLOW_WILDCARD,
 	IDC_FIND_WILDCARD_CHAR, HIDC_FIND_ALLOW_WILDCARD,
@@ -2374,7 +2374,7 @@ static DWORD id_pairs3[100] = {
 	IDC_FIND_TYPE_ASCII, HIDC_FIND_TYPE_ASCII,
 	IDC_FIND_TYPE_UNICODE, HIDC_FIND_TYPE_UNICODE,
 	IDC_FIND_TYPE_EBCDIC, HIDC_FIND_TYPE_EBCDIC,
-	0,0 
+	0,0
 };
 
 void CTextPage::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -2752,7 +2752,7 @@ void CNumberPage::OnBookmarkAll()
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_BOOKMARK_ALL);
 }
 
-static DWORD id_pairs4[100] = { 
+static DWORD id_pairs4[100] = {
 	IDC_FIND_NUM_STRING, HIDC_FIND_NUM_STRING,
 	IDC_FIND_NUMBER_FORMAT, HIDC_FIND_NUMBER_FORMAT,
 	IDC_FIND_NUMBER_SIZE, HIDC_FIND_NUMBER_SIZE,
@@ -2772,7 +2772,7 @@ static DWORD id_pairs4[100] = {
 	IDC_OFFSET, HIDC_OFFSET,
 	IDC_OFFSET_SPIN, HIDC_OFFSET,
 	IDC_RELATIVE, HIDC_RELATIVE,
-	0,0 
+	0,0
 };
 
 void CNumberPage::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -3036,7 +3036,7 @@ void CReplacePage::OnFindNext()
 	((CMainFrame *)AfxGetMainWnd())->SendMessage(WM_COMMAND, ID_FIND_NEXT);
 }
 
-static DWORD id_pairs5[100] = { 
+static DWORD id_pairs5[100] = {
 	IDC_FIND_DESC, HIDC_FIND_COMBINED_STRING,
 	IDC_FIND_COMBINED_STRING, HIDC_FIND_COMBINED_STRING,
 	IDC_FIND_REPLACE_STRING, HIDC_FIND_REPLACE_STRING,
@@ -3052,7 +3052,7 @@ static DWORD id_pairs5[100] = {
 	IDC_FIND_SCOPE_ALL, HIDC_FIND_SCOPE_ALL,
 	IDC_FIND_MATCH_CASE, HIDC_FIND_MATCH_CASE,
 	IDC_FIND_WHOLE_WORD, HIDC_FIND_WHOLE_WORD,
-	0,0 
+	0,0
 };
 
 void CReplacePage::OnContextMenu(CWnd* pWnd, CPoint point)

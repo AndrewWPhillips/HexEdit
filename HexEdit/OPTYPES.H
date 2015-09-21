@@ -78,7 +78,7 @@ enum unary_type
 	unary_at,                       // Get the value at the address
 									// For Operations/Assign it means the opposite, ie, put from calc to file (see km_op_unary)
 
-	unary_rand,                     // Only curently used for keystroke macro 
+	unary_rand,                     // Only curently used for keystroke macro
 	unary_rand_fast,                // for Operations/Random Number command (see km_op_unary)
 };
 

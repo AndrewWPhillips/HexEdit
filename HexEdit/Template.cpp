@@ -99,7 +99,7 @@ void CHexEditDoc::OnUpdateDffdRefresh(CCmdUI* pCmdUI)
 {
 	//pCmdUI->Enable(update_needed_);  // With advent of getint/bool/string the user may want to rerun the template at any time
 	CHexEditView *pv = GetBestView();
-	pCmdUI->Enable(pv != NULL && pv->pdfv_ != NULL);  // enable if there's a data format view 
+	pCmdUI->Enable(pv != NULL && pv->pdfv_ != NULL);  // enable if there's a data format view
 }
 
 // New template - set template to "default" and open the template in active window
@@ -2719,7 +2719,7 @@ CHexExpr::value_t CHexExpr::get_value(int ii, __int64 &sym_size, __int64 &sym_ad
 }
 
 #if 0  // This was in the DTD but caused problems
-/* 
+/*
 <!--
 General attributes
  name = uniquely identifies this data element -- a name is not required if an element is a child of a "for" tag

@@ -325,7 +325,7 @@ void CHexEditDoc::Change(enum mod_type utype, FILE_ADDRESS address, FILE_ADDRESS
 		// Join this undo to the previous one (end of undo array).
 		// This allows (up to 8) multiple consecutive changes in the same
 		// view of the same type to be merged together.
-		ASSERT(pview == last_view_ || num_done == 1);  // num_done may be 1 for first bottom nybble in vert_display mode 
+		ASSERT(pview == last_view_ || num_done == 1);  // num_done may be 1 for first bottom nybble in vert_display mode
 		ASSERT(utype == undo_.back().utype);
 
 		if (utype == mod_delforw)

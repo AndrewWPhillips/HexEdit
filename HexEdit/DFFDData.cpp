@@ -1131,7 +1131,7 @@ void CDFFDData::save_data()
 	}
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_DFFD_NAME, HIDC_DFFD_NAME,
 	IDC_DFFD_TYPE, HIDC_DFFD_TYPE,
 	IDC_DFFD_FORMAT, HIDC_DFFD_FORMAT,

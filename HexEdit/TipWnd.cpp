@@ -367,7 +367,7 @@ void CTipWnd::OnTimer(UINT nIDEvent)
 		{
 			ShowWindow(SW_HIDE);            // Hide the window
 			if (m_pSLWAfunc != 0)
-				(*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);  // restore transparency 
+				(*m_pSLWAfunc)(m_hWnd, -1, (BYTE)m_alpha, LWA_ALPHA);  // restore transparency
 			m_visible = false;
 			KillTimer(3); m_out = false;   // Finished fading out
 		}

@@ -417,7 +417,7 @@ void CRecentFileDlg::FillGrid()
 						item.strText += 'A';
 					if (wfad.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)
 						item.strText += 'C';
-					if (wfad.dwFileAttributes & FILE_ATTRIBUTE_ENCRYPTED)  // FILE_ATTRIBUTE_ENCRYPTED 0x00004000 
+					if (wfad.dwFileAttributes & FILE_ATTRIBUTE_ENCRYPTED)  // FILE_ATTRIBUTE_ENCRYPTED 0x00004000
 						item.strText += 'E';
 					if (wfad.dwFileAttributes & FILE_ATTRIBUTE_TEMPORARY)
 						item.strText += 'T';
@@ -554,7 +554,7 @@ BOOL CRecentFileDlg::OnInitDialog()
 #ifdef FILE_PREVIEW
 	if (m_preview.m_hWnd != (HWND)0)
 		resizer_.Add(IDC_OPEN_PREVIEW, 100, 0, 0, 0);    // attach preview to right edge of dialog
-#endif	
+#endif
 
 	// Restore the window position from last time
 	int posx = theApp.GetProfileInt("Window-Settings", "RecentFileDlgX", -30000);
@@ -563,7 +563,7 @@ BOOL CRecentFileDlg::OnInitDialog()
 	int height = theApp.GetProfileInt("Window-Settings", "RecentFileDlgHeight", -30000);
 #ifdef FILE_PREVIEW
 	width += m_preview_width;
-#endif	
+#endif
 
 	if (posx != -30000)
 	{
@@ -665,7 +665,7 @@ static DWORD id_pairs[] = {
 	IDC_VALIDATE, HIDC_VALIDATE,
 	IDC_NET_RETAIN, HIDC_NET_RETAIN,
 	IDC_NET_RETAIN_DESC, HIDC_NET_RETAIN,
-	0,0 
+	0,0
 };
 
 BOOL CRecentFileDlg::OnHelpInfo(HELPINFO* pHelpInfo)

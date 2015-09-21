@@ -666,7 +666,7 @@ std::vector<int> CHexFileList::Search(LPCTSTR str, bool ignoreCase, bool keyword
 			const char *start = kk.GetBuffer();
 			size_t len = strSearch.GetLength();
 
-			// For all matches of the search string 
+			// For all matches of the search string
 			for (const char * pp = start; ; ++pp)
 			{
 				if ((pp = strstr(pp, strSearch)) == NULL)
@@ -777,7 +777,7 @@ void CHexFileList::SetupJumpList()
 	int numFreq = freq.size(), numFav = fav.size();
 	ASSERT(numFreq <= maxSlots/3);
 	if (numFreq + numFav > (2*maxSlots)/3)         // make sure freq + fav is not more than 2/3 of total
-		numFav = (2*maxSlots)/3 - numFreq; 
+		numFav = (2*maxSlots)/3 - numFreq;
 	int numRecent = maxSlots - numFreq - numFav;
 	if (numRecent > name_.size())
 		numRecent = name_.size();

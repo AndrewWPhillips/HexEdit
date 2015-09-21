@@ -374,7 +374,7 @@ void CFileOpenDialog::OnFolderChange()
 	// changed we need to unhook now and re-hook later (see below).
 	if (m_wndHook.GetSafeHwnd() != HWND(NULL))
 		m_wndHook.UnsubclassWindow();
-  
+
 	CHexFileDialog::OnFolderChange();
 
 	m_wndHook.SubclassWindow(GetParent()->GetDlgItem(lst2)->GetSafeHwnd());
@@ -565,7 +565,7 @@ void CMultiplay::OnHelp()
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-static DWORD id_pairs_play[] = { 
+static DWORD id_pairs_play[] = {
 	IDC_PLAY_NAME, HIDC_PLAY_NAME,
 	IDC_PLAY_OPTIONS, HIDC_PLAY_OPTIONS,
 	IDC_DESC_PLAYS, HIDC_PLAYS,
@@ -573,7 +573,7 @@ static DWORD id_pairs_play[] = {
 	IDC_SPIN_PLAYS, HIDC_PLAYS,
 	IDC_PLAY_HELP, HIDC_HELP_BUTTON,
 	IDOK, HID_MULTIPLAY_OK,
-	0,0 
+	0,0
 };
 
 BOOL CMultiplay::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -683,7 +683,7 @@ static DWORD id_pairs_save[] = {
 	IDC_HALT2, HIDC_HALT2,
 	IDOK, HID_MACRO_SAVE,
 	IDC_MACRO_HELP, HIDC_HELP_BUTTON,
-	0,0 
+	0,0
 };
 
 BOOL CSaveMacro::OnHelpInfo(HELPINFO* pHelpInfo)
