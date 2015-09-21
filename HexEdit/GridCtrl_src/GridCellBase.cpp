@@ -14,9 +14,9 @@
 // file may be redistributed unmodified by any means PROVIDING it is 
 // not sold for profit without the authors written consent, and 
 // providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -38,7 +38,7 @@
 //        fixed cells should be fetched from the parent grid. The grid trusts the
 //        cells will behave in a certain way, and the cells trust the grid will
 //        supply accurate information.
-//        
+//
 /////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -149,13 +149,13 @@ BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseB
         int red = GetRValue(TextBkClr);
         int grn = GetGValue(TextBkClr);
         int blu = GetBValue(TextBkClr);
-        
+
         // Work out a factor so that light colours become darker, dark colours become lighter
         double factor = (red*30 + grn*59 + blu*11)/256 > 50 ? 0.95 : 1.05;
         red = int(red*factor); if (red > 255) red = 255;
         grn = int(grn*factor); if (grn > 255) grn = 255;
         blu = int(blu*factor); if (blu > 255) blu = 255;
-        
+
         TextBkClr = RGB(red, grn, blu);
     }
 
@@ -174,11 +174,11 @@ BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseB
         rect.right++; rect.bottom++;    // FillRect doesn't draw RHS or bottom
         if (bEraseBkgnd)
         {
-            TRY 
+            TRY
             {
                 CBrush brush(TextBkClr);
                 pDC->FillRect(rect, &brush);
-            } 
+            }
             CATCH(CResourceException, e)
             {
                 //e->ReportError();
@@ -198,7 +198,7 @@ BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseB
         {
                 // Use same color as text to outline the cell so that it shows
                 // up if the background is black.
-            TRY 
+            TRY
             {
                 CBrush brush(TextClr);
                 pDC->FrameRect(rect, &brush);
@@ -377,7 +377,7 @@ BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseB
                 pDC->LineTo( nTriangleLeft + (size.cx / 2) + 1, nTriangleBase + size.cy + 1 );
                 pDC->LineTo( nTriangleLeft + size.cx + 1, nTriangleBase + 1 );
                 pDC->LineTo( nTriangleLeft + 1, nTriangleBase + 1 );
-    
+
                 pDC->SelectObject(&penShadow);
                 pDC->MoveTo( nTriangleLeft, nTriangleBase );
                 pDC->LineTo( nTriangleLeft + (size.cx / 2), nTriangleBase + size.cy );
@@ -385,7 +385,7 @@ BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseB
                 pDC->LineTo( nTriangleLeft, nTriangleBase );
                 pDC->SelectObject(pOldPen);
             }
-            
+
             if (!bVertical)
                 rect.right -= size.cy;
         }
@@ -463,9 +463,9 @@ BOOL CGridCellBase::OnSetCursor()
 /////////////////////////////////////////////////////////////////////////////
 // CGridCellBase editing
 
-void CGridCellBase::OnEndEdit() 
+void CGridCellBase::OnEndEdit()
 {
-	ASSERT( FALSE); 
+	ASSERT( FALSE);
 }
 
 #if _MSC_VER >= 1300
@@ -489,7 +489,7 @@ BOOL CGridCellBase::GetTextRect( LPRECT pRect)  // i/o:  i=dims of cell rect; o=
 
         CGridCtrl* pGrid = GetGrid();
         CImageList* pImageList = pGrid->GetImageList();
-        
+
         if (pImageList && pImageList->GetImageInfo( GetImage(), &Info))
         {
             int nImageWidth = Info.rcImage.right-Info.rcImage.left+1;
@@ -511,7 +511,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
     {
         if (szText)
 			pDC = pGrid->GetDC();
-        if (pDC == NULL || szText == NULL) 
+        if (pDC == NULL || szText == NULL)
         {
             CGridDefaultCell* pDefCell = (CGridDefaultCell*) GetDefaultCell();
             ASSERT(pDefCell);
@@ -546,7 +546,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
                 break;
             str = str.Mid(nPos + 1);    // Bug fix by Thomas Steinborn
         }
-        
+
         CRect rect;
         rect.SetRect(0,0, nMaxWidth+1, 0);
         pDC->DrawText(szText, -1, rect, nFormat | DT_CALCRECT);
@@ -561,7 +561,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
 
     if (pOldFont)
         pDC->SelectObject(pOldFont);
-    
+
     size += CSize(4*GetMargin(), 2*GetMargin());
 
     // Kludge for vertical text
@@ -573,7 +573,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
         size.cy = nTemp;
         size += CSize(0, 4*GetMargin());
     }
-    
+
     if (bReleaseDC)
         pGrid->ReleaseDC(pDC);
 
@@ -586,20 +586,20 @@ CSize CGridCellBase::GetCellExtent(CDC* pDC)
     CSize ImageSize(0,0);
 
     int nImage = GetImage();
-    if (nImage >= 0) 
+    if (nImage >= 0)
     {
         CGridCtrl* pGrid = GetGrid();
         ASSERT(pGrid);
 
-        if (pGrid->GetImageList()) 
+        if (pGrid->GetImageList())
         {
             IMAGEINFO Info;
             if (pGrid->GetImageList()->GetImageInfo(nImage, &Info))
-                ImageSize = CSize(Info.rcImage.right-Info.rcImage.left+1, 
+                ImageSize = CSize(Info.rcImage.right-Info.rcImage.left+1,
                                   Info.rcImage.bottom-Info.rcImage.top+1);
         }
     }
-    
+
     return CSize(size.cx + ImageSize.cx, max(size.cy, ImageSize.cy));
 }
 

@@ -101,7 +101,7 @@ static int CALLBACK bl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort
 	return 0;
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_BOOKMARK_ADD, HIDC_BOOKMARK_ADD,
 	IDC_GRID_BL, HIDC_GRID_BL,
 	IDC_BOOKMARK_REMOVE, HIDC_BOOKMARK_REMOVE,
@@ -264,7 +264,7 @@ void CBookmarkDlg::InitColumnHeadings()
 
 	ASSERT(sizeof(heading)/sizeof(*heading) == COL_LAST + 1);
 
-	CString strWidths = theApp.GetProfileString("File-Settings", 
+	CString strWidths = theApp.GetProfileString("File-Settings",
 												"BookmarkDialogColumns",
 												"80,80,,60,,138");
 	int curr_col = grid_.GetFixedColumnCount();
@@ -577,7 +577,7 @@ CBrush * CBookmarkDlg::m_pBrush = NULL;
 
 BOOL CBookmarkDlg::OnEraseBkgnd(CDC *pDC)
 {
-	// We check for changed look in erase background event as it's done
+	// We check for changed look in erase background event as it's done 
 	// before other drawing.  This is necessary (to update m_pBrush etc) 
 	// because there is no message sent when the look changes.
 	static UINT saved_look = 0;
@@ -944,7 +944,7 @@ void CBookmarkDlg::OnHelp()
 BOOL CBookmarkDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
-	// and then disappear when mouse up evenet is seen.  The only soln I could
+	// and then disappear when mouse up evenet is seen.  The only soln I could 
 	// find after a lot of experimenetation is to do it later (in OnKickIdle).
 	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;

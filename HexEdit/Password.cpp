@@ -198,12 +198,12 @@ void CPassword::OnPasswordMask()
 	}
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_PASSWORD_ENTER, HIDC_PASSWORD_ENTER,
 	IDC_PASSWORD_REENTER, HIDC_PASSWORD_REENTER,
 	IDC_PASSWORD_MIN, HIDC_PASSWORD_MIN,
 	IDC_PASSWORD_MASK, HIDC_PASSWORD_MASK,
-	0,0 
+	0,0
 };
 
 BOOL CPassword::OnHelpInfo(HELPINFO* pHelpInfo)

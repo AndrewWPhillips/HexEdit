@@ -500,10 +500,10 @@ void CPropSheet::OnApplyNow()
 	PostMessage(WM_RESIZEPAGE);
 }
 
-BOOL CPropSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL CPropSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMHDR* pNMHDR = (LPNMHDR) lParam;
-	
+
 	// The sheet resizes the page whenever it is activated
 	// so we need to resize it to what we want
 	if (pNMHDR->code == TCN_SELCHANGE)
@@ -514,7 +514,7 @@ BOOL CPropSheet::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	return CPropertySheet::OnNotify(wParam, lParam, pResult);
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_INFO_CATEGORY, HIDC_INFO_CATEGORY,
 	IDC_INFO_CATEGORY_SELECT, HIDC_INFO_CATEGORY_SELECT,
 	IDC_INFO_KEYWORDS, HIDC_INFO_KEYWORDS,
@@ -584,7 +584,7 @@ static DWORD id_pairs[] = {
 	IDC_DATE_NULL, HIDC_DATE_NULL,
 	IDC_STATS_GRAPH, HIDC_STATS_GRAPH,
 	IDC_PLACEHOLDER, HIDC_STATS_GRAPH,
-	0,0 
+	0,0
 };
 
 BOOL CPropSheet::OnEraseBkgnd(CDC *pDC)
@@ -1033,7 +1033,7 @@ void CPropInfoPage::Update(CHexEditView *pv, FILE_ADDRESS /*not used*/)
 		comments_ = pfl->GetData(ii, CHexFileList::COMMENTS);
 	}
 
-	// Need document for edit/view times and current file size 
+	// Need document for edit/view times and current file size
 	CHexEditDoc *pDoc = dynamic_cast<CHexEditDoc *>(pv->GetDocument());
 
 	// Nicely format the length of view/edit time into hh:mm:ss or hhh:mm
@@ -3155,7 +3155,7 @@ void CPropRealPage::OnContextMenu(CWnd* pWnd, CPoint point)
 
 IMPLEMENT_DYNCREATE(CPropDatePage, CPropUpdatePage)
 
-// Macros to extract just the time or date part of a DATE 
+// Macros to extract just the time or date part of a DATE
 #define TIME_PART(x)  ((x)<0.0 ? fabs((x)-ceil(x)) : (x)-floor(x))
 #define DATE_PART(x)  ((x)<0.0 ? ceil(x) : floor(x))
 
@@ -3959,7 +3959,7 @@ void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 	if (pv->GetDocument()->GetCRC32(crc) >= 0)
 	{
 		if (theApp.hex_ucase_)
-			strCrc32.Format("%08X", crc); 
+			strCrc32.Format("%08X", crc);
 		else
 			strCrc32.Format("%08X", crc);
 	}

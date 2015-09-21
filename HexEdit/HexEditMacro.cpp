@@ -1432,10 +1432,10 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 			case km_convert:
 				switch ((*pk).vv)
 				{
-				case CONVERT_ASC2EBC: 
+				case CONVERT_ASC2EBC:
 					pv_->OnAscii2Ebcdic();
 					break;
-				case CONVERT_EBC2ASC: 
+				case CONVERT_EBC2ASC:
 					pv_->OnEbcdic2Ascii();
 					break;
 				case CONVERT_ANSI2IBM:
@@ -2048,7 +2048,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 				if (ff.Read(&lf.lfHeight, sizeof(lf.lfHeight)) < sizeof(lf.lfHeight)) throw pfe;
 				if (ff.Read(&lf.lfCharSet, sizeof(lf.lfCharSet)) < sizeof(lf.lfCharSet)) throw pfe;
 
-				// Read font name length, allocate memory for the string and read it in 
+				// Read font name length, allocate memory for the string and read it in
 				if (ff.Read(&str_len, sizeof(str_len)) < sizeof(str_len)) throw pfe;
 				buf = new char[str_len+1];
 				if (ff.Read(buf, str_len+1) < (UINT)str_len+1) throw pfe;

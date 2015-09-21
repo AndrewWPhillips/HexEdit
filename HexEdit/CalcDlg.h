@@ -100,17 +100,17 @@ public:
 	int get_bits() const { return bits_; }
 	unsigned __int64 GetValue() const { return mpz_get_ui64(get_norm(current_).get_mpz_t()); }
 	CString GetStringValue() const
-	{ 
-		char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t()); 
-		CString retval(ss); 
+	{
+		char * ss = mpz_get_str(NULL, 10, get_norm(current_).get_mpz_t());
+		CString retval(ss);
 
 		// This was added due to linking with release version of mpir.lib causing debug free() to throw an exception because
 		// memory is allocated using release mode malloc but free'd using debug mode free (need to link with debug build of mpir)
 		// xxx we need a better solution since not calling free causes memory leak messages at end of debug session
 #ifndef _DEBUG
-		free(ss); 
+		free(ss);
 #endif
-		return retval; 
+		return retval;
 	}
 
 // Dialog Data

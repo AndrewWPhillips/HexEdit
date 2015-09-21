@@ -1297,7 +1297,7 @@ void CHistoryShellList::AdjustMenu(HMENU hm, UINT firstCustomCmd, UINT nSelItems
 	case WIPE_FAST:
 		strMenu += "(Fast)";
 		break;
-	case WIPE_GOOD: 
+	case WIPE_GOOD:
 		strMenu += "(Good)";
 		break;
 	case WIPE_THOROUGH:
@@ -1569,9 +1569,9 @@ HRESULT CHistoryShellList::EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST
 // CExplorerDropTarget
 CExplorerDropTarget::CExplorerDropTarget(CHistoryShellList* pWnd) : m_pParent(pWnd)
 {
-	if (FAILED(CoCreateInstance(CLSID_DragDropHelper,
+	if (FAILED(CoCreateInstance(CLSID_DragDropHelper, 
 								NULL, 
-								CLSCTX_INPROC_SERVER,
+								CLSCTX_INPROC_SERVER, 
 								IID_IDropTargetHelper, 
 								(void**)&m_pHelper)))
 	{
@@ -2326,7 +2326,7 @@ static DWORD id_pairs_explorer[] = {
 	IDC_EXPLORER, HIDC_EXPLORER,
 	IDC_EXPLORER_TREE, HIDC_EXPLORER,
 	IDC_EXPLORER_LIST, HIDC_EXPLORER,
-	0,0 
+	0,0
 };
 
 BOOL CExplorerWnd::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -2550,7 +2550,7 @@ void CExplorerWnd::update_types()
 	// Note that the SHCONTF_INCLUDESUPERHIDDEN option has no effect if the Windows Explorer option
 	// "Hide protected (operating system) files (Recommended)" is off since HIDDEN files are already shown
 	if (theApp.is_win7_ && show_hidden > 1)
-		flags |= SHCONTF_INCLUDESUPERHIDDEN;  
+		flags |= SHCONTF_INCLUDESUPERHIDDEN;
 #endif
 
 	tree_.SetFlags(flags);

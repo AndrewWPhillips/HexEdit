@@ -10,9 +10,9 @@
 // file may be redistributed unmodified by any means PROVIDING it is 
 // not sold for profit without the authors written consent, and 
 // providing that this notice and the authors name and all copyright 
-// notices remains intact. 
+// notices remains intact.
 //
-// An email letting me know how you are using it would be nice as well. 
+// An email letting me know how you are using it would be nice as well.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability for any damage/loss of business that
@@ -50,17 +50,17 @@ public:
 public:
     void operator=(const CGridCell& cell);
 
-    virtual void  SetText(LPCTSTR szText)        { m_strText = szText;  }                       
+    virtual void  SetText(LPCTSTR szText)        { m_strText = szText;  }
 #if _MSC_VER >= 1300
     virtual void  SetText(LPCWSTR szTextW)        { m_strText = szTextW; }
 #endif
-    virtual void  SetImage(int nImage)           { m_nImage = nImage;   }                        
-    virtual void  SetData(LONGLONG lParam)         { m_64Param = lParam;   }      
-    virtual void  SetGrid(CGridCtrl* pGrid)      { m_pGrid = pGrid;     }                          
-    // virtual void SetState(const DWORD nState);  -  use base class version   
-    virtual void  SetFormat(DWORD nFormat)       { m_nFormat = nFormat; }                      
-    virtual void  SetTextClr(COLORREF clr)       { m_crFgClr = clr;     }                          
-    virtual void  SetBackClr(COLORREF clr)       { m_crBkClr = clr;     }                          
+    virtual void  SetImage(int nImage)           { m_nImage = nImage;   }
+    virtual void  SetData(LONGLONG lParam)         { m_64Param = lParam;   }
+    virtual void  SetGrid(CGridCtrl* pGrid)      { m_pGrid = pGrid;     }
+    // virtual void SetState(const DWORD nState);  -  use base class version
+    virtual void  SetFormat(DWORD nFormat)       { m_nFormat = nFormat; }
+    virtual void  SetTextClr(COLORREF clr)       { m_crFgClr = clr;     }
+    virtual void  SetBackClr(COLORREF clr)       { m_crBkClr = clr;     }
     virtual void  SetFont(const LOGFONT* plf);
     virtual void  SetMargin(UINT nMargin)        { m_nMargin = nMargin; }
     virtual CWnd* GetEditWnd() const             { return m_pEditWnd;   }
@@ -115,7 +115,7 @@ protected:
 };
 
 // This class is for storing grid default values. It's a little heavy weight, so
-// don't use it in bulk 
+// don't use it in bulk
 class CGridDefaultCell : public CGridCell
 {
     DECLARE_DYNCREATE(CGridDefaultCell)
@@ -134,12 +134,12 @@ public:
     virtual void  SetHeight(int nHeight)                { m_Size.cy = nHeight;   }
 
     // Disable these properties
-    virtual void     SetData(LONGLONG /*lParam*/)             { ASSERT(FALSE);         }      
+    virtual void     SetData(LONGLONG /*lParam*/)             { ASSERT(FALSE);         }
     virtual void     SetState(DWORD /*nState*/)             { ASSERT(FALSE);         }
     virtual DWORD    GetState() const                       { return CGridCell::GetState()|GVIS_READONLY; }
     virtual void     SetCoords( int /*row*/, int /*col*/)   { ASSERT(FALSE);         }
     virtual void     SetFont(const LOGFONT* /*plf*/);
-    virtual LOGFONT* GetFont() const;   
+    virtual LOGFONT* GetFont() const;
     virtual CFont*   GetFontObject() const;
 
 protected:

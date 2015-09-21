@@ -152,7 +152,7 @@ the tree don't look right, make sure that the parent / child relationship
 is not violated.
 
 *****************************************************************************/
-int CTreeColumn::InsertTreeBranch(  
+int CTreeColumn::InsertTreeBranch(
                             const unsigned char* apucTreeLevelAry,    // Tree Level data array --
                                                             //  must have aiNbrElements of entries
                             int aiNbrElements,  // NUmber of tree elements to add
@@ -184,7 +184,7 @@ int CTreeColumn::InsertTreeBranch(
     }
     else if( aiRow < m_iFixedRowCount)
         aiRow = m_iFixedRowCount;
-        
+
     m_bAllowDraw = FALSE;   // prevents crash during reset
 
     // retain old cell properties: establishes size for
@@ -285,7 +285,7 @@ int CTreeColumn::DeleteTreeBranch( int aiRow,  // Row that the tree branch begin
     // get level of initial row to delete from tree
     CGridTreeCell* pGridTreeCell = (CGridTreeCell*)m_pGrid->GetCell( aiRow, m_iColumnWithTree);
     unsigned char ucLevelCurrent = CHAR_MAX;
-    
+
     if( pGridTreeCell != NULL)
     {
         // delete just the parent
@@ -316,7 +316,7 @@ int CTreeColumn::DeleteTreeBranch( int aiRow,  // Row that the tree branch begin
         m_iRowCount--;
     }
     ASSERT( m_iRowCount == m_pGrid->GetRowCount() );
-    
+
     // have to re-number all cells below deletion point
     if( iRowDeleteCount > 0)
     {
@@ -335,7 +335,7 @@ int CTreeColumn::DeleteTreeBranch( int aiRow,  // Row that the tree branch begin
             }
         }
     }
-    
+
     m_bAllowDraw = TRUE;
     TreeRefreshRows();
     if( abRedraw)

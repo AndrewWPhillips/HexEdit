@@ -21,12 +21,12 @@ History: PJN / 11-12-1997 1) Incoporation of new DIB code provided by the author
                           4) Removed the unnecessary variable m_bCreated
                           5) Fixed a potential race condition in CSplashThread::HideSplash()
          PJN / 01-03-2000 1) Fixed a problem with bitmaps which do not have a palette
-                          2) Fixed a problem in Win 98 and Win2000 when the splash screen is
+                          2) Fixed a problem in Win 98 and Win2000 when the splash screen is 
                           closed but the main window of your app fails to activate. The code 
                           now uses AttachThreadInput to synchronise the UI activities of the
                           main GUI thread and the splash screen thread.
 
-Copyright (c) 1996 - 2000 by PJ Naughter.  
+Copyright (c) 1996 - 2000 by PJ Naughter.
 All rights reserved.
 
 */
@@ -130,7 +130,7 @@ CSplashWnd::~CSplashWnd()
 }
 
 BOOL CSplashWnd::LoadBitmap()
-{     
+{
   //Use LoadImage to get the image loaded into a DIBSection
   HBITMAP hBitmap;
   if (m_bUseFile)
@@ -138,8 +138,8 @@ BOOL CSplashWnd::LoadBitmap()
   else
     hBitmap = (HBITMAP) ::LoadImage(AfxGetResourceHandle(), m_pszResourceName, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_DEFAULTSIZE);
 
-  //Check that we could load it up  
-  if (hBitmap == NULL)       
+  //Check that we could load it up
+  if (hBitmap == NULL)
     return FALSE;
 
   //Get the width and height of the DIBSection
@@ -151,7 +151,7 @@ BOOL CSplashWnd::LoadBitmap()
   //Covert from the SDK bitmap handle to the MFC equivalent
   m_Bitmap.Attach(hBitmap);
 
-  return TRUE;   
+  return TRUE;
 }
 
 void CSplashWnd::CreatePaletteFromBitmap()
@@ -161,7 +161,7 @@ void CSplashWnd::CreatePaletteFromBitmap()
   m_Bitmap.GetObject(sizeof(BITMAP), &bm);
 
   //If the DIBSection is 256 color or less, it has a color table
-  if ((bm.bmBitsPixel * bm.bmPlanes) <= 8 )     
+  if ((bm.bmBitsPixel * bm.bmPlanes) <= 8 )
   {
     //Create a memory DC and select the DIBSection into it
     CDC memDC;
@@ -174,10 +174,10 @@ void CSplashWnd::CreatePaletteFromBitmap()
 
     //Create a palette from the color table
     LPLOGPALETTE pLogPal = (LPLOGPALETTE) new BYTE[sizeof(LOGPALETTE) + (256*sizeof(PALETTEENTRY))];
-    pLogPal->palVersion = 0x300;       
+    pLogPal->palVersion = 0x300;
     pLogPal->palNumEntries = 256;
 
-    for (WORD i=0; i<256; i++)       
+    for (WORD i=0; i<256; i++)
     {
       pLogPal->palPalEntry[i].peRed = rgb[i].rgbRed;
       pLogPal->palPalEntry[i].peGreen = rgb[i].rgbGreen;
@@ -185,21 +185,21 @@ void CSplashWnd::CreatePaletteFromBitmap()
       pLogPal->palPalEntry[i].peFlags = 0;
     }
     VERIFY(m_Palette.CreatePalette(pLogPal));
-    
+
     //Clean up
     delete[] pLogPal;
     memDC.SelectObject(pOldBitmap);
   }
-  else  //It has no color table, so use a halftone palette     
+  else  //It has no color table, so use a halftone palette
   {
     CDC* pRefDC = GetDC();
     m_Palette.CreateHalftonePalette(pRefDC);
-    ReleaseDC(pRefDC);     
-  }     
+    ReleaseDC(pRefDC);
+  }
 }
 
 BOOL CSplashWnd::Create()
-{                   
+{
   //Load up the bitmap from file or from resource
   if (!LoadBitmap())
 	  return FALSE;
@@ -237,7 +237,7 @@ int CSplashWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CSplashWnd::OnPaint()
 {
   CPaintDC dc(this);
-  
+
   //select the palette and bitmap to the DC
   CDC memDC;
   memDC.CreateCompatibleDC(&dc);
@@ -245,22 +245,22 @@ void CSplashWnd::OnPaint()
   CPalette* pOldPalette = dc.SelectPalette(&m_Palette, FALSE);
   dc.RealizePalette();
   dc.BitBlt(0, 0, m_nWidth, m_nHeight, &memDC, 0, 0, SRCCOPY);
-  memDC.SelectObject(pOldBitmap);         
+  memDC.SelectObject(pOldBitmap);
   dc.SelectPalette(pOldPalette, FALSE);
 }
 
 //This message is an optional extra, If you do not want the splash screen
 //to be not be dragable then remove this function and its message map entry
-void CSplashWnd::OnLButtonDown(UINT nFlags, CPoint point) 
+void CSplashWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
   //Fake a Window drag
   SendMessage(WM_LBUTTONUP);
   SendMessage(WM_SYSCOMMAND, MOUSE_MOVE);
 }
 
-void CSplashWnd::OnClose() 
+void CSplashWnd::OnClose()
 {
-  if (m_bOKToClose) 
+  if (m_bOKToClose)
     CWnd::OnClose();
 }
 
@@ -278,17 +278,17 @@ BOOL CSplashWnd::SelRelPal(BOOL bForceBkgnd)
 
   // If any colors have changed or we are in the
   // background, repaint the lot.
-  if (u || bForceBkgnd) 
+  if (u || bForceBkgnd)
     InvalidateRect(NULL, TRUE); // Repaint.
-  
+
   return (BOOL) u; // TRUE if some colors changed.
 }
 
 void CSplashWnd::OnPaletteChanged(CWnd* pFocusWnd)
 {
   // See if the change was caused by us and ignore it if not.
-  if (pFocusWnd != this) 
-    SelRelPal(TRUE); // Realize in the background. 
+  if (pFocusWnd != this)
+    SelRelPal(TRUE); // Realize in the background.
 }
 
 BOOL CSplashWnd::OnQueryNewPalette()

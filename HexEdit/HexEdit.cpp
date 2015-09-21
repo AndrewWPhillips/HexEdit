@@ -1,4 +1,4 @@
-// HexEdit.cpp : Defines the class behaviors for the application. 
+// HexEdit.cpp : Defines the class behaviors for the application.
 //
 // Copyright (c) 2015 by Andrew W. Phillips
 //
@@ -427,7 +427,7 @@ BOOL CHexEditApp::InitInstance()
 			{
 				ASSERT(pSplashThread->IsKindOf(RUNTIME_CLASS(CSplashThread)));
 				pSplashThread->SetBitmapToUse(sFileName);
-				pSplashThread->ResumeThread();  //Resume the thread now that we have set it up 
+				pSplashThread->ResumeThread();  //Resume the thread now that we have set it up
 			}
 		}
 
@@ -1638,7 +1638,7 @@ void CHexEditApp::OnTabsAtBottom()
 	update_tabs();
 }
 
-void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI) 
+void CHexEditApp::OnUpdateTabsAtBottom(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(tabsbottom_);
 }

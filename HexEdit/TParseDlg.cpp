@@ -158,7 +158,7 @@ BOOL TParseDlg::PreTranslateMessage(MSG* pMsg)
 
 	return CHexDialog::PreTranslateMessage(pMsg);
 }
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_SOURCE_CODE, HIDC_SOURCE_CODE,
 	IDC_PACK1, HIDC_PACK1,
 	IDC_PACK2, HIDC_PACK2,

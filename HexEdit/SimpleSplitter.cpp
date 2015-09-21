@@ -51,7 +51,7 @@ CSimpleSplitter::CSimpleSplitter(int nPanes, UINT nOrientation, int nMinSize, in
 	m_size = new int[m_nPanes];
 	m_orig = new int[m_nPanes + 1];
 	::ZeroMemory(m_pane, m_nPanes * sizeof(CWnd*));
-	
+
 	for (int i = 0; i < m_nPanes - 1; i++)			// default, set equal size to all panes
 	{
 		m_size[i] = (FULL_SIZE + m_nPanes / 2) / m_nPanes;
@@ -134,7 +134,7 @@ CWnd* CSimpleSplitter::GetActivePane(int* pIndex) const
 void CSimpleSplitter::SetPaneSizes(const int* sizes)
 {
 	int i, total = 0, total_in = 0;
-	
+
 	for (i = 0; i < m_nPanes; i++)
 	{
 		ASSERT(sizes[i] >= 0);
@@ -274,7 +274,7 @@ void CSimpleSplitter::ResizePanes()
 	CRect rcOuter;
 
 	GetClientRect(rcOuter);
-	if (m_nOrientation == SSP_HORZ)	
+	if (m_nOrientation == SSP_HORZ)
 		for (i = 0; i < m_nPanes; i++)
 		{
 			if (m_pane[i])
@@ -293,7 +293,7 @@ void CSimpleSplitter::InvertTracker()
 	CDC* pDC = GetDC();
 	CBrush* pBrush = CDC::GetHalftoneBrush();
 	HBRUSH hOldBrush;
-	
+
 	hOldBrush = (HBRUSH)SelectObject(pDC->m_hDC, pBrush->m_hObject);
 	if (m_nOrientation == SSP_HORZ)
 		pDC->PatBlt(m_nTracker - m_nBarThickness, 0, m_nBarThickness, m_nTrackerLength, PATINVERT);
@@ -306,7 +306,7 @@ void CSimpleSplitter::InvertTracker()
 
 // CSimpleSplitter messages
 
-void CSimpleSplitter::OnPaint() 
+void CSimpleSplitter::OnPaint()
 {
 	CPaintDC dc(this);
 	CRect rcPaint = dc.m_ps.rcPaint;
@@ -321,7 +321,7 @@ void CSimpleSplitter::OnPaint()
 			dc.FillSolidRect(rcPaint.left, m_orig[i] - m_nBarThickness, rcPaint.Width(), m_nBarThickness, clrBar);
 }
 
-BOOL CSimpleSplitter::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL CSimpleSplitter::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
     if (pWnd != this || nHitTest != HTCLIENT)
         return FALSE;
@@ -330,14 +330,14 @@ BOOL CSimpleSplitter::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
     return TRUE;
 }
 
-void CSimpleSplitter::OnSize(UINT nType, int cx, int cy) 
+void CSimpleSplitter::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	RecalcLayout();
 	ResizePanes();
 }
 
-void CSimpleSplitter::OnLButtonDown(UINT nFlags, CPoint point) 
+void CSimpleSplitter::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CRect rcClient;
 	int mouse_pos = m_nOrientation == SSP_HORZ ? point.x : point.y;
@@ -351,9 +351,9 @@ void CSimpleSplitter::OnLButtonDown(UINT nFlags, CPoint point)
 	InvertTracker();
 }
 
-void CSimpleSplitter::OnLButtonUp(UINT nFlags, CPoint point) 
+void CSimpleSplitter::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (GetCapture() != this) 
+	if (GetCapture() != this)
 		return;
 
 	CRect rcOuter;
@@ -371,9 +371,9 @@ void CSimpleSplitter::OnLButtonUp(UINT nFlags, CPoint point)
 	ResizePanes();
 }
 
-void CSimpleSplitter::OnMouseMove(UINT nFlags, CPoint point) 
+void CSimpleSplitter::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (GetCapture() != this) 
+	if (GetCapture() != this)
 		return;
 	InvertTracker();
 	m_nTracker = (m_nOrientation == SSP_HORZ ? point.x : point.y) - m_nTrackerMouseOffset;
@@ -384,7 +384,7 @@ void CSimpleSplitter::OnMouseMove(UINT nFlags, CPoint point)
 	InvertTracker();
 }
 
-BOOL CSimpleSplitter::OnNcCreate(LPCREATESTRUCT lpCreateStruct) 
+BOOL CSimpleSplitter::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (!CWnd::OnNcCreate(lpCreateStruct))
 		return FALSE;
@@ -395,7 +395,7 @@ BOOL CSimpleSplitter::OnNcCreate(LPCREATESTRUCT lpCreateStruct)
 	return TRUE;
 }
 
-void CSimpleSplitter::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos) 
+void CSimpleSplitter::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
 {
 	lpwndpos->flags |= SWP_NOCOPYBITS;
 	CWnd::OnWindowPosChanging(lpwndpos);

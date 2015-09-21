@@ -56,7 +56,7 @@ BEGIN_MESSAGE_MAP(CPreview, CStatic)
 END_MESSAGE_MAP()
 
 // CPreview message handlers
-void CPreview::OnPaint() 
+void CPreview::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 

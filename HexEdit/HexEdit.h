@@ -179,7 +179,7 @@ struct display_bits
 			return FONT_UCODE;                 // showing multi-byte chars (codepage/Unicode)
 		else
 			return FONT_ANSI;                  // showing ASCII, ANSI, or translated EBCDIC chars
-	}  
+	}
 };
 
 #include "crypto.h"
@@ -232,7 +232,7 @@ public:
 
 	// Allow creating of a document from a text string
 	bool no_ask_insert_;                // Turn this on to prevent OnFileNew from prompting with insertion options
-	void FileFromString(LPCTSTR str);   
+	void FileFromString(LPCTSTR str);
 	void CloseByName(const char * fname);
 
 // Command handlers
@@ -255,7 +255,7 @@ public:
 	void UpdateAllViews();      // just redraw all views
 
 	static const char * HexEditClassName; // Class name of mainframe
-	static const char * RegHelper;        // Name of helper .EXE 
+	static const char * RegHelper;        // Name of helper .EXE
 	static const char * HexEditSubKey;
 	static const char * HexEditSubSubKey;
 	static const char * ProgID;           // HKCR reg key for associating file extensions

@@ -50,7 +50,7 @@
 //
 // CDirDialog::CDirDialog(LPCTSTR lpstrInitialDir = NULL,
 //                        LPCTSTR lpszFilter = NULL, CWnd* pParentWnd = NULL);
-// 
+//
 //      lpstrInitialDir
 //          The initial directory.  If NULL then the current directory is used.
 //          See lpstrInitialDir in the Win32 documentation for OPENFILENAME for more info.
@@ -77,7 +77,7 @@
 // Example:
 //
 //      // Called when the Browse button is clicked in CMyDialog
-//      void CMyDialog::OnBrowseDir() 
+//      void CMyDialog::OnBrowseDir()
 //      {
 //          if (!UpdateData(TRUE))          // Update current value of m_dir from control
 //              return;
@@ -205,7 +205,7 @@ void CDlgWnd::OnSize(UINT nType, int cx, int cy)
 	ScreenToClient(rct);
 	GetDlgItem(IDC_OPEN)->SetWindowPos(GetDlgItem(IDC_DIR), cx - m_open_pos, rct.top,
 									   0, 0, SWP_NOSIZE);
-} 
+}
 
 void CDlgWnd::OnOpen()
 {
@@ -377,7 +377,7 @@ BEGIN_MESSAGE_MAP(CDirEdit, CEdit)
 	ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
-void CDirEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CDirEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CDlgWnd *pp;                           // Parent = the dialog itself
 	VERIFY(pp = (CDlgWnd *)GetParent());
@@ -609,7 +609,7 @@ void CDirEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-void CDirEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CDirEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 
@@ -654,7 +654,7 @@ void CDirEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	SetFocus();                         // Make sure caret stays in this edit control
 }
 
-UINT CDirEdit::OnGetDlgCode() 
+UINT CDirEdit::OnGetDlgCode()
 {
 	// Get all keys so that we see CR
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;

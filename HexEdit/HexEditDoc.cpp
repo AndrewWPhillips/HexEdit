@@ -41,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 extern CHexEditApp theApp;
 
 // I can't work out how to get constants into a header file
-const FILE_ADDRESS doc_loc::mask  = 0x3fffFFFFffffFFFF;       // Masks top bits of dlen 
+const FILE_ADDRESS doc_loc::mask  = 0x3fffFFFFffffFFFF;       // Masks top bits of dlen
 const FILE_ADDRESS doc_loc::fmask = 0x3fffFFFFffffFFFF;       // Masks off the top bits of fileaddr
 const int doc_loc::max_data_files = 4;
 

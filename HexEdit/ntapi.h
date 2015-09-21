@@ -217,7 +217,7 @@ extern "C" {
 #endif
 
 typedef
-long  
+long
 (__stdcall * PFNtOpenFile) (
 	OUT PHANDLE             FileHandle,
 	IN ACCESS_MASK          DesiredAccess,
@@ -291,7 +291,7 @@ long
 	IN ULONG  Length,
 	IN FS_INFORMATION_CLASS FileSystemInformationClass
 );
- 
+
 typedef
 VOID
 (__stdcall * PFRtlInitUnicodeString) (

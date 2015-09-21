@@ -86,7 +86,7 @@ public:
 
     // Allow usage as a pointer
     CGridMemDC* operator->() {return this;}
-        
+
     // Allow usage as a pointer
     operator CGridMemDC*() {return this;}
 

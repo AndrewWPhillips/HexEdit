@@ -140,7 +140,7 @@ void CAlgorithm::OnAlgorithmHelp()
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_ALG, HIDC_ALG,
 	IDC_ALG_BLOCKLEN, HIDC_ALG_BLOCKLEN,
 	IDC_ALG_KEYLEN, HIDC_ALG_KEYLEN,

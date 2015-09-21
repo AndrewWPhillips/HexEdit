@@ -25,7 +25,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_CALC_HIST_CLEAR, HIDC_CALC_HIST_CLEAR,
 	0,0
 };
@@ -125,7 +125,7 @@ void CCalcHistDlg::OnHelp()
 
 BOOL CCalcHistDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
-	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
+	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind
 	// and then disappear when mouse up evenet is seen.  The only soln I could
 	// find after a lot of experimenetation is to do it later (in OnKickIdle).
 	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;

@@ -276,7 +276,7 @@ bool TParser::LoadValuesFile(LPCTSTR filename, std::map<CString, __int64> &value
 	if (retval)
 	{
 		// Read the values from the file
-		try 
+		try
 		{
 			CStdioFile fin(pathname, CFile::modeRead|CFile::shareDenyWrite|CFile::typeText);
 
@@ -315,7 +315,7 @@ bool TParser::SaveValuesFile(LPCTSTR filename, const std::map<CString, __int64> 
 
 	CString pathname = theApp.xml_dir_ + filename;
 	// Read the values from the file
-	try 
+	try
 	{
 		CStdioFile fout(pathname, CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeText);
 		fout.WriteString("; version 1\n");
@@ -1094,7 +1094,7 @@ CString TParser::search_path(LPCTSTR inc, LPCTSTR name)
 		dirs.push_back((LPCTSTR)tmp.back());
 		tmp.push_back(CString());
 	}
-	dirs.push_back((LPCTSTR)0);                 // terminate 
+	dirs.push_back((LPCTSTR)0);                 // terminate
 
 	char inc_path[_MAX_PATH];
 	strcpy(inc_path, name);
@@ -1113,10 +1113,10 @@ char *TParser::ctokens[] =
 	"...",
 	"<=",
 	"<<=",
-	"<<",  // Must be after "<<=" 
+	"<<",  // Must be after "<<="
 	">=",
 	">>=",
-	">>",  // Must be after ">>=" 
+	">>",  // Must be after ">>="
 	// "##",  // this is handled during preprocessing
 	"-=",
 	"--",

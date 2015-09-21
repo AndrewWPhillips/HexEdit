@@ -142,7 +142,7 @@ void CGridCtrlComp::FixHeading(int col, UINT size)
 /////////////////////////////////////////////////////////////////////////////
 // CCompareListDlg
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	0,0
 };
 
@@ -256,7 +256,7 @@ void CCompareListDlg::OnHelp()
 BOOL CCompareListDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// Note calling theApp.HtmlHelpWmHelp here seems to make the window go behind 
-	// and then disappear when mouse up evenet is seen.  The only soln I could
+	// and then disappear when mouse up evenet is seen.  The only soln I could 
 	// find after a lot of experimenetation is to do it later (in OnKickIdle).
 	help_hwnd_ = (HWND)pHelpInfo->hItemHandle;
 	return TRUE;

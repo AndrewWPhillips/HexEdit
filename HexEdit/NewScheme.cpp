@@ -86,7 +86,7 @@ void CNewScheme::OnHelp()
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_SCHEME_NAME, HIDC_SCHEME_NAME,
 	IDC_SCHEME_LIST, HIDC_SCHEME_LIST,
 	IDC_SCHEME_HELP, HIDC_HELP_BUTTON,

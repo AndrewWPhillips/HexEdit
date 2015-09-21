@@ -76,7 +76,7 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
                                                      // then no exit on arrows
 
     m_Rect = rect;  // For bizarre CE bug.
-    
+
     DWORD dwEditStyle = WS_BORDER|WS_CHILD|WS_VISIBLE| ES_AUTOHSCROLL //|ES_MULTILINE
         | dwStyle;
     if (!Create(dwEditStyle, rect, pParent, nID)) return;
@@ -100,17 +100,17 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 #endif
 	int len = sInitText.GetLength();
     SetFocus();
-    
+
     switch (nFirstChar){
         case VK_LBUTTON: 
         case VK_RETURN:   SetSel(len, -1); return;
         case VK_BACK:     SetSel(len, -1); break;
         case VK_TAB:
         case VK_DOWN: 
-        case VK_UP:   
+        case VK_UP:
         case VK_RIGHT:
-        case VK_LEFT:  
-        case VK_NEXT:  
+        case VK_LEFT:
+        case VK_NEXT:
         case VK_PRIOR: 
         case VK_HOME:
         case VK_SPACE:
@@ -121,7 +121,7 @@ CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
     // Added by KiteFly. When entering DBCS chars into cells the first char was being lost
     // SenMessage changed to PostMessage (John Lagerquist)
     if( nFirstChar < 0x80)
-        PostMessage(WM_CHAR, nFirstChar);   
+        PostMessage(WM_CHAR, nFirstChar);
     else
         PostMessage(WM_IME_CHAR, nFirstChar);
 }
@@ -157,7 +157,7 @@ void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         GetParent()->SetFocus();
         return;
     }
-    
+
     CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
@@ -187,27 +187,27 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         GetParent()->SetFocus();
         return;
     }
-    
+
     CEdit::OnChar(nChar, nRepCnt, nFlags);
-    
+
     // Resize edit control if needed
-    
+
     // Get text extent
     CString str;
     GetWindowText( str );
 
     // add some extra buffer
     str += _T("  ");
-    
+
     CWindowDC dc(this);
     CFont *pFontDC = dc.SelectObject(GetFont());
     CSize size = dc.GetTextExtent( str );
     dc.SelectObject( pFontDC );
-       
+
     // Get client rect
     CRect ParentRect;
     GetParent()->GetClientRect( &ParentRect );
-    
+
     // Check whether control needs to be resized
     // and whether there is space to grow
     if (size.cx > m_Rect.Width())
@@ -234,7 +234,7 @@ BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
     // Catch the Alt key so we don't choke if focus is going to an owner drawn button
     if (pMsg->message == WM_SYSCHAR)
         return TRUE;
-    
+
     return CWnd::PreTranslateMessage(pMsg);
 }
 
@@ -242,8 +242,8 @@ BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 void CInPlaceEdit::PostNcDestroy() 
 {
     CEdit::PostNcDestroy();
-    
-    delete this;	
+
+    delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////

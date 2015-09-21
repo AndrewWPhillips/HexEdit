@@ -5,7 +5,7 @@ Purpose: A splash screen component for MFC 4.x which uses a DIB bitmap
          so that the bitmap will display using its own optimized palette
 Created: PJN / 15-11-1996
 
-Copyright (c) 1996 - 2000 by PJ Naughter.  
+Copyright (c) 1996 - 2000 by PJ Naughter.
 All rights reserved.
 
 */
@@ -25,10 +25,10 @@ public:
 // Operations
   void SetBitmapToUse(const CString& sFilename);
   void SetBitmapToUse(UINT nResourceID);
-  void SetBitmapToUse(LPCTSTR pszResourceName); 
+  void SetBitmapToUse(LPCTSTR pszResourceName);
   BOOL Create();
-  void SetOKToClose() { m_bOKToClose = TRUE; };  
-  
+  void SetOKToClose() { m_bOKToClose = TRUE; };
+
 protected:
   //{{AFX_VIRTUAL(CSplashWnd)
   //}}AFX_VIRTUAL
@@ -43,7 +43,7 @@ protected:
   //}}AFX_MSG
 
   DECLARE_MESSAGE_MAP()
-  
+
   BOOL SelRelPal(BOOL bForceBkgnd);
   BOOL LoadBitmap();
   void CreatePaletteFromBitmap();
@@ -53,7 +53,7 @@ protected:
   CPalette  m_Palette;
   int       m_nHeight;
   int       m_nWidth;
-  CWnd      m_wndOwner;                   
+  CWnd      m_wndOwner;
   BOOL      m_bUseFile;
   LPCTSTR   m_pszResourceName;
   CString   m_sFilename;
@@ -66,7 +66,7 @@ public:
   void HideSplash();
   void SetBitmapToUse(const CString& sFilename);
   void SetBitmapToUse(UINT nResourceID);
-  void SetBitmapToUse(LPCTSTR pszResourceName); 
+  void SetBitmapToUse(LPCTSTR pszResourceName);
 
 protected:
 	CSplashThread();

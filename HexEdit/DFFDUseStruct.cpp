@@ -167,7 +167,7 @@ BOOL CDFFDUseStruct::OnInitDialog()
 	return TRUE;
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_DFFD_NAME, HIDC_DFFD_NAME,
 	IDC_DFFD_STRUCT, HIDC_DFFD_STRUCT,
 	IDC_DFFD_STRUCT_VAR, HIDC_DFFD_STRUCT_VAR,
@@ -175,7 +175,7 @@ static DWORD id_pairs[] = {
 	IDC_DFFD_COMMENTS, HIDC_DFFD_COMMENTS,
 	ID_DFFD_PREV, HID_DFFD_PREV,
 	ID_DFFD_NEXT, HID_DFFD_NEXT,
-	0,0 
+	0,0
 };
 
 BOOL CDFFDUseStruct::OnHelpInfo(HELPINFO* pHelpInfo)

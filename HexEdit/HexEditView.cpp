@@ -93,7 +93,7 @@ static char THIS_FILE[] = __FILE__;
 
 extern CHexEditApp theApp;
 
-//BYTE CHexEditFontCombo::saved_charset = 147;  // (see BCGMisc.h) initially 147 to not match 
+//BYTE CHexEditFontCombo::saved_charset = 147;  // (see BCGMisc.h) initially 147 to not match
 											  // anything -> force initial rebuild of the font list
 static bool in_recalc_display = false;
 
@@ -774,7 +774,7 @@ CHexEditView::~CHexEditView()
 		delete pfont_;
 	if (pbrush_ != NULL)
 		delete pbrush_;
-} 
+}
 
 BOOL CHexEditView::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -1214,7 +1214,7 @@ void CHexEditView::OnInitialUpdate()
 	nav_moves_ = 0;
 } // OnInitialUpdate
 
-// Update our options to the CHexFileList 
+// Update our options to the CHexFileList
 void CHexEditView::StoreOptions()
 {
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
@@ -3234,7 +3234,7 @@ void CHexEditView::ValidateCaret(CPointAp &pos, BOOL inside /*=true*/)
 		// All the following is to avoid problem of dragging a selection within the same "line" but
 		// up a "row" and forward a column.  This caused no selection to be drawn and the selection
 		// tip to show a negative selection length.
-		CPointAp start, end;            // Current selection 
+		CPointAp start, end;            // Current selection
 		CPointAp base;                  // Base of current selection (initial point clicked)
 		if (GetSel(start, end))
 			base = end;
@@ -3947,7 +3947,7 @@ void CHexEditView::show_pos(FILE_ADDRESS address /*=-1*/, BOOL no_dffd /*=FALSE*
 	mm->hec_hex_addr_.add_spaces();
 	mm->hec_hex_addr_.UpdateWindow();           // Force immed. redraw
 
-	// Set the decimal address edit box 
+	// Set the decimal address edit box
 	ss.Format("%lu", address);
 	mm->dec_dec_addr_.SetWindowText(ss);
 	mm->dec_dec_addr_.add_commas();
@@ -7479,7 +7479,7 @@ void CHexEditView::do_motorola(CString file_name)
 			return;
 		}
 
-		// Read 
+		// Read
 		int count, skipped;             // Total records read and ignored
 		size_t data_len = 1024;
 		unsigned char *file_data = new unsigned char[data_len];  // one S record
@@ -7643,7 +7643,7 @@ void CHexEditView::do_intel(CString file_name)
 			return;
 		}
 
-		// Read 
+		// Read
 		int count, skipped;             // Total records read and ignored
 		size_t data_len = 1024;
 		unsigned char *file_data = new unsigned char[data_len];  // one S record
@@ -12627,7 +12627,7 @@ void CHexEditView::OnSearchIcase()      // F4
 	CSearchEditControl::BeginSearch(CSearchEditControl::mode_icase);
 }
 
-// 
+// xxx
 CChildFrame *CHexEditView::comp_window()
 {
 	CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
@@ -15262,7 +15262,7 @@ void CHexEditView::OnSha2_512()
 // Also note that I had to comment out the Adler and CRC includes in hash.hpp as
 // this was causing build errors (and I don't need those).
 // Anyway, I added this for the SHA2 digests (SHA-256 etc) but I have also changed
-// the MD5 to use it.  (I have not changed SHA1 (yet) as the old code is faster.) 
+// the MD5 to use it.  (I have not changed SHA1 (yet) as the old code is faster.)
 template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();

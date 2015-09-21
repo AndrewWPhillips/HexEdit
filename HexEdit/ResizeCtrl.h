@@ -15,10 +15,10 @@
 // This file is provided "as is" with no expressed or implied warranty.
 //
 // Expect bugs.
-// 
+//
 // Please use and enjoy. Please let me know of any bugs/mods/improvements 
 // that you have found/implemented and I will fix/incorporate them into this
-// file. 
+// file.
 //
 // -----------------------------------------------------------------------
 // 1.0  2000-07-11  Bug in CalcValue corrected
@@ -36,9 +36,9 @@ class CResizeArray;
 
 struct CResizeInfo
 {
-  int ctlID;  // Specifies the identifier of the control 
+  int ctlID;  // Specifies the identifier of the control
   int left;   // Specifies the  change in the position of the left edge 
-              // of the object relative to the total change in the parent window’s width. 
+              // of the object relative to the total change in the parent window’s width.
   int top;    // Specifies the  change in the position of the top 
               // of the object relative to the total change in the parent window’s height.
   int width;  // Specifies the  change in the width of the object 
@@ -60,12 +60,12 @@ public:
   // left, top, width and height determines how the size and position of the control window
   // will change when the size of the parent window changes.
 
-  // In general, the formula is	
+  // In general, the formula is
   //
   //    newValue = oldValue + (( deltaValueParent * partValue) / maxPart );
   //
   // newValue          - new left or top position or new width or height
-  // oldValue          - old left or top position or old width or height 
+  // oldValue          - old left or top position or old width or height
   // deltaValueParent  - changes in parent width or height
   // partValue         - left, top, width or height value specified in the Add Method
   // maxPart           - value specified by the maxPart parameter of the constructor
@@ -100,7 +100,7 @@ public:
   //
 
   // Removes a control window from the list to be resized
-  
+
 	BOOL Remove( HWND hWndCtl  );
 	BOOL Remove( int ctlID     );
 	BOOL Remove( CWnd * wndCtl );
@@ -164,7 +164,7 @@ public:
 
   // Prepares the propertysheet to ensure that
   // all pages are created , should be called
-  // before the control is enabled 
+  // before the control is enabled
   BOOL PropertySheetPrepare( CPropertySheet * sheet );
 
   // Adds the buttons of PropertySheet or Wizard
@@ -189,13 +189,13 @@ private:
   // adds or removes style WS_THICKFRAME of the aprent window
   void ChangeStyle( BOOL enable );
   // initialise the control
-  // calculates the new left, top, width or height 
+  // calculates the new left, top, width or height
   BOOL CalcValue(int delta, int part, int & pending, long & position, BOOL isSize);
   // subclass window proc
 	static LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
   BOOL                              m_hasResizingBorder; // TRUE if the parent has a resizing border
-  WNDPROC                           m_prevWndProc;       // previous Window Proc 
+  WNDPROC                           m_prevWndProc;       // previous Window Proc
   BOOL                              m_enabled;           // parent is subclassed
   int                               m_maxPart;           // max PartValue
   HWND                              m_hWndParent;        // handle of the paretn window
@@ -209,7 +209,7 @@ private:
 	BOOL                              m_inResize;          // flag to prevent recursion in WM_SIZE
   /////////////////////////////////////////////////
   int                               m_hitCode;           // stored hitCode from WM_NCLBUTTONDOWN
-  CSize                             m_delta;             // stored delta Size from WM_NCLBUTTONDOWN 
+  CSize                             m_delta;             // stored delta Size from WM_NCLBUTTONDOWN
   BOOL                              m_inMouseMove;       // flag to prevent recursion in WM_MOUSEMOVE
   /////////////////////////////////////////////////
   CRect                             m_gripRect;          // position and size of the grip rect

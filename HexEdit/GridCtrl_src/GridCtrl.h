@@ -92,7 +92,7 @@
 #define IsCTRLpressed()  ( (GetKeyState(VK_CONTROL) & (1 << (sizeof(SHORT)*8-1))) != 0 )
 
 // Backwards compatibility for pre 2.20 grid versions
-#define DDX_GridControl(pDX, nIDC, rControl)  DDX_Control(pDX, nIDC, rControl)     
+#define DDX_GridControl(pDX, nIDC, rControl)  DDX_Control(pDX, nIDC, rControl)
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -679,7 +679,7 @@ protected:
     COLORREF    m_crWindowText, m_crWindowColour, m_cr3DFace,     // System colours
                 m_crShadow;
     COLORREF    m_crTTipBackClr, m_crTTipTextClr;                 // Titletip colours - FNA
-    
+
     BOOL        m_bVirtualMode;
     LPARAM      m_lParam;                                           // lParam for callback
     GRIDCALLBACK m_pfnCallback;                                     // The callback function
@@ -880,7 +880,7 @@ inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
         if (nRow < GetFixedRowCount())    gvdi.item.nState |= (GVIS_FIXED | GVIS_FIXEDROW);
         if (nCol < GetFixedColumnCount()) gvdi.item.nState |= (GVIS_FIXED | GVIS_FIXEDCOL);
         if (GetFocusCell() == CCellID(nRow, nCol)) gvdi.item.nState |= GVIS_FOCUSED;
-        
+
         if (m_pfnCallback)
             m_pfnCallback(&gvdi, m_lParam);
         else

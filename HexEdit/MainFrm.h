@@ -348,7 +348,7 @@ private:
 	UINT last_id_;                // Last menu item mouse was over
 	bool progress_on_;            // Used by Progress() method to say if we are currently displaying progress
 
-	std::vector<CString> GetMacroCommands(); // get cmd IDs of macros for adding to macro sub-menu 
+	std::vector<CString> GetMacroCommands(); // get cmd IDs of macros for adding to macro sub-menu
 };
 
 /////////////////////////////////////////////////////////////////////////////

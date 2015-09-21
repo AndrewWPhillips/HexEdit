@@ -57,7 +57,7 @@ protected:
 	BOOL           m_HasBackGround;
 	int            m_ShadowOffset;
 	BOOL           m_Shadow;
-	long           m_PointSize;   
+	long           m_PointSize;
 
 
 	virtual CFont *GetFont();

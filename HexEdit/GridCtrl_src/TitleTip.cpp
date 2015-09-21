@@ -113,7 +113,7 @@ BOOL CTitleTip::Create(CWnd * pParentWnd)
 BOOL CTitleTip::DestroyWindow() 
 {
     m_bCreated = FALSE;
-	
+
 	return CWnd::DestroyWindow();
 }
 
@@ -188,7 +188,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 	CRect rectDisplay = rectTitle;
 	rectDisplay.left += xoffset;
 	rectDisplay.right = rectDisplay.left + size.cx + xoffset;
-    
+
     // Do not display if the text fits within available space
     if ( rectDisplay.right > rectTitle.right-xoffset )
     {
@@ -196,7 +196,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
         SetWindowPos( &wndTop, rectDisplay.left, rectDisplay.top, 
             rectDisplay.Width(), rectDisplay.Height(), 
             SWP_SHOWWINDOW|SWP_NOACTIVATE );
-        
+
         // FNA - handle colors correctly
         if (crBackClr != CLR_DEFAULT)
         {
@@ -216,7 +216,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
         dc.TextOut( 0, 0, strTitle );
         SetCapture();
     }
-    
+
     dc.SelectObject( pOldFont );
 }
 
@@ -236,15 +236,15 @@ void CTitleTip::OnMouseMove(UINT nFlags, CPoint point)
     if (!m_rectHover.PtInRect(point)) 
     {
         Hide();
-        
+
         // Forward the message
         ClientToScreen( &point );
         CWnd *pWnd = WindowFromPoint( point );
         if ( pWnd == this ) 
             pWnd = m_pParentWnd;
-        
+
         int hittest = (int)pWnd->SendMessage(WM_NCHITTEST,0,MAKELONG(point.x,point.y));
-        
+
         if (hittest == HTCLIENT) {
             pWnd->ScreenToClient( &point );
             pWnd->PostMessage( WM_MOUSEMOVE, nFlags, MAKELONG(point.x,point.y) );
@@ -321,7 +321,7 @@ BOOL CTitleTip::PreTranslateMessage(MSG* pMsg)
                             pMsg->lParam);
 		return TRUE;
 		}
-		
+	
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
         Hide();

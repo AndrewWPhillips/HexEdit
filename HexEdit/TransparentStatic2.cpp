@@ -56,7 +56,7 @@ BOOL CTransparentStatic2::OnEraseBkgnd(CDC* pDC)
       CWnd *pParent = GetParent();
       ASSERT(pParent);
       pParent->ScreenToClient(&Rect);  //convert our corrdinates to our parents
-      
+
       //copy what's on the parents at this point
       CDC *pDC = pParent->GetDC();
       CDC MemDC;

@@ -261,7 +261,7 @@ void CHexEditDoc::GetAerialBitmap(int clear /*= 0xC0*/)
 		memset(FreeImage_GetBits(dib_), clear, dib_size_);       // Clear to a grey
 }
 
-// Sends a message for the thread to kill itself then tides up shared members 
+// Sends a message for the thread to kill itself then tidies up shared members. 
 void CHexEditDoc::KillAerialThread()
 {
 	ASSERT(pthread3_ != NULL);

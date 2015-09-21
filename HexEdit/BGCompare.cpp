@@ -568,7 +568,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_prev_diff(bool other, FIL
 	}
 
 	int idx;
-	
+
 	// First check for a replacement that is before the address
 	if ((idx = AddressAt(*replace_addr, from) - 1) >= 0)
 	{
@@ -711,7 +711,7 @@ std::pair<FILE_ADDRESS, FILE_ADDRESS> CHexEditDoc::get_next_diff(bool other, FIL
 	}
 
 	int idx;
-	
+
 	if ((idx = AddressAt(*replace_addr, from)) < replace_addr->size())
 	{
 		retval.first  = (*replace_addr)[idx];
@@ -1104,7 +1104,7 @@ void CHexEditDoc::StartComp()
 	start_comp_event_.SetEvent();
 }
 
-// Sends a message for the thread to kill itself then tidies up shared members 
+// Sends a message for the thread to kill itself then tidies up shared members. 
 void CHexEditDoc::KillCompThread()
 {
 	ASSERT(pthread4_ != NULL);

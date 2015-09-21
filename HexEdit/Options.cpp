@@ -522,7 +522,7 @@ static DWORD id_pairs_sys[] = {
 	IDC_AUTOEXEC, HIDC_AUTOEXEC,
 	IDC_UPDATE, HIDC_UPDATE,
 	IDC_HIST_PAGE, HIDC_HIST_PAGE,
-	0,0 
+	0,0
 };
 
 BOOL CSystemGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -674,7 +674,7 @@ static DWORD id_pairs_folders[] = {
 	IDC_OPEN_FOLDER_DOC            , HIDC_OPEN_FOLDER_DOC            ,
 	IDC_OPEN_FOLDER_LAST           , HIDC_OPEN_FOLDER_LAST           ,
 	IDC_OPEN_FOLDER_SPECIFIED      , HIDC_OPEN_FOLDER_SPECIFIED      ,
-	0,0 
+	0,0
 };
 
 BOOL CFoldersPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -829,7 +829,7 @@ BOOL CPreviewPage::OnApply()
 }
 
 static DWORD id_pairs_preview[] = {
-	0,0 
+	0,0
 };
 
 BOOL CPreviewPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -919,7 +919,7 @@ static DWORD id_pairs_explorer[] = {
 	IDC_SHOW_INDEXED, HIDC_SHOW_INDEXED,
 	IDC_SHOW_NOT_INDEXED, HIDC_SHOW_NOT_INDEXED,
 	IDC_SYNC_TREE, HIDC_SYNC_TREE,
-	0,0 
+	0,0
 };
 
 BOOL CExplorerPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1049,7 +1049,7 @@ static DWORD id_pairs_bu[] = {
 	IDC_EXPORT_ADDRESS, HIDC_EXPORT_ADDRESS,
 	IDC_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
 	IDC_SPIN_EXPORT_LINELEN, HIDC_EXPORT_LINELEN,
-	0,0 
+	0,0
 };
 
 BOOL CBackupPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1197,7 +1197,7 @@ static DWORD id_pairs_hist[] = {
 	IDC_CLEAR_BOOKMARKS, HIDC_CLEAR_BOOKMARKS,
 	IDC_CLEAR_ON_EXIT, HIDC_CLEAR_ON_EXIT,
 	IDC_CLEAR_HIST, HIDC_CLEAR_HIST,
-	0,0 
+	0,0
 };
 
 BOOL CHistoryPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1312,7 +1312,7 @@ void CWorkspaceEditPage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_we[] = { 
+static DWORD id_pairs_we[] = {
 	IDC_INTELLIGENT_UNDO, HIDC_INTELLIGENT_UNDO,
 	IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
 	IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
@@ -1325,7 +1325,7 @@ static DWORD id_pairs_we[] = {
 	IDC_SLIDER_AUTOSCROLL, HIDC_SLIDER_AUTOSCROLL,
 	IDC_DOC_PAGE, HIDC_DOC_PAGE,
 	IDC_BACKUP_PAGE, HIDC_BACKUP_PAGE,
-	0,0 
+	0,0
 };
 
 BOOL CWorkspaceEditPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1457,7 +1457,7 @@ void CWorkspacePage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_ws[] = { 
+static DWORD id_pairs_ws[] = {
 	IDC_BG_SEARCH, HIDC_BG_SEARCH,
 	IDC_BACKUP, HIDC_BACKUP,
 	IDC_BACKUP_SPACE, HIDC_BACKUP_SPACE,
@@ -1473,7 +1473,7 @@ static DWORD id_pairs_ws[] = {
 	IDC_UNDO_MERGE, HIDC_UNDO_MERGE,
 	IDC_SPIN_UNDO_MERGE, HIDC_UNDO_MERGE,
 	IDC_DOC_PAGE, HIDC_DOC_PAGE,
-	0,0 
+	0,0
 };
 
 BOOL CWorkspacePage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1593,14 +1593,14 @@ void CBackgroundPage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_bg[] = { 
+static DWORD id_pairs_bg[] = {
 	IDC_BG_SEARCH, HIDC_BG_SEARCH,
 	IDC_BG_STATS, HIDC_BG_STATS,
 	IDC_BG_NETWORK, HIDC_BG_NETWORK,
 	IDC_BG_OPTICAL, HIDC_BG_OPTICAL,
 	IDC_BG_REMOVEABLE, HIDC_BG_REMOVEABLE,
 	IDC_BG_DEVICE, HIDC_BG_DEVICE,
-	0,0 
+	0,0
 };
 
 BOOL CBackgroundPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -1660,8 +1660,8 @@ void CAerialPage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_aerial[] = { 
-	0,0 
+static DWORD id_pairs_aerial[] = {
+	0,0
 };
 
 BOOL CAerialPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -2037,7 +2037,7 @@ void CTemplatePage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_template[] = { 
+static DWORD id_pairs_template[] = {
 	//IDC_DFFD_NONE, HIDC_DFFD_NONE,
 	//IDC_DFFD_SPLIT, HIDC_DFFD_SPLIT,
 	//IDC_DFFD_TAB, HIDC_DFFD_TAB,
@@ -2315,14 +2315,14 @@ BOOL CTipsPage::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-static DWORD id_pairs8[] = { 
+static DWORD id_pairs8[] = {
 	IDC_GRID_TIP, HIDC_GRID_TIP,
 	IDC_SLIDER_TIP, HIDC_SLIDER_TIP,
 	IDC_NEW, HIDC_NEW,
 	IDC_DEL, HIDC_DEL,
 	IDC_UP, HIDC_UP,
 	IDC_DOWN, HIDC_DOWN,
-	0,0 
+	0,0
 };
 
 BOOL CTipsPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -2901,7 +2901,7 @@ LRESULT CColourSchemes::OnIdle(long lCount)
 	return FALSE;
 }
 
-static DWORD id_pairs6[] = { 
+static DWORD id_pairs6[] = {
 	IDC_ADD_SCHEME, HIDC_ADD_SCHEME,
 	IDC_REMOVE_SCHEME, HIDC_REMOVE_SCHEME,
 	IDC_SCHEMES, HIDC_SCHEMES,
@@ -2915,7 +2915,7 @@ static DWORD id_pairs6[] = {
 	IDC_DOWN, HIDC_DOWN,
 	IDC_ADD, HIDC_ADD,
 	IDC_REMOVE, HIDC_REMOVE,
-	0,0 
+	0,0
 };
 
 BOOL CColourSchemes::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -3495,7 +3495,7 @@ void CMacroPage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs2[] = { 
+static DWORD id_pairs2[] = {
 	IDC_REFRESH_NEVER, HIDC_REFRESH_NEVER,
 	IDC_REFRESH_SECS, HIDC_REFRESH_SECS,
 	IDC_REFRESH_KEYS, HIDC_REFRESH_KEYS,
@@ -3517,7 +3517,7 @@ static DWORD id_pairs2[] = {
 	IDC_SAVEMACRO, HIDC_SAVEMACRO,
 	IDC_LOADMACRO, HIDC_LOADMACRO,
 	IDC_MACRODIR, HIDC_MACRODIR,
-	0,0 
+	0,0
 };
 
 BOOL CMacroPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -3811,7 +3811,7 @@ void CPrintGeneralPage::OnChange()
 	SetModified(TRUE);
 }
 
-static DWORD id_pairs_prn_gen[] = { 
+static DWORD id_pairs_prn_gen[] = {
 	IDC_PRINT_BORDER, HIDC_PRINT_BORDER,
 	IDC_PRINT_HEADINGS, HIDC_PRINT_HEADINGS,
 	IDC_PRINT_MARK, HIDC_PRINT_MARK,
@@ -3830,7 +3830,7 @@ static DWORD id_pairs_prn_gen[] = {
 	IDC_PRINT_BOTTOM, HIDC_PRINT_BOTTOM,
 	IDC_PRINT_HEADER_EDGE, HIDC_PRINT_HEADER_EDGE,
 	IDC_PRINT_FOOTER_EDGE, HIDC_PRINT_FOOTER_EDGE,
-	0,0 
+	0,0
 };
 
 BOOL CPrintGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -4048,7 +4048,7 @@ static DWORD id_pairs_prn_dec[] = {
 	IDC_PRINT_WATERMARK, HIDC_PRINT_WATERMARK,
 	IDC_WATERMARK, HIDC_WATERMARK,
 	IDC_WATERMARK_OPTS, HIDC_WATERMARK_OPTS,
-	0,0 
+	0,0
 };
 
 BOOL CPrintDecorationsPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -4242,13 +4242,13 @@ BOOL CFiltersPage::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-static DWORD id_pairs4[] = { 
+static DWORD id_pairs4[] = {
 	IDC_GRID_FILTERS, HIDC_GRID_FILTERS,
 	IDC_NEW, HIDC_NEW,
 	IDC_DEL, HIDC_DEL,
 	IDC_UP, HIDC_UP,
 	IDC_DOWN, HIDC_DOWN,
-	0,0 
+	0,0
 };
 
 BOOL CFiltersPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -4573,7 +4573,7 @@ void CWindowGeneralPage::OnChange()
 	SetModified(TRUE);
 }
 
-static DWORD id_pairs_wingeneral[] = { 
+static DWORD id_pairs_wingeneral[] = {
 	IDC_FILE_ICON, HIDC_FILE_ICON,
 	IDC_FILE_NAME, HIDC_FILE_NAME,
 	IDC_DISP_RESET, HIDC_DISP_RESET,
@@ -4582,7 +4582,7 @@ static DWORD id_pairs_wingeneral[] = {
 	IDC_DISPLAY_AERIAL, HIDC_DISPLAY_AERIAL,
 	IDC_DISPLAY_COMP, HIDC_DISPLAY_COMP,
 	IDC_DISPLAY_PREVW, HIDC_DISPLAY_PREVW,
-	0,0 
+	0,0
 };
 
 BOOL CWindowGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -4783,7 +4783,7 @@ CWindowPage::~CWindowPage()
 {
 	// This avoids debug heap saying we have a memory leak at exit
 	//page_name.clear();
-	//page_number.clear(); 
+	//page_number.clear();
 	page_info.clear();
 }
 
@@ -5041,7 +5041,7 @@ void CWindowPage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_windisplay[] = { 
+static DWORD id_pairs_windisplay[] = {
 	IDC_MAX, HIDC_MAX,
 	IDC_SHOW_AREA, HIDC_SHOW_AREA,
 	IDC_CHARSET, HIDC_CHARSET,
@@ -5067,7 +5067,7 @@ static DWORD id_pairs_windisplay[] = {
 	IDC_LINENOS, HIDC_LINENOS,
 	IDC_ADDRBASE1, HIDC_ADDRBASE1,
 	IDC_GLOBAL_PAGE, HIDC_GLOBAL_PAGE,
-	0,0 
+	0,0
 };
 
 BOOL CWindowPage::OnHelpInfo(HELPINFO* pHelpInfo)
@@ -5384,7 +5384,7 @@ void CWindowEditPage::OnOK()
 	COptPage::OnOK();
 }
 
-static DWORD id_pairs_winedit[] = { 
+static DWORD id_pairs_winedit[] = {
 	IDC_MODIFY, HIDC_MODIFY,
 	IDC_INSERT, HIDC_INSERT,
 	IDC_INSERT_DESC, HIDC_INSERT,
@@ -5399,7 +5399,7 @@ static DWORD id_pairs_winedit[] = {
 	IDC_SHOW_HIGHLIGHTS, HIDC_SHOW_HIGHLIGHTS,
 	IDC_SHOW_BOOKMARKS, HIDC_SHOW_BOOKMARKS,
 	IDC_GLOBAL_PAGE, HIDC_GLOBAL_PAGE,
-	0,0 
+	0,0
 };
 
 BOOL CWindowEditPage::OnHelpInfo(HELPINFO* pHelpInfo)

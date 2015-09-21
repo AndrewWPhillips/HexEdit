@@ -410,7 +410,7 @@ void COpenSpecialDlg::OnOK()
 	CDialog::OnOK();
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_OPEN_TREE, HIDC_OPEN_TREE,
 	IDC_OPEN_READONLY, HIDC_OPEN_READONLY,
 	IDC_PROP_DESC, HIDC_OPEN_INFO,

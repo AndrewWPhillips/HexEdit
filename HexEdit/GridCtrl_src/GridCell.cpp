@@ -98,7 +98,7 @@ void CGridCell::SetFont(const LOGFONT* plf)
         if (!m_plfFont)
             m_plfFont = new LOGFONT;
         if (m_plfFont)
-            memcpy(m_plfFont, plf, sizeof(LOGFONT)); 
+            memcpy(m_plfFont, plf, sizeof(LOGFONT));
     }
 }
 
@@ -113,7 +113,7 @@ LOGFONT* CGridCell::GetFont() const
         return pDefaultCell->GetFont();
     }
 
-    return m_plfFont; 
+    return m_plfFont;
 }
 
 CFont* CGridCell::GetFontObject() const
@@ -147,10 +147,10 @@ DWORD CGridCell::GetFormat() const
         return pDefaultCell->GetFormat();
     }
 
-    return m_nFormat; 
+    return m_nFormat;
 }
 
-UINT CGridCell::GetMargin() const           
+UINT CGridCell::GetMargin() const
 {
     if (m_nMargin == (UINT)-1)
     {
@@ -161,7 +161,7 @@ UINT CGridCell::GetMargin() const
         return pDefaultCell->GetMargin();
     }
 
-    return m_nMargin; 
+    return m_nMargin;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -170,20 +170,20 @@ UINT CGridCell::GetMargin() const
 BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
     if ( m_bEditing )
-	{      
+	{
         if (m_pEditWnd)
-		    m_pEditWnd->SendMessage ( WM_CHAR, nChar );    
-    }  
-	else  
-	{   
+		    m_pEditWnd->SendMessage ( WM_CHAR, nChar );
+    }
+	else
+	{
 		DWORD dwStyle = ES_LEFT;
-		if (GetFormat() & DT_RIGHT) 
+		if (GetFormat() & DT_RIGHT)
 			dwStyle = ES_RIGHT;
-		else if (GetFormat() & DT_CENTER) 
+		else if (GetFormat() & DT_CENTER)
 			dwStyle = ES_CENTER;
-		
+
 		m_bEditing = TRUE;
-		
+
 		// InPlaceEdit auto-deletes itself
 		CGridCtrl* pGrid = GetGrid();
 		m_pEditWnd = new CInPlaceEdit(pGrid, rect, dwStyle, nID, nRow, nCol, GetText(), nChar);
@@ -206,7 +206,7 @@ void CGridCell::OnEndEdit()
 /////////////////////////////////////////////////////////////////////////////
 // CGridDefaultCell
 
-CGridDefaultCell::CGridDefaultCell() 
+CGridDefaultCell::CGridDefaultCell()
 {
 #ifdef _WIN32_WCE
     m_nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_NOPREFIX;
@@ -225,7 +225,7 @@ CGridDefaultCell::CGridDefaultCell()
 #else // not CE
     NONCLIENTMETRICS ncm;
     ncm.cbSize = sizeof(NONCLIENTMETRICS);
-	if (!theApp.is_vista_) 
+	if (!theApp.is_vista_)
 		ncm.cbSize -= sizeof(ncm.iPaddedBorderWidth);
     VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, &ncm, 0));
     SetFont(&(ncm.lfMessageFont));
@@ -234,7 +234,7 @@ CGridDefaultCell::CGridDefaultCell()
 
 CGridDefaultCell::~CGridDefaultCell()
 {
-    m_Font.DeleteObject(); 
+    m_Font.DeleteObject();
 }
 
 void CGridDefaultCell::SetFont(const LOGFONT* plf)
@@ -277,5 +277,5 @@ LOGFONT* CGridDefaultCell::GetFont() const
 CFont* CGridDefaultCell::GetFontObject() const
 {
     ASSERT(m_Font.GetSafeHandle());
-    return (CFont*) &m_Font; 
+    return (CFont*) &m_Font;
 }

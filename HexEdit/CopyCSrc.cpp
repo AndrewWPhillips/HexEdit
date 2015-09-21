@@ -314,7 +314,7 @@ void CCopyCSrc::OnCsrcHelp()
 		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_CSRC_FOR, HIDC_CSRC_FOR,
 	IDC_CSRC_INDENT, HIDC_CSRC_INDENT,
 	IDC_CSRC_INDENT_SPIN, HIDC_CSRC_INDENT,

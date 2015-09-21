@@ -531,7 +531,7 @@ void CNewFile::OnChangeCbChain(HWND hWndRemove, HWND hWndAfter)
 		::SendMessage(next_cb_hwnd_, WM_CHANGECBCHAIN, (WPARAM)hWndRemove, (LPARAM)hWndAfter);  // pass the message on
 }
 
-static DWORD id_pairs[] = { 
+static DWORD id_pairs[] = {
 	IDC_FILL_SIZE_DATA, HIDC_FILL_SIZE_DATA,
 	IDC_SIZE_FACTOR, HIDC_SIZE_FACTOR,
 	IDC_SIZE_LENGTH, HIDC_SIZE_LENGTH,
@@ -558,7 +558,7 @@ static DWORD id_pairs[] = {
 	IDC_FILL_NUMBER_TYPE, HIDC_FILL_NUMBER_TYPE,
 	IDC_DESC_FILL_NUMBER_TYPE, HIDC_FILL_NUMBER_TYPE,
 	IDC_BIG_ENDIAN, HIDC_BIG_ENDIAN,
-	0,0 
+	0,0
 };
 
 BOOL CNewFile::OnHelpInfo(HELPINFO* pHelpInfo)

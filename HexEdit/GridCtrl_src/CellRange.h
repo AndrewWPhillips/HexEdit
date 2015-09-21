@@ -35,7 +35,7 @@
 //      http://users.aol.com/chinajoe
 
 class CCellID
-{    
+{
 // Attributes
 public:
     int row, col;
@@ -50,43 +50,43 @@ public:
 };
 
 class CCellRange
-{ 
+{
 public:
-    
+
     CCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
     {
         Set(nMinRow, nMinCol, nMaxRow, nMaxCol);
     }
 
     void Set(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1);
-    
+
     int  IsValid() const;
     int  InRange(int row, int col) const;
     int  InRange(const CCellID& cellID) const;
     int  Count() { return (m_nMaxRow - m_nMinRow + 1) * (m_nMaxCol - m_nMinCol + 1); }
-    
+
     CCellID  GetTopLeft() const;
     CCellRange  Intersect(const CCellRange& rhs) const;
-    
+
     int GetMinRow() const {return m_nMinRow;}
     void SetMinRow(int minRow) {m_nMinRow = minRow;}
-    
+
     int GetMinCol() const {return m_nMinCol;}
     void SetMinCol(int minCol) {m_nMinCol = minCol;}
-    
+
     int GetMaxRow() const {return m_nMaxRow;}
     void SetMaxRow(int maxRow) {m_nMaxRow = maxRow;}
-    
+
     int GetMaxCol() const {return m_nMaxCol;}
     void SetMaxCol(int maxCol) {m_nMaxCol = maxCol;}
 
     int GetRowSpan() const {return m_nMaxRow - m_nMinRow + 1;}
     int GetColSpan() const {return m_nMaxCol - m_nMinCol + 1;}
-    
+
     void operator=(const CCellRange& rhs);
     int  operator==(const CCellRange& rhs);
     int  operator!=(const CCellRange& rhs);
-    
+
 protected:
     int m_nMinRow;
     int m_nMinCol;
