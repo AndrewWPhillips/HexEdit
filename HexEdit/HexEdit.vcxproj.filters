@@ -1169,10 +1169,8 @@
     <ClInclude Include="CompareList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="SVNRevisionTemplate.h">
+    <ClInclude Include="SVNRevision.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
+    </ClInclude>
   </ItemGroup>
 </Project>

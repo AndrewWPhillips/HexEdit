@@ -585,11 +585,7 @@
     <ClInclude Include="Splasher.h" />
     <ClInclude Include="SRecord.h" />
     <ClInclude Include="StdAfx.h" />
-    <CustomBuild Include="SVNRevisionTemplate.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"C:\Program Files\TortoiseSVN\bin\SubWCRev.exe"  "$(ProjectDir)."  %(Filename)%(Extension)  SVNRevision.h
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SVNRevision.h;%(Outputs)</Outputs>
-    </CustomBuild>
+    <ClInclude Include="SVNRevision.h" />
     <ClInclude Include="SystemSound.h" />
     <ClInclude Include="TabView.h" />
     <ClInclude Include="TaskDialog.h" />
