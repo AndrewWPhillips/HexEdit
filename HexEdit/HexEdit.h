@@ -1,6 +1,6 @@
 // HexEdit.h : main header file for the HEXEDIT application
 //
-// Copyright (c) 2015 by Andrew W. Phillips
+// Copyright (c) 2016 by Andrew W. Phillips
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.
@@ -30,10 +30,8 @@
 //#define INTERNAL_VERSION 10             // version 3.4
 //#define INTERNAL_VERSION 11             // version 3.5
 //#define INTERNAL_VERSION 12             // version 4.0 and 3.6
-#define INTERNAL_VERSION 13             // version 4.5
-
-// may need to adjust this depending on how many versions there were in last 2 years
-#define UPGRADE_DIFF 4   // diff between current version and version before which an upgrade is invalid
+//#define INTERNAL_VERSION 13             // version 4.5
+#define INTERNAL_VERSION 14             // version 5.0
 
 typedef __int64 FILE_ADDRESS;
 
