@@ -2129,11 +2129,18 @@ void CCalcDlg::update_file_buttons()
 
 	if (pview != NULL)
 	{
-		GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change it
 		CButton *pb = (CButton *)GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS);
-		pb->SetCheck(pview->BigEndian());
+		BOOL endian_state = pview->BigEndian();
+		BOOL previous_endian_state = pb->GetCheck();
+		if (endian_state != previous_endian_state)
+		{
+			GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(TRUE);  // enable so we can change it
+			pb->SetCheck(pview->BigEndian());
+		}
 	}
-	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(pview != NULL && bits_ > 8);
+	// We can only use endianess if bits_ is a multiple of 8 (whole byte).
+	// It also makes no sense for bits_ == 8 (1 byte) and bits_ == 0 (Inf. bytes)
+	GetDlgItem(IDC_BIG_ENDIAN_FILE_ACCESS)->EnableWindow(GetView() != NULL && bits_ > 8 && bits_%8 == 0);
 }
 
 // Button drawing funcs for OnDrawItem below
