@@ -1009,17 +1009,8 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SVNRevisionTemplate.h"
+				RelativePath=".\SVNRevision.h"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;C:\Program Files\TortoiseSVN\bin\SubWCRev.exe&quot;  &quot;$(ProjectDir).&quot;  $(InputFileName)  SVNRevision.h&#x0D;&#x0A;"
-						Outputs="SVNRevision.h"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="SystemSound.h"

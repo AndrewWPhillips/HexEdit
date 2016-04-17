@@ -16,8 +16,6 @@
 #include "resource.hm"
 #include "HelpID.hm"            // User defined help IDs
 
-#include "SVNRevision.h"
-
 #include <HtmlHelp.h>
 
 extern CHexEditApp theApp;
@@ -153,7 +151,7 @@ void CAbout::fix_controls()
 	// Display the revision (if beta or if shift held down)
 	if (theApp.beta_ > 0 || ::GetKeyState(VK_SHIFT) < 0)
 	{
-		ss.Format(" Revision %d", SVNRevision);
+		ss.Format(" Revision %d", 1429);  // TODO: use Git revision number now instead of SVNRevision from SubVersion?
 		text1_ += ss;
 	}
 
