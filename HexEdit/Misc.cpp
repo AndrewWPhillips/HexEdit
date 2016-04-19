@@ -120,6 +120,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 */
 
 #include "stdafx.h"
+
 #include <MultiMon.h>
 
 #include "HexEdit.h"
@@ -132,7 +133,10 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <sys/stat.h>           // For _stat()
 #include <sys/utime.h>          // For _utime()
 
+#pragma warning(push)
+#pragma warning(disable: 4293)  // avoid bogus overflow warning
 #include <boost/crc.hpp>        // For CRCs
+#pragma warning(pop)
 #include <boost/random/mersenne_twister.hpp>
 
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
