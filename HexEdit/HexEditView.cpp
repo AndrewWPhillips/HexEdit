@@ -8,7 +8,6 @@
 //
 
 #include "stdafx.h"
-#include <boost/hash.hpp>  // This is for digests (SHA2 etc) see below for notes on where it came from
 #include "HexEdit.h"
 #include "HexFileList.h"
 #include <imagehlp.h>       // For ::MakeSureDirectoryPathExists()
@@ -35,8 +34,18 @@
 #include "IntelHex.h"     // For import/export of Intel Hex files
 #include "CopyCSrc.h"     // For Copy as C Source dialog
 #include "zlib/zlib.h"    // For compression
+#ifdef OLD_DIGESTS
 #include "md5.h"          // For MD5 hash
 #include "sha1.h"         // For SHA1 hash
+#else // OLD_DIGESTS
+#pragma warning(push)                      // we need to save an restore warnings because Crypto++ headers muck with some
+#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5
+#include "include/Crypto++/cryptlib.h"
+#include "include/Crypto++/md5.h"
+#include "include/Crypto++/sha.h"
+#include "include/Crypto++/sha3.h"
+#pragma warning(pop)
+#endif // OLD_DIGESTS
 #include "Bin2Src.h"      // For formatted clipboard text
 #include "HelpID.hm"
 
@@ -15010,7 +15019,7 @@ void CHexEditView::OnCrcGeneral()
 	}
 }
 
-#if 0  // Replace old MD5 with Boost version
+#ifdef OLD_DIGESTS  // Replace old MD5 with Crypto++ version
 void CHexEditView::OnMd5()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -15113,18 +15122,12 @@ func_return:
 #else
 void CHexEditView::OnMd5()
 {
-	typedef boost::hashes::md5 alg;
-	DoDigest<alg>("MD5", CHECKSUM_MD5);
+	CryptoPP::Weak1::MD5 md5;
+	DoDigest(&md5, CHECKSUM_MD5);
 }
-#endif
+#endif  // OLD_DIGESTS
 
-#if 0  // Don't use Boost SHA1 (yet) as it is 4-5 times slower than our old one
-void CHexEditView::OnSha1()
-{
-	typedef boost::hashes::sha1 alg;
-	DoDigest<alg>("SHA1", CHECKSUM_SHA1);
-}
-#else
+#ifdef OLD_DIGESTS  // Replace old SHA digest with Crypto++ version
 void CHexEditView::OnSha1()
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -15231,44 +15234,56 @@ func_return:
 	if (buf != NULL)
 		delete[] buf;
 }
-#endif
+
+void CHexEditView::OnSha2_224() { } // not implemented
+void CHexEditView::OnSha2_256() { } // not implemented
+void CHexEditView::OnSha2_384() { } // not implemented
+void CHexEditView::OnSha2_512() { } // not implemented
+#else
+void CHexEditView::OnSha1()
+{
+	CryptoPP::SHA1 sha1;
+	DoDigest(&sha1, CHECKSUM_SHA1);
+}
 
 void CHexEditView::OnSha2_224()
 {
-	DoDigest<boost::hashes::sha2<224> >("SHA-224", CHECKSUM_SHA224);
+//	DoDigest<boost::hashes::sha2<224> >("SHA-224", CHECKSUM_SHA224);
+	CryptoPP::SHA224 sha224;
+	DoDigest(&sha224, CHECKSUM_SHA224);
 }
 
 void CHexEditView::OnSha2_256()
 {
-	DoDigest<boost::hashes::sha2<256> >("SHA-256", CHECKSUM_SHA256);
+//	DoDigest<boost::hashes::sha2<256> >("SHA-256", CHECKSUM_SHA256);
+	CryptoPP::SHA256 sha256;
+	DoDigest(&sha256, CHECKSUM_SHA256);
 }
 
 void CHexEditView::OnSha2_384()
 {
-	DoDigest<boost::hashes::sha2<384> >("SHA-384", CHECKSUM_SHA384);
+//	DoDigest<boost::hashes::sha2<384> >("SHA-384", CHECKSUM_SHA384);
+	CryptoPP::SHA384 sha384;
+	DoDigest(&sha384, CHECKSUM_SHA384);
 }
 
 void CHexEditView::OnSha2_512()
 {
-	DoDigest<boost::hashes::sha2<512> >("SHA-512", CHECKSUM_SHA512);
+//	DoDigest<boost::hashes::sha2<512> >("SHA-512", CHECKSUM_SHA512);
+	CryptoPP::SHA512 sha512;
+	DoDigest(&sha512, CHECKSUM_SHA512);
 }
 
-// This is a template member function for generating digest based on the proposed
-// Boost "hash" library.  This is actually not (yet) part of Boost as at ver 1.47
-// but I have installed the hash.hpp header (and the files int the hash sub-directory)
-// into the Boost include directory (currently using Boost 1.47).  Note that the
-// file, directory and namespace (hashes) may all change if/when it is added to
-// Boost (possibly as "digest") to avoid confusion with functional/hash.
-// Also note that I had to comment out the Adler and CRC includes in hash.hpp as
-// this was causing build errors (and I don't need those).
-// Anyway, I added this for the SHA2 digests (SHA-256 etc) but I have also changed
-// the MD5 to use it.  (I have not changed SHA1 (yet) as the old code is faster.)
-template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
+// Passes chunks of the current selection to the Crypto++ digest function by
+// repeatedly calling HashTransformation::Update() then gets the result using
+// HashTransformation::Final() and puts it into the calculator.
+void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	CString desc(digest->AlgorithmName().c_str());
 	unsigned char *buf = NULL;
 
-	// Get current address or selection
+	// Get current address or selection range
 	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
 	GetSelAddr(start_addr, end_addr);
 
@@ -15276,7 +15291,7 @@ template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
 	{
 		// No selection, presumably in macro playback
 		ASSERT(theApp.playing_);
-		TaskMessageBox("No Selection", "There is no selection to calculate " + CString(desc));
+		TaskMessageBox("No Selection", "There is no selection to calculate " + desc);
 		theApp.mac_error_ = 10;
 		return;
 	}
@@ -15296,47 +15311,49 @@ template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
 	}
 	ASSERT(buf != NULL);
 
-	T::stream_hash<8>::type ctx;
-	T::digest_type digest;
-
+	// Process the selection in "buflen" chunks
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 	{
 		// Get the next buffer full from the document
 		len = size_t(min(buflen, end_addr - curr));
 		VERIFY(GetDocument()->GetData(buf, len, curr) == len);
 
-		ctx.update_n(buf, len);
+		digest->Update(buf, len);  // update digest
 
+		// Allow for abort + update progress
 		if (AbortKeyPress() &&
-			TaskMessageBox("Abort " + CString(desc) + " calculation?", 
-			    "You have interrupted the " + CString(desc) + " calculation.\n\n"
-			    "Do you want to stop the process?",MB_YESNO) == IDYES)
+			TaskMessageBox("Abort " + desc + " calculation?", 
+			"You have interrupted the " + desc + " calculation.\n\n"
+			"Do you want to stop the process?",MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			mm->Progress(-1);  // disable progress bar
 			goto func_return;
 		}
-
 		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 	}
-	digest = ctx.end_message();
+
+	// Get the resulting digest
+	size_t result_len = digest->DigestSize();   // size of the digest in bytes
+	byte * result = new byte[result_len];
+	digest->Final(result);
 
 	mm->Progress(-1);  // disable progress bar
 
-	// Display the value in (avoidable) message box and then load it into the calculator
+	// Display the value in calculator and (avoidable) message box
 	{
 		CString ss;
 		const char * fmt = theApp.hex_ucase_ ? "%2.2X" : "%2.2x";
-		for (int ii = 0; ii < T::digest_type::digest_bits/8; ++ii)
+		for (int ii = 0; ii < result_len; ++ii)
 		{
 			char buf[8];
-			sprintf(buf, fmt, digest[ii]);
+			sprintf(buf, fmt, result[ii]);
 			ss += buf;
 		}
 
-		// Load the value into the calculator ensuring bits is at least 160 and radix is hex
-		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < T::digest_type::digest_bits)
-			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(T::digest_type::digest_bits);
+		// Load the value into the calculator ensuring bits is at least big enough and radix is hex
+		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < result_len*8)
+			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(result_len*8);
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);       // Digests are traditionally shown in hex
 
@@ -15351,11 +15368,13 @@ template<class T> void CHexEditView::DoDigest(LPCSTR desc, int mac_id)
 		AddSpaces(ss);
 		CString mess;
 		mess.Format("%s\n\n"
-		            "The calculator value has been set to the result of the %s calculation "
-		            "which is %d bits in length and displayed in hex (radix 16).\n\n"
-		            "%s", desc, desc, T::digest_type::digest_bits, ss);
+			"The calculator value has been set to the result of the %s calculation "
+			"which is %d bits in length and displayed in hex (radix 16).\n\n"
+			"%s", desc, desc, result_len * 8, ss);
 		CAvoidableDialog::Show(IDS_DIGEST, mess);
 	}
+
+	delete[] result;
 
 	// Record in macro since we did it successfully
 	theApp.SaveToMacro(km_checksum, mac_id);
@@ -15364,6 +15383,7 @@ func_return:
 	if (buf != NULL)
 		delete[] buf;
 }
+#endif  // OLD_DIGESTS
 
 void CHexEditView::OnUpdateByteNZ(CCmdUI* pCmdUI)
 {
