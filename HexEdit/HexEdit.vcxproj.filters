@@ -29,6 +29,9 @@
     <Filter Include="zlib\header">
       <UniqueIdentifier>{2b62b6ab-2bae-4c36-8f77-26a8a095af9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers %28External%29">
+      <UniqueIdentifier>{cd8d92ae-7ca9-41c9-a17b-7f50ded02088}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AerialView.cpp">
@@ -1171,6 +1174,30 @@
     </ClInclude>
     <ClInclude Include="SVNRevision.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FreeImage.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MLtaskdialogs.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mpir.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mpirxx.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Crypto++\cryptlib.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Crypto++\md5.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Crypto++\sha.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Crypto++\sha3.h">
+      <Filter>Headers %28External%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
