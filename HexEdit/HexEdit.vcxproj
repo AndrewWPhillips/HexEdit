@@ -90,7 +90,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
@@ -139,7 +139,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;cryptlibD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -554,6 +554,14 @@
     <ClInclude Include="HexEditView.h" />
     <ClInclude Include="HexFileList.h" />
     <ClInclude Include="HexPrintDialog.h" />
+    <ClInclude Include="include\Crypto++\cryptlib.h" />
+    <ClInclude Include="include\Crypto++\md5.h" />
+    <ClInclude Include="include\Crypto++\sha.h" />
+    <ClInclude Include="include\Crypto++\sha3.h" />
+    <ClInclude Include="include\FreeImage.h" />
+    <ClInclude Include="include\MLtaskdialogs.h" />
+    <ClInclude Include="include\mpir.h" />
+    <ClInclude Include="include\mpirxx.h" />
     <ClInclude Include="IntelHex.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="md5.h" />

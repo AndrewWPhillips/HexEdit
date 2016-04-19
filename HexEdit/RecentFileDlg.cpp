@@ -723,11 +723,14 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	GetDlgItem(IDC_REMOVE_FILES)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_OPEN_FILES)->EnableWindow(rows_selected > 0 && !ro);
 
-	CString ss;
+	CString ss, ss_previous;
 	ss.Format("%d", rows_selected);
 	AddCommas(ss);
+	ss = "Selected: " + ss;
 	ASSERT(GetDlgItem(IDC_FILES_SELECTED) != NULL);
-	GetDlgItem(IDC_FILES_SELECTED)->SetWindowText("Selected: " + ss);
+	GetDlgItemText(IDC_FILES_SELECTED, ss_previous);
+	if (ss.Compare(ss_previous) != 0)  // Only set it if it has changed to avoid flicker
+		SetDlgItemText(IDC_FILES_SELECTED, ss);
 
 	// Update OK button to say "Save" if files need deleting
 	GetDlgItemText(IDOK, ss);

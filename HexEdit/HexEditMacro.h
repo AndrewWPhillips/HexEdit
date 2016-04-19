@@ -346,10 +346,14 @@ enum checksum_type  // used with km_checksum
 	// Cryptographic checksums (hash codes)
 	CHECKSUM_MD5 = 21,
 	CHECKSUM_SHA1,
-	CHECKSUM_SHA224,
+	CHECKSUM_SHA224,  // SHA-2 variants
 	CHECKSUM_SHA256,
 	CHECKSUM_SHA384,
 	CHECKSUM_SHA512,
+	CHECKSUM_SHA3_224, // SHA-3 variants
+	CHECKSUM_SHA3_256,
+	CHECKSUM_SHA3_384,
+	CHECKSUM_SHA3_512,
 
 	// General CRC implementations (parameters supplied)
 	// Note enum value minus 100 is the bit size.  We leave space for many other sizes in future (5,6,7,24,40 etc)

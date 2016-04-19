@@ -22,6 +22,7 @@
 #include <vector>
 using namespace std;
 #include <boost/tuple/tuple.hpp>
+namespace CryptoPP { class HashTransformation; }  // forward declaration
 
 // Forward declarations
 class CHexEditDoc;
@@ -828,7 +829,7 @@ public:
 	afx_msg void OnCompAutoScroll();
 	afx_msg void OnUpdateCompAutoScroll(CCmdUI* pCmdUI);
 
-	template<class T> void DoDigest(LPCSTR desc, int mac_id);
+	void DoDigest(CryptoPP::HashTransformation * digest, int mac_id); // digests now done by Crypto++ (not boost::hashes which never eventuated)
 	afx_msg void OnSha2_224();
 	afx_msg void OnSha2_256();
 	afx_msg void OnSha2_384();
