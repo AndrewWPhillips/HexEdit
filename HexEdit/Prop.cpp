@@ -3939,7 +3939,7 @@ void CPropStatsPage::DoDataExchange(CDataExchange* pDX)
 
 void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 {
-	CString mess, strCrc32, strMd5, strSha1;
+	CString mess, strCrc32, strMd5, strSha1, strSha256, strSha512;
 
 	if (!theApp.bg_stats_)
 	{
@@ -3995,6 +3995,74 @@ void CPropStatsPage::Update(CHexEditView *pv, FILE_ADDRESS address)
 		AddSpaces(strSha1);
 	}
 
+	if (pv->GetDocument()->GetSha256(digest) >= 0)
+	{
+		const char * fmt;
+		if (theApp.hex_ucase_)
+			fmt = "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X";
+		else
+			fmt = "%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x";
+		strSha256.Format(fmt,
+			digest[0], digest[1], digest[2], digest[3],
+			digest[4], digest[5], digest[6], digest[7],
+			digest[8], digest[9], digest[10], digest[11],
+			digest[12], digest[13], digest[14], digest[15],
+			digest[16], digest[17], digest[18], digest[19],
+			digest[20], digest[21], digest[22], digest[23],
+			digest[24], digest[25], digest[26], digest[27],
+			digest[28], digest[29], digest[30], digest[31]
+			);
+		AddSpaces(strSha256);
+	}
+
+	if (pv->GetDocument()->GetSha512(digest) >= 0)
+	{
+		const char * fmt;
+		if (theApp.hex_ucase_)
+			fmt = "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X"
+			"%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X";
+		else
+			fmt = "%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x"
+			"%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x";
+		strSha512.Format(fmt,
+			digest[0], digest[1], digest[2], digest[3],
+			digest[4], digest[5], digest[6], digest[7],
+			digest[8], digest[9], digest[10], digest[11],
+			digest[12], digest[13], digest[14], digest[15],
+			digest[16], digest[17], digest[18], digest[19],
+			digest[20], digest[21], digest[22], digest[23],
+			digest[24], digest[25], digest[26], digest[27],
+			digest[28], digest[29], digest[30], digest[31],
+			digest[32], digest[33], digest[34], digest[35],
+			digest[36], digest[37], digest[38], digest[39],
+			digest[40], digest[41], digest[42], digest[43],
+			digest[44], digest[45], digest[46], digest[47],
+			digest[48], digest[49], digest[50], digest[51],
+			digest[52], digest[53], digest[54], digest[55],
+			digest[56], digest[57], digest[58], digest[59],
+			digest[60], digest[61], digest[62], digest[63]
+			);
+		AddSpaces(strSha512);
+	}
+
 error_return:
 	CString ss;
 	GetDlgItemText(IDC_STATS_CRC32, ss);
@@ -4006,6 +4074,13 @@ error_return:
 	GetDlgItemText(IDC_STATS_SHA1, ss);
 	if (ss != strSha1)
 		SetDlgItemText(IDC_STATS_SHA1, strSha1);
+	GetDlgItemText(IDC_STATS_SHA256, ss);
+	if (ss != strSha256)
+		SetDlgItemText(IDC_STATS_SHA256, strSha256);
+	GetDlgItemText(IDC_STATS_SHA512, ss);
+	if (ss != strSha512)
+		SetDlgItemText(IDC_STATS_SHA512, strSha512);
+
 	return;
 }
 
@@ -4028,7 +4103,9 @@ BOOL CPropStatsPage::OnInitDialog()
 	// Controls to adjust -              left  top  width height
 	resizer_.Add(IDC_STATS_CRC32,          0,   0, 100,   0);
 	resizer_.Add(IDC_STATS_MD5,            0,   0, 100,   0);
-	resizer_.Add(IDC_STATS_SHA1,           0,   0, 100,   0);
+	resizer_.Add(IDC_STATS_SHA1, 0, 0, 100, 0);
+	resizer_.Add(IDC_STATS_SHA256, 0, 0, 100, 0);
+	resizer_.Add(IDC_STATS_SHA512, 0, 0, 100, 0);
 
 	return TRUE;
 }

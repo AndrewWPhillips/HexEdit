@@ -829,11 +829,17 @@ public:
 	afx_msg void OnCompAutoScroll();
 	afx_msg void OnUpdateCompAutoScroll(CCmdUI* pCmdUI);
 
-	void DoDigest(CryptoPP::HashTransformation * digest, int mac_id); // digests now done by Crypto++ (not boost::hashes which never eventuated)
+	void DoDigest(CryptoPP::HashTransformation * digest, int mac_id); // In 5.0 digests are now done by Crypto++
 	afx_msg void OnSha2_224();
 	afx_msg void OnSha2_256();
 	afx_msg void OnSha2_384();
 	afx_msg void OnSha2_512();
+
+	// Added in 5.0 (using Crypto++)
+	afx_msg void OnSha3_224();
+	afx_msg void OnSha3_256();
+	afx_msg void OnSha3_384();
+	afx_msg void OnSha3_512();
 
 	DECLARE_MESSAGE_MAP()
 

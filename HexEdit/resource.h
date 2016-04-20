@@ -1291,6 +1291,8 @@
 #define IDC_COMPARE_MINMATCH            1689
 #define IDC_COMPARE_MINMATCH_SPIN       1690
 #define IDC_COMPARE_STATIC1             1691
+#define IDC_STATS_SHA256                1692
+#define IDC_STATS_SHA512                1693
 #define IDC_BMP_FORMAT                  1695
 #define IDC_BMP_BPP                     1696
 #define IDC_BMP_WIDTH                   1697
@@ -1560,6 +1562,10 @@
 #define ID_SHA256                       33060
 #define ID_SHA384                       33061
 #define ID_SHA512                       33062
+#define ID_SHA3_224                     33063
+#define ID_SHA3_256                     33064
+#define ID_SHA3_384                     33065
+#define ID_SHA3_512                     33066
 #define ID_CRC_CCITT_T                  33067
 #define ID_CRC32_MPEG2                  33068
 #define ID_FIND_NEXT                    33070

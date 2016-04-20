@@ -169,6 +169,8 @@ struct OptValues
 	  BOOL bg_stats_crc32_;
 	  BOOL bg_stats_md5_;
 	  BOOL bg_stats_sha1_;
+	  BOOL bg_stats_sha256_;
+	  BOOL bg_stats_sha512_;
 	BOOL    bg_exclude_network_;
 	BOOL    bg_exclude_removeable_;
 	BOOL    bg_exclude_optical_;

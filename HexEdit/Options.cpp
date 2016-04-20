@@ -149,6 +149,8 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.bg_stats_crc32_ = FALSE;
 	val_.bg_stats_md5_ = FALSE;
 	val_.bg_stats_sha1_ = FALSE;
+	val_.bg_stats_sha256_ = FALSE;
+	val_.bg_stats_sha512_ = FALSE;
 	val_.bg_exclude_network_ = TRUE;
 	val_.bg_exclude_removeable_ = FALSE;
 	val_.bg_exclude_optical_ = TRUE;
