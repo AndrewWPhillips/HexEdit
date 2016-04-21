@@ -553,12 +553,17 @@
 #define IDC_BG_DEVICE                   1054
 #define IDC_OPEN_OEM                    1055
 #define IDC_SEL_STORE                   1055
+#define IDC_BG_STATS_CRC32              1055
 #define IDC_DEC_64BIT                   1056
 #define IDC_SEL_AT_STORE                1056
+#define IDC_BG_STATS_MD5                1056
 #define IDC_SEL_LEN_STORE               1057
 #define IDC_DEC_32BIT                   1057
+#define IDC_BG_STATS_SHA1               1057
 #define IDC_DEC_16BIT                   1058
+#define IDC_BG_STATS_SHA256             1058
 #define IDC_DEC_8BIT                    1059
+#define IDC_BG_STATS_SHA512             1059
 #define IDC_POW                         1060
 #define IDC_MOD                         1061
 #define IDC_DIVIDE                      1062
@@ -1868,7 +1873,7 @@
 #define AFX_IDS_APP_ID                  0xE006
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
