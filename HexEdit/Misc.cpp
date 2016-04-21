@@ -132,8 +132,12 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <sys/stat.h>           // For _stat()
 #include <sys/utime.h>          // For _utime()
 
+#pragma warning(push)           // save (and later restore - see "pop" below) current warning level so we can avoid messages from Boost crc header
+#pragma warning(disable: 4293)
+#pragma warning(disable: 4800)
 #include <boost/crc.hpp>        // For CRCs
-#include <boost/random/mersenne_twister.hpp>
+#pragma warning(pop)
+#include <boost/random/mersenne_twister.hpp> // for random numbers
 
 #include <imagehlp.h>           // For ::MakeSureDirectoryPathExists()
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
