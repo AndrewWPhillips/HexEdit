@@ -18,18 +18,12 @@
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
-#if !defined(AFX_IDS_APP_ID)
-#define AFX_IDS_APP_ID                  0xE006  // New MFC symbol for Win7 task bar
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -58,7 +52,7 @@ IDR_OPER                BITMAP                  "res\\operations.bmp"
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  16, 15
+IDR_MAINFRAME TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
@@ -84,7 +78,7 @@ BEGIN
     BUTTON      ID_PLAY
 END
 
-IDR_EDITBAR TOOLBAR  16, 15
+IDR_EDITBAR TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_SEARCH_BACK
     BUTTON      ID_SEARCH
@@ -100,7 +94,7 @@ BEGIN
     BUTTON      ID_TRACK_CHANGES
 END
 
-IDR_MISC TOOLBAR  16, 15
+IDR_MISC TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_CLOSE
     BUTTON      ID_FILE_PRINT_SETUP
@@ -163,7 +157,7 @@ BEGIN
     BUTTON      ID_COMP_TAB
 END
 
-IDR_OPER TOOLBAR  16, 15
+IDR_OPER TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_ENCRYPT_ENCRYPT
     BUTTON      ID_ENCRYPT_DECRYPT
@@ -216,7 +210,7 @@ BEGIN
     BUTTON      ID_OR_64BIT
 END
 
-IDR_STDBAR TOOLBAR  16, 15
+IDR_STDBAR TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
@@ -247,7 +241,7 @@ BEGIN
     BUTTON      ID_PLAY
 END
 
-IDR_NAVBAR TOOLBAR  16, 15
+IDR_NAVBAR TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_DFFD_SYNC
     BUTTON      ID_DFFD_AUTO_SYNC
@@ -267,7 +261,7 @@ BEGIN
     BUTTON      ID_NAV_FORW
 END
 
-IDR_FORMATBAR TOOLBAR  16, 15
+IDR_FORMATBAR TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_VIEW_RULER
     BUTTON      ID_AUTOFIT
@@ -300,7 +294,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -400,7 +394,7 @@ BEGIN
     END
 END
 
-IDR_HEXEDTYPE MENU 
+IDR_HEXEDTYPE MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -596,10 +590,15 @@ BEGIN
             MENUITEM "&MD5",                        ID_MD5
             MENUITEM "&SHA1",                       ID_SHA1
             MENUITEM SEPARATOR
-            MENUITEM "SHA22&4",                     ID_SHA224
-            MENUITEM "SHA&256",                     ID_SHA256
-            MENUITEM "SHA&384",                     ID_SHA384
-            MENUITEM "SHA&512",                     ID_SHA512
+            MENUITEM "SHA2 22&4",                   ID_SHA224
+            MENUITEM "SHA&2 256",                   ID_SHA256
+            MENUITEM "SHA2 3&84",                   ID_SHA384
+            MENUITEM "SHA2 &512",                   ID_SHA512
+            MENUITEM SEPARATOR
+            MENUITEM "SHA3 224",                    ID_SHA3_224
+            MENUITEM "SHA&3 256",                   ID_SHA3_256
+            MENUITEM "SHA3 384",                    ID_SHA3_384
+            MENUITEM "SHA3 512",                    ID_SHA3_512
         END
         POPUP "Encryption"
         BEGIN
@@ -932,7 +931,7 @@ BEGIN
     END
 END
 
-IDR_NOT_USED MENU 
+IDR_NOT_USED MENU
 BEGIN
     POPUP "Bar Context"
     BEGIN
@@ -990,7 +989,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_ADDRESS MENU 
+IDR_CONTEXT_ADDRESS MENU
 BEGIN
     POPUP "Address Area Context"
     BEGIN
@@ -1009,7 +1008,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_HEX MENU 
+IDR_CONTEXT_HEX MENU
 BEGIN
     POPUP "Hex Area Context"
     BEGIN
@@ -1034,7 +1033,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_CHAR MENU 
+IDR_CONTEXT_CHAR MENU
 BEGIN
     POPUP "Char Area Context"
     BEGIN
@@ -1094,7 +1093,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_BARS MENU 
+IDR_CONTEXT_BARS MENU
 BEGIN
     POPUP "Bar Context"
     BEGIN
@@ -1128,7 +1127,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_STATBAR MENU 
+IDR_CONTEXT_STATBAR MENU
 BEGIN
     POPUP "Status Bar Context"
     BEGIN
@@ -1149,7 +1148,7 @@ BEGIN
     END
 END
 
-IDR_MISC MENU 
+IDR_MISC MENU
 BEGIN
     POPUP "Format commands"
     BEGIN
@@ -1251,7 +1250,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_HIGHLIGHT MENU 
+IDR_CONTEXT_HIGHLIGHT MENU
 BEGIN
     POPUP "Highlight"
     BEGIN
@@ -1268,7 +1267,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_SELECTION MENU 
+IDR_CONTEXT_SELECTION MENU
 BEGIN
     POPUP "Selection"
     BEGIN
@@ -1291,7 +1290,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_BOOKMARKS MENU 
+IDR_CONTEXT_BOOKMARKS MENU
 BEGIN
     POPUP "Bookmarks"
     BEGIN
@@ -1308,7 +1307,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_TABS MENU 
+IDR_CONTEXT_TABS MENU
 BEGIN
     POPUP "MDI Tabs Context"
     BEGIN
@@ -1333,7 +1332,7 @@ BEGIN
     END
 END
 
-IDR_POPUP_DROP_MDITABS MENU 
+IDR_POPUP_DROP_MDITABS MENU
 BEGIN
     POPUP "MDI Tabs Drag"
     BEGIN
@@ -1346,7 +1345,7 @@ BEGIN
     END
 END
 
-IDR_FUNCTION MENU 
+IDR_FUNCTION MENU
 BEGIN
     POPUP "Functions"
     BEGIN
@@ -1434,7 +1433,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_AERIAL MENU 
+IDR_CONTEXT_AERIAL MENU
 BEGIN
     POPUP "Aerial View Context"
     BEGIN
@@ -1471,7 +1470,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_PREVW MENU 
+IDR_CONTEXT_PREVW MENU
 BEGIN
     POPUP "Preview Context"
     BEGIN
@@ -1491,7 +1490,7 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_COMPARE MENU 
+IDR_CONTEXT_COMPARE MENU
 BEGIN
     POPUP "Compare Context"
     BEGIN
@@ -1513,7 +1512,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS 
+IDR_MAINFRAME ACCELERATORS
 BEGIN
     "1",            ID_TOOL1,               VIRTKEY, ALT, NOINVERT
     "2",            ID_TOOL2,               VIRTKEY, ALT, NOINVERT
@@ -2452,12 +2451,17 @@ BEGIN
     LTEXT           "Background processing",IDC_STATIC,9,4,76,8
     CONTROL         "&Searching",IDC_BG_SEARCH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,18,48,10,0,HIDC_BG_SEARCH
     CONTROL         "S&tatistics",IDC_BG_STATS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,33,44,10,0,HIDC_BG_STATS
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,34,54,223,1
-    LTEXT           "Exclude these from background processing",IDC_STATIC,9,50,137,8
-    CONTROL         "Files on network drives",IDC_BG_NETWORK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,66,100,10,0,HIDC_BG_NETWORK
-    CONTROL         "Files on optical drives",IDC_BG_OPTICAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,78,100,10,0,HIDC_BG_OPTICAL
-    CONTROL         "Files on removeable drives",IDC_BG_REMOVEABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,66,100,10,0,HIDC_BG_REMOVEABLE
-    CONTROL         "Volumes/raw devices",IDC_BG_DEVICE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,78,100,10,0,HIDC_BG_DEVICE
+    CONTROL         "CRC 32",IDC_BG_STATS_CRC32,"Button",BS_AUTOCHECKBOX,33,49,41,10,0,HIDC_BG_STATS_CRC32
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,34,69,223,1
+    LTEXT           "Exclude these from background processing",IDC_STATIC,9,65,137,8
+    CONTROL         "Files on network drives",IDC_BG_NETWORK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,81,100,10,0,HIDC_BG_NETWORK
+    CONTROL         "Files on optical drives",IDC_BG_OPTICAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,93,100,10,0,HIDC_BG_OPTICAL
+    CONTROL         "Files on removeable drives",IDC_BG_REMOVEABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,81,100,10,0,HIDC_BG_REMOVEABLE
+    CONTROL         "Volumes/raw devices",IDC_BG_DEVICE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,93,100,10,0,HIDC_BG_DEVICE
+    CONTROL         "MD5",IDC_BG_STATS_MD5,"Button",BS_AUTOCHECKBOX,95,36,31,10,0,HIDC_BG_STATS_MD5
+    CONTROL         "SHA 1",IDC_BG_STATS_SHA1,"Button",BS_AUTOCHECKBOX,95,49,37,10,0,HIDC_BG_STATS_SHA1
+    CONTROL         "SHA 256",IDC_BG_STATS_SHA256,"Button",BS_AUTOCHECKBOX,157,36,45,10,0,HIDC_BG_STATS_SHA256
+    CONTROL         "SHA 512",IDC_BG_STATS_SHA512,"Button",BS_AUTOCHECKBOX,157,49,45,10,0,HIDC_BG_STATS_SHA512
 END
 
 IDD_OPT_FOLDERS DIALOGEX 0, 0, 260, 140
@@ -2505,12 +2509,16 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Stats"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    RTEXT           "CRC32:",IDC_STATIC,0,12,27,8
-    EDITTEXT        IDC_STATS_CRC32,27,10,189,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_CRC32
-    RTEXT           "MD5:",IDC_STATIC,0,29,27,8
-    EDITTEXT        IDC_STATS_MD5,27,27,189,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_MD5
-    RTEXT           "SHA1:",IDC_STATIC,0,46,27,8
-    EDITTEXT        IDC_STATS_SHA1,27,44,189,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_SHA1
+    RTEXT           "CRC32:",IDC_STATIC,0,7,36,8
+    EDITTEXT        IDC_STATS_CRC32,37,5,180,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_CRC32
+    RTEXT           "MD5:",IDC_STATIC,0,22,36,8
+    EDITTEXT        IDC_STATS_MD5,37,20,180,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_MD5
+    RTEXT           "SHA1:",IDC_STATIC,0,37,36,8
+    EDITTEXT        IDC_STATS_SHA1,37,35,180,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_SHA1
+    RTEXT           "SHA 256:",IDC_STATIC,0,52,36,8
+    EDITTEXT        IDC_STATS_SHA256,37,50,180,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_SHA1
+    RTEXT           "SHA 512:",IDC_STATIC,0,67,36,8
+    EDITTEXT        IDC_STATS_SHA512,37,65,180,12,ES_AUTOHSCROLL | ES_READONLY,0,HIDC_STATS_SHA1
 END
 
 IDD_CRC DIALOGEX 0, 0, 202, 180
@@ -2934,7 +2942,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_OPT_MACRO, DIALOG
     BEGIN
@@ -2965,7 +2973,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_SMALLICON       "Display items by using small icons.\nSmall Icons"
     ID_VIEW_LARGEICON       "Display items by using large icons.\nLarge Icons"
@@ -2973,7 +2981,7 @@ BEGIN
     ID_VIEW_DETAILS         "Displays detailed information about each item in the window.\nDetails"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "HexEdit"
     IDR_HEXEDTYPE           "\nHexEd\nHexEd\n\n\nHexEdit.Document\nHexEdit Document"
@@ -2993,7 +3001,7 @@ BEGIN
     IDS_NEW_TIP             "New info tip"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "HexEdit"
     AFX_IDS_IDLEMESSAGE     "Ready"
@@ -3001,7 +3009,7 @@ BEGIN
     AFX_IDS_APP_ID          "ECSoftware.HexEdit.5.0"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -3011,7 +3019,7 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_NEW             "Create a new empty file\nNew"
     ID_FILE_OPEN            "Open a file\nOpen"
@@ -3024,7 +3032,7 @@ BEGIN
     ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Display program version and license information\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save changed files\nExit"
@@ -3034,7 +3042,7 @@ BEGIN
     ID_HELP                 "Display help for current task or command\nHelp"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_MRU_FILE1       "Open this document"
     ID_FILE_MRU_FILE2       "Open this document"
@@ -3054,13 +3062,13 @@ BEGIN
     ID_FILE_MRU_FILE16      "Open this document"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
     ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
@@ -3070,7 +3078,7 @@ BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -3085,13 +3093,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle Status Bar"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -3102,19 +3110,19 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
     AFX_IDS_MDICHILD        "Activate this window"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_AUTOFIT              "Adjust number of columns to fit display\nAuto Fit"
     ID_FONT                 "Select new display font\nFont"
@@ -3129,7 +3137,7 @@ BEGIN
     IDC_JUMP_DEC            "Go to decimal address\nDecimal Address"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TOOLBARS        "Show or hide this toolbar\nToggle Toolbar"
     ID_JUMP_HEX_ADDR        "Invoke hex jump tool\nJump Hex"
@@ -3142,7 +3150,7 @@ BEGIN
     ID_OPTIONS              "Change global options\nOptions"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INDICATOR_BIG_ENDIAN " BE "
     ID_INDICATOR_FILE_LENGTH "9,999+1"
@@ -3155,14 +3163,14 @@ BEGIN
     CG_IDS_TIPOFTHEDAY      "Display a useful ""Tip of the Day""\nTip of the Day"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDC_SEARCH              "Search for hex bytes, text, text ignoring case\nFind: case-insensitive/case-sensitive/hex (F4/F5/F6)"
     ID_SEARCH_FORW          "Search Forward for the Current Search Text\nFind Forward"
     ID_SEARCH_BACK          "Search Backward for Current Search Text\nFind Backward"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INSERT               "Toggle between inserting or replacing existing bytes\nInsert/Overtype"
     ID_RECORD               "Record keystroke macro\nRecord/Stop"
@@ -3178,7 +3186,7 @@ BEGIN
     ID_DEC_64BIT            "Subtract one from quad word(s) (64 bit)\nDec Quad Word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INC_32BIT            "Add one to double word(s) (32 bit)\nInc Double Word"
     ID_INC_64BIT            "Add one to quad word(s) (64 bit)\nInc Quad Word"
@@ -3198,7 +3206,7 @@ BEGIN
     ID_OPTIONS3             "Change color scheme options\nColor Options"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_MULTI_PLAY           "Replay a macro one or more times\nMacro Play"
     ID_EXTENDTO_MARK        "Extend selection to mark\nExtend To Mark"
@@ -3216,17 +3224,17 @@ BEGIN
     ID_EDIT_GOTO            "Calculate address to jump to\nGo To"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FONT_INC             "Increase the font size in the active window\nIncrease Font"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FONT_DEC             "Decreases the font size in the active window\nDecrease Font"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_CALCULATOR           "Invoke hex/decimal/octal/binary calculator\nCalculator"
     ID_WEB_PAGE             "Show the HexEdit site in your web browser\nHexEdit Home Page"
@@ -3241,7 +3249,7 @@ BEGIN
     ID_HIGHLIGHT_CLEAR      "Clear all highlights in this file\nClear Highlights"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_COLORS              "Color Schemes"
     CG_IDS_TIPOFTHEDAYMENU2 "Ti&p of the Day..."
@@ -3256,7 +3264,7 @@ BEGIN
     IDS_WEB_FORUMS          "http://www.hexedit.com/forums.html"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_HIGHLIGHT_PREV       "Go to previous highlight\nPrevious Highlight"
     ID_HIGHLIGHT_NEXT       "Go to next highlight\nNext Highlight"
@@ -3269,7 +3277,7 @@ BEGIN
     ID_JUMP_DEC_COMBO       "Jump to decimal address\nJump decimal"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_USER_TOOLBAR1   "Show or hide the user toolbar\nToggle User ToolBar"
     ID_VIEW_USER_TOOLBAR2   "Show or hide the user toolbar\nToggle User ToolBar"
@@ -3284,7 +3292,7 @@ BEGIN
     ID_OR_BYTE              "Bitwise OR calculator value with current byte or selected bytes\nOR Byte"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_OR_16BIT             "Bitwise OR calculator value with word(s) (16 bit)\nOR Word"
     ID_OR_32BIT             "Bitwise OR calculator value with double word(s) (32 bit)\nOR Double Word"
@@ -3297,7 +3305,7 @@ BEGIN
     ID_ENCRYPT_PASSWORD     "Allows you to enter the encryption password\nPassword"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_ENCRYPT_CLEAR        "Clears the current encryption password\nClear Password"
     ID_ENCRYPT_ENCRYPT      "Encrypts the selected text using the current algorithm and password\nEncrypt"
@@ -3314,7 +3322,7 @@ BEGIN
     ID_EXPORT_HEX_TEXT      "Export as hex to text file\nExport Hex Text"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EXPORT_S1            "Export to file as Motorola S1 (16 bit address) records\nExport Motorola S1"
     ID_EXPORT_S2            "Export to file as Motorola S2 (24 bit address) records\nExport Motorola S2"
@@ -3331,7 +3339,7 @@ BEGIN
     ID_PRINTERARGS_CURRENTDATE "&D"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_PRINTERARGS_CURRENTTIME "&T"
     ID_PRINTERARGS_LONGFORMATDATETIME "&N"
@@ -3351,7 +3359,7 @@ BEGIN
     ID_DISPLAY_CHAR         "Display char area only (hide hex area)\nChar Area"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DISPLAY_BOTH         "Display both hex and char areas\nBoth Areas"
     ID_CHARSET_EBCDIC       "Display characters as EBCDIC\nEBCDIC"
@@ -3371,7 +3379,7 @@ BEGIN
     ID_CHECKSUM8            "Stores the 8 bit checksum in the calculator\n8 Bit Checksum"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_CHECKSUM16           "Stores the 16 bit checksum in the calculator\n16 Bit Checksum"
     ID_CHECKSUM32           "Stores the 32 bit checksum in the calculator\n32 Bit Checksum"
@@ -3389,7 +3397,7 @@ BEGIN
     ID_ASSIGN_32BIT         "Assign calculator value to double word(s) (32 bit)\nAssign Double Word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_NAV_BACK             "Go back to previous point"
     ID_NAV_FORW             "Go forward to navigation point"
@@ -3400,7 +3408,7 @@ BEGIN
     ID_CHARSET_CODEPAGE     "Display charcaters using the selected code page\nCODEPAGE"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_SCHEME               "Select colour scheme\nColour Scheme"
     ID_SCHEME_US            "Select color scheme\nColor Scheme"
@@ -3411,13 +3419,13 @@ BEGIN
     ID_HELP_DONATE          "Go to the Donation web page\nDonate"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_CRC_CCITT_T          "Stores standard CCITT (16 bit) CRC in the calculator\nCRC CCITT"
     ID_CRC32_MPEG2          "Stores MPEG-2 (32 bit) CRC in the calculator\nCRC 32 MPEG-2"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_ASSIGN_64BIT         "Assign calculator value to quad word(s) (64 bit)\nAssign Quad Word"
     ID_ADD_BYTE             "Add calculator value to current byte or all selected bytes\nAdd to Byte"
@@ -3437,7 +3445,7 @@ BEGIN
     ID_GTR_32BIT            "Greater of double word(s) and calculator value are saved\nGreater Double Word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_NAVBAR          "Show or hide the Navigation bar\nNavigation Bar"
     ID_VIEW_FORMATBAR       "Show or hide the Format bar\nFormat Bar"
@@ -3452,7 +3460,7 @@ BEGIN
     ID_DFFD_INSERT_EVAL     "Insert data element\nInsert Data"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DFFD_EDIT            "Edit this element\nEdit"
     ID_DFFD_BYTE            "Use length of 1 byte\nLength 1 byte"
@@ -3466,7 +3474,7 @@ BEGIN
     ID_DFFD_GLOBAL          "Change global options for this format\nOptions"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DFFD_SAVE            "Save changes to the current template file\nSave"
     ID_DFFD_SAVEAS          "Save the current template to a new file\nSave As"
@@ -3480,7 +3488,7 @@ BEGIN
     ID_AERIAL_TAB           "Show aerial view in a tabbed window\nAerial Tab"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_HIGHLIGHT_MENU       "Highlighter commands"
     ID_DFFD_WEB             "Go to template web site for more info\nTemplate Web Site"
@@ -3489,7 +3497,7 @@ BEGIN
     ID_RAND_32BIT           "Generate random DWORD (32 bit) value(s)\nRandom Double Word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_REPAIR_COPYUSERFILES "Setup personal files for macros, templates, etc\nCopy Personal Files"
     ID_PREVW_HIDE           "Turn off preview of bitmap files\\Preview Off"
@@ -3497,7 +3505,7 @@ BEGIN
     ID_PREVW_TAB            "Show preview (bitmaps) in a tabbed window\nPreview Tab"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_RAND_64BIT           "Generate random QWORD (64 bit) value(s)\nRandom Quad Word"
     ID_RAND_FAST            "Generate fast random bytes\nFast Random"
@@ -3515,7 +3523,7 @@ BEGIN
     ID_REPAIR_CUST          "Reset toolbar/menu/keyboard customizations\nRepair Customizations"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_REPAIR_SETTINGS      "Remove all customizations and other settings\nRepair Settings"
     ID_REPAIR_ALL           "Remove all settings and saved information\nRepair All"
@@ -3528,7 +3536,7 @@ BEGIN
     ID_VIEW_BOOKMARKS       "Show/hide Bookmarks dialog\nToggle Bookmarks"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_GTR_64BIT            "Greater of quad word(s) and calculator value are saved\nGreater Quad Word"
     ID_LESS_BYTE            "Lesser of byte(s) and calculator value are saved\nLesser Byte"
@@ -3548,19 +3556,19 @@ BEGIN
     ID_MOD_32BIT            "Remainder after dividing double word(s) by calculator value\nModulus Double Word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_FIND            "Show/hide Find Dialog\nToggle Find Dialog"
     ID_VIEW_PROPERTIES      "Show/hide Properties Dialog\nToggle Properties"
     ID_VIEW_EXPL            "Show/hide the Explorer dialog\nExplorer Dialog"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DIALOGS_DOCKABLE     "Toggle dockability of modeless dialogs\nAllow Dockable Dialogs"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_MOD_64BIT            "Remainder after dividing quad word(s) by calculator value\nModulus Quad Word"
     ID_REV_BYTE             "Reverse bits of byte or all selected bytes\nReverse Bits (byte)"
@@ -3573,7 +3581,7 @@ BEGIN
     ID_SUBTRACT_X_64BIT     "Subtract quad word(s) from calculator value and store result(s)\nSubtract From Quad Word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_LSL_BYTE             "Left shift byte(s) by value in calculator\nLSL Byte(s)"
     ID_LSL_16BIT            "Left shift word(s) by value in calculator\nLSL Word(s)"
@@ -3589,12 +3597,12 @@ BEGIN
     ID_ASR_64BIT            "Arithmetic right shift quad word(s) by value in calculator\nASR Quad Word(s)"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_DEL_TIP             "Delete this tip"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DFFD_HIDE            "Turn off use of templates\nTemplate Off"
     ID_DFFD_SPLIT           "Show template in a split window\nTemplate Split"
@@ -3602,14 +3610,14 @@ BEGIN
     ID_DFFD_NEW             "Create new template (opens default template)\nNew Template"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_RULER           "Show or hide the ruler\nToggle Ruler"
     ID_VIEW_HL_CURSOR       "Highlight cursor location in ruler and address area\nHighlight Cursor"
     ID_VIEW_HL_MOUSE        "Show mouse location in ruler and address area\nShow Mouse"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_IND_SEL              "Indicate cursor/selection in the left and top borders\nSelection in Border"
     ID_IND_MARK             "Indicate the row containing the mark in the left border\nMark in Border"
@@ -3618,7 +3626,7 @@ BEGIN
     ID_IND_BM               "Indicate rows containing bookmarks in the left border\nBookmarks in Border"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_ANT_SEL              "Indicate cursor/selection with marching ants\nSelection Ants"
     ID_ANT_MARK             "Indicate the row containing the mark with marching ants\nMark Ants"
@@ -3631,14 +3639,14 @@ BEGIN
     ID_COMP_LAST            "Jump to last difference\nLast Diff"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_AERIAL_ZOOM1         "Display file bytes/elements each as a single pixel\nAerial Zoom Out"
     ID_AERIAL_ZOOM2         "Display file bytes/elements as 2 x 2 pixels\nAerial Zoom X 2"
     ID_AERIAL_ZOOM3         "Display file bytes/elements as 3 x 3 pixels"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_AERIAL_ZOOM4         "Display file bytes/elements as 4 x 4 pixels\nAerial Zoom X 4"
     ID_AERIAL_ZOOM5         "Display file bytes/elements as 5 x 5 pixels"
@@ -3655,7 +3663,7 @@ BEGIN
     ID_AERIAL_ZOOM16        "Display file bytes/elements as 16 X 16 pixels\nAerial Zoom X 16"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_COMP_HIDE            "Turn off compare view\nCompare View Off"
     ID_COMP_SPLIT           "Show compare view in a split window\nCompare Split"
@@ -3663,7 +3671,7 @@ BEGIN
     ID_COMP_NEW             "Start new compare (open new compare file)\nNew Compare"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_COMP_ALL_FIRST       "Jump to first of all differences\nAll First Diff"
     ID_COMP_ALL_PREV        "Jump to previous of all differences\nAll Prev Diff"
@@ -3671,7 +3679,7 @@ BEGIN
     ID_COMP_ALL_LAST        "Jump to last of all differences\nAll Last Diff"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_WARNING_DO_NOT_RENUMBER 
                             "***** The IDs below (ie, in low 50000's) are used in CAvoidableDialog and may be stored in the registry."
@@ -3680,13 +3688,13 @@ BEGIN
     IDS_BOOKMARK_FILENOTFOUND "The file containing the bookmark was not found"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_REG_REQUIRED        "Administrator Privileges required for Registry Changes"
     IDS_USE_AERIAL_SCHEME   "Change to MANY scheme?      "
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_BOOKMARK_EXISTS     "This bookmark already exists"
     IDS_CALC_NEGATIVE_UNSIGNED "Negative value will cause overflow"
@@ -3706,7 +3714,7 @@ BEGIN
     IDS_CALC_ERROR          "Calculation Error"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CALC_INVALID        "Invalid expression"
     IDS_CALC_TOO_BIG        "Too Big to Display"
@@ -3726,7 +3734,7 @@ BEGIN
     IDS_COMPARE_DIFF        "Difference Found"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_INVALID_HEX         "Invalid Hex Digit"
     IDS_SEL_LEN             "Selection Length Error"
@@ -3745,12 +3753,12 @@ BEGIN
     IDS_RECENT_GONE         "Remove Recent File?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -3758,10 +3766,8 @@ END
 // English (Australia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3854,7 +3860,7 @@ IDB_HELP_HOT            BITMAP                  "res\\help_hot.bmp"
 // Menu
 //
 
-IDR_PRINT_ARGS MENU 
+IDR_PRINT_ARGS MENU
 BEGIN
     POPUP "Header"
     BEGIN
@@ -3884,7 +3890,7 @@ BEGIN
     END
 END
 
-IDR_MENUBUTTON MENU 
+IDR_MENUBUTTON MENU
 BEGIN
     POPUP "Display"
     BEGIN
@@ -3938,7 +3944,7 @@ BEGIN
     END
 END
 
-IDR_DFFD MENU 
+IDR_DFFD MENU
 BEGIN
     POPUP "Struct"
     BEGIN
@@ -4062,7 +4068,7 @@ BEGIN
     END
 END
 
-IDR_CALC_GO MENU 
+IDR_CALC_GO MENU
 BEGIN
     POPUP "Go button"
     BEGIN
@@ -4071,7 +4077,7 @@ BEGIN
     END
 END
 
-IDR_BOOKMARKS_VALIDATE MENU 
+IDR_BOOKMARKS_VALIDATE MENU
 BEGIN
     POPUP "Validate button"
     BEGIN
@@ -4079,7 +4085,7 @@ BEGIN
     END
 END
 
-IDR_EXPL MENU 
+IDR_EXPL MENU
 BEGIN
     POPUP "Views button"
     BEGIN
@@ -4100,7 +4106,7 @@ END
 // Dialog
 //
 
-IDD_TIP DIALOG  0, 0, 231, 164
+IDD_TIP DIALOG 0, 0, 231, 164
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Tip of the Day"
 FONT 8, "MS Sans Serif"
@@ -4306,7 +4312,7 @@ BEGIN
     PUSHBUTTON      "Help",IDC_SCHEME_HELP,129,45,50,14,WS_GROUP
 END
 
-IDD_MACRO_MESSAGE DIALOG  0, 0, 165, 95
+IDD_MACRO_MESSAGE DIALOG 0, 0, 165, 95
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Message"
 FONT 8, "MS Sans Serif"
@@ -4376,7 +4382,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,232,164,48,14
 END
 
-IDD_BM_FIND DIALOG  0, 0, 164, 126
+IDD_BM_FIND DIALOG 0, 0, 164, 126
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Bookmark All"
 FONT 8, "MS Sans Serif"
@@ -4542,7 +4548,7 @@ BEGIN
     CTEXT           "These may be overridden  for individual fields.",IDC_STATIC,14,48,90,18
 END
 
-IDD_SAVE_TEMPLATE DIALOG  0, 0, 186, 106
+IDD_SAVE_TEMPLATE DIALOG 0, 0, 186, 106
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Save Template"
 FONT 8, "MS Sans Serif"
@@ -4955,7 +4961,7 @@ STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_VISIBLE
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CONTROL         "Custom1",IDC_GRID_DIFFS,"MFCGridCtrl",WS_GROUP | WS_TABSTOP,0,0,99,49,0
+    CONTROL         "Custom1",IDC_GRID_DIFFS,"MFCGridCtrl",WS_GROUP | WS_TABSTOP,0,0,99,49
 END
 
 
@@ -5115,7 +5121,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_CALC, DIALOG
     BEGIN

@@ -608,6 +608,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_ZLIB_COMPRESS, OnUpdateSelNZ)
 	ON_COMMAND(ID_ZLIB_DECOMPRESS, OnDecompress)
 	ON_UPDATE_COMMAND_UI(ID_ZLIB_DECOMPRESS, OnUpdateSelNZ)
+
 	ON_COMMAND(ID_MD5, OnMd5)
 	ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA1, OnSha1)
@@ -621,6 +622,15 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_SHA384, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA512, OnSha2_512)
 	ON_UPDATE_COMMAND_UI(ID_SHA512, OnUpdateByteNZ)
+
+	ON_COMMAND(ID_SHA3_224, OnSha3_224)
+	ON_UPDATE_COMMAND_UI(ID_SHA3_224, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA3_256, OnSha3_256)
+	ON_UPDATE_COMMAND_UI(ID_SHA3_256, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA3_384, OnSha3_384)
+	ON_UPDATE_COMMAND_UI(ID_SHA3_384, OnUpdateByteNZ)
+	ON_COMMAND(ID_SHA3_512, OnSha3_512)
+	ON_UPDATE_COMMAND_UI(ID_SHA3_512, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_UPPERCASE, OnUppercase)
 	ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
@@ -15248,30 +15258,50 @@ void CHexEditView::OnSha1()
 
 void CHexEditView::OnSha2_224()
 {
-//	DoDigest<boost::hashes::sha2<224> >("SHA-224", CHECKSUM_SHA224);
 	CryptoPP::SHA224 sha224;
 	DoDigest(&sha224, CHECKSUM_SHA224);
 }
 
 void CHexEditView::OnSha2_256()
 {
-//	DoDigest<boost::hashes::sha2<256> >("SHA-256", CHECKSUM_SHA256);
 	CryptoPP::SHA256 sha256;
 	DoDigest(&sha256, CHECKSUM_SHA256);
 }
 
 void CHexEditView::OnSha2_384()
 {
-//	DoDigest<boost::hashes::sha2<384> >("SHA-384", CHECKSUM_SHA384);
 	CryptoPP::SHA384 sha384;
 	DoDigest(&sha384, CHECKSUM_SHA384);
 }
 
 void CHexEditView::OnSha2_512()
 {
-//	DoDigest<boost::hashes::sha2<512> >("SHA-512", CHECKSUM_SHA512);
 	CryptoPP::SHA512 sha512;
 	DoDigest(&sha512, CHECKSUM_SHA512);
+}
+
+void CHexEditView::OnSha3_224()
+{
+	CryptoPP::SHA3_224 sha3_224;
+	DoDigest(&sha3_224, CHECKSUM_SHA3_224);
+}
+
+void CHexEditView::OnSha3_256()
+{
+	CryptoPP::SHA3_256 sha3_256;
+	DoDigest(&sha3_256, CHECKSUM_SHA3_256);
+}
+
+void CHexEditView::OnSha3_384()
+{
+	CryptoPP::SHA3_384 sha3_384;
+	DoDigest(&sha3_384, CHECKSUM_SHA3_384);
+}
+
+void CHexEditView::OnSha3_512()
+{
+	CryptoPP::SHA3_512 sha3_512;
+	DoDigest(&sha3_512, CHECKSUM_SHA3_512);
 }
 
 // Passes chunks of the current selection to the Crypto++ digest function by
@@ -15369,8 +15399,8 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 		CString mess;
 		mess.Format("%s\n\n"
 			"The calculator value has been set to the result of the %s calculation "
-			"which is %d bits in length and displayed in hex (radix 16).\n\n"
-			"%s", desc, desc, result_len * 8, ss);
+			"which is %d bits (%d bytes) in length and displayed in hex (radix 16).\n\n"
+			"%s", (const char *)desc, (const char *)desc, (int)(result_len * 8), (int)result_len, (const char *)ss);
 		CAvoidableDialog::Show(IDS_DIGEST, mess);
 	}
 

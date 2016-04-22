@@ -135,6 +135,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 
 #pragma warning(push)
 #pragma warning(disable: 4293)  // avoid bogus overflow warning
+#pragma warning(disable: 4800)  // avoid performance warning
 #include <boost/crc.hpp>        // For CRCs
 #pragma warning(pop)
 #include <boost/random/mersenne_twister.hpp>

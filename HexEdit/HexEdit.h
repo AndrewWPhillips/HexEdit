@@ -719,6 +719,8 @@ public:
 	  BOOL bg_stats_crc32_;             // Do CRC32 as well
 	  BOOL bg_stats_md5_;               // Do MD5 as well
 	  BOOL bg_stats_sha1_;              // Do SHA1 as well
+	  BOOL bg_stats_sha256_;            // Do SHA2-256 as well
+	  BOOL bg_stats_sha512_;            // Do SHA2-512 as well
 	BOOL bg_exclude_network_;           // Don't do background search/stats for files on network drives
 	BOOL bg_exclude_removeable_;        // Don't do background search/stats for files on removeable media
 	BOOL bg_exclude_optical_;           // Don't do background search/stats for files on CD, DVD

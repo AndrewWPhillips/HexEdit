@@ -12,6 +12,13 @@
 #include "HexEditDoc.h"
 #include "md5.h"
 #include "sha1.h"
+#pragma warning(push)                      // we need to save an restore warnings because Crypto++ headers muck with some
+#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5
+#include "include/Crypto++/cryptlib.h"
+#include "include/Crypto++/md5.h"
+#include "include/Crypto++/sha.h"
+#include "include/Crypto++/sha3.h"
+#pragma warning(pop)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -145,6 +152,42 @@ int CHexEditDoc::GetSha1(unsigned char buf[20])
 		return -2;         // stats calcs in progress
 
 	memcpy(buf, sha1_, sizeof(sha1_));
+	return 0;
+}
+
+int CHexEditDoc::GetSha256(unsigned char buf[32])
+{
+	if (!CanDoStats() || pthread5_ == NULL)
+		return -4;         // stats not done on this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (!theApp.bg_stats_sha256_)
+		return -1;
+
+	if (!stats_fin_)
+		return -2;         // stats calcs in progress
+
+	memcpy(buf, sha256_, sizeof(sha256_));
+	return 0;
+}
+
+int CHexEditDoc::GetSha512(unsigned char buf[64])
+{
+	if (!CanDoStats() || pthread5_ == NULL)
+		return -4;         // stats not done on this file
+
+	// Protect access to shared data
+	CSingleLock sl(&docdata_, TRUE);
+
+	if (!theApp.bg_stats_sha512_)
+		return -1;
+
+	if (!stats_fin_)
+		return -2;         // stats calcs in progress
+
+	memcpy(buf, sha512_, sizeof(sha512_));
 	return 0;
 }
 
@@ -372,7 +415,9 @@ UINT CHexEditDoc::RunStatsThread()
 		FILE_ADDRESS file_len = length_;
 		BOOL do_crc32 = theApp.bg_stats_crc32_;
 		BOOL do_md5   = theApp.bg_stats_md5_;
-		BOOL do_sha1  = theApp.bg_stats_sha1_;
+		BOOL do_sha1 = theApp.bg_stats_sha1_;
+		BOOL do_sha256 = theApp.bg_stats_sha256_;
+		BOOL do_sha512 = theApp.bg_stats_sha512_;
 		docdata_.Unlock();
 
 		FILE_ADDRESS addr = 0;
@@ -380,6 +425,8 @@ UINT CHexEditDoc::RunStatsThread()
 
 		struct MD5Context md5_ctx;
 		sha1_context sha1_ctx;
+		CryptoPP::SHA256 sha256;
+		CryptoPP::SHA512 sha512;
 
 		const size_t buf_size = 16384;
 		ASSERT(stats_buf_ == NULL && c32_ == NULL && c64_ == NULL);
@@ -400,19 +447,25 @@ UINT CHexEditDoc::RunStatsThread()
 		if (do_crc32)
 			hcrc32 = crc_32_init();
 
-		// Init MD5
+		// Init digests (MD5, SHA1, etc)
 		if (do_md5)
 			MD5Init(&md5_ctx);
-
-		// Init SHA1
 		if (do_sha1)
 			sha1_starts(&sha1_ctx);
+		// For Crypto++ digests (SHA256 etc) we don't need to init anything (ctor/Final/Restart will init. for us).
 
 		// Scan all the data blocks of the file
 		for (;;)
 		{
 			if (StatsProcessStop())
+			{
+				// Reset the calcs if we don't call Final()
+				if (do_sha256)
+					sha256.Restart();
+				if (do_sha512)
+					sha512.Restart();
 				break;
+			}
 
 			size_t got;
 
@@ -433,14 +486,17 @@ UINT CHexEditDoc::RunStatsThread()
 						count_[ii] = c64_[ii];
 				}
 
+				// Get results of any digests to be calculated
 				if (do_crc32)
 					crc32_ = crc_32_final(hcrc32);
-
 				if (do_md5)
 					MD5Final(md5_, &md5_ctx);
-
 				if (do_sha1)
 					sha1_finish(&sha1_ctx, sha1_);
+				if (do_sha256)
+					sha256.Final(sha256_);
+				if (do_sha512)
+					sha512.Final(sha512_);
 #ifdef _DEBUG
 				__int64 total_count = 0;
 				for (int ii = 0; ii < 256; ++ii)
@@ -473,13 +529,15 @@ UINT CHexEditDoc::RunStatsThread()
 			if (do_crc32)
 				crc_32_update(hcrc32, stats_buf_, got);
 
-			// Do MD5
+			// Update any digests (MD5, SHA1, etc) being calculated
 			if (do_md5)
 				MD5Update(&md5_ctx, stats_buf_, got);
-
-			// Do SHA1
 			if (do_sha1)
 				sha1_update(&sha1_ctx, stats_buf_, got);
+			if (do_sha256)
+				sha256.Update(stats_buf_, got);
+			if (do_sha512)
+				sha512.Update(stats_buf_, got);
 
 			addr += got;
 			{

@@ -782,6 +782,8 @@ public:
 	int GetCRC32(unsigned long & crc32);     // returns -1, -2, -4, or 0 if CRC32 is passed bask in ref param
 	int GetMd5(unsigned char buf[16]);       // returns -1, -2, -4, or 0 if MD5 is passed back in buf
 	int GetSha1(unsigned char buf[20]);      // returns -1, -2, -4, or 0 if SHA1 is passed back in buf
+	int GetSha256(unsigned char buf[32]);    // returns -1, -2, -4, or 0 if SHA1 is passed back in buf
+	int GetSha512(unsigned char buf[64]);    // returns -1, -2, -4, or 0 if SHA1 is passed back in buf
 
 	// DFFD stuff
 	enum
@@ -1092,6 +1094,8 @@ private:
 	unsigned long  crc32_;      // CRC32 if theApp.bg_stats_crc32_ is TRUE
 	unsigned char md5_[16];     // MD5 message digest if theApp.bg_stats_md5_ == TRUE
 	unsigned char sha1_[20];    // SHA1 message digest if theApp.bg_stats_sha1_ == TRUE
+	unsigned char sha256_[32];  // SHA2-256 message digest if theApp.bg_stats_sha256_ == TRUE
+	unsigned char sha512_[64];  // SHA2-512 message digest if theApp.bg_stats_sha512_ == TRUE
 
 	// -------------- template (DFFD) (see Template.cpp) ----------------
 	// Each df_size_ gives the size of a data field or whole array/structure.  If -ve take abs value.

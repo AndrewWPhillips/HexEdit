@@ -146,9 +146,11 @@ void COptSheet::init(int display_page, BOOL must_show_page)
 	val_.undo_limit_ = 4;
 	val_.bg_search_ = TRUE;
 	val_.bg_stats_ = FALSE;
-	val_.bg_stats_crc32_ = FALSE;
-	val_.bg_stats_md5_ = FALSE;
-	val_.bg_stats_sha1_ = FALSE;
+	val_.bg_stats_crc32_ = TRUE;
+	val_.bg_stats_md5_ = TRUE;
+	val_.bg_stats_sha1_ = TRUE;
+	val_.bg_stats_sha256_ = FALSE;
+	val_.bg_stats_sha512_ = FALSE;
 	val_.bg_exclude_network_ = TRUE;
 	val_.bg_exclude_removeable_ = FALSE;
 	val_.bg_exclude_optical_ = TRUE;
@@ -1542,6 +1544,11 @@ void CBackgroundPage::DoDataExchange(CDataExchange* pDX)
 	COptPage::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_BG_SEARCH, pParent->val_.bg_search_);
 	DDX_Check(pDX, IDC_BG_STATS, pParent->val_.bg_stats_);
+	DDX_Check(pDX, IDC_BG_STATS_CRC32, pParent->val_.bg_stats_crc32_);
+	DDX_Check(pDX, IDC_BG_STATS_MD5, pParent->val_.bg_stats_md5_);
+	DDX_Check(pDX, IDC_BG_STATS_SHA1, pParent->val_.bg_stats_sha1_);
+	DDX_Check(pDX, IDC_BG_STATS_SHA256, pParent->val_.bg_stats_sha256_);
+	DDX_Check(pDX, IDC_BG_STATS_SHA512, pParent->val_.bg_stats_sha512_);
 	DDX_Check(pDX, IDC_BG_NETWORK, pParent->val_.bg_exclude_network_);
 	DDX_Check(pDX, IDC_BG_OPTICAL, pParent->val_.bg_exclude_optical_);
 	DDX_Check(pDX, IDC_BG_REMOVEABLE, pParent->val_.bg_exclude_removeable_);
@@ -1553,6 +1560,11 @@ BEGIN_MESSAGE_MAP(CBackgroundPage, COptPage)
 	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_BG_SEARCH, OnChangeBackground)
 	ON_BN_CLICKED(IDC_BG_STATS, OnChangeBackground)
+	ON_BN_CLICKED(IDC_BG_STATS_CRC32, OnChange)
+	ON_BN_CLICKED(IDC_BG_STATS_MD5, OnChange)
+	ON_BN_CLICKED(IDC_BG_STATS_SHA1, OnChange)
+	ON_BN_CLICKED(IDC_BG_STATS_SHA256, OnChange)
+	ON_BN_CLICKED(IDC_BG_STATS_SHA512, OnChange)
 	ON_BN_CLICKED(IDC_BG_NETWORK, OnChange)
 	ON_BN_CLICKED(IDC_BG_OPTICAL, OnChange)
 	ON_BN_CLICKED(IDC_BG_REMOVEABLE, OnChange)
@@ -1561,6 +1573,17 @@ END_MESSAGE_MAP()
 
 void CBackgroundPage::fix_controls()
 {
+	ASSERT(GetDlgItem(IDC_BG_STATS_CRC32) != NULL);
+	GetDlgItem(IDC_BG_STATS_CRC32)->EnableWindow(pParent->val_.bg_stats_);
+	ASSERT(GetDlgItem(IDC_BG_STATS_MD5) != NULL);
+	GetDlgItem(IDC_BG_STATS_MD5)->EnableWindow(pParent->val_.bg_stats_);
+	ASSERT(GetDlgItem(IDC_BG_STATS_SHA1) != NULL);
+	GetDlgItem(IDC_BG_STATS_SHA1)->EnableWindow(pParent->val_.bg_stats_);
+	ASSERT(GetDlgItem(IDC_BG_STATS_SHA256) != NULL);
+	GetDlgItem(IDC_BG_STATS_SHA256)->EnableWindow(pParent->val_.bg_stats_);
+	ASSERT(GetDlgItem(IDC_BG_STATS_SHA512) != NULL);
+	GetDlgItem(IDC_BG_STATS_SHA512)->EnableWindow(pParent->val_.bg_stats_);
+
 	// If either bg search or stats are on then we can enable all the "exclude" check boxes
 	bool enable = pParent->val_.bg_search_ || pParent->val_.bg_stats_;
 

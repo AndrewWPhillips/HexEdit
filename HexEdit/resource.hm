@@ -40,6 +40,11 @@
 #define HIDC_BG_REMOVEABLE              0x81b8041c    // IDD_OPT_BACKGROUND [English (United States)]
 #define HIDC_BG_SEARCH                  0x81b80419    // IDD_OPT_BACKGROUND [English (United States)]
 #define HIDC_BG_STATS                   0x81b8041a    // IDD_OPT_BACKGROUND [English (United States)]
+#define HIDC_BG_STATS_CRC32             0x81b8041f    // IDD_OPT_BACKGROUND [English (United States)]
+#define HIDC_BG_STATS_MD5               0x81b80420    // IDD_OPT_BACKGROUND [English (United States)]
+#define HIDC_BG_STATS_SHA1              0x81b80421    // IDD_OPT_BACKGROUND [English (United States)]
+#define HIDC_BG_STATS_SHA256            0x81b80422    // IDD_OPT_BACKGROUND [English (United States)]
+#define HIDC_BG_STATS_SHA512            0x81b80423    // IDD_OPT_BACKGROUND [English (United States)]
 #define HIDC_BIG_ENDIAN                 0x80a30469    // IDD_PROP_DECIMAL [English (United States)]
 #define HIDC_BIG_ENDIAN_FILE_ACCESS     0x8075048c    // IDD_CALC
 #define HIDC_BINARY                     0x807503ec    // IDD_CALC
@@ -217,7 +222,6 @@
 #define HIDC_DISPLAY_TEMPLATE           0x8137069a    // IDD_OPT_WINGENERAL [English (United States)]
 #define HIDC_DISP_RESET                 0x813704c3    // IDD_OPT_WINGENERAL [English (United States)]
 #define HIDC_DIVIDE                     0x80750426    // IDD_CALC
-#define HIDC_DLG_DOCK                   0x819a0418    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_DLG_MOVE                   0x819a0419    // IDD_OPT_WORKLAYOUT [English (United States)]
 #define HIDC_DOC_PAGE                   0x80eb0622    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_DOWN                       0x80e60472    // IDD_OPT_COLOURS [English (United States)]
@@ -507,6 +511,8 @@
 #define HIDC_STATS_CRC32                0x820d066c    // IDD_PROP_STATS [English (United States)]
 #define HIDC_STATS_MD5                  0x820d066d    // IDD_PROP_STATS [English (United States)]
 #define HIDC_STATS_SHA1                 0x820d066e    // IDD_PROP_STATS [English (United States)]
+#define HIDC_STATS_SHA256               0x820d066e    // IDD_PROP_STATS [English (United States)]
+#define HIDC_STATS_SHA512               0x820d066e    // IDD_PROP_STATS [English (United States)]
 #define HIDC_SUBJECT                    0x80e50435    // IDD_EMAIL
 #define HIDC_SUBTRACT                   0x80750428    // IDD_CALC
 #define HIDC_SYNC_TREE                  0x81ff0688    // IDD_OPT_EXPLORER [English (United States)]
