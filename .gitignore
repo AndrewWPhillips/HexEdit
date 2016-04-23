@@ -3,5 +3,6 @@
 HexEdit/Release/
 HexEdit/Output/
 HexEdit/Debug/
-HexEdit/Videos/
 HexEdit/ipch/
+HexEdit/videos/*.avi
+HexEdit/Videos/Work/
