@@ -184,9 +184,6 @@
     <ClCompile Include="MainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="md5.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -227,9 +224,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScrView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleGraph.cpp">
@@ -953,9 +947,6 @@
     <ClInclude Include="MainFrm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="md5.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1011,9 +1002,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScrView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sha1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleGraph.h">

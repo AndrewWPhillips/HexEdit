@@ -213,12 +213,6 @@
     <ClCompile Include="HexViewDraw.cpp" />
     <ClCompile Include="IntelHex.cpp" />
     <ClCompile Include="MainFrm.cpp" />
-    <ClCompile Include="md5.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Misc.cpp" />
     <ClCompile Include="NavManager.cpp" />
     <ClCompile Include="NewCompare.cpp" />
@@ -236,10 +230,6 @@
     <ClCompile Include="ResizeCtrl.cpp" />
     <ClCompile Include="SaveDffd.cpp" />
     <ClCompile Include="ScrView.cpp" />
-    <ClCompile Include="sha1.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="SimpleGraph.cpp" />
     <ClCompile Include="SimpleSplitter.cpp" />
     <ClCompile Include="SpecialList.cpp" />
@@ -564,7 +554,6 @@
     <ClInclude Include="include\mpirxx.h" />
     <ClInclude Include="IntelHex.h" />
     <ClInclude Include="MainFrm.h" />
-    <ClInclude Include="md5.h" />
     <ClInclude Include="Misc.h" />
     <ClInclude Include="NavManager.h" />
     <ClInclude Include="NewCompare.h" />
@@ -586,7 +575,6 @@
     <ClInclude Include="SaveDffd.h" />
     <ClInclude Include="Scheme.h" />
     <ClInclude Include="ScrView.h" />
-    <ClInclude Include="sha1.h" />
     <ClInclude Include="SimpleGraph.h" />
     <ClInclude Include="SimpleSplitter.h" />
     <ClInclude Include="SpecialList.h" />

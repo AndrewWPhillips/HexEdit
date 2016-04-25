@@ -1,6 +1,6 @@
 // BGStats.cpp : statistics scan in background thread (part of CHexEditDoc)
 //
-// Copyright (c) 2015 by Andrew W. Phillips.
+// Copyright (c) 2016 by Andrew W. Phillips.
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.
@@ -10,15 +10,12 @@
 #include "stdafx.h"
 #include "HexEdit.h"
 #include "HexEditDoc.h"
-#include "md5.h"
-#include "sha1.h"
-#pragma warning(push)                      // we need to save an restore warnings because Crypto++ headers muck with some
+
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5
 #include "include/Crypto++/cryptlib.h"
 #include "include/Crypto++/md5.h"
 #include "include/Crypto++/sha.h"
 #include "include/Crypto++/sha3.h"
-#pragma warning(pop)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -420,14 +417,6 @@ UINT CHexEditDoc::RunStatsThread()
 		BOOL do_sha512 = theApp.bg_stats_sha512_;
 		docdata_.Unlock();
 
-		FILE_ADDRESS addr = 0;
-		void * hcrc32 = NULL;
-
-		struct MD5Context md5_ctx;
-		sha1_context sha1_ctx;
-		CryptoPP::SHA256 sha256;
-		CryptoPP::SHA512 sha512;
-
 		const size_t buf_size = 16384;
 		ASSERT(stats_buf_ == NULL && c32_ == NULL && c64_ == NULL);
 		stats_buf_ = new unsigned char[buf_size];
@@ -443,23 +432,31 @@ UINT CHexEditDoc::RunStatsThread()
 			memset(c64_, '\0', 256*sizeof(*c64_));
 		}
 
-		// Init CRC
+		FILE_ADDRESS addr = 0;
+		void * hcrc32 = NULL;
+
+		CryptoPP::Weak1::MD5 md5;
+		CryptoPP::SHA1 sha1;
+		CryptoPP::SHA256 sha256;
+		CryptoPP::SHA512 sha512;
+
+		// Initialise checksum/digest calcs
 		if (do_crc32)
 			hcrc32 = crc_32_init();
-
-		// Init digests (MD5, SHA1, etc)
-		if (do_md5)
-			MD5Init(&md5_ctx);
-		if (do_sha1)
-			sha1_starts(&sha1_ctx);
-		// For Crypto++ digests (SHA256 etc) we don't need to init anything (ctor/Final/Restart will init. for us).
+		// Note: digest init. (MD5, etc) no longer necessary with Crypto++ (init done in c'tor)
 
 		// Scan all the data blocks of the file
 		for (;;)
 		{
 			if (StatsProcessStop())
 			{
-				// Reset the calcs if we don't call Final()
+				// Terminated early so reset the calcs
+				if (do_crc32)
+					(void)crc_32_final(hcrc32);
+				if (do_md5)
+					md5.Restart();
+				if (do_sha1)
+					sha1.Restart();
 				if (do_sha256)
 					sha256.Restart();
 				if (do_sha512)
@@ -490,9 +487,9 @@ UINT CHexEditDoc::RunStatsThread()
 				if (do_crc32)
 					crc32_ = crc_32_final(hcrc32);
 				if (do_md5)
-					MD5Final(md5_, &md5_ctx);
+					md5.Final(md5_);
 				if (do_sha1)
-					sha1_finish(&sha1_ctx, sha1_);
+					sha1.Final(sha1_);
 				if (do_sha256)
 					sha256.Final(sha256_);
 				if (do_sha512)
@@ -531,9 +528,9 @@ UINT CHexEditDoc::RunStatsThread()
 
 			// Update any digests (MD5, SHA1, etc) being calculated
 			if (do_md5)
-				MD5Update(&md5_ctx, stats_buf_, got);
+				md5.Update(stats_buf_, got);
 			if (do_sha1)
-				sha1_update(&sha1_ctx, stats_buf_, got);
+				sha1.Update(stats_buf_, got);
 			if (do_sha256)
 				sha256.Update(stats_buf_, got);
 			if (do_sha512)

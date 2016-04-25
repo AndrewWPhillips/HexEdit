@@ -492,7 +492,7 @@ BOOL CHexEditApp::InitInstance()
 		if (hwnd_1st_ != (HWND)0 && one_only_)
 		{
 #ifdef _DEBUG
-			AfxMessageBox("xxx ALREADY STARTED");
+			AfxMessageBox("HexEdit ALREADY RUNNING!");
 #endif
 			// Make sure it's on top and not minimised before opening files in it
 			::BringWindowToTop(hwnd_1st_);
@@ -2156,13 +2156,11 @@ void CHexEditApp::LoadOptions()
 
 	bg_search_ = GetProfileInt("Options", "BackgroundSearch", 1) ? TRUE : FALSE;
 	bg_stats_ = GetProfileInt("Options", "BackgroundStats", 0) ? TRUE : FALSE;
-	bg_stats_crc32_ = GetProfileInt("Options", "BackgroundStatsCRC32", 0) ? TRUE : FALSE;
-	bg_stats_md5_ = GetProfileInt("Options", "BackgroundStatsMD5", 0) ? TRUE : FALSE;
-	bg_stats_sha1_ = GetProfileInt("Options", "BackgroundStatsSHA1", 0) ? TRUE : FALSE;
+	bg_stats_crc32_ = GetProfileInt("Options", "BackgroundStatsCRC32", 1) ? TRUE : FALSE;
+	bg_stats_md5_ = GetProfileInt("Options", "BackgroundStatsMD5", 1) ? TRUE : FALSE;
+	bg_stats_sha1_ = GetProfileInt("Options", "BackgroundStatsSHA1", 1) ? TRUE : FALSE;
 	bg_stats_sha256_ = GetProfileInt("Options", "BackgroundStatsSHA256", 0) ? TRUE : FALSE;
 	bg_stats_sha512_ = GetProfileInt("Options", "BackgroundStatsSHA512", 0) ? TRUE : FALSE;
-// xxx always turn these on until we have checkboxes in the Options dialog for them
-bg_stats_crc32_ = bg_stats_md5_ = bg_stats_sha1_ = bg_stats_sha256_ = bg_stats_sha512_ = TRUE;
 
 	bg_exclude_network_ = GetProfileInt("Options", "BackgroundExcludeNetwork", 1) ? TRUE : FALSE;
 	bg_exclude_removeable_ = GetProfileInt("Options", "BackgroundExcludeRemoveable", 0) ? TRUE : FALSE;
