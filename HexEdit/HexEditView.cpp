@@ -41,7 +41,7 @@
 #include "include/Crypto++/md5.h"
 #include "include/Crypto++/sha.h"
 #include "include/Crypto++/sha3.h"
-#define CRYPTOPP_CRC32
+//#define CRYPTOPP_CRC32
 #ifdef CRYPTOPP_CRC32
 #include "include/Crypto++/crc.h"
 #endif
@@ -611,27 +611,17 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_ZLIB_DECOMPRESS, OnUpdateSelNZ)
 
 	ON_COMMAND(ID_MD5, OnMd5)
-	ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA1, OnSha1)
-	ON_UPDATE_COMMAND_UI(ID_SHA1, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_SHA224, OnSha2_224)
-	ON_UPDATE_COMMAND_UI(ID_SHA224, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA256, OnSha2_256)
-	ON_UPDATE_COMMAND_UI(ID_SHA256, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA384, OnSha2_384)
-	ON_UPDATE_COMMAND_UI(ID_SHA384, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA512, OnSha2_512)
-	ON_UPDATE_COMMAND_UI(ID_SHA512, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_SHA3_224, OnSha3_224)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_224, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA3_256, OnSha3_256)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_256, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA3_384, OnSha3_384)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_384, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA3_512, OnSha3_512)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_512, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_UPPERCASE, OnUppercase)
 	ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
@@ -15113,14 +15103,7 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
 	GetSelAddr(start_addr, end_addr);
 
-	if (start_addr >= end_addr)
-	{
-		// No selection, presumably in macro playback
-		ASSERT(theApp.playing_);
-		TaskMessageBox("No Selection", "There is no selection to calculate " + desc);
-		theApp.mac_error_ = 10;
-		return;
-	}
+	ASSERT(start_addr <= end_addr);   // We now allow calc of digest on empty selection
 	ASSERT(start_addr < GetDocument()->length());
 
 	// Get a buffer - fairly large for efficiency
@@ -15200,10 +15183,14 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 		// Display the result in an (avoidable) dialog
 		AddSpaces(ss);
 		CString mess;
-		mess.Format("%s\n\n"
+		mess.Format("%s %s\n\n"
 			"The calculator value has been set to the result of the %s calculation "
 			"which is %d bits (%d bytes) in length and displayed in hex (radix 16).\n\n"
-			"%s", (const char *)desc, (const char *)desc, (int)(result_len * 8), (int)result_len, (const char *)ss);
+			"%s", 
+			(const char *)desc, start_addr == end_addr ? "(zero length input)" : "",
+			(const char *)desc, 
+			(int)(result_len * 8), (int)result_len, 
+			(const char *)ss);
 		CAvoidableDialog::Show(IDS_DIGEST, mess);
 	}
 
