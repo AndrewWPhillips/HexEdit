@@ -544,6 +544,7 @@
     <ClInclude Include="HexEditView.h" />
     <ClInclude Include="HexFileList.h" />
     <ClInclude Include="HexPrintDialog.h" />
+    <ClInclude Include="include\Crypto++\crc.h" />
     <ClInclude Include="include\Crypto++\cryptlib.h" />
     <ClInclude Include="include\Crypto++\md5.h" />
     <ClInclude Include="include\Crypto++\sha.h" />

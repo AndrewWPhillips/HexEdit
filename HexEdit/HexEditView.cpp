@@ -41,6 +41,10 @@
 #include "include/Crypto++/md5.h"
 #include "include/Crypto++/sha.h"
 #include "include/Crypto++/sha3.h"
+#define CRYPTOPP_CRC32
+#ifdef CRYPTOPP_CRC32
+#include "include/Crypto++/crc.h"
+#endif
 #pragma warning(pop)
 
 #include "Bin2Src.h"      // For formatted clipboard text
@@ -14803,6 +14807,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	default:
 		ASSERT(0);
 	}
+
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 	{
 		// Get the next buffer full from the document
@@ -14876,6 +14881,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 
 		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 	}
+
 	switch (op)
 	{
 	case CHECKSUM_CRC16:
@@ -14978,10 +14984,18 @@ void CHexEditView::OnCrcXmodem()
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_XMODEM, "CRC XMODEM");
 }
 
+#ifdef CRYPTOPP_CRC32
+void CHexEditView::OnCrc32()
+{
+	CryptoPP::CRC32 crc32;
+	DoDigest(&crc32, CHECKSUM_CRC32);
+}
+#else
 void CHexEditView::OnCrc32()
 {
 	DoChecksum<DWORD>(this, CHECKSUM_CRC32, "CRC 32");
 }
+#endif
 
 void CHexEditView::OnCrc32Mpeg2()
 {
@@ -15123,6 +15137,9 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	}
 	ASSERT(buf != NULL);
 
+	//CString qqq; // TBD: remove timing test
+	//timer tqqq(true);
+
 	// Process the selection in "buflen" chunks
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 	{
@@ -15149,6 +15166,10 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	size_t result_len = digest->DigestSize();   // size of the digest in bytes
 	byte * result = new byte[result_len];
 	digest->Final(result);
+
+	//tqqq.stop();
+	//qqq.Format("Elapsed %f", (double)tqqq.elapsed());
+	//AfxMessageBox(qqq);
 
 	mm->Progress(-1);  // disable progress bar
 

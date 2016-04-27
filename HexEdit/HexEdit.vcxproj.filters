@@ -1187,5 +1187,8 @@
     <ClInclude Include="include\Crypto++\sha3.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
+    <ClInclude Include="include\Crypto++\crc.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
