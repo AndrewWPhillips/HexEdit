@@ -1390,7 +1390,31 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				}
 				break;
 
-
+			case km_transform:
+				switch ((*pk).v64)
+				{
+				case TRANSFORM_BASE32_ENCODER:
+					pv_->OnBase32Encode();
+					break;
+				case TRANSFORM_BASE32_DECODER:
+					pv_->OnBase32Decode();
+					break;
+				case TRANSFORM_BASE64_ENCODER:
+					pv_->OnBase64Encode();
+					break;
+				case TRANSFORM_BASE64_DECODER:
+					pv_->OnBase64Decode();
+					break;
+				case TRANSFORM_BASE64URL_ENCODER:
+					pv_->OnBase64UrlEncode();
+					break;
+				case TRANSFORM_BASE64URL_DECODER:
+					pv_->OnBase64UrlDecode();
+					break;
+				default:
+					ASSERT(0);   // unhandled transform type
+				}
+				break;
 			// Old macros commands - leave for now, so that old macro files still work
 			case km_invert:
 				pv_->OnInvert();

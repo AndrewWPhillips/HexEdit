@@ -847,6 +847,13 @@ public:
 
 	void DoTransform(CryptoPP::BufferedTransformation *pTrx, int transform_type, CString strDesc, double mem_factor = 1.0);
 
+	afx_msg void OnBase32Encode();
+	afx_msg void OnBase32Decode();
+	afx_msg void OnBase64Encode();
+	afx_msg void OnBase64Decode();
+	afx_msg void OnBase64UrlEncode();
+	afx_msg void OnBase64UrlDecode();
+
 	DECLARE_MESSAGE_MAP()
 
 public:

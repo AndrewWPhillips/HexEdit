@@ -303,7 +303,7 @@ enum km_type
 	km_fav,                     // toggle favourites category
 
 	// Added in 5.0
-	km_transform,               // trandformation using Crypto++ (encryption etc)
+	km_transform,               // trandformation using Crypto++ (see enum transform_type)
 
 	km_last // = 246?           // Keep at end
 
@@ -371,10 +371,16 @@ enum checksum_type  // used with km_checksum
 };
 
 // Note: Don't change these values to ensure forward compatibility of macros
-enum transform_type
+enum transform_type  // used with km_transform
 {
 	TRANSFORM_ERROR = 0,
 
+	TRANSFORM_BASE32_ENCODER = 200,
+	TRANSFORM_BASE32_DECODER,
+	TRANSFORM_BASE64_ENCODER,
+	TRANSFORM_BASE64_DECODER,
+	TRANSFORM_BASE64URL_ENCODER,   // base64 using web safe characters
+	TRANSFORM_BASE64URL_DECODER,
 };
 
 struct mouse_sel

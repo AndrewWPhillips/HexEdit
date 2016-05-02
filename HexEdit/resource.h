@@ -1814,6 +1814,12 @@
 #define ID_PREVW_BG_WHITE               39219
 #define ID_PREVW_BG_BLACK               39220
 #define ID_PREVW_BG_GREY                39221
+#define ID_BASE32ENCODE                 39230
+#define ID_BASE32DECODE                 39231
+#define ID_BASE64ENCODE                 39232
+#define ID_BASE64DECODE                 39233
+#define ID_BASE64URLENCODE              39234
+#define ID_BASE64URLDECODE              39235
 #define IDS_WARNING_DO_NOT_RENUMBER     52700
 #define IDS_BOOKMARK_NOFILE             52701
 #define IDS_BOOKMARK_NOTFOUND           52702
@@ -1878,7 +1884,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
-#define _APS_NEXT_COMMAND_VALUE         39230
+#define _APS_NEXT_COMMAND_VALUE         39240
 #define _APS_NEXT_CONTROL_VALUE         1713
 #define _APS_NEXT_SYMED_VALUE           252
 #endif

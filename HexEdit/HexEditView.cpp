@@ -47,6 +47,8 @@
 #ifdef CRYPTOPP_CRC32
 #include "include/Crypto++/crc.h"
 #endif
+#include "include/Crypto++/base32.h"
+#include "include/Crypto++/base64.h"
 #pragma warning(pop)
 
 #include "Bin2Src.h"      // For formatted clipboard text
@@ -631,6 +633,19 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
 	ON_COMMAND(ID_LOWERCASE, OnLowercase)
 	ON_UPDATE_COMMAND_UI(ID_LOWERCASE, OnUpdateConvert)
+
+	ON_COMMAND(ID_BASE32ENCODE, OnBase32Encode)
+	ON_UPDATE_COMMAND_UI(ID_BASE32ENCODE, OnUpdateConvert)
+	ON_COMMAND(ID_BASE32DECODE, OnBase32Decode)
+	ON_UPDATE_COMMAND_UI(ID_BASE32DECODE, OnUpdateConvert)
+	ON_COMMAND(ID_BASE64ENCODE, OnBase64Encode)
+	ON_UPDATE_COMMAND_UI(ID_BASE64ENCODE, OnUpdateConvert)
+	ON_COMMAND(ID_BASE64DECODE, OnBase64Decode)
+	ON_UPDATE_COMMAND_UI(ID_BASE64DECODE, OnUpdateConvert)
+	ON_COMMAND(ID_BASE64URLENCODE, OnBase64UrlEncode)
+	ON_UPDATE_COMMAND_UI(ID_BASE64URLENCODE, OnUpdateConvert)
+	ON_COMMAND(ID_BASE64URLDECODE, OnBase64UrlDecode)
+	ON_UPDATE_COMMAND_UI(ID_BASE64URLDECODE, OnUpdateConvert)
 
 	ON_COMMAND(ID_DFFD_HIDE, OnDffdHide)
 	ON_UPDATE_COMMAND_UI(ID_DFFD_HIDE, OnUpdateDffdHide)
@@ -13355,6 +13370,42 @@ void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI)
 		pCmdUI->Enable(start_addr < end_addr);
 }
 
+void CHexEditView::OnBase32Encode()
+{
+	CryptoPP::Base32Encoder enc_b32;
+	DoTransform(&enc_b32, TRANSFORM_BASE32_ENCODER, "Base32 Encode", 8.0 / 5);
+}
+
+void CHexEditView::OnBase32Decode()
+{
+	CryptoPP::Base32Decoder dec_b32;
+	DoTransform(&dec_b32, TRANSFORM_BASE32_DECODER, "Base32 Decode", 5.0 / 8);
+}
+
+void CHexEditView::OnBase64Encode()
+{
+	CryptoPP::Base64Encoder enc_b64;
+	DoTransform(&enc_b64, TRANSFORM_BASE64_ENCODER, "Base64 Encode", 4.0 / 3);
+}
+
+void CHexEditView::OnBase64Decode()
+{
+	CryptoPP::Base64Decoder dec_b64;
+	DoTransform(&dec_b64, TRANSFORM_BASE64_DECODER, "Base64 Decode", 3.0 / 4);
+}
+
+void CHexEditView::OnBase64UrlEncode()
+{
+	CryptoPP::Base64URLEncoder enc_b64url;
+	DoTransform(&enc_b64url, TRANSFORM_BASE64URL_ENCODER, "Base64 URL Encode", 4.0 / 3);
+}
+
+void CHexEditView::OnBase64UrlDecode()
+{
+	CryptoPP::Base64URLDecoder dec_b64url;
+	DoTransform(&dec_b64url, TRANSFORM_BASE64URL_DECODER, "Base64 URL Decode", 3.0 / 4);
+}
+
 // Convert current selection based on a Crypto++ filter
 //  pTrx           = Crypto++ transformation
 //  transform_type = id so we can save the operation to a keystroke macro
@@ -13406,7 +13457,7 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 	size_t outlen = size_t(end_addr - start_addr);     // worst case size for output buffer
 
 	if (mem_factor == 1.0)
-		outlen += 512;
+		outlen += 512;                                 // Allow a bit extra (eg block encryptio may increase the length slightly)
 	else if (mem_factor > 0.0)
 		outlen = size_t(outlen * mem_factor);
 
@@ -13530,8 +13581,10 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 	}
 	else
 	{
+		ASSERT(!display_.overtype);     // can't have different length in OVR mode
+
 		// Delete the "old" block that is to be replaced
-		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+		// Note: this must be done before calling AddDataFile otherwise it will delete the temp file.
 		GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
 
 		if (outbuf == NULL)
@@ -13562,6 +13615,8 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 func_return:
 	mm->Progress(-1);  // disable progress bar
 
+	if (inbuf != NULL)
+		delete[] inbuf;
 	if (outbuf != NULL)
 		delete[] outbuf;
 	else if (temp_file[0] != '\0')
@@ -15342,9 +15397,6 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	}
 	ASSERT(buf != NULL);
 
-	//CString qqq; // TBD: remove timing test
-	//timer tqqq(true);
-
 	// Process the selection in "buflen" chunks
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 	{
@@ -15371,10 +15423,6 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	size_t result_len = digest->DigestSize();   // size of the digest in bytes
 	byte * result = new byte[result_len];
 	digest->Final(result);
-
-	//tqqq.stop();
-	//qqq.Format("Elapsed %f", (double)tqqq.elapsed());
-	//AfxMessageBox(qqq);
 
 	mm->Progress(-1);  // disable progress bar
 

@@ -570,6 +570,15 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "&Uppercase",                  ID_UPPERCASE
             MENUITEM "&Lowercase",                  ID_LOWERCASE
+            MENUITEM SEPARATOR
+            MENUITEM "Base 32 Encode",              ID_BASE32ENCODE
+            MENUITEM "Base 32 Decode",              ID_BASE32DECODE
+            MENUITEM SEPARATOR
+            MENUITEM "Base 64 Encode",              ID_BASE64ENCODE
+            MENUITEM "Base 64 Decode",              ID_BASE64DECODE
+            MENUITEM SEPARATOR
+            MENUITEM "Base 64 URL Encode",          ID_BASE64URLENCODE
+            MENUITEM "Base 64 URL Decode",          ID_BASE64URLDECODE
         END
         POPUP "Checksum"
         BEGIN
