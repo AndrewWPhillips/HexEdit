@@ -1,3 +1,4 @@
+!HexEdit/lib/*.lib
 *.opensdf
 *.sdf
 HexEdit/Release/

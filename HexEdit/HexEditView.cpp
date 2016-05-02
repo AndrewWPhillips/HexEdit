@@ -43,6 +43,10 @@
 #include "include/Crypto++/md5.h"
 #include "include/Crypto++/sha.h"
 #include "include/Crypto++/sha3.h"
+//#define CRYPTOPP_CRC32
+#ifdef CRYPTOPP_CRC32
+#include "include/Crypto++/crc.h"
+#endif
 #pragma warning(pop)
 
 #include "Bin2Src.h"      // For formatted clipboard text
@@ -611,27 +615,17 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 	ON_UPDATE_COMMAND_UI(ID_ZLIB_DECOMPRESS, OnUpdateSelNZ)
 
 	ON_COMMAND(ID_MD5, OnMd5)
-	ON_UPDATE_COMMAND_UI(ID_MD5, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA1, OnSha1)
-	ON_UPDATE_COMMAND_UI(ID_SHA1, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_SHA224, OnSha2_224)
-	ON_UPDATE_COMMAND_UI(ID_SHA224, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA256, OnSha2_256)
-	ON_UPDATE_COMMAND_UI(ID_SHA256, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA384, OnSha2_384)
-	ON_UPDATE_COMMAND_UI(ID_SHA384, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA512, OnSha2_512)
-	ON_UPDATE_COMMAND_UI(ID_SHA512, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_SHA3_224, OnSha3_224)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_224, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA3_256, OnSha3_256)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_256, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA3_384, OnSha3_384)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_384, OnUpdateByteNZ)
 	ON_COMMAND(ID_SHA3_512, OnSha3_512)
-	ON_UPDATE_COMMAND_UI(ID_SHA3_512, OnUpdateByteNZ)
 
 	ON_COMMAND(ID_UPPERCASE, OnUppercase)
 	ON_UPDATE_COMMAND_UI(ID_UPPERCASE, OnUpdateConvert)
@@ -15025,6 +15019,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 	default:
 		ASSERT(0);
 	}
+
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 	{
 		// Get the next buffer full from the document
@@ -15098,6 +15093,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 
 		mm->Progress(int(((curr - start_addr)*100)/(end_addr - start_addr)));
 	}
+
 	switch (op)
 	{
 	case CHECKSUM_CRC16:
@@ -15200,10 +15196,18 @@ void CHexEditView::OnCrcXmodem()
 	DoChecksum<unsigned short>(this, CHECKSUM_CRC_XMODEM, "CRC XMODEM");
 }
 
+#ifdef CRYPTOPP_CRC32
+void CHexEditView::OnCrc32()
+{
+	CryptoPP::CRC32 crc32;
+	DoDigest(&crc32, CHECKSUM_CRC32);
+}
+#else
 void CHexEditView::OnCrc32()
 {
 	DoChecksum<DWORD>(this, CHECKSUM_CRC32, "CRC 32");
 }
+#endif
 
 void CHexEditView::OnCrc32Mpeg2()
 {
@@ -15321,14 +15325,7 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
 	GetSelAddr(start_addr, end_addr);
 
-	if (start_addr >= end_addr)
-	{
-		// No selection, presumably in macro playback
-		ASSERT(theApp.playing_);
-		TaskMessageBox("No Selection", "There is no selection to calculate " + desc);
-		theApp.mac_error_ = 10;
-		return;
-	}
+	ASSERT(start_addr <= end_addr);   // We now allow calc of digest on empty selection
 	ASSERT(start_addr < GetDocument()->length());
 
 	// Get a buffer - fairly large for efficiency
@@ -15344,6 +15341,9 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 		return;
 	}
 	ASSERT(buf != NULL);
+
+	//CString qqq; // TBD: remove timing test
+	//timer tqqq(true);
 
 	// Process the selection in "buflen" chunks
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
@@ -15371,6 +15371,10 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 	size_t result_len = digest->DigestSize();   // size of the digest in bytes
 	byte * result = new byte[result_len];
 	digest->Final(result);
+
+	//tqqq.stop();
+	//qqq.Format("Elapsed %f", (double)tqqq.elapsed());
+	//AfxMessageBox(qqq);
 
 	mm->Progress(-1);  // disable progress bar
 
@@ -15401,10 +15405,14 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 		// Display the result in an (avoidable) dialog
 		AddSpaces(ss);
 		CString mess;
-		mess.Format("%s\n\n"
+		mess.Format("%s %s\n\n"
 			"The calculator value has been set to the result of the %s calculation "
 			"which is %d bits (%d bytes) in length and displayed in hex (radix 16).\n\n"
-			"%s", (const char *)desc, (const char *)desc, (int)(result_len * 8), (int)result_len, (const char *)ss);
+			"%s", 
+			(const char *)desc, start_addr == end_addr ? "(zero length input)" : "",
+			(const char *)desc, 
+			(int)(result_len * 8), (int)result_len, 
+			(const char *)ss);
 		CAvoidableDialog::Show(IDS_DIGEST, mess);
 	}
 
