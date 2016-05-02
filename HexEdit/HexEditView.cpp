@@ -13385,25 +13385,25 @@ void CHexEditView::OnBase32Decode()
 void CHexEditView::OnBase64Encode()
 {
 	CryptoPP::Base64Encoder enc_b64;
-	DoTransform(&enc_b64, TRANSFORM_BASE64_ENCODER, "Base64 Encode", 4.0 / 3);
+	DoTransform(&enc_b64, TRANSFORM_BASE64_ENCODER, "Base64 Encode", 1.3519);   // 1.3519 allows for a new line every 72 chars of output (w/o that it would be just 1.3333)
 }
 
 void CHexEditView::OnBase64Decode()
 {
 	CryptoPP::Base64Decoder dec_b64;
-	DoTransform(&dec_b64, TRANSFORM_BASE64_DECODER, "Base64 Decode", 3.0 / 4);
+	DoTransform(&dec_b64, TRANSFORM_BASE64_DECODER, "Base64 Decode", 6.0 / 8);
 }
 
 void CHexEditView::OnBase64UrlEncode()
 {
 	CryptoPP::Base64URLEncoder enc_b64url;
-	DoTransform(&enc_b64url, TRANSFORM_BASE64URL_ENCODER, "Base64 URL Encode", 4.0 / 3);
+	DoTransform(&enc_b64url, TRANSFORM_BASE64URL_ENCODER, "Base64 URL Encode", 1.3519);
 }
 
 void CHexEditView::OnBase64UrlDecode()
 {
 	CryptoPP::Base64URLDecoder dec_b64url;
-	DoTransform(&dec_b64url, TRANSFORM_BASE64URL_DECODER, "Base64 URL Decode", 3.0 / 4);
+	DoTransform(&dec_b64url, TRANSFORM_BASE64URL_DECODER, "Base64 URL Decode", 6.0 / 8);
 }
 
 // Convert current selection based on a Crypto++ filter
@@ -13456,10 +13456,8 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 	unsigned char *outbuf = NULL;                      // buffer used if transformed bytes are stored in memory
 	size_t outlen = size_t(end_addr - start_addr);     // worst case size for output buffer
 
-	if (mem_factor == 1.0)
-		outlen += 512;                                 // Allow a bit extra (eg block encryptio may increase the length slightly)
-	else if (mem_factor > 0.0)
-		outlen = size_t(outlen * mem_factor);
+	if (mem_factor > 0.0)
+		outlen = size_t(outlen * mem_factor) + 512;   // Allow a bit extra (eg block encryptio may increase the length slightly)
 
 	// Create "sink" that is used to store the result of the trasnformation
 	if (outlen > (64 * 1024 * 1024) && GetDocument()->DataFileSlotFree())
@@ -13554,7 +13552,10 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 			"Do you want to stop?", MB_YESNO) == IDYES)
 		{
 			pTrx->MessageEnd();
+			pTrx->Detach();      // so we can delete the file
 
+			if (temp_file[0] != '\0')
+				remove(temp_file);
 			theApp.mac_error_ = 10;
 			goto func_return;
 		}
@@ -13566,9 +13567,13 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 	// Get the actual size of the transformed data
 	FILE_ADDRESS new_len;
 	if (outbuf != NULL)
+	{
 		new_len = (dynamic_cast<CryptoPP::ArraySink *>(pSink))->TotalPutLength();
+	}
 	else
 	{
+		pTrx->Detach();        // this is so we can use the file
+
 		CFileStatus fs;
 		CFile64::GetStatus(temp_file, fs);
 		new_len = fs.m_size;
@@ -13619,8 +13624,6 @@ func_return:
 		delete[] inbuf;
 	if (outbuf != NULL)
 		delete[] outbuf;
-	else if (temp_file[0] != '\0')
-		remove(temp_file);
 }
 
 void CHexEditView::OnEncrypt()
