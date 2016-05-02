@@ -302,12 +302,16 @@ enum km_type
 	km_copy_full_name,          // Copy the full path of the active file to the clipboard (as text)
 	km_fav,                     // toggle favourites category
 
-	km_last // = 245?           // Keep at end
-};
+	// Added in 5.0
+	km_transform,               // trandformation using Crypto++ (encryption etc)
+
+	km_last // = 246?           // Keep at end
 
 // If/when we reach 255 we can recycle km_unused, km_invert, km_neg/km_inc/km_flip* etc
 // Be careful to keep the numbers of all retained commands the same so that old
 // keystroke macro files work in new versions of HexEdit.
+
+};
 
 enum convert_type  // used with km_convert
 {
@@ -364,6 +368,13 @@ enum checksum_type  // used with km_checksum
 	CHECKSUM_CRC_16BIT = 116,
 	CHECKSUM_CRC_32BIT = 132,
 	CHECKSUM_CRC_64BIT = 164,
+};
+
+// Note: Don't change these values to ensure forward compatibility of macros
+enum transform_type
+{
+	TRANSFORM_ERROR = 0,
+
 };
 
 struct mouse_sel

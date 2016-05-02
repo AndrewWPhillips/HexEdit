@@ -22,7 +22,10 @@
 #include <vector>
 using namespace std;
 #include <boost/tuple/tuple.hpp>
-namespace CryptoPP { class HashTransformation; }  // forward declaration
+namespace CryptoPP { // forward declarations
+	class HashTransformation; 
+	class BufferedTransformation;
+}  
 
 // Forward declarations
 class CHexEditDoc;
@@ -808,6 +811,13 @@ public:
 	afx_msg void OnUpdateScheme(CCmdUI* pCmdUI);
 
 	// Added in 4.0
+	void DoDigest(CryptoPP::HashTransformation * digest, int mac_id); // In 5.0 digests are now done by Crypto++
+	afx_msg void OnSha2_224();
+	afx_msg void OnSha2_256();
+	afx_msg void OnSha2_384();
+	afx_msg void OnSha2_512();
+
+	// Completed in 4.5
 	afx_msg void OnCompFirst();
 	afx_msg void OnUpdateCompFirst(CCmdUI* pCmdUI);
 	afx_msg void OnCompPrev();
@@ -829,17 +839,13 @@ public:
 	afx_msg void OnCompAutoScroll();
 	afx_msg void OnUpdateCompAutoScroll(CCmdUI* pCmdUI);
 
-	void DoDigest(CryptoPP::HashTransformation * digest, int mac_id); // In 5.0 digests are now done by Crypto++
-	afx_msg void OnSha2_224();
-	afx_msg void OnSha2_256();
-	afx_msg void OnSha2_384();
-	afx_msg void OnSha2_512();
-
 	// Added in 5.0 (using Crypto++)
 	afx_msg void OnSha3_224();
 	afx_msg void OnSha3_256();
 	afx_msg void OnSha3_384();
 	afx_msg void OnSha3_512();
+
+	void DoTransform(CryptoPP::BufferedTransformation *pTrx, int transform_type, CString strDesc, double mem_factor = 1.0);
 
 	DECLARE_MESSAGE_MAP()
 

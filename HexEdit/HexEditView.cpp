@@ -38,6 +38,8 @@
 #pragma warning(push)                      // we need to save an restore warnings because Crypto++ headers muck with some
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5
 #include "include/Crypto++/cryptlib.h"
+#include "include/Crypto++/filters.h"
+#include "include/Crypto++/files.h"
 #include "include/Crypto++/md5.h"
 #include "include/Crypto++/sha.h"
 #include "include/Crypto++/sha3.h"
@@ -49,6 +51,8 @@
 #ifdef _DEBUG
 #include "timer.h"
 #endif
+
+#define MEM_WARNING_SIZE (256*1024*1024)
 
 // This #define allows checking that the drawing code does clipping properly for
 // efficiency.  For example for very long lines we don't want to draw a huge no
@@ -6988,7 +6992,7 @@ void CHexEditView::do_read(CString file_name)
 			return;
 		}
 
-		if (data_len > 128*1024*1024)  // 128 Mb file may be too big
+		if (data_len > MEM_WARNING_SIZE)  // file may be too big
 		{
 			if (TaskMessageBox("Large File Warning",
 							  "HexEdit is out of temporary file "
@@ -13295,7 +13299,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 		}
 
 		// Warn if we might cause memory exhaustion
-		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+		if (end_addr - start_addr > MEM_WARNING_SIZE)  // buffer may be too big
 		{
 			if (TaskMessageBox("Conversion Warning",
 				"HexEdit is out of temporary file "
@@ -13355,6 +13359,219 @@ void CHexEditView::OnUpdateConvert(CCmdUI* pCmdUI)
 	}
 	else
 		pCmdUI->Enable(start_addr < end_addr);
+}
+
+// Convert current selection based on a Crypto++ filter
+//  pTrx           = Crypto++ transformation
+//  transform_type = id so we can save the operation to a keystroke macro
+//  strDesc        = description of the operation for display to the user
+//  mem_factor     = factor by which memory is increased (1.0 means about the same, 0.0 means exactly the same)
+void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int transform_type, CString strDesc, double mem_factor /*=1*/)
+{
+	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
+	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
+	if (check_ro(strDesc))
+		return;
+
+	// Get current address or selection
+	FILE_ADDRESS start_addr, end_addr;          // Start and end of selection
+	GetSelAddr(start_addr, end_addr);
+
+	// Make sure there is a selection
+	if (start_addr >= end_addr)
+	{
+		// No selection, presumably in macro playback
+		ASSERT(aa->playing_);
+		TaskMessageBox("No Selection", "The selection is empty");
+		aa->mac_error_ = 10;
+		return;
+	}
+
+	// If in OVR and transformation chnages the selection length then we give the user an option to
+	// turn off OVR mode (go into INS mode) or cancel the operation.
+	if (display_.overtype && mem_factor != 0.0)
+	{
+		if (CAvoidableDialog::Show(IDS_OVERTYPE,
+			"The operation will change the length of the "
+			"selection.  This is not permitted in OVR mode.\n\n."
+			"Do you want to turn off overtype mode?",
+			"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+		{
+			aa->mac_error_ = 10;
+			return;
+		}
+		else if (!do_insert())
+			return;
+	}
+
+	CWaitCursor wait;                                  // Turn on wait cursor (hourglass)
+
+	CryptoPP::BufferedTransformation * pSink = NULL;   // stores result (either to buffer or temp file)
+	char temp_file[_MAX_PATH] = { '\0' };              // temp file if transformed bytes are stored on disk (too big for mem)
+	unsigned char *outbuf = NULL;                      // buffer used if transformed bytes are stored in memory
+	size_t outlen = size_t(end_addr - start_addr);     // worst case size for output buffer
+
+	if (mem_factor == 1.0)
+		outlen += 512;
+	else if (mem_factor > 0.0)
+		outlen = size_t(outlen * mem_factor);
+
+	// Create "sink" that is used to store the result of the trasnformation
+	if (outlen > (64 * 1024 * 1024) && GetDocument()->DataFileSlotFree())
+	{
+		// Too big for memory so create a "temp" file to store the transformed data
+		// (This file stores the data until the document is closed or written to disk.)
+		char temp_dir[_MAX_PATH];
+		::GetTempPath(sizeof(temp_dir), temp_dir);
+		::GetTempFileName(temp_dir, _T("_HE"), 0, temp_file);
+
+		// Create Crypto++ file sink object
+		pSink = new CryptoPP::FileSink(temp_file);
+	}
+	else if (outlen < UINT_MAX)
+	{
+		// We need to allocate a buffer in memory so warn if we might cause memory exhaustion
+		if (outlen > MEM_WARNING_SIZE)  // More than 256 Mb may be too big
+		{
+			if (TaskMessageBox(strDesc + " Warning",
+				"HexEdit is out of temporary file "
+				"handles and such a large selection "
+				"may cause memory exhaustion.  Please click "
+				"\"No\" and save the file to free handles "
+				"or click \"Yes\" to continue.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) != IDYES)
+			{
+				theApp.mac_error_ = 5;
+				return;
+			}
+		}
+
+		// Get memory for selection and create Crypto++ buffer sink
+		try
+		{
+			outbuf = new unsigned char[outlen];
+		}
+		catch (std::bad_alloc)
+		{
+			AfxMessageBox("Insufficient memory");
+			aa->mac_error_ = 10;
+			return;
+		}
+
+		pSink = new CryptoPP::ArraySink(outbuf, outlen);
+	}
+	else
+	{
+		// Error if we ran out of temp file handles and selection is really big
+		TaskMessageBox(strDesc + " Error",
+			"HexEdit is out of temporary files and "
+			"cannot handle such a large selection.\n\n"
+			"Please save the file to deallocate "
+			"temporary file handles and try again.");
+		theApp.mac_error_ = 10;
+		return;
+	}
+
+	// Add our sink to the output of the transformation
+	pTrx->Attach(pSink);
+
+	// Note: at this point Crypto++ "owns" pSink and will "destruct" it when pTrx is destructed but
+	// we can still use it - eg, to get the output length from ArraySink (if stored in memory) 
+
+	// Get buffer for reading source blocks
+	unsigned char *inbuf = NULL;
+	size_t inbuflen = size_t(min(32768, end_addr - start_addr));
+	try
+	{
+		inbuf = new unsigned char[inbuflen];
+	}
+	catch (std::bad_alloc)
+	{
+		AfxMessageBox("Insufficient memory");
+		theApp.mac_error_ = 10;
+		return;
+	}
+
+	size_t len;                                    // size of data to be encrypted
+	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
+	{
+		// Get the next buffer full from the document
+		len = size_t(min(inbuflen, end_addr - curr));
+		VERIFY(GetDocument()->GetData(inbuf, len, curr) == len);
+
+		// Call Crypto++ to transform and output
+		pTrx->Put(inbuf, len);
+
+		if (AbortKeyPress() &&
+			TaskMessageBox(strDesc + " Abort?",
+			"You have interrupted the operaion.\n\n"
+			"Do you want to stop?", MB_YESNO) == IDYES)
+		{
+			pTrx->MessageEnd();
+
+			theApp.mac_error_ = 10;
+			goto func_return;
+		}
+
+		mm->Progress(int(((curr - start_addr) * 100) / (end_addr - start_addr)));
+	}
+	pTrx->MessageEnd();
+
+	// Get the actual size of the transformed data
+	FILE_ADDRESS new_len;
+	if (outbuf != NULL)
+		new_len = (dynamic_cast<CryptoPP::ArraySink *>(pSink))->TotalPutLength();
+	else
+	{
+		CFileStatus fs;
+		CFile64::GetStatus(temp_file, fs);
+		new_len = fs.m_size;
+	}
+
+	if (outbuf != NULL && new_len == end_addr - start_addr)
+	{
+		// "new" data is the same length as the "old" data so just do a replace
+		GetDocument()->Change(mod_replace, start_addr, new_len, outbuf, 0, this);
+	}
+	else
+	{
+		// Delete the "old" block that is to be replaced
+		// Note: this must be done before AddDataFile otherwise Change() (via regenerate()) will delete the temp file.
+		GetDocument()->Change(mod_delforw, start_addr, end_addr - start_addr, NULL, 0, this);
+
+		if (outbuf == NULL)
+		{
+			// Add the temp file to the document
+			int idx = GetDocument()->AddDataFile(temp_file, TRUE);
+			ASSERT(idx != -1);
+			GetDocument()->Change(mod_insert_file, start_addr, new_len, NULL, idx, this, TRUE);
+		}
+		else
+		{
+			// Add the new data block
+			GetDocument()->Change(mod_insert, start_addr, new_len, outbuf, 0, this, TRUE);
+		}
+		undo_.back().previous_too = true;    // Merge changes (at least in this view)
+
+		// Select the "new" data
+		SetSel(addr2pos(start_addr), addr2pos(start_addr + new_len));
+
+		// Inform the user in case they don't notice the selection has been increased
+		CString mess;
+		mess.Format("Encryption increased the selection length by %ld bytes", long(new_len - (end_addr - start_addr)));
+		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
+	}
+	DisplayCaret();
+	aa->SaveToMacro(km_transform, transform_type);
+
+func_return:
+	mm->Progress(-1);  // disable progress bar
+
+	if (outbuf != NULL)
+		delete[] outbuf;
+	else if (temp_file[0] != '\0')
+		remove(temp_file);
 }
 
 void CHexEditView::OnEncrypt()
@@ -13526,7 +13743,7 @@ void CHexEditView::OnEncrypt()
 			}
 
 			// Warn if we might cause memory exhaustion
-			if (end_addr - start_addr > 128*1024*1024)  // More than 128 Mb may be too big
+			if (end_addr - start_addr > MEM_WARNING_SIZE)  // More than 256 Mb may be too big
 			{
 				if (TaskMessageBox("Encryption Warning",
 					"HexEdit is out of temporary file "
@@ -13850,7 +14067,7 @@ void CHexEditView::OnDecrypt()
 			}
 
 			// Warn if we might cause memory exhaustion
-			if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+			if (end_addr - start_addr > MEM_WARNING_SIZE)  // buffer may be too big
 			{
 				if (TaskMessageBox("Decryption Warning",
 					"HexEdit is out of temporary file "
@@ -14191,7 +14408,7 @@ void CHexEditView::OnCompress()
 		}
 
 		// Warn if we might cause memory exhaustion
-		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+		if (end_addr - start_addr > MEM_WARNING_SIZE)  // buffer may be too big
 		{
 			if (TaskMessageBox("Compression Warning",
 				"HexEdit is out of temporary file "
@@ -14488,7 +14705,7 @@ void CHexEditView::OnDecompress()
 		}
 
 		// Warn if we might cause memory exhaustion
-		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+		if (end_addr - start_addr > MEM_WARNING_SIZE)  // 256 Mb file may be too big
 		{
 			if (TaskMessageBox("Decompression Warning",
 				"HexEdit is out of temporary file "
@@ -14702,6 +14919,11 @@ void CHexEditView::OnUpdate64bitBinary(CCmdUI* pCmdUI)
 }
 
 // Note: DoChecksum is not a member template (not supported in VC++ when written) so a ptr to the view is passed in pv
+// Note: To avoid template code bloat the template parameter for this function should only ever be:
+//  T = unsigned char
+//  T = unsigned short
+//  T = unsigned long
+//  T = unsigned __int64
 template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR desc)
 {
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
@@ -15136,7 +15358,7 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 		if (AbortKeyPress() &&
 			TaskMessageBox("Abort " + desc + " calculation?", 
 			"You have interrupted the " + desc + " calculation.\n\n"
-			"Do you want to stop the process?",MB_YESNO) == IDYES)
+			"Do you want to stop the process?", MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			mm->Progress(-1);  // disable progress bar
@@ -15351,7 +15573,8 @@ template<class T> void ProcBinary(CHexEditView *pv, T val, T *buf, size_t count,
 
 // Perform binary operations (where the 2nd operand is taken from the calculator).
 // [This is used to replace numerous other functions (OnAddByte, OnXor64Bit etc).]
-// T = template parameter specifying size of operand (1,2,4 or 8 byte integer)
+// T = template parameter specifying size of operand
+//     NOTE: T should only ever be char, short, long, __int64 (to avoid code bloat)
 // pv = pointer to the view (we had to do this as VC6 does not support member templates)
 // op = operation to perform
 // desc = describes the operations and operand size for use in error messages
@@ -15520,7 +15743,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		}
 
 		// Warn if we might cause memory exhaustion
-		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+		if (end_addr - start_addr > MEM_WARNING_SIZE)  // buffer may be too big
 		{
 			if (TaskMessageBox("Warning",
 				"HexEdit is out of temporary file "
@@ -15988,8 +16211,9 @@ template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, 
 	// This speeds up NOT operation somewhat (though disk is normally limiting factor).
 	// Note that we can only do this easily for NOT as it is the only operation
 	// that does not need byte order reversal for big-endian and has an SSE2 instruction.
-	// Also note that if the length is no divisible by 16 then the last few bytes are
-	// handled by the old code (see case unary_not: below).
+	// Note 2. if the selection length is not divisible by 16 then the last few bytes 
+	// are handled by the old code (see case unary_not: below).
+	// Note 3. speed of SSE2 relies on 1st address being on 16-byte boundary (see _aligned_malloc).
 	if (op == unary_not)
 	{
 		__m128i all_on = _mm_set1_epi8 ('\xFF');
@@ -16071,6 +16295,7 @@ template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, 
 // Perform unary operations on the selection
 // [This is used to replace numerous other functions (OnIncByte, OnFlip64Bit etc).]
 // T = template parameter specifying size of operand (1,2,4 or 8 byte integer)
+//     NOTE: T should only ever be char, short, long, __int64 (to avoid code bloat)
 // op = operation to perform
 // desc = describes the operations and operand size for use in error messages
 template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR desc, T dummy)
@@ -16236,7 +16461,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		}
 
 		// Warn if we might cause memory exhaustion
-		if (end_addr - start_addr > 128*1024*1024)  // 128 Mb file may be too big
+		if (end_addr - start_addr > MEM_WARNING_SIZE)  // buffer may be too big
 		{
 			if (TaskMessageBox("Warning",
 				"HexEdit is out of temporary file "
