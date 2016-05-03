@@ -1,6 +1,6 @@
 // HexEditView.cpp : implementation of the CHexEditView class
 //
-// Copyright (c) 2015 by Andrew W. Phillips
+// Copyright (c) 2016 by Andrew W. Phillips
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.
@@ -12656,7 +12656,10 @@ void CHexEditView::OnSearchIcase()      // F4
 	CSearchEditControl::BeginSearch(CSearchEditControl::mode_icase);
 }
 
-// xxx
+// Returns the child frame of another non-minimized window.
+// If there is not exactly one such window (not including current window) then returns NULL.
+// This is used to find another window to compare with when the use selects Edit/Compare
+// (or Alt+C) to compare from the current cursor position in each window.
 CChildFrame *CHexEditView::comp_window()
 {
 	CMainFrame *mm = dynamic_cast<CMainFrame *>(AfxGetMainWnd());
