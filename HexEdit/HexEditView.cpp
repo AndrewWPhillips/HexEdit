@@ -13536,7 +13536,7 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 		return;
 	}
 
-	size_t len;                                    // size of data to be encrypted
+	size_t len;                                    // size of data block to be transformed at once
 	for (FILE_ADDRESS curr = start_addr; curr < end_addr; curr += len)
 	{
 		// Get the next buffer full from the document
@@ -13611,7 +13611,7 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 
 		// Inform the user in case they don't notice the selection has been increased
 		CString mess;
-		mess.Format("Encryption increased the selection length by %ld bytes", long(new_len - (end_addr - start_addr)));
+		mess.Format("%s increased the selection length by %ld bytes", strDesc, long(new_len - (end_addr - start_addr)));
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
 	}
 	DisplayCaret();
