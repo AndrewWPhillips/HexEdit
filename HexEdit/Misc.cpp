@@ -9,41 +9,6 @@
 
 /*
 
-MODULE NAME:    NUMSCALE - OLD version see below for new one
-
-Usage:          CString NumScale(double val)
-
-Returns:        A string containing the scaled number (see below)
-
-Parameters:     val = a value to be scaled
-
-Description:    Converts a number to a string which is more easily read.
-				At most 5 significant digits are generated (and hence
-				there is a loss of precision) to aid readability.  If
-				scaling is necessary a metric modifier is appended to
-				the string.  Eg:
-
-				0.0 becomes "0 "
-				0.1 becomes "0 "
-				1.0 becomes "1 "
-				100.0 becomes "100 "
-				99999.0 becomes "99,999 "
-				100000.0 becomes "100 K"
-				99999000.0 becomes "99,999 K"
-				100000000.0 becomes "100 M"
-				99999000000.0 becomes "99,999 M"
-				100000000000.0 becomes "100 G"
-				99999000000000.0 becomes "99,999 G"
-				100000000000000.0 becomes "100 T"
-				99999000000000000.0 becomes "99,999 T"
-				100000000000000000.0 returns "1.000e16 "
-
-				Note that scaling values between 1 and -1  (milli, micro, etc)
-				are not supported (produce 0).  Negative numbers are scaled
-				identically to positive ones but preceded by a minus sign.
-				Numbers are rounded to the nearest whole number.
-
-------------------------------------------------------
 MODULE NAME:    NUMSCALE - Creat abbreviated number
 
 Usage:          CString NumScale(double val)
@@ -738,79 +703,6 @@ void AddSpaces(CString &str)
 	delete[] out;
 }
 
-// When a menu item is selected we only get an id which is usually a command ID
-// but for the menu created with make_var_menu_tree the id is only a unique number.
-// What we really want is the menu text which contains a variable name.
-// Given a menu ptr and an id the menu is searched and the menu item text for
-// that id is returned or an empty string if it is not found.
-CString get_menu_text(CMenu *pmenu, int id)
-{
-	CString retval;
-
-	// Check menu items first
-	if (pmenu->GetMenuString(id, retval, MF_BYCOMMAND) > 0)
-		return retval;
-
-	// Check ancestor menus
-	int item_count = pmenu->GetMenuItemCount();
-	for (int ii = 0; ii < item_count; ++ii)
-	{
-		CMenu *psub = pmenu->GetSubMenu(ii);
-		if (psub != NULL && psub->GetMenuString(id, retval, MF_BYCOMMAND) > 0)
-			return retval;
-	}
-
-	return CString("");
-}
-
-void StringToClipboard(const char * str)
-{
-	if (!::OpenClipboard(AfxGetMainWnd()->m_hWnd))
-	{
-		TRACE("Could not open clipboard\n");
-		return;
-	}
-
-	if (!::EmptyClipboard())
-	{
-		TRACE("Could not empty clipboard\n");
-		::CloseClipboard();
-		return;
-	}
-
-	size_t len = strlen(str);
-	ASSERT(str != NULL && len < 10000);
-
-	HANDLE hh = ::GlobalAlloc(GMEM_MOVEABLE|GMEM_DDESHARE, strlen(str)+1);
-	if (hh == NULL)
-	{
-		TRACE("GlobalAlloc failed\n");
-		::CloseClipboard();
-		return;
-	}
-
-	unsigned char * pp = reinterpret_cast<unsigned char *>(::GlobalLock(hh));
-	if (pp == NULL)
-	{
-		TRACE("GlobalLock failed\n");
-		::GlobalFree(hh);
-		::CloseClipboard();
-		return;
-	}
-
-	memcpy(pp, str, len+1);
-
-	if (::SetClipboardData(CF_TEXT, hh) == NULL)
-	{
-		TRACE("SetClipboardData failed\n");
-		::GlobalFree(hh);
-	}
-	else
-		::GlobalUnlock(hh);   // release (but don't free) memory now ownded by clipboard
-
-	::CloseClipboard();
-}
-
 //-----------------------------------------------------------------------------
 // Conversions
 
@@ -1269,15 +1161,6 @@ void test_misc()
 #endif
 
 //-----------------------------------------------------------------------------
-void BrowseWeb(UINT id)
-{
-	CString str;
-	VERIFY(str.LoadString(id));
-
-	::ShellExecute(AfxGetMainWnd()->m_hWnd, _T("open"), str, NULL, NULL, SW_SHOWNORMAL);
-}
-
-//-----------------------------------------------------------------------------
 // File handling
 
 // Try to find the absolute path the .EXE and return it (including trailing backslash)
@@ -1690,115 +1573,6 @@ CString FileErrorMessage(const CFileException *fe, UINT mode /*=CFile::modeRead|
 				break;
 		}
 		return retval;
-}
-
-//-----------------------------------------------------------------------------
-// Multiple monitor handling
-
-// Gets rect of the monitor which contains the mouse
-CRect MonitorMouse()
-{
-	CPoint pt;
-	GetCursorPos(&pt);
-
-	CRect rect(pt.x, pt.y, pt.x+1, pt.y+1);
-	return MonitorRect(rect);
-}
-
-// Gets rect of monitor which contains most of rect.
-// In non-multimon environment it just returns the rect of the
-// screen work area (excludes "always on top" docked windows).
-CRect MonitorRect(CRect rect)
-{
-	CRect cont_rect;
-
-	if (theApp.mult_monitor_)
-	{
-		// Use rect of containing monitor as "container"
-		HMONITOR hh = MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
-		MONITORINFO mi;
-		mi.cbSize = sizeof(mi);
-		if (hh != 0 && GetMonitorInfo(hh, &mi))
-			cont_rect = mi.rcWork;  // work area of nearest monitor
-		else
-		{
-			// Shouldn't happen but if it does use the whole virtual screen
-			ASSERT(0);
-			cont_rect = CRect(::GetSystemMetrics(SM_XVIRTUALSCREEN),
-				::GetSystemMetrics(SM_YVIRTUALSCREEN),
-				::GetSystemMetrics(SM_XVIRTUALSCREEN) + ::GetSystemMetrics(SM_CXVIRTUALSCREEN),
-				::GetSystemMetrics(SM_YVIRTUALSCREEN) + ::GetSystemMetrics(SM_CYVIRTUALSCREEN));
-		}
-	}
-	else if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, &cont_rect, 0))
-	{
-		// I don't know if this will ever happen since the Windows documentation
-		// is pathetic and does not say when or why SystemParametersInfo might fail.
-		cont_rect = CRect(0, 0, ::GetSystemMetrics(SM_CXFULLSCREEN),
-								::GetSystemMetrics(SM_CYFULLSCREEN));
-	}
-
-	return cont_rect;
-}
-
-// Returns true if rect is wholly or partially off the screen.
-// In multimon environment it also returns true if rect extends over more than one monitor.
-bool OutsideMonitor(CRect rect)
-{
-	CRect cont_rect = MonitorRect(rect);
-
-	return rect.left   < cont_rect.left  ||
-		   rect.right  > cont_rect.right ||
-		   rect.top    < cont_rect.top   ||
-		   rect.bottom > cont_rect.bottom;
-}
-
-// Check if most of window is off all monitors.  If so it returns true and
-// adjusts the parameter (rect) so the rect is fully within the closest monitor.
-bool NeedsFix(CRect &rect)
-{
-	CRect cont_rect = MonitorRect(rect);
-	CRect small_rect(rect);
-	small_rect.DeflateRect(rect.Width()/4, rect.Height()/4);
-	CRect tmp;
-	if (!tmp.IntersectRect(cont_rect, small_rect))
-	{
-		// Fix the rect
-#if _MSC_VER >= 1300
-		if (rect.right > cont_rect.right)
-			rect.MoveToX(rect.left - (rect.right - cont_rect.right));
-		if (rect.bottom > cont_rect.bottom)
-			rect.MoveToY(rect.top - (rect.bottom - cont_rect.bottom));
-		if (rect.left < cont_rect.left)
-			rect.MoveToX(cont_rect.left);
-		if (rect.top < cont_rect.top)
-			rect.MoveToY(cont_rect.top);
-#endif
-		return true;
-	}
-	else
-		return false;  // its OK
-}
-
-// Check if a lengthy operation should be aborted.
-// Updates display and checks for user pressing Escape key/space bar.
-bool AbortKeyPress()
-{
-	MSG msg;
-
-	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-	{
-		// Handle paint, close, etc events but nothing that does anything (like WM_COMMAND)
-		if (msg.message < WM_KEYFIRST)
-		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
-		}
-		else if (msg.message == WM_KEYDOWN && (msg.wParam == VK_ESCAPE || msg.wParam == VK_SPACE))
-			return true;
-	}
-
-	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////

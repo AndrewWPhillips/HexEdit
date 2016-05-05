@@ -36,7 +36,6 @@ bool ConvertToFileTime(time_t tt, FILETIME *ft);
 
 // System utils
 BOOL IsUs();     // This is just to handle a few differences in American spelling
-void BrowseWeb(UINT id);
 CString GetExePath();
 BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
@@ -47,19 +46,9 @@ void SetFileCreationTime(const char *filename, time_t tt);
 void SetFileAccessTime(const char *filename, time_t tt);
 BOOL SetFileTimes(const char * filename, const FILETIME * cre, const FILETIME * acc = NULL, const FILETIME * mod = NULL);
 BOOL SetFileCompression(const char * filename, USHORT comp);
-bool AbortKeyPress();
-
-CString get_menu_text(CMenu *pmenu,int id);
-void StringToClipboard(const char * str);
 
 void LoadHist(std::vector<CString> & hh, LPCSTR name, size_t smax);
 void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
-
-// Multiple monitor
-bool OutsideMonitor(CRect);
-CRect MonitorMouse();
-CRect MonitorRect(CRect);
-bool NeedsFix(CRect &rect);
 
 // Round to nearest integer allowing for -ve values, halves always go away from zero eg -1.5 => -2.0
 inline double fround(double r) { return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5); }
