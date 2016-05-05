@@ -12,8 +12,51 @@
 #include <Commctrl.h>
 #include "GuiMisc.h"
 
+// TaskMessageBox - Display a message to the user
+// NOTE: Use AvoidableTaskDialog() instead if you want to give the user an option to dismiss the dialog &
+//   never see it again - though this requires a string resource (ID used to remember which dialog is which).
+// Parameters:
+//   mess = short message at top
+//   content = longer description (may be empty)
+//   nType = one of MB_OK, MB_OKCANCEL, MB_YESNO, MB_YESNOCANCEL etc
+//   icon = ID of icon - if 0 is question mark (if "YES" button shown) or exclamation mark
+int TaskMessageBox(LPCTSTR mess, LPCTSTR content, UINT nType /* = MB_OK */, LPCTSTR icon /* = 0 */)
+{
+	HWND hw = AfxGetMainWnd()->m_hWnd;
+	CStringW strMess(mess);
+	CStringW strContent(content);
+	TASKDIALOG_COMMON_BUTTON_FLAGS bflags = 0;
+	int button = 0;                                // actual button chosen (IDOK etc)
+	switch (nType)
+	{
+	default:
+		ASSERT(0);      // unknown type
+		// fall through
+	case MB_OK:
+		bflags = TDCBF_OK_BUTTON;
+		break;
+	case MB_OKCANCEL:
+		bflags =  TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON;
+		break;
+	case MB_YESNO:
+		bflags = TDCBF_YES_BUTTON | TDCBF_NO_BUTTON;
+		break;
+	case MB_YESNOCANCEL:
+		bflags = TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON;
+		break;
+	case MB_RETRYCANCEL:
+		bflags = TDCBF_RETRY_BUTTON | TDCBF_CANCEL_BUTTON;
+		break;
+	}
+	if (::TaskDialog(hw, AfxGetInstanceHandle(), NULL, strMess, strContent, bflags, (PCWSTR)icon, &button) == S_OK)
+		return button;
+	else
+		return 0;
+}
+
 int AvoidableTaskDialog(int id, LPCTSTR content/*=0*/, LPCTSTR expanded/*=0*/, LPCTSTR title/*=0*/,
-                        TASKDIALOG_COMMON_BUTTON_FLAGS buttons/*=0*/, LPCTSTR icon/*=0*/)
+                        TASKDIALOG_COMMON_BUTTON_FLAGS buttons/*=0*/, LPCTSTR icon/*=0*/,
+						const TASKDIALOG_BUTTON * custom/*=0*/, int count/*=0*/)
 {
 	CString strId;
 	strId.Format("%d", id);
@@ -22,7 +65,6 @@ int AvoidableTaskDialog(int id, LPCTSTR content/*=0*/, LPCTSTR expanded/*=0*/, L
 	if ((retval = theApp.GetProfileInt("DialogDontAskValues", strId, 0)) > 0)
 		return retval;
 
-#undef TASKDIALOGCONFIG                      // qqq remove later
 	CStringW strTitle, strContent, strExpanded;  // Used to create Unicode strings (must not be destroyed before call to TaskDialogIndirect())
 	TASKDIALOGCONFIG config = { 0 };
 
@@ -46,6 +88,13 @@ int AvoidableTaskDialog(int id, LPCTSTR content/*=0*/, LPCTSTR expanded/*=0*/, L
 		strContent = content;
 		config.pszContent = strContent;
 	}
+	// Add custom buttons if specified
+	if (custom != NULL)
+	{
+		config.pButtons = custom;
+		config.cButtons = count;
+	}
+	// The whole point is to make the dialog avoidable so add the text that turns on the checkbox
 	if (buttons == 0 || buttons == TDCBF_OK_BUTTON)
 		config.pszVerificationText = L"Don't show this message again.";  // It's just informational if only showing the OK button
 	else
@@ -60,16 +109,10 @@ int AvoidableTaskDialog(int id, LPCTSTR content/*=0*/, LPCTSTR expanded/*=0*/, L
 	}
 /*
 	config.pszFooter = L"This is the footer";
-
-	const TASKDIALOG_BUTTON buttons[] = {
-		{ IDOK, L"That's OK" }
-	};
-	config.pButtons = buttons;
-	config.cButtons = ARRAYSIZE(buttons);
 */
 
-	int button = 0;
-	BOOL dont_ask = FALSE;
+	int button = 0;            // stores which button was selected
+	BOOL dont_ask = FALSE;     // says whether the "verification text" checkbox was selected
 	if (TaskDialogIndirect(&config, &button, NULL, &dont_ask) == S_OK)
 	{
 		retval = button;
