@@ -11,7 +11,6 @@
 #include "hexedit.h"
 #include <CommCtrl.h>
 #include "TipWnd.h"
-#include "Misc.h"    // For window within screen/monitor checks
 
 // CTipWnd
 

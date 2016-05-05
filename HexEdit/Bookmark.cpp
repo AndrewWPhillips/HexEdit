@@ -289,7 +289,7 @@ int CBookmarkList::AddBookmark(LPCTSTR nn)
 	CHexEditView *pview = GetView();
 	if (pview == NULL)
 	{
-		CAvoidableDialog::Show(IDS_BOOKMARK_NOFILE, "", "No File Open");
+		AvoidableTaskDialog(IDS_BOOKMARK_NOFILE, "Can't add bookmark - no file open");
 		theApp.mac_error_ = 2;
 		return -1;
 	}
@@ -401,7 +401,7 @@ BOOL CBookmarkList::GoTo(LPCTSTR name)
 	{
 		CString ss;
 		ss.Format("The bookmark %s was not found", name);
-		CAvoidableDialog::Show(IDS_BOOKMARK_NOTFOUND, ss, "Not Found");
+		AvoidableTaskDialog(IDS_BOOKMARK_NOTFOUND, ss, NULL, "Not Found");
 		theApp.mac_error_ = 2;
 		return FALSE;
 	}
@@ -451,7 +451,7 @@ BOOL CBookmarkList::GoTo(int index)
 				  "\n\n%s\n\n"
 				  "Do you want to remove bookmark \"%s\"?",
 				  file_[index], name_[index]);
-		if (CAvoidableDialog::Show(IDS_BOOKMARK_FILENOTFOUND, ss, "Not Found", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		if (AvoidableTaskDialog(IDS_BOOKMARK_FILENOTFOUND, ss, NULL, "Not Found", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 		{
 			RemoveBookmark(index);
 			return FALSE;

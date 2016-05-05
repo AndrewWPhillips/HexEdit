@@ -880,16 +880,23 @@ void CHexFileList::SetupJumpList()
 	// (ie, there are extensions to register OR the appid or exe path is wrong)
 	if (need_reg)
 	{
-		if (CAvoidableDialog::Show(IDS_REG_REQUIRED, 
-		                           "In order to use customized jump lists under Windows 7, "
-		                           "the file extensions for recently opened, frequently opened "
-		                           "and favorites need to be registered for opening with "
-		                           "HexEdit.  These are registry settings for all users, "
-		                           "which require Administrator privileges to modify.\n\n"
-		                           "Do you wish to associate HexEdit with these file extensions?\n\n"
-								   + strExt,
-		                           "File Registration",
-		                           MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES ||
+		CString strTmp = strExt;
+		strTmp.Replace("|", "   ");
+		if (AvoidableTaskDialog(IDS_REG_REQUIRED,
+		                        "To use jump lists HexEdit needs to register some file types.\n\n"
+		                           "Do you wish to associate HexEdit with these files extensions?\n\n"
+								   + strTmp,
+								"\nJump Lists were introduced with Windows 7. They are lists of items that are "
+								   "quickly accessed by right-clicking the HexEdit icon on the Task Bar. HexEdit "
+								   "supports lists of most recently opened items, frequently opened items, and "
+								   "those that you mark as favorites.\n\n"
+								   "However, for jump lists to work the type(s) of the files in the jump lists "
+								   "must be registered as \"openable\" with HexEdit. To associate the above file "
+								   "types with HexEdit requires starting a separate application with Administrator "
+								   "privileges in order to add registry setting for all users.\n\n"
+								   "When prompted please select \"Yes\" in the User Account Control window.",
+								"File Registration",
+		                        TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) != IDYES ||
 			!theApp.RegisterExtensions(strExt))
 		{
 			// There is no point in doing anything else if we could not register the file extensions since

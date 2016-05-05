@@ -661,7 +661,7 @@ void CSaveMacro::OnOK()
 
 	if (name_.IsEmpty())
 	{
-		CAvoidableDialog::Show(IDS_NO_MACRO_NAME, "Please enter a name for the macro.");
+		AvoidableTaskDialog(IDS_NO_MACRO_NAME, "Please enter a name for the macro.");
 		ASSERT(GetDlgItem(IDC_MACRO_NAME) != NULL);
 		GetDlgItem(IDC_MACRO_NAME)->SetFocus();
 		return;
@@ -738,7 +738,7 @@ void CMacroMessage::OnOK()
 
 	if (message_.IsEmpty())
 	{
-		CAvoidableDialog::Show(IDS_NO_MACRO_MESSAGE, "Please enter the text of the message to be displayed when the macro is run.");
+		AvoidableTaskDialog(IDS_NO_MACRO_MESSAGE, "Please enter the text of the message to be displayed when the macro is run.");
 		ASSERT(GetDlgItem(IDC_MACRO_MESSAGE) != NULL);
 		GetDlgItem(IDC_MACRO_MESSAGE)->SetFocus();
 		return;

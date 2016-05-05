@@ -34,6 +34,7 @@
 #include "HexEditView.h"
 #include "CalcDlg.h"
 #include "Misc.h"
+#include "GuiMisc.h"
 #include "SystemSound.h"
 #include "resource.hm"      // Help IDs
 
@@ -824,7 +825,7 @@ void CCalcDlg::do_binop(binop_type binop)
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -883,20 +884,22 @@ void CCalcDlg::check_for_error()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR, (CString)current_str_);
+		AvoidableTaskDialog(IDS_CALC_ERROR, (CString)current_str_);
 		//mm_->StatusBarText();
 		aa_->mac_error_ = 10;
 	}
 	else if (state_ == CALCOVERFLOW)
 	{
 		make_noise("Calculator Overflow");
-		CAvoidableDialog::Show(IDS_CALC_OVERFLOW, 
-			"The operation overflowed the current number of bits.  "
-			"This may mean the value is too large a positive or negative value or "
-			"the value is negative and the current settings are for unsigned values.\n\n"
-			"The displayed result has been adjusted to fit the current settings.  "
-			"Please modify the \"Bits\" and/or \"Signed\" settings to see the full result or "
-			"use \"Inf\" for infinite precision (Bits = 0) to display any value without overflow.");
+		AvoidableTaskDialog(IDS_CALC_OVERFLOW,
+			"The last operation overflowed the current number of bits.\n\n"
+			"The displayed result has been adjusted to fit the current settings.\n"
+			"You can see the complete result by adjusting the display settings.",
+			"The current calculator value is too large (either positive or negative) or "        // Full explanation
+			"it is a large negative value and the current settings are for unsigned values.\n\n"
+			"To see the full result modify the \"Bits\" and/or \"Signed\" settings, or simply "
+			"use \"Inf\" for infinite precision (Bits = 0) to display any value without overflow."
+			);
 		//mm_->StatusBarText("Overflow");
 		aa_->mac_error_ = 2;
 	}
@@ -906,7 +909,7 @@ void CCalcDlg::check_for_error()
 void CCalcDlg::no_file_error()
 {
 	make_noise("Calculator Error");
-	CAvoidableDialog::Show(IDS_CALC_NO_FILE,
+	AvoidableTaskDialog(IDS_CALC_NO_FILE,
 		"The calculator cannot perform this operation when no file is open.");
 	aa_->mac_error_ = 10;
 }
@@ -914,7 +917,7 @@ void CCalcDlg::no_file_error()
 void CCalcDlg::not_int_error()
 {
 	make_noise("Calculator Error");
-	CAvoidableDialog::Show(IDS_CALC_NOT_INT,
+	AvoidableTaskDialog(IDS_CALC_NOT_INT,
 			"Most calculator buttons are designed to only work with integers.  "
 			"You cannot use this button when working with a non-integer expression or value.");
 // xxx work out what it is and say so: real etc???
@@ -1116,7 +1119,7 @@ void CCalcDlg::do_unary(unary_type unary)
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -1172,12 +1175,12 @@ void CCalcDlg::calc_unary(unary_type unary)
 		// Ask the user if they want to switch to signed numbers
 		if (!signed_ && 
 			current_ < min_val_ && 
-			CAvoidableDialog::Show(IDS_CALC_NEGATIVE_UNSIGNED,
+			AvoidableTaskDialog(IDS_CALC_NEGATIVE_UNSIGNED,
 			                       "You are changing the sign of a positive number. "
 			                       "Since you are currently using unsigned numbers "
 			                       "this will cause an OVERFLOW condition.\n\n"
 			                       "Do you want to change to using signed numbers?",
-			                       "Toggle Signed?", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+								   NULL, "Toggle Signed?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 		{
 			change_signed(!signed_);
 		}
@@ -2637,7 +2640,7 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform a jump with an invalid value.");
 		//mm_->StatusBarText("Jump with invalid value.");
 		aa_->mac_error_ = 10;
@@ -2825,7 +2828,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -2834,7 +2837,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 	else if (state_ == CALCOTHER)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_INVALID,
+		AvoidableTaskDialog(IDS_CALC_INVALID,
 				"The current value or expression is invalid.");
 		//mm_->StatusBarText("Invalid expression");
 		return;
@@ -3559,9 +3562,10 @@ void CCalcDlg::OnGetVar()
 {
 	if (ctl_vars_.m_nMenuResult == ID_VARS_CLEAR)
 	{
-		if (CAvoidableDialog::Show(IDS_VARS_CLEAR, 
-			                       "Are you sure you want to delete all variables?", "", 
-								   MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		if (AvoidableTaskDialog(IDS_VARS_CLEAR,
+			                       "Are you sure you want to delete all variables?",
+			                       NULL, NULL, 
+			                       TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 			mm_->expr_.DeleteVars();
 	}
 	else if (ctl_vars_.m_nMenuResult != 0)
@@ -3896,7 +3900,7 @@ void CCalcDlg::OnMemStore()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -3943,7 +3947,7 @@ void CCalcDlg::OnMemAdd()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -3971,7 +3975,7 @@ void CCalcDlg::OnMemSubtract()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4023,7 +4027,7 @@ void CCalcDlg::OnMarkStore()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4094,7 +4098,7 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4147,7 +4151,7 @@ void CCalcDlg::OnMarkSubtract()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4312,7 +4316,7 @@ void CCalcDlg::OnMarkAtStore()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4354,7 +4358,7 @@ void CCalcDlg::OnSelStore()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4410,7 +4414,7 @@ void CCalcDlg::OnSelAtStore()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
@@ -4445,7 +4449,7 @@ void CCalcDlg::OnSelLenStore()
 	if (state_ == CALCERROR)
 	{
 		make_noise("Calculator Error");
-		CAvoidableDialog::Show(IDS_CALC_ERROR,
+		AvoidableTaskDialog(IDS_CALC_ERROR,
 				"You cannot perform this operation on an invalid value.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;

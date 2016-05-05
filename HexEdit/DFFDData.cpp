@@ -772,13 +772,13 @@ bool CDFFDData::check_data()
 	if (name_.IsEmpty() &&
 		parent_type_ != CHexEditDoc::DF_FORV &&
 		parent_type_ != CHexEditDoc::DF_FORF &&
-		CAvoidableDialog::Show(IDS_DFFD_USE_UNNAMED,
+		AvoidableTaskDialog(IDS_DFFD_USE_UNNAMED,
 		              "The name for this DATA element is empty.  "
 					  "This means it will not be available for "
 					  "use in expressions or visible in view mode.\n\n"
 					  "Are you sure you want an unnamed element?",
-					  NULL,
-					  MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
+					  NULL, NULL,
+					  TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) != IDYES)
 	{
 		ctl_name_.SetFocus();
 		return false;

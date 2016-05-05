@@ -20,7 +20,6 @@
 #include "HexEditView.h"
 #include "SystemSound.h"
 #include "SimpleGraph.h"
-#include "Misc.h"
 #include "SpecialList.h"
 #include "resource.hm"          // For control help IDs
 #include "prop.h"
@@ -1940,7 +1939,7 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			unsigned char dec_val = (unsigned char)atoi(char_dec_);
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -1969,7 +1968,7 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			unsigned char octal_val = (unsigned char)strtoul(char_octal_, &endptr, 8);
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -2007,7 +2006,7 @@ BOOL CPropCharPage::PreTranslateMessage(MSG* pMsg)
 			unsigned char binary_val = (unsigned char)strtoul(char_binary_, &endptr, 2);
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -2497,7 +2496,7 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -2542,7 +2541,7 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -2588,7 +2587,7 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -2636,7 +2635,7 @@ BOOL CPropDecPage::PreTranslateMessage(MSG* pMsg)
 			}
 			if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif
@@ -2995,7 +2994,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 			}
 			else if (pview->ReadOnly())
 			{
-				CAvoidableDialog::Show(IDS_PROP_READONLY, "You can't modify a read only file.");
+				AvoidableTaskDialog(IDS_PROP_READONLY, "You can't modify a read only file.");
 #ifdef SYS_SOUNDS
 				if (!CSystemSound::Play("Read Only"))
 #endif

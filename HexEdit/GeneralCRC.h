@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "misc.h"
 
 // CGeneralCRC dialog - accepts parameters for general CRC calculations
 class CGeneralCRC : public CDialog

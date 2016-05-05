@@ -24,7 +24,6 @@
 #include "HexFileList.h"
 #include "Boyer.h"
 #include "SystemSound.h"
-#include "Misc.h"
 #include "BCGMisc.h"
 #include <afxribbonres.h>
 #include "HelpID.hm"            // User defined help IDs
@@ -2801,7 +2800,7 @@ BOOL CMainFrame::DoFind()
 				{
 					// Display not found message
 					pview->show_pos();                         // Restore display of orig address
-					CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
+					AvoidableTaskDialog(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
 				}
 				else
 				{
@@ -2822,7 +2821,7 @@ BOOL CMainFrame::DoFind()
 				theApp.OnIdle(0);             // Force display of updated address
 
 				// Give the user the option to search the top bit of the file that has not been searched
-				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+				if (AvoidableTaskDialog(IDS_CONT_SEARCH, mess, NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 				{
 					if ((found_addr = search_back(pdoc,
 												  end - (length-1) < 0 ? 0 : end - (length-1),
@@ -2839,7 +2838,7 @@ BOOL CMainFrame::DoFind()
 					{
 						// Display not found message
 						pview->show_pos();                         // Restore display of orig address
-						CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
+						AvoidableTaskDialog(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
 					}
 					else
 					{
@@ -2860,7 +2859,7 @@ BOOL CMainFrame::DoFind()
 				// Display not found message
 				SetAddress(start);
 				theApp.OnIdle(0);             // Force display of updated address
-				CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
+				AvoidableTaskDialog(IDS_SEARCH_NOT_FOUND, not_found_mess(FALSE, icase, tt, wholeword, alignment));
 				pview->show_pos();                         // Restore display of orig address
 			}
 		}
@@ -2992,7 +2991,7 @@ BOOL CMainFrame::DoFind()
 				{
 					// Display not found message (after searching all open files)
 					pview->show_pos();                         // Restore display of orig address
-					CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
+					AvoidableTaskDialog(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
 				}
 				else
 				{
@@ -3013,7 +3012,7 @@ BOOL CMainFrame::DoFind()
 				theApp.OnIdle(0);             // Force display of updated address
 
 				// Give the user the option to search the top bit of the file that has not been searched
-				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+				if (AvoidableTaskDialog(IDS_CONT_SEARCH, mess, NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 				{
 					if ((found_addr = search_forw(pdoc, 0,
 												  start+length-1 > pdoc->length() ? pdoc->length() : start+length-1,
@@ -3029,7 +3028,7 @@ BOOL CMainFrame::DoFind()
 					{
 						// Display not found message (after searching again from top of file)
 						pview->show_pos();                         // Restore display of orig address
-						CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
+						AvoidableTaskDialog(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
 					}
 					else
 					{
@@ -3050,7 +3049,7 @@ BOOL CMainFrame::DoFind()
 				// Display not found message (after normal scope search to EOF)
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
-				CAvoidableDialog::Show(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
+				AvoidableTaskDialog(IDS_SEARCH_NOT_FOUND, not_found_mess(TRUE, icase, tt, wholeword, alignment));
 				pview->show_pos();                         // Restore display of orig address
 			}
 		}
@@ -3328,7 +3327,7 @@ void CMainFrame::OnReplaceAll()
 				// Give the user the option to search the top bit of the file that has not been searched
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
-				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+				if (AvoidableTaskDialog(IDS_CONT_SEARCH, mess, NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 				{
 					wc.Restore();
 					curr = 0;
@@ -3564,7 +3563,7 @@ void CMainFrame::OnBookmarkAll()
 				SetAddress(end);
 				theApp.OnIdle(0);             // Force display of updated address
 
-				if (CAvoidableDialog::Show(IDS_CONT_SEARCH, mess, "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+				if (AvoidableTaskDialog(IDS_CONT_SEARCH, mess, NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 				{
 					wc.Restore();
 					curr = 0;
@@ -3594,12 +3593,12 @@ void CMainFrame::OnBookmarkAll()
 				if (!bmerror_reported)
 				{
 					bmerror_reported = true;
-					if (CAvoidableDialog::Show(IDS_BOOKMARK_ALL_NOFILE,
+					if (AvoidableTaskDialog(IDS_BOOKMARK_ALL_NOFILE,
 						"Bookmark store disk file locations.  A bookmark could "
 						"not be added to a file as it has not been saved to disk.\n\n"
 						"Do you want to continue?",
-						"", 
-						MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) == IDCANCEL)
+						NULL, NULL,
+						TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) == IDCANCEL)
 					{
 						break;
 					}

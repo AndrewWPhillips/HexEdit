@@ -810,10 +810,10 @@ void CBookmarkDlg::OnValidate()
 		mess.Format("%ld bookmarks were deleted (files missing)\n"
 					"%ld bookmarks were moved (past EOF)",
 					long(tt.size()), long(move_count));
-		CAvoidableDialog::Show(IDS_BOOKMARKS_DELETED, mess);
+		AvoidableTaskDialog(IDS_BOOKMARKS_DELETED, mess);
 	}
 	else
-		CAvoidableDialog::Show(IDS_BOOKMARKS_NONE_DELETED, 
+		AvoidableTaskDialog(IDS_BOOKMARKS_NONE_DELETED,
 		                 "No bookmarks were deleted or moved.");
 }
 

@@ -430,11 +430,11 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	}
 	ASSERT(bad_count == 0 || !mess.IsEmpty());
 	if (bad_count == 1)
-		CAvoidableDialog::Show(IDS_BOOKMARKS_ADJUSTED, 
+		AvoidableTaskDialog(IDS_BOOKMARKS_ADJUSTED,
 			"This file had an invalid bookmark: " + mess +
 			"\nThe bookmark has been set to the end of file.");
 	else if (bad_count > 1)
-		CAvoidableDialog::Show(IDS_BOOKMARKS_ADJUSTED, 
+		AvoidableTaskDialog(IDS_BOOKMARKS_ADJUSTED,
 			"The following bookmarks were invalid "
 			"and were moved to the end of file:\n" + mess);
 	((CMainFrame *)AfxGetMainWnd())->StatusBarText("Invalid bookmarks moved to EOF");
@@ -1090,7 +1090,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			CString mess;
 			mess.Format("%s could not be opened for exclusive access.\n\n"
 				"It is opened shared (file contents may change).", lpszPathName);
-			CAvoidableDialog::Show(IDS_FILE_OPEN_NON_EXCLUSIVE, mess);
+			AvoidableTaskDialog(IDS_FILE_OPEN_NON_EXCLUSIVE, mess);
 			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened non-exclusive");
 			theApp.mac_error_ = 1;
 			shared_ = TRUE;
@@ -1106,7 +1106,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			CString mess;
 			mess.Format("%s is in use or is a read only file.\n\n"
 				"It is opened for read only (no changes possible).", lpszPathName);
-			CAvoidableDialog::Show(IDS_FILE_OPEN_READ_ONLY, mess);
+			AvoidableTaskDialog(IDS_FILE_OPEN_READ_ONLY, mess);
 			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened read-only");
 			theApp.mac_error_ = 1;
 			readonly_ = TRUE;
@@ -1126,7 +1126,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			mess.Format("%s is in use or is a read only file.\n\n"
 				"It is opened for read only (no changes possible) "
 				"with shared access (file contents can change).", lpszPathName);
-			CAvoidableDialog::Show(IDS_FILE_OPEN_READ_ONLY, mess);
+			AvoidableTaskDialog(IDS_FILE_OPEN_READ_ONLY, mess);
 			((CMainFrame *)AfxGetMainWnd())->StatusBarText("Warning: File opened non-exclusive, read-only");
 			theApp.mac_error_ = 1;
 		}
@@ -1180,7 +1180,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			mess += "\ncould not be opened (reason unknown)";
 			break;
 		}
-		//CAvoidableDialog::Show(IDS_FILE_OPEN_ERROR, mess, 0, 0, MAKEINTRESOURCE(IDI_CROSS));
+		//AvoidableTaskDialog(IDS_FILE_OPEN_ERROR, mess, 0, 0, 0, MAKEINTRESOURCE(IDI_CROSS));
 		TaskMessageBox("Open Error", mess, 0, MAKEINTRESOURCE(IDI_CROSS));
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText("Error: File not opened");
 		theApp.mac_error_ = 10;

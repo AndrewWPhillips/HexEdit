@@ -19,8 +19,6 @@
 #include "Bookmark.h"
 #include "timer.h"
 #include "SystemSound.h"
-#include "misc.h"
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

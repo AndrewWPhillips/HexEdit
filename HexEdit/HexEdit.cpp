@@ -57,7 +57,6 @@
 #include "Algorithm.h"  // For encruption algorithm selection
 #include "CompressDlg.h" // For compression settings dialog
 #include "Password.h"   // For encryption password dialog
-#include "Misc.h"
 #include "Splasher.h"       // For splash window
 #include "UpdateChecker.h"  // For checking for updates
 
@@ -478,9 +477,9 @@ BOOL CHexEditApp::InitInstance()
 				{
 					if (checker.UpdateAvailable(version_))
 					{
-						CAvoidableDialog::Show(IDS_UPDATE_AVAILABLE,
-						                       "A newer version of HexEdit is currently available for download.", "", 
-						                       MLCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
+						AvoidableTaskDialog(IDS_UPDATE_AVAILABLE,
+						                    "A newer version of HexEdit is currently available for download.", NULL, NULL, 
+						                    TDCBF_OK_BUTTON, MAKEINTRESOURCE(IDI_INFO));
 					}
 					WriteProfileInt(_T("Update"), _T("LastCheckDate"), (int)now);
 				}
@@ -1220,11 +1219,11 @@ BOOL CHexEditApp::OnOpenRecentFile(UINT nID)
 	ASSERT(open_current_readonly_ == -1);
 	if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
 	{
-		if (CAvoidableDialog::Show(IDS_RECENT_GONE,
-								   "The file or device could not be opened.\n\n"
-								   "Do you want to remove the entry from the recent file list?",
-								   "",
-								   MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		if (AvoidableTaskDialog(IDS_RECENT_GONE,
+								"The file or device could not be opened.\n\n"
+								"Do you want to remove the entry from the recent file list?",
+								NULL, NULL,
+								TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 		{
 			m_pRecentFileList->Remove(nIndex);
 		}
@@ -1712,7 +1711,7 @@ int CHexEditApp::ExitInstance()
 		CString mess;
 		mess.Format("You currently have a large amount of data on the clipboard (%sbytes).\n\n"
 			        "Do you want to leave the data on the clipboard?", NumScale((double)last_cb_size_));
-		if (CAvoidableDialog::Show(IDS_LEAVE_LARGE_CB, mess,"",  MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
+		if (AvoidableTaskDialog(IDS_LEAVE_LARGE_CB, mess, NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) != IDYES)
 			::EmptyClipboard();
 
 		::CloseClipboard();
@@ -3424,12 +3423,13 @@ void CHexEditApp::set_options(struct OptValues &val)
 		(RegQueryValue(HKEY_CLASSES_ROOT, HexEditSubSubKey, buf, &buf_size) == ERROR_SUCCESS))
 	{
 		// Option has been changed (turned on or off)
-		if (CAvoidableDialog::Show(IDS_REG_REQUIRED, 
-									"In order to change registry settings for all users "
-									"you may be prompted for Administrator privileges.\n\n"
-									"Do you wish to continue?\n\n",
-									"Admin Privileges",
-									MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+		if (AvoidableTaskDialog(IDS_REG_REQUIRED,
+								"In order to change registry settings for all users "
+								"you may be prompted for Administrator privileges.\n\n"
+								"Do you wish to continue?\n\n",
+								NULL,
+								"Admin Privileges",
+								TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 		{
 			if (val.shell_open_)
 			{

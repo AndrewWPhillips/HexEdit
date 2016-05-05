@@ -1151,7 +1151,7 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 
 		CString strMess;
 		strMess.Format("The error:\n\n%s\noccurred while %s %s", strError, op, (nSelItems > 1 ? "at least one of the files" : CString(fname) + ext));
-		CAvoidableDialog::Show(IDS_FILE_ATTR, strMess);
+		AvoidableTaskDialog(IDS_FILE_ATTR, strMess);
 	}
 }
 

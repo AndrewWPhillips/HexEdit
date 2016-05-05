@@ -16,7 +16,6 @@
 #include "SystemSound.h"
 #include "HexEditDoc.h"
 #include "TipWnd.h"
-#include "misc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -125,7 +124,7 @@ void CCalcEdit::put()
 			          "digits which may be too large for the Windows text box to handle.\n\n"
 			          "You may open the result in a text file, or copy it to the clipboard, or "
 			          "simply select \"Cancel\" to attempt to display it normally.", len-3);
-			CAvoidableDialog dlg(IDS_CALC_TOO_BIG, ss, "", MLCBF_CANCEL_BUTTON);
+			CAvoidableDialog dlg(IDS_CALC_TOO_BIG, ss, NULL, NULL, TDCBF_CANCEL_BUTTON);
 			dlg.AddButton(47, "Open in File");
 			dlg.AddButton(48, "Copy to Clipboard");
 

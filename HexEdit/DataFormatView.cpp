@@ -3864,14 +3864,14 @@ void CDataFormatView::OnDffdSync()
 
 	if (start < 0 || start > pdoc->length())
 	{
-		CAvoidableDialog::Show(IDS_DFFD_SYNC_EOF,
+		AvoidableTaskDialog(IDS_DFFD_SYNC_EOF,
 			"The address of this data element according to the "
 			"template is past the physical end of file.");
 		start = end = pdoc->length();
 	}
 	else if (end > pdoc->length())
 	{
-		CAvoidableDialog::Show(IDS_DFFD_SYNC_EOF,
+		AvoidableTaskDialog(IDS_DFFD_SYNC_EOF,
 			"The address of this end of the data element according "
 			"to the template is past the physical end of file.");
 		end = pdoc->length();
@@ -4364,7 +4364,8 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 			break;
 
 		case ID_DFFD_DELETE:
-			if (CAvoidableDialog::Show(IDS_DFFD_DELETE, "Are you sure you want to delete this element?", "", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+			if (AvoidableTaskDialog(IDS_DFFD_DELETE, "Are you sure you want to delete this element?", NULL, NULL, 
+				                    TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 			{
 				if (parent_type == CHexEditDoc::DF_USE_STRUCT)
 				{
@@ -4991,7 +4992,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// String longer than field (fixed length string field)
 				ss = ss.Left(df_size);
 				grid_.SetItemText(pItem->iRow, pItem->iColumn, ss);
-				CAvoidableDialog::Show(IDS_DFFD_TRUNCATED,
+				AvoidableTaskDialog(IDS_DFFD_TRUNCATED,
 					"The string you entered is too long for the "
 					"template field and has been truncated to fit.");
 			}
@@ -5053,7 +5054,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				// String longer than field (fixed length string field)
 				sw = sw.Left(df_size/2);
 				grid_.SetItemText(pItem->iRow, pItem->iColumn, sw);
-				CAvoidableDialog::Show(IDS_DFFD_TRUNCATED,
+				AvoidableTaskDialog(IDS_DFFD_TRUNCATED,
 					"The string you entered is too long for the "
 					"template field and has been truncated to fit.");
 			}
@@ -5097,7 +5098,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				}
 				if (inv)
 				{
-					CAvoidableDialog::Show(IDS_DFFD_INVALID_EBCDIC, 
+					AvoidableTaskDialog(IDS_DFFD_INVALID_EBCDIC,
 						"One or more characters were used that cannot be converted to EBCDIC.  "
 						"These have been converted to null (zero) bytes.");
 				}
@@ -5269,7 +5270,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				ASSERT(bit_mask <= 0x7F);
 				if (tmp8 > bit_mask)
 				{
-					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+					AvoidableTaskDialog(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
 					tmp8 &= bit_mask;
 				}
@@ -5294,7 +5295,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				ASSERT(bit_mask <= 0x7FFF);
 				if (tmp16 > bit_mask)
 				{
-					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+					AvoidableTaskDialog(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
 					tmp16 &= bit_mask;
 				}
@@ -5319,7 +5320,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				ASSERT(bit_mask <= 0x7fffFFFF);
 				if (tmp32 > bit_mask)
 				{
-					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+					AvoidableTaskDialog(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
 					tmp32 &= bit_mask;
 				}
@@ -5343,7 +5344,7 @@ void CDataFormatView::OnGridEndLabelEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 				unsigned __int64 bit_mask = (__int64(1)<<(pdoc->df_extra_[ii]>>8)) - 1;
 				if (tmp64 > bit_mask)
 				{
-					CAvoidableDialog::Show(IDS_DFFD_EXTRA_IGNORED,
+					AvoidableTaskDialog(IDS_DFFD_EXTRA_IGNORED,
 						"The value exceeds the bits available in the bit-field, and has been truncated.");
 					tmp64 &= bit_mask;
 				}

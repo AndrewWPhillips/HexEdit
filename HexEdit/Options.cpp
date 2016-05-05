@@ -4629,10 +4629,10 @@ void CWindowGeneralPage::OnSaveDefault()
 	// valid at this point as any edited pages would have had their UpdateData()
 	// member called before now, ie when switching out of that page.
 
-	if (CAvoidableDialog::Show(IDS_OPTION_SAVE_ALL,
-	                           "Are you sure you want to use the current settings as the defaults?",
-	                           "",
-	                           MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) != IDYES)
+	if (AvoidableTaskDialog(IDS_OPTION_SAVE_ALL,
+	                        "Are you sure you want to use the current settings as the defaults?",
+	                        NULL, NULL,
+	                        TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) != IDYES)
 		return;
 
 	CHexEditView * pview = GetView();

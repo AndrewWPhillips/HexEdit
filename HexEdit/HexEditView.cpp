@@ -2337,10 +2337,10 @@ BOOL CHexEditView::check_ovr(const char *desc)
 		return TRUE;
 	}
 
-	if (CAvoidableDialog::Show(IDS_OVERTYPE,
-							   ss + "\n\nDo you want to turn off overtype mode?",
-							   "", 
-							   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+	if (AvoidableTaskDialog(IDS_OVERTYPE,
+							ss + "\n\nDo you want to turn off overtype mode?",
+							NULL, NULL, 
+							TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 	{
 		theApp.mac_error_ = 5;
 		return TRUE;
@@ -2383,7 +2383,7 @@ BOOL CHexEditView::check_ro(const char *desc)
 	{
 		ss.Format("You can't %s while this window is read only.\n\n"
 				  "Do you want to turn off read only mode?", desc);
-		if (CAvoidableDialog::Show(IDS_READ_ONLY, ss, "", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+		if (AvoidableTaskDialog(IDS_READ_ONLY, ss, NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 		{
 			CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 			aa->mac_error_ = 10;
@@ -3575,8 +3575,8 @@ void CHexEditView::MoveToAddress(FILE_ADDRESS astart, FILE_ADDRESS aend /*=-1*/,
 		char buf[128];
 		sprintf(buf, "Attempt to jump to invalid address %I64d\n\n"
 				  "Jump to end of file instead and continue?", __int64(astart));
-		if (CAvoidableDialog::Show(IDS_INVALID_JUMP, buf, "", 
-			           MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+		if (AvoidableTaskDialog(IDS_INVALID_JUMP, buf, NULL, NULL,
+			           TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 		{
 			theApp.mac_error_ = 10;
 			return;
@@ -4298,8 +4298,8 @@ void CHexEditView::do_char(UINT nChar)
 			if (!CSystemSound::Play("Invalid Character"))
 #endif
 				::Beep(5000,200);
-			CAvoidableDialog::Show(IDS_INVALID_HEX,
-				"The only valid keys in the hex area are 0-9 and A-F.", "", 0, MAKEINTRESOURCE(IDI_CROSS));
+			AvoidableTaskDialog(IDS_INVALID_HEX,
+				"The only valid keys in the hex area are 0-9 and A-F.", NULL, NULL , 0, MAKEINTRESOURCE(IDI_CROSS));
 			aa->mac_error_ = 5;
 			return;
 		}
@@ -4311,7 +4311,7 @@ void CHexEditView::do_char(UINT nChar)
 			if (!CSystemSound::Play("Invalid Character"))
 #endif
 				::Beep(5000,200);
-			CAvoidableDialog::Show(IDS_INVALID_EBCDIC,
+			AvoidableTaskDialog(IDS_INVALID_EBCDIC,
 				"The key is not a valid EBCDIC character.");
 			aa->mac_error_ = 10;
 			return;
@@ -4323,11 +4323,11 @@ void CHexEditView::do_char(UINT nChar)
 		if (display_.overtype && start_addr != end_addr)
 		{
 			// xxx direct warning if GetDocument()->IsDevice()?
-			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+			if (AvoidableTaskDialog(IDS_OVERTYPE,
 				"This will delete the current selection which "
 				"is not permitted in overtype mode.\n\n"
 				"Do you want to turn off overtype mode?",
-				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+				NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				return;
@@ -4338,10 +4338,10 @@ void CHexEditView::do_char(UINT nChar)
 		else if (display_.overtype && start_addr == GetDocument()->length())
 		{
 			// xxx direct warning if GetDocument()->IsDevice()?
-			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+			if (AvoidableTaskDialog(IDS_OVERTYPE,
 				"You can't extend this file while in overtype mode.\n\n"
 				"Do you want to turn off overtype mode?",
-				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+				NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 5;
 				return;
@@ -4552,11 +4552,11 @@ void CHexEditView::do_char(UINT nChar)
 			if (display_.overtype)
 			{
 				// xxx direct warning if GetDocument()->IsDevice()?
-				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				if (AvoidableTaskDialog(IDS_OVERTYPE,
 					"This will delete the current selection which "
 					"is not permitted in overtype mode.\n\n"
 					"Do you want to turn off overtype mode?",
-					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+					NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 				{
 					aa->mac_error_ = 5;
 					return;
@@ -7543,7 +7543,7 @@ void CHexEditView::do_motorola(CString file_name)
 						file_name);
 		else
 			mess.Format("Wrote %ld records importing \"%s\"", long(count), file_name);
-		CAvoidableDialog::Show(IDS_IMPORT_RESULT, mess, "", 0, MAKEINTRESOURCE(IDI_INFO));
+		AvoidableTaskDialog(IDS_IMPORT_RESULT, mess, NULL, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		theApp.SaveToMacro(km_import_motorola, file_name);
 	}
@@ -7707,7 +7707,7 @@ void CHexEditView::do_intel(CString file_name)
 						file_name);
 		else
 			mess.Format("Wrote %ld records importing \"%s\"", long(count), file_name);
-		CAvoidableDialog::Show(IDS_IMPORT_RESULT, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
+		AvoidableTaskDialog(IDS_IMPORT_RESULT, mess, NULL, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		theApp.SaveToMacro(km_import_intel, file_name);
 	}
@@ -9128,12 +9128,12 @@ void CHexEditView::do_replace(FILE_ADDRESS start, FILE_ADDRESS end, unsigned cha
 	if (display_.overtype && end-start != len)
 	{
 		// xxx direct warning if GetDocument()->IsDevice()?
-		if (CAvoidableDialog::Show(IDS_REPLACE_OVERTYPE,
-								   "The Replace operation requires replacing bytes with data of a "
+		if (AvoidableTaskDialog(IDS_REPLACE_OVERTYPE,
+								"The Replace operation requires replacing bytes with data of a "
 								   "different length.  This requires the window to be in insert mode."
 								   "\n\nDo you want to turn off overtype mode?",
-								   "", 
-								   MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+								NULL, NULL, 
+								TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 		{
 			theApp.mac_error_ = 10;
 			return;
@@ -9208,11 +9208,11 @@ void CHexEditView::OnEditPaste()
 				// FILE_ADDRESS addr = GetPos();
 				if (display_.overtype && start_addr + *pl > GetDocument()->length())
 				{
-					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					if (AvoidableTaskDialog(IDS_OVERTYPE,
 						"This paste operation extends past the end of file.  "
 						"The file cannot be extended in overtype mode.\n\n"
 						"Do you want to turn off overtype mode?",
-						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+						NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 					{
 						::CloseClipboard();
 						aa->mac_error_ = 10;
@@ -9226,12 +9226,12 @@ void CHexEditView::OnEditPaste()
 				}
 				else if (display_.overtype && end_addr-start_addr != *pl)
 				{
-					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+					switch (AvoidableTaskDialog(IDS_PASTE_OVERTYPE,
 							"Pasting in overtype mode will overwrite data.  "
 							"Select \"Yes\" to insert the data; select \"No\" to"
 							"overwrite; or select \"Cancel\" to do nothing.\n\n"
 							"Do you want to turn on insert mode?",
-							"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+							NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -9313,11 +9313,11 @@ void CHexEditView::OnEditPaste()
 				// Do some file mode checks and fixes as specified by the user
 				if (display_.overtype && start_addr + fs.m_size > GetDocument()->length())
 				{
-					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					if (AvoidableTaskDialog(IDS_OVERTYPE,
 						"This paste operation extends past the end of file.  "
 						"The file cannot be extended in overtype mode.\n\n"
 						"Do you want to turn off overtype mode?",
-						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+						NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 					{
 						aa->mac_error_ = 10;
 						return;
@@ -9327,12 +9327,12 @@ void CHexEditView::OnEditPaste()
 				}
 				else if (display_.overtype && end_addr-start_addr != fs.m_size)
 				{
-					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+					switch (AvoidableTaskDialog(IDS_PASTE_OVERTYPE,
 						"Pasting in overtype mode will overwrite data.  "
 						"Select \"Yes\" to insert the data; select \"No\" to"
 						"overwrite; or select \"Cancel\" to do nothing.\n\n"
 						"Do you want to turn on insert mode?",
-						"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+						NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -9457,7 +9457,7 @@ void CHexEditView::OnEditPaste()
 
 			if (newlen == 0)
 			{
-				CAvoidableDialog::Show(IDS_INVALID_EBCDIC, "No valid EBCDIC characters were found to paste.");
+				AvoidableTaskDialog(IDS_INVALID_EBCDIC, "No valid EBCDIC characters were found to paste.");
 				aa->mac_error_ = 2;
 				goto error_return;
 			}
@@ -9477,11 +9477,11 @@ void CHexEditView::OnEditPaste()
 		// Check that we are not changing the file length when in overtype mode
 		if (display_.overtype && start_addr + len > GetDocument()->length())
 		{
-			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+			if (AvoidableTaskDialog(IDS_OVERTYPE,
 				"This paste operation extends past the end of file.  "
 				"The file cannot be extended in overtype mode.\n\n"
 				"Do you want to turn off overtype mode?",
-				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+				NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				goto error_return;
@@ -9491,12 +9491,12 @@ void CHexEditView::OnEditPaste()
 		}
 		else if (display_.overtype && end_addr-start_addr != len)
 		{
-			switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+			switch (AvoidableTaskDialog(IDS_PASTE_OVERTYPE,
 				"Pasting in overtype mode will overwrite data.  "
 				"Select \"Yes\" to insert the data; select \"No\" to"
 				"overwrite; or select \"Cancel\" to do nothing.\n\n"
 				"Do you want to turn on insert mode?",
-				"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+				NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON))
 			{
 			case IDYES:
 				if (!do_insert())
@@ -9580,11 +9580,11 @@ void CHexEditView::OnPasteAscii()
 			// FILE_ADDRESS addr = GetPos();
 			if (display_.overtype && start_addr + len > GetDocument()->length())
 			{
-				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				if (AvoidableTaskDialog(IDS_OVERTYPE,
 					"This paste operation extends past the end of file.  "
 					"The file cannot be extended in overtype mode.\n\n"
 					"Do you want to turn off overtype mode?",
-					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+					NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 				{
 					::CloseClipboard();
 					aa->mac_error_ = 10;
@@ -9595,12 +9595,12 @@ void CHexEditView::OnPasteAscii()
 			}
 			else if (display_.overtype && end_addr-start_addr != len)
 			{
-				switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+				switch (AvoidableTaskDialog(IDS_PASTE_OVERTYPE,
 					"Pasting in overtype mode will overwrite data.  "
 					"Select \"Yes\" to insert the data; select \"No\" to"
 					"overwrite; or select \"Cancel\" to do nothing.\n\n"
 					"Do you want to turn on insert mode?",
-					"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+					NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON))
 				{
 				case IDYES:
 					if (!do_insert())
@@ -9689,11 +9689,11 @@ void CHexEditView::OnPasteEbcdic()
 				// FILE_ADDRESS addr = GetPos();
 				if (display_.overtype && start_addr + newlen > GetDocument()->length())
 				{
-					if (CAvoidableDialog::Show(IDS_OVERTYPE,
+					if (AvoidableTaskDialog(IDS_OVERTYPE,
 						"This paste operation extends past the end of file.  "
 						"The file cannot be extended in overtype mode.\n\n"
 						"Do you want to turn off overtype mode?",
-						"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+						NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 					{
 						::CloseClipboard();
 						aa->mac_error_ = 10;
@@ -9704,12 +9704,12 @@ void CHexEditView::OnPasteEbcdic()
 				}
 				else if (display_.overtype && end_addr-start_addr != newlen)
 				{
-					switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+					switch (AvoidableTaskDialog(IDS_PASTE_OVERTYPE,
 						"Pasting in overtype mode will overwrite data.  "
 						"Select \"Yes\" to insert the data; select \"No\" to"
 						"overwrite; or select \"Cancel\" to do nothing.\n\n"
 						"Do you want to turn on insert mode?",
-						"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+						NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON))
 					{
 					case IDYES:
 						if (!do_insert())
@@ -9811,11 +9811,11 @@ void CHexEditView::OnPasteUnicode()
 			// FILE_ADDRESS addr = GetPos();
 			if (display_.overtype && start_addr + 2*len > GetDocument()->length())
 			{
-				if (CAvoidableDialog::Show(IDS_OVERTYPE,
+				if (AvoidableTaskDialog(IDS_OVERTYPE,
 					"This paste operation extends past the end of file.  "
 					"The file cannot be extended in overtype mode.\n\n"
 					"Do you want to turn off overtype mode?",
-					"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+					NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 				{
 					::CloseClipboard();
 					aa->mac_error_ = 10;
@@ -9826,12 +9826,12 @@ void CHexEditView::OnPasteUnicode()
 			}
 			else if (display_.overtype && end_addr-start_addr != 2*len)
 			{
-				switch (CAvoidableDialog::Show(IDS_PASTE_OVERTYPE,
+				switch (AvoidableTaskDialog(IDS_PASTE_OVERTYPE,
 					"Pasting in overtype mode will overwrite data.  "
 					"Select \"Yes\" to insert the data; select \"No\" to"
 					"overwrite; or select \"Cancel\" to do nothing.\n\n"
 					"Do you want to turn on insert mode?",
-					"", MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON))
+					NULL, NULL, TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON))
 				{
 				case IDYES:
 					if (!do_insert())
@@ -12742,7 +12742,7 @@ void CHexEditView::OnEditCompare()
 	// If we found nothing to compare with, display message and return
 	if (compc == NULL)
 	{
-		CAvoidableDialog::Show(IDS_CANT_COMPARE, "Comparison not performed "
+		AvoidableTaskDialog(IDS_CANT_COMPARE, "Comparison not performed "
 						"- two non-minimized windows required.");
 		aa->mac_error_ = 10;
 		return;
@@ -12753,7 +12753,7 @@ void CHexEditView::OnEditCompare()
 	CHexEditView *compv = dynamic_cast<CHexEditView *>(compc->GetHexEditView());
 	if (compv == NULL)
 	{
-		CAvoidableDialog::Show(IDS_CANT_COMPARE, "Cannot compare with this type of window.");
+		AvoidableTaskDialog(IDS_CANT_COMPARE, "Cannot compare with this type of window.");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -12785,7 +12785,7 @@ void CHexEditView::OnEditCompare()
 	{
 		mess.Format("Comparing data with itself in windows:\n\n%s and %s",
 						(const char *)orig_title, (const char *)comp_title);
-		CAvoidableDialog::Show(IDS_CANT_COMPARE, mess);
+		AvoidableTaskDialog(IDS_CANT_COMPARE, mess);
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -12869,7 +12869,7 @@ void CHexEditView::OnEditCompare()
 			mess = CString("Difference found after ") + buf + CString(" bytes");
 			mm->StatusBarText(mess);
 			if (!aa->playing_)
-				CAvoidableDialog::Show(IDS_COMPARE_DIFF, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
+				AvoidableTaskDialog(IDS_COMPARE_DIFF, mess, NULL, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 			// Move to where diff found and select that byte in both views
 			// (Selecting the byte allows the differences to be seen in both
@@ -12905,7 +12905,7 @@ void CHexEditView::OnEditCompare()
 		mess = "Both files already at EOF.";
 		mm->StatusBarText(mess);
 		if (!aa->playing_)
-			CAvoidableDialog::Show(IDS_COMPARE_NO_DIFF, mess);
+			AvoidableTaskDialog(IDS_COMPARE_NO_DIFF, mess);
 		aa->mac_error_ = 1;
 	}
 	else if (orig_got == comp_got)
@@ -12946,7 +12946,7 @@ void CHexEditView::OnEditCompare()
 //                    orig_addr + orig_got - start_addr);
 		mm->StatusBarText(mess);
 		if (!aa->playing_)
-			CAvoidableDialog::Show(IDS_COMPARE_NO_DIFF, mess);
+			AvoidableTaskDialog(IDS_COMPARE_NO_DIFF, mess);
 		aa->mac_error_ = 1;
 	}
 	else if (orig_got < comp_got)
@@ -12966,7 +12966,7 @@ void CHexEditView::OnEditCompare()
 		mess.Format("EOF on \"%s\" after %s bytes", orig_title, buf);
 		mm->StatusBarText(mess);
 		if (!aa->playing_)
-			CAvoidableDialog::Show(IDS_COMPARE_DIFF, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
+			AvoidableTaskDialog(IDS_COMPARE_DIFF, mess, NULL, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		compv->MoveWithDesc("Comparison Difference Found ", comp_addr + orig_got, comp_addr + orig_got + 1);
 		if (aa->highlight_)
@@ -12990,7 +12990,7 @@ void CHexEditView::OnEditCompare()
 		mess.Format("EOF on \"%s\" after %s bytes", comp_title, buf);
 		mm->StatusBarText(mess);
 		if (!aa->playing_)
-			CAvoidableDialog::Show(IDS_COMPARE_DIFF, mess, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
+			AvoidableTaskDialog(IDS_COMPARE_DIFF, mess, NULL, NULL, 0, MAKEINTRESOURCE(IDI_INFO));
 
 		compv->MoveWithDesc("EOF in Comparison ", comp_addr + comp_got);
 		MoveWithDesc("Comparison Difference Found ", orig_addr + comp_got, orig_addr + comp_got + 1);
@@ -13439,11 +13439,11 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 	// turn off OVR mode (go into INS mode) or cancel the operation.
 	if (display_.overtype && mem_factor != 0.0)
 	{
-		if (CAvoidableDialog::Show(IDS_OVERTYPE,
+		if (AvoidableTaskDialog(IDS_OVERTYPE,
 			"The operation will change the length of the "
 			"selection.  This is not permitted in OVR mode.\n\n."
 			"Do you want to turn off overtype mode?",
-			"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+			NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 		{
 			aa->mac_error_ = 10;
 			return;
@@ -13680,12 +13680,12 @@ void CHexEditView::OnEncrypt()
 	{
 		if (display_.overtype && aa->crypto_.needed(aa->algorithm_-1, 256) != 256)
 		{
-			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+			if (AvoidableTaskDialog(IDS_OVERTYPE,
 				"Encrypting with this algorithm will increase the length "
 				"of the current (unencrypted) selection and increase the "
 				"length of the file.  This is not permitted in OVR mode.\n\n."
 				"Do you want to turn off overtype mode?",
-				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+				NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				return;
@@ -13874,7 +13874,7 @@ void CHexEditView::OnEncrypt()
 		{
 			// Presumably in macro playback
 			ASSERT(aa->playing_);
-			CAvoidableDialog::Show(IDS_SEL_LEN,
+			AvoidableTaskDialog(IDS_SEL_LEN,
 				"The selection length is not a multiple of 8.  "
 				"For this encryption algorithm the length of the "
 				"selection must be a multiple of the encryption block length.");
@@ -13977,12 +13977,12 @@ void CHexEditView::OnDecrypt()
 
 		if (blen != 0 && display_.overtype)
 		{
-			if (CAvoidableDialog::Show(IDS_OVERTYPE,
+			if (AvoidableTaskDialog(IDS_OVERTYPE,
 				"Decrypting with this algorithm may reduce increase the length "
 				"of the current (encrypted) selection and hence decrease the "
 				"length of the file.  This is not permitted in OVR mode.\n\n."
 				"Do you want to turn off overtype mode?",
-				"", MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON) != IDOK)
+				NULL, NULL, TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 			{
 				aa->mac_error_ = 10;
 				return;
@@ -14004,7 +14004,7 @@ void CHexEditView::OnDecrypt()
 			ASSERT(aa->playing_);
 			CString ss;
 			ss.Format("%d", blen);
-			CAvoidableDialog::Show(IDS_SEL_LEN,
+			AvoidableTaskDialog(IDS_SEL_LEN,
 				"The selection length is not a multiple of " + ss + ".  "
 				"For this encryption algorithm the length of the "
 				"selection must be a multiple of the encryption block length.");
@@ -14195,7 +14195,7 @@ void CHexEditView::OnDecrypt()
 		{
 			// Presumably in macro playback
 			ASSERT(aa->playing_);
-			CAvoidableDialog::Show(IDS_SEL_LEN,
+			AvoidableTaskDialog(IDS_SEL_LEN,
 				"The selection length is not a multiple of 8.  "
 				"For this encryption algorithm the length of the "
 				"selection must be a multiple of the encryption block length.");
@@ -15004,7 +15004,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		ASSERT(theApp.playing_);
 		CString mess;
 		mess.Format("The selection must be a multiple of %d for %s", sizeof(T), desc);
-		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
+		AvoidableTaskDialog(IDS_SEL_LEN, mess);
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
 		theApp.mac_error_ = 10;
 		return;
@@ -15467,7 +15467,7 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 			(const char *)desc, 
 			(int)(result_len * 8), (int)result_len, 
 			(const char *)ss);
-		CAvoidableDialog::Show(IDS_DIGEST, mess);
+		AvoidableTaskDialog(IDS_DIGEST, mess);
 	}
 
 	delete[] result;
@@ -15690,7 +15690,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		ASSERT(theApp.playing_);
 		CString mess;
 		mess.Format("The selection must be a multiple of %d bytes for %s", sizeof(T), desc);
-		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
+		AvoidableTaskDialog(IDS_SEL_LEN, mess);
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
 		theApp.mac_error_ = 10;
 		return;
@@ -16416,7 +16416,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 		ASSERT(theApp.playing_);
 		CString mess;
 		mess.Format("The selection must be a multiple of %d bytes for %s", sizeof(T), desc);
-		CAvoidableDialog::Show(IDS_SEL_LEN, mess);
+		AvoidableTaskDialog(IDS_SEL_LEN, mess);
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText(mess);
 		theApp.mac_error_ = 10;
 		return;

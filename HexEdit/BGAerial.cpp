@@ -114,14 +114,19 @@ void CHexEditDoc::AddAerialView(CHexEditView *pview)
 			strScheme == CODEPAGE_NAME )
 		{
 			CString ss;
-			ss.Format("The current %s scheme will not distinguish between "
-			          "many different byte values.  It is recommended that "
-			          "you first switch to a better scheme to more easily "
-			          "see patterns in the Aerial View display.\n\n"
+			ss.Format("The current %s scheme has limited variations.\n\n"
 			          "Do you wish to switch to the \"Many\" %s scheme?",
 			          ::IsUs() ? "color" : "colour",
 					  ::IsUs() ? "color" : "colour");
-			if (CAvoidableDialog::Show(IDS_USE_AERIAL_SCHEME, ss, NULL, MLCBF_YES_BUTTON | MLCBF_NO_BUTTON) == IDYES)
+			if (AvoidableTaskDialog(IDS_USE_AERIAL_SCHEME, 
+				                    ss, 
+									"\nThe Aerial View is drawn using the current scheme "
+									"byte ranges. This scheme will not distinguish between "
+									"many different byte values.\n\nIt is recommended that "
+									"you first switch to a better scheme to more easily "
+									"see patterns in the Aerial View display.",
+									NULL,
+									TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 			{
 				pview->SetScheme(MULTI_NAME);
 			}
