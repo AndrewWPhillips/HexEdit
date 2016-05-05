@@ -3701,6 +3701,7 @@ STRINGTABLE
 BEGIN
     IDS_REG_REQUIRED        "Administrator Privileges required for Registry Changes"
     IDS_USE_AERIAL_SCHEME   "Change to MANY scheme?      "
+    IDS_CLIPBOARD_FORMAT    "Select Clipboard Format"
 END
 
 STRINGTABLE

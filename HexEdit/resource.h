@@ -1875,6 +1875,7 @@
 #define IDS_REG_REQUIRED                52752
 #define IDS_CONFIRM_OP                  52753
 #define IDS_USE_AERIAL_SCHEME           52754
+#define IDS_CLIPBOARD_FORMAT            52755
 #define IDS_UPDATE_AVAILABLE            52799
 #define AFX_IDS_APP_ID                  0xE006
 

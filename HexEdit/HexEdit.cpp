@@ -583,23 +583,43 @@ BOOL CHexEditApp::InitInstance()
 		// no way to tell that it is even there (since there was no main window-> nothing on task bar).
 		if (cb_text_type_ >= 4 /*CB_TEXT_LAST*/)
 		{
-			CTaskDialog dlg("Select Clipboard Format", 
-							"Due to popular demand the \"Hex Text\" clipboard format is now supported.  "
-							"When using this option each binary byte is placed on the clipboard as two "
-							"hex digits (with appropriate spacing).\n\n"
-							"You can choose to use this new format when working with the clipboard "
-							"(copying, cutting, and pasting), or the traditional formats used in HexEdit "
-							"(where data is placed on the clipboard as both binary data and text).\n");
-			dlg.SetIcon(MAKEINTRESOURCE(IDI_QUESTIONMARK));
-			dlg.AddButton(IDYES, "Use \"Hex Text\" format");
-			dlg.AddButton(IDNO,  "Use \"traditional\" binary + text formats");
-			dlg.SetFooter("You can modify this setting later, or choose one of the other "
-						  "options using the Workspace/Edit page of the Options dialog.");
-			dlg.SetFooterIcon(MAKEINTRESOURCE(IDI_INFO));
-
-			cb_text_type_ = dlg.DoModal(AfxGetMainWnd()) == IDYES;  // set to 0 (traditional) or 1 (hex text)
+			const TASKDIALOG_BUTTON custom_buttons[] = {
+				{ IDYES, L"Use \"Hex Text\" format" },
+				{ IDNO,  L"Use \"traditional\" binary + text formats" },
+			};
+			cb_text_type_ = AvoidableTaskDialog
+							(
+								IDS_CLIPBOARD_FORMAT,
+								"HexEdit supports many different options for using the Windows "
+									"Clipboard. Binary data can be cut, copied and pasted "
+									"as hex digits or as binary data + text.\n\n"
+									"Choose your preferred option for using binary data.",
+								"\nOn user request the \"Hex Text\" clipboard format is now supported "
+									"but this format does have disadvantages as explained below.\n\n"
+									"Hex Text\n\n"
+									"Each byte is placed on the clipboard as two hex digits (with "
+									"appropriate spacing). This makes it easy to paste the hex data "
+									"into a text editor or document. The disadvantage is that it "
+									"uses more memory which may be a problem for large amounts "
+									"of data. It also precludes copying the actual text if the binary "
+									"contains ASCII (or other forms of text).\n\n"
+									"Binary Data + Text\n\n"
+									"The data is pasted in two different formats - as binary data and "
+									"as text. The binary format is efficient and compatible with the "
+									"Visual Studio hex editor. The text format depends on the current "
+									"text format in use such as ASCII or Unicode.\n\n"
+									"Note that both options preserve all binary values when copying "
+									"and pasting, including NUL (zero) bytes.\n\n"
+									"Also note that you can change this setting at any time "
+									"or choose other options using the Workspace/Edit page "
+									"of the Options dialog.",
+								NULL,
+								0,
+								MAKEINTRESOURCE(IDI_QUESTIONMARK),
+								custom_buttons,
+								2
+							) == IDYES;
 		}
-
 		// CG: This line inserted by 'Tip of the Day' component.
 		ShowTipAtStartup();
 
