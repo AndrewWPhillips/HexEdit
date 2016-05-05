@@ -156,7 +156,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 		ON_COMMAND(ID_SEARCH_ICASE, OnSearchIcase)
 		ON_COMMAND(ID_EDIT_COMPARE, OnEditCompare)
 		ON_COMMAND(ID_WINDOW_NEXT, OnWindowNext)
-		ON_UPDATE_COMMAND_UI(ID_EDIT_COMPARE, OnUpdateEditCompare)
+		//ON_UPDATE_COMMAND_UI(ID_EDIT_COMPARE, OnUpdateEditCompare)
 		ON_WM_CONTEXTMENU()
 		ON_WM_RBUTTONDOWN()
 		ON_COMMAND(ID_INC_BYTE, OnIncByte)
@@ -2338,8 +2338,11 @@ BOOL CHexEditView::check_ovr(const char *desc)
 	}
 
 	if (AvoidableTaskDialog(IDS_OVERTYPE,
-							ss + "\n\nDo you want to turn off overtype mode?",
-							NULL, NULL, 
+							ss + "\n\nDo you want to turn off OVR mode?",
+							"\nThe operation may insert or delete bytes from the file "
+								"which is not permitted in overtype mode.\n\n"
+								"Select \"OK\" to turn on insert (INS) mode.",
+							NULL, 
 							TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON) != IDOK)
 	{
 		theApp.mac_error_ = 5;
@@ -12742,8 +12745,11 @@ void CHexEditView::OnEditCompare()
 	// If we found nothing to compare with, display message and return
 	if (compc == NULL)
 	{
-		AvoidableTaskDialog(IDS_CANT_COMPARE, "Comparison not performed "
-						"- two non-minimized windows required.");
+		AvoidableTaskDialog(IDS_CANT_COMPARE, "Window for comparison required.",
+			"The comparison was not performed - exactly two non-minimized windows are required.\n\n"
+			"For side-by-side window comparisons first open both files (or two windows on the "
+			"same file}, turn off window tabs using the Window menu command (Window/Display Tabs), "
+			"then tile the windows vertically (Window/Tile Vertically).");
 		aa->mac_error_ = 10;
 		return;
 	}
@@ -13435,7 +13441,7 @@ void CHexEditView::DoTransform(CryptoPP::BufferedTransformation *pTrx, int trans
 		return;
 	}
 
-	// If in OVR and transformation chnages the selection length then we give the user an option to
+	// If in OVR and transformation changes the selection length then we give the user an option to
 	// turn off OVR mode (go into INS mode) or cancel the operation.
 	if (display_.overtype && mem_factor != 0.0)
 	{

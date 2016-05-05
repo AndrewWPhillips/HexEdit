@@ -34,7 +34,6 @@
 #include "HexEditView.h"
 #include "CalcDlg.h"
 #include "Misc.h"
-#include "GuiMisc.h"
 #include "SystemSound.h"
 #include "resource.hm"      // Help IDs
 
@@ -826,7 +825,9 @@ void CCalcDlg::do_binop(binop_type binop)
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -893,12 +894,12 @@ void CCalcDlg::check_for_error()
 		make_noise("Calculator Overflow");
 		AvoidableTaskDialog(IDS_CALC_OVERFLOW,
 			"The last operation overflowed the current number of bits.\n\n"
-			"The displayed result has been adjusted to fit the current settings.\n"
-			"You can see the complete result by adjusting the display settings.",
-			"The current calculator value is too large (either positive or negative) or "        // Full explanation
-			"it is a large negative value and the current settings are for unsigned values.\n\n"
-			"To see the full result modify the \"Bits\" and/or \"Signed\" settings, or simply "
-			"use \"Inf\" for infinite precision (Bits = 0) to display any value without overflow."
+				"The displayed result was adjusted for the current settings.\n"
+				"To see the complete result please adjust the display settings.",
+			"The current calculator value is too large (either positive or negative) or "
+				"it is a large negative value and the current settings are for unsigned values.\n\n"
+				"To see the full result modify the \"Bits\" and/or \"Signed\" settings, or simply "
+				"use \"Inf\" for infinite precision (Bits = 0) to display any value without overflow."
 			);
 		//mm_->StatusBarText("Overflow");
 		aa_->mac_error_ = 2;
@@ -916,11 +917,35 @@ void CCalcDlg::no_file_error()
 
 void CCalcDlg::not_int_error()
 {
+	const char *expr_type = "Unknown";
+	switch (state_)
+	{
+	case CALCREALEXPR:
+	case CALCREALRES:
+		expr_type = "real";
+		break;
+	case CALCDATEEXPR:
+	case CALCDATERES:
+		expr_type = "date";
+		break;
+	case CALCSTREXPR:
+	case CALCSTRRES:
+		expr_type = "string";
+		break;
+	case CALCBOOLEXPR:
+	case CALCBOOLRES:
+		expr_type = "boolean";
+		break;
+	}
+
 	make_noise("Calculator Error");
-	AvoidableTaskDialog(IDS_CALC_NOT_INT,
-			"Most calculator buttons are designed to only work with integers.  "
-			"You cannot use this button when working with a non-integer expression or value.");
-// xxx work out what it is and say so: real etc???
+	CString ss;
+	ss.Format("\nYou may use the calculator to evaluate expressions of any type (integer, real, "
+		"etc) but most calculator buttons are designed to only work with integer values.\n\n"
+		"You cannot use this button when working with a %s expression or value.",
+		expr_type);
+	AvoidableTaskDialog(IDS_CALC_NOT_INT, "Calculator buttons only work with integers.", ss);
+
 	//mm_->StatusBarText("Buttons only valid for integers.");
 	aa_->mac_error_ = 10;
 }
@@ -1120,7 +1145,9 @@ void CCalcDlg::do_unary(unary_type unary)
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+			"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -1176,11 +1203,11 @@ void CCalcDlg::calc_unary(unary_type unary)
 		if (!signed_ && 
 			current_ < min_val_ && 
 			AvoidableTaskDialog(IDS_CALC_NEGATIVE_UNSIGNED,
-			                       "You are changing the sign of a positive number. "
-			                       "Since you are currently using unsigned numbers "
-			                       "this will cause an OVERFLOW condition.\n\n"
-			                       "Do you want to change to using signed numbers?",
-								   NULL, "Toggle Signed?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
+			                    "You are changing the sign of a positive number.\n\n"
+									"Do you want to change to using signed numbers?",
+								"\nSince you are currently using unsigned numbers "
+									"changing the sign will cause an OVERFLOW condition.",
+								"Toggle Signed?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
 		{
 			change_signed(!signed_);
 		}
@@ -2641,7 +2668,9 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform a jump with an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Jump with invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -2829,7 +2858,9 @@ void CCalcDlg::OnEquals()               // Calculate result
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -3901,7 +3932,9 @@ void CCalcDlg::OnMemStore()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -3948,7 +3981,9 @@ void CCalcDlg::OnMemAdd()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -3976,7 +4011,9 @@ void CCalcDlg::OnMemSubtract()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4028,7 +4065,9 @@ void CCalcDlg::OnMarkStore()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4099,7 +4138,9 @@ void CCalcDlg::OnMarkAdd()              // Add current value to mark
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4152,7 +4193,9 @@ void CCalcDlg::OnMarkSubtract()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4317,7 +4360,9 @@ void CCalcDlg::OnMarkAtStore()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4359,7 +4404,9 @@ void CCalcDlg::OnSelStore()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4415,7 +4462,9 @@ void CCalcDlg::OnSelAtStore()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
@@ -4450,7 +4499,9 @@ void CCalcDlg::OnSelLenStore()
 	{
 		make_noise("Calculator Error");
 		AvoidableTaskDialog(IDS_CALC_ERROR,
-				"You cannot perform this operation on an invalid value.");
+			"You cannot perform this operation on an invalid value.",
+			"The previous calculation caused an error.\n\n"
+				"Please press the calculator \"Clear\" button to continue.");
 		//mm_->StatusBarText("Operation on invalid value.");
 		aa_->mac_error_ = 10;
 		return;
