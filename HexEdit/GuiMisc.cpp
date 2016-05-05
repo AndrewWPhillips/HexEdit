@@ -36,7 +36,10 @@ int AvoidableTaskDialog(int id, LPCTSTR content/*=0*/, LPCTSTR expanded/*=0*/, L
 		strTitle = title;
 		config.pszWindowTitle = strTitle;
 	}
-	config.pszMainIcon = (PCWSTR)icon;  // Could also use TD_WARNING_ICON, TD_INFORMATION_ICON, TD_ERROR_ICON
+	if (icon != NULL)
+		config.pszMainIcon = (PCWSTR)icon;
+	else
+		config.pszMainIcon = TD_WARNING_ICON;
 	config.pszMainInstruction = MAKEINTRESOURCEW(id);
 	if (content != NULL)
 	{
