@@ -1395,7 +1395,7 @@ void CHexEditApp::OnRepairCust()
 					  "* changes to all menus including context (popup) menus\n"
 					  "* keyboard customizations\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
+					  MB_YESNO, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
 
 	GetContextMenuManager()->ResetState();
@@ -1411,7 +1411,7 @@ void CHexEditApp::OnRepairSettings()
 					  "(All registry entries will be removed.)\n"
 					  "\nTo do this HexEdit must close.\n"
 					  "\nDo you want to continue?",
-					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
+					  MB_YESNO, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
 
 	// Signal deletion of all registry settings
@@ -1431,7 +1431,7 @@ void CHexEditApp::OnRepairAll()
 					  "* recent file list, bookmarks, highlights etc\n\n"
 					  "When complete you will need to restart HexEdit.\n"
 					  "\nAre you absolutely sure you want to continue?",
-					  MB_YESNO, 0, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
+					  MB_YESNO, MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 		return;
 
 	// Signal deletion of all registry settings and settings files

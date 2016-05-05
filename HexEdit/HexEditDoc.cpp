@@ -1181,7 +1181,7 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			break;
 		}
 		//CAvoidableDialog::Show(IDS_FILE_OPEN_ERROR, mess, 0, 0, MAKEINTRESOURCE(IDI_CROSS));
-		TaskMessageBox("Open Error", mess, 0, 0, MAKEINTRESOURCE(IDI_CROSS));
+		TaskMessageBox("Open Error", mess, 0, MAKEINTRESOURCE(IDI_CROSS));
 		((CMainFrame *)AfxGetMainWnd())->StatusBarText("Error: File not opened");
 		theApp.mac_error_ = 10;
 		return FALSE;

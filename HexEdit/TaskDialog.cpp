@@ -10,6 +10,41 @@
 #include "StdAfx.h"
 #include "TaskDialog.h"
 
+int TaskMessageBox(LPCTSTR mess, LPCTSTR content, UINT nType /* = MB_OK */, LPCTSTR icon /* = 0 */)
+{
+	HWND hw = AfxGetMainWnd()->m_hWnd;
+	CStringW strMess(mess);
+	CStringW strContent(content);
+	TASKDIALOG_COMMON_BUTTON_FLAGS bflags = 0;
+	int button = 0;                                // actual button chosen (IDOK etc)
+	switch (nType)
+	{
+	default:
+		ASSERT(0);      // unknown type
+		// fall through
+	case MB_OK:
+		bflags = TDCBF_OK_BUTTON;
+		break;
+	case MB_OKCANCEL:
+		bflags =  TDCBF_OK_BUTTON | TDCBF_CANCEL_BUTTON;
+		break;
+	case MB_YESNO:
+		bflags = TDCBF_YES_BUTTON | TDCBF_NO_BUTTON;
+		break;
+	case MB_YESNOCANCEL:
+		bflags = TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON;
+		break;
+	case MB_RETRYCANCEL:
+		bflags = TDCBF_RETRY_BUTTON | TDCBF_CANCEL_BUTTON;
+		break;
+	}
+	if (::TaskDialog(hw, AfxGetInstanceHandle(), NULL, strMess, strContent, bflags, (PCWSTR)icon, &button) == S_OK)
+		return button;
+	else
+		return 0;
+}
+
+
 // This is taken from M. Labelle's partial task dialog implementation - see http://www.codeproject.com/KB/dialog/taskdialogs.aspx
 
 //////////////////////////////////////////////////////////////////////////////

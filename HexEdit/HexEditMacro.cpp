@@ -100,7 +100,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				TaskMessageBox("No File Open",
 					"There are command(s) in the current macro that require a file to be "
 					"currently open to execute.  The macro cannot continue.",
-					0, 0, MAKEINTRESOURCE(IDI_CROSS));
+					0, MAKEINTRESOURCE(IDI_CROSS));
 				((CMainFrame *)AfxGetMainWnd())->StatusBarText("Macro terminated");
 				mac_error_ = 10;
 				goto exit_play;
@@ -1663,11 +1663,11 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 #endif
 				// Display an appropriate error
 				if (mac_error_ > 10)
-					TaskMessageBox("Major Error", "A System Error was encountered during macro execution", 0, 0, MAKEINTRESOURCE(IDI_CROSS));
+					TaskMessageBox("Major Error", "A System Error was encountered during macro execution", 0, MAKEINTRESOURCE(IDI_CROSS));
 				else if (mac_error_  > 2)
 				{
 					// Just display mess in status bar as dlg box has already been seen
-					TaskMessageBox("Macro Error", "An error was encountered during macro execution", 0, 0, MAKEINTRESOURCE(IDI_CROSS));
+					TaskMessageBox("Macro Error", "An error was encountered during macro execution", 0, MAKEINTRESOURCE(IDI_CROSS));
 				}
 				else if (mac_error_ > 1)
 					TaskMessageBox("Minor Error", "A minor error was encountered during macro execution.");
@@ -1993,7 +1993,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 		{
 				TaskMessageBox("Invalid Macro File",
 					"This is not a HexEdit macro file or it has become corrupted.",
-					0, 0, MAKEINTRESOURCE(IDI_CROSS));
+					0, MAKEINTRESOURCE(IDI_CROSS));
 			pfe->Delete();
 			mac_error_ = 10;
 			return FALSE;

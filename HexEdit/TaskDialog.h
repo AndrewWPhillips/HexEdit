@@ -5,6 +5,7 @@
 // It requires an external library (commctrl_taskdialogs.h, commctrl_taskdialogs.lib, commctrl_taskdialogs.dll).
 
 #include <MLtaskdialogs.h>
+#include <CommCtrl.h>
 
 class CSimpleTaskDialog : public CWnd
 {
@@ -133,7 +134,7 @@ private:
 
 };
 
-// Replacement for AfxMessageBox that uses CTaskDialog
+// TaskMessageBox - Display a message to the user
 // NOTE: Use CAvoidableDialog::Show() instead if you want to give the user an option to dismiss the dialog &
 //   never see it again - though this requires a string resource (ID used to remember which dialog is which).
 // Parameters:
@@ -143,33 +144,7 @@ private:
 //   icon = ID of icon - if 0 is question mark (if "YES" button shown) or exclamation mark
 //   title = window title (defaults to "HexEdit" if empty)
 //  TBD: implement nIDHELP parameter and Help button?
-inline int TaskMessageBox(LPCTSTR mess, LPCTSTR content = _T(""), UINT nType = MB_OK, UINT nIDHelp = 0, LPCTSTR icon = 0, LPCTSTR title = _T(""))
-{
-	MLTASKDIALOG_COMMON_BUTTON_FLAGS buttons;
-	switch (nType)
-	{
-	default:
-		ASSERT(0);      // unknown type
-		// fall through
-	case MB_OK:
-		buttons = MLCBF_OK_BUTTON;
-		break;
-	case MB_OKCANCEL:
-		buttons =  MLCBF_OK_BUTTON | MLCBF_CANCEL_BUTTON;
-		break;
-	case MB_YESNO:
-		buttons = MLCBF_YES_BUTTON | MLCBF_NO_BUTTON;
-		break;
-	case MB_YESNOCANCEL:
-		buttons = MLCBF_YES_BUTTON | MLCBF_NO_BUTTON | MLCBF_CANCEL_BUTTON;
-		break;
-	case MB_RETRYCANCEL:
-		buttons = MLCBF_RETRY_BUTTON | MLCBF_CANCEL_BUTTON;
-		break;
-	}
-	CTaskDialog dlg(mess, content, title, buttons, icon);
-	return dlg.DoModal(CWnd::GetActiveWindow());
-}
+int TaskMessageBox(LPCTSTR mess, LPCTSTR content = _T(""), UINT nType = MB_OK, LPCTSTR icon = 0);
 
 //////////////////////////////////////////////////////////////////////////////
 // CSimpleTaskDialog attributes

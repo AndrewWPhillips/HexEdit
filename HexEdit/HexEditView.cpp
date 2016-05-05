@@ -6075,7 +6075,7 @@ void CHexEditView::OnBookmarkToggle()
 		TaskMessageBox("Bookmark Requires Disk File",
 			"A bookmark stores a disk file location.  Bookmarks can not "
 			"be added to this file as it has not been saved to disk.\n\n"
-			"Please save the file to disk and try again.", 0, 0, 0 /* no icon*/);
+			"Please save the file to disk and try again.", 0, 0 /* no icon*/);
 		((CHexEditApp *)AfxGetApp())->mac_error_ = 5;
 		return;
 	}
@@ -14670,7 +14670,7 @@ void CHexEditView::OnDecompress()
 											  "HexEdit can save the data decompressed "
 											  "so far and attempt to recover from "
 											  "this error but some data will be lost.\n\n"
-											  "Do you want to continue?", MB_YESNO, 0,
+											  "Do you want to continue?", MB_YESNO,
 											  MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 							{
 								ff.Close();
@@ -14816,7 +14816,7 @@ void CHexEditView::OnDecompress()
 										  "HexEdit can save the data decompressed "
 										  "so far and attempt to recover from "
 										  "this error but some data will be lost.\n\n"
-										  "Do you want to continue?", MB_YESNO, 0,
+										  "Do you want to continue?", MB_YESNO,
 										  MAKEINTRESOURCE(IDI_CROSS)) != IDYES)
 						{
 							theApp.mac_error_ = 10;
