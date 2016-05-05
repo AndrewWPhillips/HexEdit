@@ -2,7 +2,6 @@ This include sub-directory contains header files used to interface to external l
 These files are not part of HexEdit but are placed here for convenience.
 
 FreeImage.h - defines interface to the FreeImage library used in many parts of HexEdit (esp. Aerial View)
-MLtaskdialogs.h - dialogs library for avoidable dialogs etc used throughout the GUI
 mpir.h/mpirxx.h - C and C++ interfaces to MPIR (mult. precision ints & rationals) used in calculator
 Crypto++/cryptlib.h - primary header needed for Crypto++ (currently just used for digests)
 Crypto++/md5.h - Crypto++ MD5 digest

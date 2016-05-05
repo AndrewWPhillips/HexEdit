@@ -66,7 +66,7 @@
 #include <errno.h>
 #include "TipDlg.h"
 #include "CoordAp.h"
-#include "AvoidableDialog.h"
+#include "HexEdit.h"
 #include "GuiMisc.h"
 #include "HelpID.hm"
 

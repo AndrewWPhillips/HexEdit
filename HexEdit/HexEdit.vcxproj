@@ -242,7 +242,6 @@
     </ClCompile>
     <ClCompile Include="SystemSound.cpp" />
     <ClCompile Include="TabView.cpp" />
-    <ClCompile Include="TaskDialog.cpp" />
     <ClCompile Include="Template.cpp" />
     <ClCompile Include="TipDlg.cpp" />
     <ClCompile Include="TipWnd.cpp" />
@@ -500,7 +499,6 @@
   <ItemGroup>
     <ClInclude Include="AerialView.h" />
     <ClInclude Include="Algorithm.h" />
-    <ClInclude Include="AvoidableDialog.h" />
     <ClInclude Include="BCGMisc.h" />
     <ClInclude Include="Bin2Src.h" />
     <ClInclude Include="Bookmark.h" />
@@ -554,7 +552,6 @@
     <ClInclude Include="include\Crypto++\sha.h" />
     <ClInclude Include="include\Crypto++\sha3.h" />
     <ClInclude Include="include\FreeImage.h" />
-    <ClInclude Include="include\MLtaskdialogs.h" />
     <ClInclude Include="include\mpir.h" />
     <ClInclude Include="include\mpirxx.h" />
     <ClInclude Include="IntelHex.h" />
@@ -589,7 +586,6 @@
     <ClInclude Include="SVNRevision.h" />
     <ClInclude Include="SystemSound.h" />
     <ClInclude Include="TabView.h" />
-    <ClInclude Include="TaskDialog.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="TipDlg.h" />
     <ClInclude Include="TipWnd.h" />

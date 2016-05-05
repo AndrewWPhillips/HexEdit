@@ -3,12 +3,10 @@ This lib sub-directory contains libraries that are used to build HexEdit.
 Checked in libraries may be specific to VS2010 as noted below.
 How to download and build them with later versions of VS is also explained.
 
-Note that some libs also require a DLL at runtime (eg FreeImage.DLL,
-MLtaskdialog.DLL and mpir.DLL).
+Note that some libs also require a DLL at runtime (eg FreeImage.DLL, mpir.DLL).
 
 
 FreeImage.lib - FreeImage open source library     (see http://freeimage.sourceforge.net/)
-MLtaskdialogs.lib - open source library for creating Vista style task dialogs
 mpir.lib - C Multi-precision maths library forked from GMP
 mpirxx.lib - C++ class wrapper for mpir.lib               (see http://mpir.org/)
 cryptlib.lib - Crypto++ library - release version for v100 (VS2010)
@@ -77,7 +75,3 @@ FreeImage
 1. Does not depend on specific MS CRT libraries so you can use the same version.
 2. FreeImage.DLL is required at run-time.
 
-MLTasksDialog
-
-1. Does not depend on specific MS CRT libraries so you can use the same version.
-2. MLTasksDialog.DLL is required at run-time.

@@ -124,11 +124,11 @@ void CCalcEdit::put()
 			          "digits which may be too large for the Windows text box to handle.\n\n"
 			          "You may open the result in a text file, or copy it to the clipboard, or "
 			          "simply select \"Cancel\" to attempt to display it normally.", len-3);
-			CAvoidableDialog dlg(IDS_CALC_TOO_BIG, ss, NULL, NULL, TDCBF_CANCEL_BUTTON);
-			dlg.AddButton(47, "Open in File");
-			dlg.AddButton(48, "Copy to Clipboard");
-
-			switch (dlg.DoModal())
+			const TASKDIALOG_BUTTON custom_buttons[] = {
+				{ 47, L"Open in File" },
+				{ 48, L"Copy to Clipboard" },
+			};
+			switch (AvoidableTaskDialog(IDS_CALC_TOO_BIG, ss, NULL, NULL, TDCBF_CANCEL_BUTTON, 0, custom_buttons, 2))
 			{
 			case 47:
 				theApp.FileFromString(buf);

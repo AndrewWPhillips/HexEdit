@@ -250,9 +250,6 @@
     <ClCompile Include="TabView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TaskDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Template.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -386,6 +383,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CompareList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiMisc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -812,9 +812,6 @@
     <ClInclude Include="Algorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AvoidableDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BCGMisc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1028,9 +1025,6 @@
     <ClInclude Include="TabView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TaskDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1166,9 +1160,6 @@
     <ClInclude Include="include\FreeImage.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
-    <ClInclude Include="include\MLtaskdialogs.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
     <ClInclude Include="include\mpir.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
@@ -1195,6 +1186,9 @@
     </ClInclude>
     <ClInclude Include="include\Crypto++\base32.h">
       <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiMisc.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
