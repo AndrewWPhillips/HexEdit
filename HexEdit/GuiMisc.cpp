@@ -22,7 +22,10 @@
 //   icon = ID of icon - if 0 is question mark (if "YES" button shown) or exclamation mark
 int TaskMessageBox(LPCTSTR mess, LPCTSTR content, UINT nType /* = MB_OK */, LPCTSTR icon /* = 0 */)
 {
-	HWND hw = AfxGetMainWnd()->m_hWnd;
+	HWND hw = (HWND)0;
+	CWnd * mm = AfxGetMainWnd();
+	if (mm != NULL)
+		HWND hw = mm->m_hWnd;
 	CStringW strMess(mess);
 	CStringW strContent(content);
 	TASKDIALOG_COMMON_BUTTON_FLAGS bflags = 0;
@@ -48,6 +51,8 @@ int TaskMessageBox(LPCTSTR mess, LPCTSTR content, UINT nType /* = MB_OK */, LPCT
 		bflags = TDCBF_RETRY_BUTTON | TDCBF_CANCEL_BUTTON;
 		break;
 	}
+	if (icon == 0)
+		icon = (LPCTSTR)TD_WARNING_ICON;
 	if (::TaskDialog(hw, AfxGetInstanceHandle(), NULL, strMess, strContent, bflags, (PCWSTR)icon, &button) == S_OK)
 		return button;
 	else
@@ -69,7 +74,9 @@ int AvoidableTaskDialog(int id, LPCTSTR content/*=0*/, LPCTSTR expanded/*=0*/, L
 	TASKDIALOGCONFIG config = { 0 };
 
 	config.cbSize = sizeof(config);
-	config.hwndParent = AfxGetMainWnd()->m_hWnd;
+	CWnd * mm = AfxGetMainWnd();
+	if (mm != NULL)
+		config.hwndParent = mm->m_hWnd;
 	config.hInstance = ::GetModuleHandle(NULL);
 	//config.dwFlags = TDF_SIZE_TO_CONTENT;
 	config.dwCommonButtons = buttons;
