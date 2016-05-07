@@ -26,7 +26,7 @@ public:
 	//}}AFX_DATA
 	CTransparentStatic2 ctl_line1_;
 	CTransparentStatic2 ctl_line2_;
-	CTransparentStatic2 ctl_line3_;
+	//CTransparentStatic2 ctl_line3_;
 	CTransparentStatic2 ctl_line4_;
 	CTransparentStatic2 ctl_line5_;
 	CTransparentListBox ctl_ack_;

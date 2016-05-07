@@ -46,7 +46,7 @@ void CAbout::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 	DDX_Control(pDX, IDC_LINE1, ctl_line1_);
 	DDX_Control(pDX, IDC_LINE2, ctl_line2_);
-	DDX_Control(pDX, IDC_LINE3, ctl_line3_);
+	//DDX_Control(pDX, IDC_LINE3, ctl_line3_);
 	DDX_Control(pDX, IDC_LINE4, ctl_line4_);
 	DDX_Control(pDX, IDC_LINE5, ctl_line5_);
 	DDX_Control(pDX, IDC_ACK, ctl_ack_);
