@@ -142,33 +142,38 @@ IDB_EDITBAR_H  editbarHot.bmp
 The 3 images for each toolbar can be created from there corresponding Paint.Net file (eg Graphics\editbar.pdn) in this way:
 
 - make the "hot" image
-  x change colour of background layer to XP toolbar background colour (239,236,221)
+  - open source .PDN file in Paint.Net (eg Graphics\editbar.PDN)
+  - save to new (temp) .PDN file to avoid accidentally overwriting the original
+  - remove yet to be used buttons from right end (Image / Canvas Size)
   - merge down all image layers if there are more than one
-  - select layer with images
+  - select layer (top) with images
   - increase saturation of images layer to 140
-  x merge images layer with background layer (merge down)
   - fill background layer with (192,192,192)
-  - save as 24-bit .BMP with "hot" suffix (eg editbarHot.BMP)
+  - save as 24-bit .BMP with "hot" suffix (eg RES\editbarHot.BMP)
 - make the "cold" (normal) image
-  - reopen the .PDN file (eg editbar.PDN)
+  - reopen the .PDN file (eg Graphics\editbar.PDN)
+  - save to new (temp) .PDN file to avoid accidentally overwriting the original
+  - remove yet to be used buttons from right end (Image / Canvas Size)
   - merge down all image layers if there are more than one
-  - select layer with toolbar images
+  - select layer (top) with toolbar images
   - open Hue + Saturation dialog (Adjustment/ Hue + Saturation)
   - reduce saturation from 100 down to 80
     - note that background colour is in diff layer and stays the same
   - fill background with (192,192,192)
-  - save as 24-bit .BMP file (eg editbarCold.BMP)
-- make the disabled image [not currently done]
-  - reopen the .PDN file (eg editbar.PDN)
+  - save as 24-bit .BMP file (eg RES\editbarCold.BMP)
+- make the disabled image
+  - reopen the .PDN file (eg Graphics\editbar.PDN)
+  - save to new (temp) .PDN file to avoid accidentally overwriting the original
+  - remove yet to be used buttons from right end (Image / Canvas Size)
   - merge down all image layers if there are more than one
-  - select layer with images
+  - select layer (top layer) with images
   - open Hue + Saturation dialog and reduce saturation to 0
   - open Brightness + Contrast dialog (Adjustment/Brightness+Contrast)
     - reduce contrast to -60, increase brightness to 50
   - fill background layer with (192,192,192)
-  - save as .BMP file (eg editbarDisabled.BMP)
+  - save as .BMP file (eg RES/editbarDisabled.BMP)
 - reduce size of all .BMP files by making them 8-bit with RLE compression
-  - load each .BMP into Photoshop Elements
+  - load each .BMP into PhotoShop or Photoshop Elements
   - convert to 8-bit if necessary (Image/Mode/Indexed Color) using Palette: Local (perceptual)
   - save to .BMP in RES directory with RLE option on (eg RES\editbarHot.bmp)
 
