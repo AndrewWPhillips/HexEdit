@@ -448,6 +448,18 @@ BOOL CHexEditApp::InitInstance()
 
 		CWinAppEx::InitInstance();
 
+		// Check for /clean on command line Parse command line (before use of 
+		// CCommandLineParser - see later) before callling LoadOptions() so
+		// that we can force a clean of registry settings before code is run
+		// that may cause a crash if something is really wrong with reg settings.
+		if (__argc > 1 && (__argv[1][0] == '/' || __argv[1][0] == '-') && _strnicmp(__argv[1]+1, "clean", 5) == 0)
+		{
+			// /cleanup found on cmd line so delete registry settings and exit
+			theApp.delete_reg_settings_ = TRUE;  // this forces ExitInstance to delete all reg. settings
+			theApp.ExitInstance();
+			exit(0);
+		}
+
 		// Override the document manager so we can make save dialog resizeable
 		if (m_pDocManager != NULL) delete m_pDocManager;
 		m_pDocManager = new CHexEditDocManager;
@@ -4414,14 +4426,7 @@ void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLas
 {
 	if (non_std)
 	{
-		if (bFlag && CString("clean").CompareNoCase(pszParam) == 0)
-		{
-			// IF /cleanup found then delete registry settings and exit
-			theApp.delete_reg_settings_ = TRUE;
-			theApp.ExitInstance();
-			exit(0);
-		}
-		else if (bFlag)
+		if (bFlag)
 		{
 			// If there are any flags set then assume this is a standard command line
 			non_std = FALSE;
