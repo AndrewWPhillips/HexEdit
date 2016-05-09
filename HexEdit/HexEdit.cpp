@@ -452,17 +452,6 @@ BOOL CHexEditApp::InitInstance()
 		if (m_pDocManager != NULL) delete m_pDocManager;
 		m_pDocManager = new CHexEditDocManager;
 
-		// Parse command line for standard shell commands, DDE, file open
-		// Note: CCommandLineInfo class was overridden with the CCommandLineParser
-		// class - this can open as many files as specified on the command line
-		// but does this in CCommandLineParse::ParseParam rather than storing
-		// the file name for CWinAppEx::ProcessShellCommands (and sets
-		// m_nShellCommand to FileNothing).
-		// NOTE: This was moved before LoadOptions so that the /clean cmd line param
-		//       can have an effect before any options are used that may cause a crash.
-		CCommandLineParser cmdInfo;
-		ParseCommandLine(cmdInfo);
-
 		LoadOptions();
 		InitVersionInfo();
 
@@ -485,6 +474,12 @@ BOOL CHexEditApp::InitInstance()
 				}
 			}
 		}
+
+		// CCommandLineParser replaces app's CommandLineInfo class.
+		// This uses ParseParam() method (via app's ParseCommandLine() method)
+		// to get all file names on the command line and open them (or tell
+		// already running copt of HexEdit to open them if "one_only_" is true).
+		CCommandLineParser cmdInfo;
 
 		// Work out if there is a previous instance running
 		hwnd_1st_ = ::FindWindow(HexEditClassName, NULL);
@@ -548,6 +543,8 @@ BOOL CHexEditApp::InitInstance()
 		m_pRecentFileList = new CHexFileList(0, FILENAME_RECENTFILES, recent_files_);
 		m_pRecentFileList->ReadList();
 
+		// NOTE: Don't try to open files (eg command line) before this point
+
 		GetFileList()->SetupJumpList();  // set up Win7 task bar
 
 		// This used to be after the command line parsing but was moved here so that
@@ -557,13 +554,19 @@ BOOL CHexEditApp::InitInstance()
 		m_pMainWnd->SetFocus();
 //          pMainFrame->ShowWindow(SW_SHOWMAXIMIZED);
 
-		// Don't create empty document by default
-		if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew)
-			cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
+		// Open any files on the command line
+		ParseCommandLine(cmdInfo);
 
-		// Dispatch commands specified on the command line
-		if (!ProcessShellCommand(cmdInfo))
-				return FALSE;
+		// If ParseCommandLine found a shell operation to perform then do it.
+		// If the command is FileOpen then the file has alreay been opened - so nothing needed.
+		// If the command is FileNothing or FileNew then do nothing.
+		if (cmdInfo.m_nShellCommand != CCommandLineInfo::FileOpen &&
+			cmdInfo.m_nShellCommand != CCommandLineInfo::FileNothing &&
+			cmdInfo.m_nShellCommand != CCommandLineInfo::FileNew &&
+			!ProcessShellCommand(cmdInfo))
+		{
+			return FALSE;
+		}
 
 		//pMainFrame->FixPanes();  // workaround for BCG bug
 #ifdef _DEBUG
@@ -4445,7 +4448,7 @@ void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLas
 			}
 			else if (aa->OpenDocumentFile(pszParam))
 			{
-				m_nShellCommand = FileNothing;
+				m_nShellCommand = FileNothing;  // file already opened so no shell command required
 				return;
 			}
 		}
