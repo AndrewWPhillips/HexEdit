@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexEdit", "HexEdit.vcxproj", "{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RegHelper", "RegHelper\RegHelper.vcxproj", "{01264AF0-9956-4647-B202-743CCCACD18C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Debug|Win32.Build.0 = Debug|Win32
 		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Release|Win32.ActiveCfg = Release|Win32
 		{C4CC0564-D6ED-4341-8C04-3AA9F8D571F5}.Release|Win32.Build.0 = Release|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Debug|Win32.Build.0 = Debug|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Release|Win32.ActiveCfg = Release|Win32
+		{01264AF0-9956-4647-B202-743CCCACD18C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
