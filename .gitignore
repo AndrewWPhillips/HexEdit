@@ -1,4 +1,5 @@
 !HexEdit/lib/*.lib
+!HexEdit/bin/*.exe
 *.opensdf
 *.sdf
 HexEdit/Release/
@@ -7,3 +8,5 @@ HexEdit/Debug/
 HexEdit/ipch/
 HexEdit/videos/*.avi
 HexEdit/Videos/Work/
+HexEdit/RegHelper/Debug/
+HexEdit/RegHelper/Release/
