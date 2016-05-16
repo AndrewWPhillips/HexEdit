@@ -857,28 +857,39 @@ void CHexFileList::SetupJumpList()
 	}
 
 	// Put all extensions (that have yet to be registered) into a string for RegisterExtensions
+	bool need_ext = false;
 	CString strExt;
 	for (std::set<CString>::const_iterator pext = ext.begin(); pext != ext.end(); ++pext)
 	{
         if (RegOpenKeyEx(HKEY_CLASSES_ROOT, *pext + "\\OpenWithProgids", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
 		{
 			strExt += *pext + "|";
-			need_reg = true;
+			need_ext = true;
 		}
 		else
 		{
 			if (RegQueryValueEx(hkey, CHexEditApp::ProgID, NULL, NULL, NULL, NULL) != ERROR_SUCCESS)
 			{
 				strExt += *pext + "|";
-				need_reg = true;
+				need_ext = true;
 			}
 			RegCloseKey(hkey);
 		}
 	}
 
+	const char * explanation =  "\nJump Lists were introduced with Windows 7. They are lists of items that are "
+								"quickly accessed by right-clicking the HexEdit icon on the Task Bar. HexEdit "
+								"supports lists of most recently opened items, frequently opened items, and "
+								"those that you mark as favorites.\n\n"
+								"However, for jump lists to work the type(s) of the files in the jump lists "
+								"must be registered as \"openable\" with HexEdit. To associate the above file "
+								"types with HexEdit requires starting a separate application with Administrator "
+								"privileges in order to add registry setting for all users.\n\n"
+								"When prompted please select \"Yes\" in the User Account Control window.";
+
 	// Only fire up reghelper if need to register something (need_reg is true)
 	// (ie, there are extensions to register OR the appid or exe path is wrong)
-	if (need_reg)
+	if (need_ext)
 	{
 		CString strTmp = strExt;
 		strTmp.Replace("|", "   ");
@@ -886,15 +897,7 @@ void CHexFileList::SetupJumpList()
 		                        "To use jump lists HexEdit needs to register some file types.\n\n"
 		                           "Do you wish to associate HexEdit with these files extensions?\n\n"
 								   + strTmp,
-								"\nJump Lists were introduced with Windows 7. They are lists of items that are "
-								   "quickly accessed by right-clicking the HexEdit icon on the Task Bar. HexEdit "
-								   "supports lists of most recently opened items, frequently opened items, and "
-								   "those that you mark as favorites.\n\n"
-								   "However, for jump lists to work the type(s) of the files in the jump lists "
-								   "must be registered as \"openable\" with HexEdit. To associate the above file "
-								   "types with HexEdit requires starting a separate application with Administrator "
-								   "privileges in order to add registry setting for all users.\n\n"
-								   "When prompted please select \"Yes\" in the User Account Control window.",
+								explanation,
 								"File Registration",
 		                        TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) != IDYES ||
 			!theApp.RegisterExtensions(strExt))
@@ -907,6 +910,18 @@ void CHexFileList::SetupJumpList()
 		// TODO: xxx We need keep track of all extensions we have registered in a reg string
 		//       xxx so we can unregister them all if necessary.  (Perhaps this can be done in 
 		//       xxx RegHelper.exe, so we know if we added the .ext or just the OpenWithProgids entry)
+	}
+	else if (need_reg)
+	{
+		if (AvoidableTaskDialog(IDS_REG_REQUIRED,
+		                        "Should HexEdit modify some global registry settings?\n\n",
+								explanation,
+								"Registry Settings",
+		                        TDCBF_YES_BUTTON | TDCBF_NO_BUTTON) == IDYES)
+		{
+			theApp.RegisterExtensions("");  // set up registry settings without registering any file extensions
+			return;                         // no need to 
+		}
 	}
 
 	// Add the 3 types of files to the task list
