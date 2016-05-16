@@ -1,0 +1,87 @@
+---------
+Make sure there are files in Recent/Freq/Fav Jump Lists
+Open HexEdit - make sure Standard Toolbar is visible
+Open Properties dialog, switch to File Page
+Open two files (same folder), change Category of both to "TBD"
+Open HexEdit Explorer, change to same folder, hide all cols except Name,Size,Date
+Make sure there are other files with category "Bad" 
+Close Prop dialog, Explorer, and the 2 files
+---------
+ " In this video we are going to look at Jump Lists which are a cool feature added
+   in Windows 7 which allows you to right-click an program in the task bar
+   to quickly perform common tasks.
+- right-Click EverNote icon to see its Jump Lists
+
+ " For HexEdit you can quickly open the last file you used
+- right-click HexEdit icons to see Fav/Freq/Recent files
+ " OR files you open a lot even if you haven't opened them in a while
+- mouse over Frequent Files
+ " OR files you have tagged as favourites in HexEdit
+- mouse over Favourites
+
+ " So how do you tag a file as a favourite?
+- select a file to open it in HexEdit
+
+ " The simplest way is to click the "star" icon on the main toolbar
+- click "star" on Standard toolbar
+
+ " Behind the scenes this is simply adding the currently open file to the "Favourites" category
+ 
+ " The favourites category and the star button has been in HexEdit since before Windows
+   7 but now it is used to populate the "Favourites" Jump List
+ 
+~~~~1
+
+ " To change the category of a file you can simply open the Properties dialog
+- open Prop dialog, switch to Summary page
+- open another file, switch between the files to see the Category change
+
+ " To change the category just select it from the drop down list
+- change 2nd file from TBD to Favourites
+
+ " Or you can type in a new category
+- type in category of "New"
+
+ " You can also see categories in the Explorer window
+- open HexEdit Explorer window right
+
+ " You need to turn on the Categories column
+- right-click a column header and select Categories
+- turn off Size and Modified columns
+
+ " So if I wanted to open all files in the "Bad" category I can just sort them
+- click the Category column header and select all in the "Bad" category
+
+ " and open them right from HexEdit Explorer
+- right-click and select "open read-only", then change category of some to "New"
+ 
+~~~~2
+
+ " OK so that is how categories work. Now we go back to Jump Lists.
+- close HexEdit
+
+ " The next time you open HexEdit it will add the Favourites to your Jump Lists
+- open HexEdit
+- it should display the "Admin Provileges" dialog
+
+ " Ah, now this is a complication. For Jump Lists to work the files in the Jump List
+   must have been registered with Windows as openable by HexEdit. This is not a problem
+   with most programs since they can usually only open there own types of files.
+   For example, when you install Word the installer automatically says that .DOC and .DOCX
+   file are openable with Word.
+   
+ " Of course, you can open any sort of file with HexEdit. After all it is designed to be
+   able to edit any type of binary file. But to add the files to the HexEdit Jump Lists
+   HexEdit has to chnage some global registry settings.
+   
+ " Now Windows won't allow a program to ordinarily change settings for all users even
+   if the person running the program is an admin. To do this you must start a program with
+   Admin privileges. So HexEdit has to fire up a special program to modify the registry
+   settings. When this program is run you will see the good old UAC prompt.
+- click "yes" and the UAC window is shown
+
+ " You also have to click Yes here for Jump Lists to work
+- click "Yes" and close HexEdit
+
+ " Now the Jump Lists have been set up
+- right-click HexEdit icon and select a Favourite file
