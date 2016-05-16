@@ -69,28 +69,25 @@ Alternative
 
 Categories
 ==========
-Prefixes: * = scripted, + = captured and uploaded, > means added to web page
+
+Here are the scripts (complete and proposed for HexEdit video tutorials).
+The actual scripts are in HexEdit/videos. The process for creating videos in in the Videos note.
+
+Legend: * = scripted, + = captured and uploaded, > means added to web page
 
 > Intro
 
 Viewing
--------
 
-> Using Display
-
-> Format (Adjusting)
-
-> Highlighter
-
-> Ruler
-
-> Status Bar
-
-* Document Options
-
-* Colour Schemes
-
-* Aerial View
+> Using Display  (ViewDisplay)
+> Format (Adjusting)  (ViewFormat) 
+> Highlighter (ViewHighLighter) 
+> Ruler  (ViewRuler)
+> Status Bar (ViewStatusBar)
+* Document Options  (ViewDisplayOptions) 
+* Colour Schemes (ViewColourScheme) 
+* Aerial View (ViewAerial)
+* Preview View (ViewPreview) 
 
 Templates
 - split/tabbed
@@ -115,14 +112,10 @@ Unicode
 - clipboard
 
 Editing
--------
 
 > Editing Intro
-
 > Selecting
-
 > Mark
-
 > Properties Dialog & File Properties
 
 * Properties Numbers
@@ -145,11 +138,6 @@ Undo
 - intelligent undo
 - no redo (only use I have ever found is if undo too far)
 
-Large Files
-- aborting long operations
-- file/New
-- building a large file using Edit/Append and Append Same File
-
 Info Tips
 - list
   - checkboxes
@@ -168,8 +156,12 @@ Info Tips
   - address
   - sector/offset
 
+Large Files
+- aborting long operations
+- file/New
+- building a large file using Edit/Append and Append Same File
+
 Customization
--------------
 
 Toolbars/Keyboard
 
@@ -197,21 +189,18 @@ Default Display
 
 Colour Schemes
 
+Info Tips
+
 File Type Filters
 
 Default Directories
 
-Info Tips
-
 Auto Macros
 
 Navigation
-----------
 
 * Jump Tools
-
 + Bookmarks
-
 * Advanced Bookmarks
 
 Navigations Points
@@ -219,15 +208,14 @@ Navigations Points
 - drop down lists - strictly chronological
 - file will be reopened
 
-Calculator
-- base/bits
+NavCalculator
+- base 16 or 10, bits 64
 - layout binop on right, unop on left
-- expressions with brackets for precedence
-- file operations
+- GO button
+- integration with jump tools
+- assign to var (expressions)
 - memory/mark buttons
 - integration with macros
-- endian
-- overflow
 
 Variables
 - types
@@ -240,13 +228,12 @@ Variables
 
 
 Macros
-------
 
 Macros
 - recording/playing
 - options
 - stop on error to avoid mangled files
-- Abort macros at any time by pressing Escape 
+- Abort macros at any time by pressing Escape
 
 Macro Files
 - macros files
@@ -263,7 +250,6 @@ Advanced Macros
 - bookmarks
 
 Searching
----------
 
 * Find Tool
 
@@ -281,17 +267,23 @@ Aligned Find
 
 
 Tools
------
 
 Compare
 - highlight
 
 Conversions
-- EBC<->ASC, OEM<->ANSI, ucase etc
+- EBC<->ASC, OEM<->ANSI, ucase, base64
 
 Unary Arithmetic Operations
 
-Operations Using Calc (Binary + Assign)
+ToolsCalculator
+- radix/bits/signed/endian
+- layout: binop/unaryop/file
+- expressions with brackets for precedence
+- file operations
+- memory/mark buttons
+- endian
+- overflow
 
 Encryption
 
@@ -303,7 +295,6 @@ Import/Export
 
 
 Help
-----
 
 Dialog
 - options dialog
@@ -328,7 +319,6 @@ Help Topics
 
 
 File Handling
--------------
 
 Opening Files
 - dialog
@@ -361,6 +351,8 @@ Explorer
 File Operations
 - deleting
 - change attr
+- changing dates
+- wiping
 
 File Windows
 - tabs at top or bottom
@@ -371,7 +363,6 @@ File Windows
 - Windows dialog
 
 Templates
----------
 
 Provided templates
 - .EXE
@@ -418,5 +409,3 @@ Template Parser Customization
   - keep backup
 - own (custom) types and constants
 - _Windows_types - all from windows headers + some MFC structs/classes
-
-

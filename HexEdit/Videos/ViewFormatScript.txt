@@ -1,0 +1,93 @@
+Remove hexedit.exe from RFL
+Position File Open dialog
+Hide Format bar
+
+----------------------------
+  " In this video we will look at a few commands that change the layout of the HexEdit display.
+    First I'll just open a file so I can demonstrate.
+
+- open hexedit.exe
+  " Many of these options are on a separate toolbar called the Format Bar -
+    so I'll just turn that on by right clicking the menu bar and selecting it.
+
+- open format toolbar
+
+  " First, the ruler is a very useful facility that shows the columns in hex or decimal
+    depending on how addresses are currently displayed.  It also allows you to adjust
+    the layout in various ways which I will demonstrate later.
+- turn ruler on
+- toggle address display
+
+  " You already saw the auto-fit button
+- turn on autofit and resize
+
+  " If you turn off autofit you can also adjust the number of columns using these buttons
+- turn off auto-fit
+- demo dec/inc columns
+
+~~~~ 1
+
+
+  " The font drop downs allow you to quickly select a new font or font size
+- demo font and size
+
+  " We saw these other commands in the previous video but they are 
+   in the Format Bar on separate buttons here for ease of use.
+- change to hex mode ...
+  " Or to make things even easier you can move a button to your own toolbar.  For example, if 
+  " you use stacked mode and EBCDIC a lot (as I know certain of you do)
+    you can drag these buttons to another toolbar
+  " Actually it is very easy to change the toolbars by holding down the Alt key and dragging
+    a button.  If you also hold down the Control key you will copy a button instead of moving it
+
+- copy stacked and EBCDIC buttons to the menu bar
+
+~~~~ 2
+
+  " All of these formating options and many more can be changed in the Options dialog.
+- Open Options dialog - switch to doc/general page
+- general page
+  " All the option pages under "Document" relate to the file you are working on.
+  " This button restores the default settings and this button saves the current
+    settings as the default.
+
+- display page
+  " The display page has most of the options we have already seen on the toolbars,
+    here is autofit, area display, char set and controls chars
+- toggle autofit
+- change area display
+- change char set
+
+  " But there are a few things you can do here that you can't with the toolbar buttons.
+    For example you can display line numbers and you can turn on both hex and decimal
+    addresses at the same time.
+- turn on line nos and click Apply
+
+  " If I change the options and click the Apply button I can see the effect in the window.
+- turn on hex and decimal addresses and click Apply
+- move dialog up so effect can be seen
+
+~~~~ 3
+
+  " The grouping option says how columns are grouped
+- chnage grouping and click Apply
+
+  " The offset option is not often used but was requested by several people.
+    It just says at what column the first byte of the file is displayed.
+- change offset and click Apply
+
+    One use for the offset is when you have a file which consists of many fixed sized records
+    preceded by a header of a different length.  There are several database formats like this.
+    You adjust the offset so the first record starts at the left column and you set the number
+    of columns to match the record size.
+
+- close Options dialog
+
+  " Another way to adjust the offset is just to position the cursor at the column
+    which you want on the left side of the screen and press Alt+Enter.
+
+- move mouse and click Alt-Enter
+
+~~~~ 4
+  " In the next video we will look at how to make a selection of some bytes of the file.
+
