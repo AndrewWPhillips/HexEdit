@@ -649,7 +649,7 @@ BOOL CFoldersPage::OnApply()
 	// Check that the directories exist
 	if (!PathIsDirectory(pParent->val_.open_folder_) &&
 		TaskMessageBox("Folder Not Found",
-		"The default Opne Folder \"" + pParent->val_.open_folder_ +
+		"The specified default Open Folder \"" + pParent->val_.open_folder_ +
 		"\" does not exist.\n\nContinue anyway?",
 		MB_YESNO) == IDNO)
 	{
@@ -659,7 +659,7 @@ BOOL CFoldersPage::OnApply()
 	}
 	if (!PathIsDirectory(pParent->val_.save_folder_) &&
 		TaskMessageBox("Folder Not Found",
-		"The default Save As Folder \"" + pParent->val_.save_folder_ +
+		"The specified default Save As Folder \"" + pParent->val_.save_folder_ +
 		"\" does not exist.\n\nContinue anyway?",
 		MB_YESNO) == IDNO)
 	{

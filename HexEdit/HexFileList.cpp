@@ -877,15 +877,16 @@ void CHexFileList::SetupJumpList()
 		}
 	}
 
-	const char * explanation =  "\nJump Lists were introduced with Windows 7. They are lists of items that are "
-								"quickly accessed by right-clicking the HexEdit icon on the Task Bar. HexEdit "
-								"supports lists of most recently opened items, frequently opened items, and "
-								"those that you mark as favorites.\n\n"
-								"However, for jump lists to work the type(s) of the files in the jump lists "
-								"must be registered as \"openable\" with HexEdit. To associate the above file "
-								"types with HexEdit requires starting a separate application with Administrator "
-								"privileges in order to add registry setting for all users.\n\n"
-								"When prompted please select \"Yes\" in the User Account Control window.";
+	static const char * explanation =
+		"\nJump Lists were introduced with Windows 7. They are lists of items that are "
+		"quickly accessed by right-clicking the HexEdit icon on the Task Bar. HexEdit "
+		"supports lists of most recently opened items, frequently opened items, and "
+		"those that you mark as favorites.\n\n"
+		"However, for jump lists to work the type(s) of the files in the jump lists "
+		"must be registered as \"openable\" with HexEdit. To associate the above file "
+		"types with HexEdit requires starting a separate application with Administrator "
+		"privileges in order to add registry setting for all users.\n\n"
+		"When prompted please select \"Yes\" in the User Account Control window.";
 
 	// Only fire up reghelper if need to register something (need_reg is true)
 	// (ie, there are extensions to register OR the appid or exe path is wrong)

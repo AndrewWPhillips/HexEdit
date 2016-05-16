@@ -15852,7 +15852,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		// Tell the user about divide by zero errors
 		CString mess;
 		mess.Format("There were %d divide by zero errors while performing %s.  "
-			        "The values at those locations were not changed.", int(div0), desc);
+			        "The values at each of those locations were not changed.", int(div0), desc);
 		TaskMessageBox("Divide by Zero", mess);
 		theApp.mac_error_ = 5;
 	}

@@ -1,7 +1,7 @@
 RegHelper is a project that is used to support HexEdit.
 
 HexEdit cannot modify registry settings affecting all users, even if it is run by an Administrator.
-A separate program (RegHelper.exe) is used to allow global registry changes. When HexEdit runs RegHelp.exe
+A separate program (RegHelper.exe) is used to allow global registry changes. When HexEdit runs RegHelper.exe
 a UAC (User Access Control) window is displayed asking the user if they want to allow the changes.
 
 Command Line Options
