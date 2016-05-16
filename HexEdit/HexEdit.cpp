@@ -4079,7 +4079,8 @@ void CHexEditApp::OnHelpEmail()
 
 void CHexEditApp::OnUpdateHelpEmail(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(::GetProfileInt("MAIL", "MAPI", 0) == 1);
+	//pCmdUI->Enable(::GetProfileInt("MAIL", "MAPI", 0) == 1);
+	pCmdUI->Enable(TRUE);
 }
 
 void CHexEditApp::OnWebPage()
@@ -4548,12 +4549,6 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 {
 	BOOL retval = FALSE;
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-	if (::GetProfileInt("MAIL", "MAPI", 0) != 1)
-	{
-		AfxMessageBox("MAPI not supported on this machine");
-		return FALSE;                                 // MAPI mail not supported
-	}
 
 	HINSTANCE hmapi = ::LoadLibrary("MAPI32.DLL");
 	if (hmapi == (HINSTANCE)0)
