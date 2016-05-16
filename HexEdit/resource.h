@@ -442,6 +442,7 @@
 #define IDD_PROP_BITMAP                 525
 #define IDD_CALC_HIST                   526
 #define IDD_COMPARE_LIST                527
+#define IDD_OPT_WINCOMPARE              528
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1313,6 +1314,7 @@
 #define IDC_DISPLAY_COMP                1707
 #define IDC_DISPLAY_PREVW               1708
 #define IDC_GRID_DIFFS                  1712
+#define IDC_STATIC_COMPARE_NAME         1713
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1886,7 +1888,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
 #define _APS_NEXT_COMMAND_VALUE         39240
-#define _APS_NEXT_CONTROL_VALUE         1713
+#define _APS_NEXT_CONTROL_VALUE         1714
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
