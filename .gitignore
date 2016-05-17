@@ -2,6 +2,7 @@
 !HexEdit/bin/*.exe
 *.opensdf
 *.sdf
+HexEdit/GitRevision.h
 HexEdit/Release/
 HexEdit/Output/
 HexEdit/Debug/

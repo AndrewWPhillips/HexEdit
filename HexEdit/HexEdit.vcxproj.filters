@@ -13,9 +13,6 @@
       <UniqueIdentifier>{5d763f96-d01c-40bc-b7a6-0644425cf51b}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
-    <Filter Include="Help Files">
-      <UniqueIdentifier>{745fe01f-b23a-4bf0-b11f-c4f6253daf53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Text Files">
       <UniqueIdentifier>{3a4a1327-5298-4e7b-8eef-120adadf45f2}</UniqueIdentifier>
       <Extensions>txt</Extensions>
@@ -31,6 +28,9 @@
     </Filter>
     <Filter Include="Headers %28External%29">
       <UniqueIdentifier>{cd8d92ae-7ca9-41c9-a17b-7f50ded02088}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Build Files">
+      <UniqueIdentifier>{745fe01f-b23a-4bf0-b11f-c4f6253daf53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -690,14 +690,11 @@
     <None Include="Res\window.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="HelpID.hm">
-      <Filter>Help Files</Filter>
-    </None>
     <None Include="HLP\HexEdit.rtf">
-      <Filter>Help Files</Filter>
+      <Filter>Build Files</Filter>
     </None>
     <None Include="MakehelpV.bat">
-      <Filter>Help Files</Filter>
+      <Filter>Build Files</Filter>
     </None>
     <None Include="TestData\_xxx.xml">
       <Filter>Text Files</Filter>
@@ -762,7 +759,6 @@
     <None Include="TestData\WebSearch.txt">
       <Filter>Text Files</Filter>
     </None>
-    <None Include="manifest.xml" />
     <None Include="TestData\ToDo.txt">
       <Filter>Text Files</Filter>
     </None>
@@ -798,6 +794,15 @@
     </None>
     <None Include="res\help_hot.bmp">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="manifest.xml">
+      <Filter>Build Files</Filter>
+    </None>
+    <None Include="HelpID.hm">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="PreBuild.bat">
+      <Filter>Build Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

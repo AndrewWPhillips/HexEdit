@@ -9,6 +9,7 @@
 
 #include "stdafx.h"
 #include "HexEdit.h"
+#include "GitRevision.h"
 #include "Register.h"
 #include "SystemSound.h"
 #include <FreeImage.h>
@@ -151,7 +152,7 @@ void CAbout::fix_controls()
 	// Display the revision (if beta or if shift held down)
 	if (theApp.beta_ > 0 || ::GetKeyState(VK_SHIFT) < 0)
 	{
-		ss.Format(" Revision %d", 1429);  // TODO: use Git revision number now instead of SVNRevision from SubVersion?
+		ss.Format(" Revision %d", GITREVISION);
 		text1_ += ss;
 	}
 

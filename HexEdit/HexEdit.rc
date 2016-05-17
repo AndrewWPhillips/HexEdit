@@ -13,7 +13,7 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include "afxres.h"
-#include "SVNRevision.h"
+#include "GitRevision.h"
 //#include "secres.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -2673,8 +2673,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,0,1,SVNRevision
- PRODUCTVERSION 5,0,1,SVNRevision
+ FILEVERSION 5,0,1,GITREVISION
+ PRODUCTVERSION 5,0,1,GITREVISION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2691,12 +2691,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "5.0.1." SVNRevisionStr
+            VALUE "FileVersion", "5.0.1.0"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2016  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "5.0.1." SVNRevisionStr
+            VALUE "ProductVersion", "5.0.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -5202,7 +5202,7 @@ END
 2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
-    "#include ""SVNRevision.h""\r\n"
+    "#include ""GitRevision.h""\r\n"
     "//#include ""secres.h""\0"
 END
 
