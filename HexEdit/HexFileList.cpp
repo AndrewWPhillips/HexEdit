@@ -857,21 +857,22 @@ void CHexFileList::SetupJumpList()
 	}
 
 	// Put all extensions (that have yet to be registered) into a string for RegisterExtensions
-	bool need_ext = false;
 	CString strExt;
 	for (std::set<CString>::const_iterator pext = ext.begin(); pext != ext.end(); ++pext)
 	{
-        if (RegOpenKeyEx(HKEY_CLASSES_ROOT, *pext + "\\OpenWithProgids", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS)
+        if (RegOpenKeyEx(HKEY_CLASSES_ROOT, *pext + "\\OpenWithProgids", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS &&
+			!pext->IsEmpty() )
 		{
 			strExt += *pext + "|";
-			need_ext = true;
+			need_reg = true;
 		}
 		else
 		{
-			if (RegQueryValueEx(hkey, CHexEditApp::ProgID, NULL, NULL, NULL, NULL) != ERROR_SUCCESS)
+			if (RegQueryValueEx(hkey, CHexEditApp::ProgID, NULL, NULL, NULL, NULL) != ERROR_SUCCESS &&
+				!pext->IsEmpty() )
 			{
 				strExt += *pext + "|";
-				need_ext = true;
+				need_reg = true;
 			}
 			RegCloseKey(hkey);
 		}
@@ -890,7 +891,7 @@ void CHexFileList::SetupJumpList()
 
 	// Only fire up reghelper if need to register something (need_reg is true)
 	// (ie, there are extensions to register OR the appid or exe path is wrong)
-	if (need_ext)
+	if (need_reg)
 	{
 		CString strTmp = strExt;
 		strTmp.Replace("|", "   ");
