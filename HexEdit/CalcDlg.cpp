@@ -2916,6 +2916,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 		break;
 
 	case CALCOVERFLOW:  // it happens
+	case CALCERROR:
 		break;
 
 	case CALCINTEXPR:   // should have been converted to CALCINTLIT
