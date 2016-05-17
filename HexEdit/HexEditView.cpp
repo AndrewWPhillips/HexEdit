@@ -16272,9 +16272,9 @@ void CHexEditView::OnAsr64bit()
 	::OnOperateBinary<__int64>(this, binop_asr, "arithmetic shift right quad words", __int64(0));
 }
 
-template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, unary_type op)
+template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, int count, unary_type op)
 {
-	size_t ii = 0;
+	int ii = 0;
 #ifdef USE_SSE2
 	// This speeds up NOT operation somewhat (though disk is normally limiting factor).
 	// Note that we can only do this easily for NOT as it is the only operation
