@@ -4390,6 +4390,22 @@
     <param name="Local" value="binary_files\Error_Checking.htm">
     <param name="Name" value="SHA1 command">
     <param name="Local" value="cmd_operations\HID_SHA1.htm">
+    <param name="Name" value="SHA 224">
+    <param name="Local" value="cmd_operations\ID_SHA224.htm">
+    <param name="Name" value="SHA 256">
+    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Name" value="SHA 384 Command">
+    <param name="Local" value="cmd_operations\SHA_384_Command.htm">
+    <param name="Name" value="SHA 512 Command">
+    <param name="Local" value="cmd_operations\SHA_512_Command.htm">
+    <param name="Name" value="SHA 3 224 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Name" value="SHA 3 256 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Name" value="SHA 3 384 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Name" value="SHA 3 512 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="message digest">
@@ -4916,6 +4932,20 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
     <param name="Name" value="Background Processing Page">
     <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+    <param name="Name" value="SHA 256">
+    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Name" value="SHA 384 Command">
+    <param name="Local" value="cmd_operations\SHA_384_Command.htm">
+    <param name="Name" value="SHA 512 Command">
+    <param name="Local" value="cmd_operations\SHA_512_Command.htm">
+    <param name="Name" value="SHA 3 224 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Name" value="SHA 3 256 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Name" value="SHA 3 384 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Name" value="SHA 3 512 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="background statistics">
@@ -4975,6 +5005,11 @@
     <param name="Name" value="flag bits">
     <param name="Name" value="BitFields etc">
     <param name="Local" value="binary_files\BitFields_Etc.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="digest">
+    <param name="Name" value="SHA 3 512 Command">
+    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
   </object>
 </ul>
 </html>
