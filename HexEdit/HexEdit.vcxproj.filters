@@ -1159,9 +1159,6 @@
     <ClInclude Include="CompareList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVNRevision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\FreeImage.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>

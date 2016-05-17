@@ -597,7 +597,6 @@
     <ClInclude Include="Splasher.h" />
     <ClInclude Include="SRecord.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVNRevision.h" />
     <ClInclude Include="SystemSound.h" />
     <ClInclude Include="TabView.h" />
     <ClInclude Include="timer.h" />
