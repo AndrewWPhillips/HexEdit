@@ -1569,6 +1569,10 @@ BEGIN
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
     "Z",            ID_SELECT_LINE,         VIRTKEY, ALT, NOINVERT
     "~",            ID_INVERT,              ASCII,  NOINVERT
+    VK_HOME,        ID_COMP_FIRST,          VIRTKEY, ALT, NOINVERT
+    VK_END,         ID_COMP_LAST,           VIRTKEY, ALT, NOINVERT
+    VK_LEFT,        ID_COMP_PREV,           VIRTKEY, ALT, NOINVERT
+    VK_RIGHT,       ID_COMP_NEXT,           VIRTKEY, ALT, NOINVERT
 END
 
 
