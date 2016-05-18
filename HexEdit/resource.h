@@ -174,12 +174,9 @@
 #define IDR_CONTEXT_HEX                 240
 #define IDR_CONTEXT_CHAR                241
 #define IDD_OPT_FILTERS                 241
-#define IDR_CONTEXT_BARS                242
-#define IDD_OPT_WINDOW1                 242
 #define IDR_CONTEXT_STATBAR             243
 #define IDD_PROP_FILE1                  243
 #define IDR_CONTEXT_HIGHLIGHT           244
-#define IDR_MAINFRAME3                  245
 #define IDI_UP                          245
 #define IDR_TOOLBAR                     245
 #define IDR_VIEWBAR                     245

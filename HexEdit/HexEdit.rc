@@ -1102,40 +1102,6 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_BARS MENU
-BEGIN
-    POPUP "Bar Context"
-    BEGIN
-        POPUP "&Dialog bars"
-        BEGIN
-            MENUITEM "Allow &Docking",              ID_DIALOGS_DOCKABLE
-            MENUITEM SEPARATOR
-            MENUITEM "&Calculator",                 ID_VIEW_CALCULATOR
-            MENUITEM "&Bookmarks",                  ID_VIEW_BOOKMARKS
-            MENUITEM "&Find",                       ID_VIEW_FIND
-            MENUITEM "&Properties",                 ID_VIEW_PROPERTIES
-            MENUITEM "&Explorer",                   ID_VIEW_EXPL
-        END
-        MENUITEM SEPARATOR
-        MENUITEM "&Standard Toolbar",           ID_VIEW_VIEWBAR
-        MENUITEM "&Edit Bar",                   ID_VIEW_EDITBAR
-        MENUITEM "For&mat Bar",                 ID_VIEW_FORMATBAR
-        MENUITEM "&Navigation Bar",             ID_VIEW_NAVBAR
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR1
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR2
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR3
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR4
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR5
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR6
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR7
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR8
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR9
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR10
-        MENUITEM SEPARATOR
-        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
-    END
-END
-
 IDR_CONTEXT_STATBAR MENU
 BEGIN
     POPUP "Status Bar Context"
@@ -4923,15 +4889,15 @@ BEGIN
     LTEXT           "",IDC_PROMPT,6,7,175,37
 END
 
-IDD_GETSTR DIALOGEX 0, 0, 186, 92
+IDD_GETSTR DIALOGEX 0, 0, 186, 97
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Enter text"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,30,73,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,114,72,50,14
-    LTEXT           "",IDC_PROMPT,6,7,173,35
-    EDITTEXT        IDC_VALUE,6,53,173,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,30,77,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,114,76,50,14
+    LTEXT           "",IDC_PROMPT,6,7,173,47
+    EDITTEXT        IDC_VALUE,6,57,173,14,ES_AUTOHSCROLL
 END
 
 IDD_BOOKMARKS DIALOGEX 0, 0, 120, 149
@@ -4955,9 +4921,9 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "Custom1",IDC_GRID_RFL,"MFCGridCtrl",WS_GROUP | WS_TABSTOP,7,7,302,166,0,HIDC_GRID_RFL
     LTEXT           "Selected: 99999",IDC_FILES_SELECTED,317,7,61,8,0,0,HIDC_FILES_SELECTED
-    PUSHBUTTON      "Open",IDC_OPEN_FILES,317,18,56,14,WS_GROUP,0,HIDC_OPEN_FILES
+    DEFPUSHBUTTON   "Open",IDC_OPEN_FILES,317,18,56,14,WS_GROUP,0,HIDC_OPEN_FILES
     PUSHBUTTON      "Open read-only",IDC_OPEN_RO,317,34,56,14,0,0,HIDC_OPEN_RO
-    DEFPUSHBUTTON   "Save",IDOK,317,60,56,14,WS_GROUP
+    PUSHBUTTON      "Save",IDOK,317,60,56,14,WS_GROUP
     PUSHBUTTON      "Remove",IDC_REMOVE_FILES,317,76,56,14,0,0,HIDC_REMOVE_FILES
     PUSHBUTTON      "Validate All",IDC_VALIDATE,317,92,56,14,WS_GROUP,0,HIDC_VALIDATE
     CONTROL         "Keep network",IDC_NET_RETAIN,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,317,108,60,9,0,HIDC_NET_RETAIN
@@ -5175,6 +5141,19 @@ BEGIN
     IDD_CALC, DIALOG
     BEGIN
         BOTTOMMARGIN, 200
+    END
+
+    IDD_RECENT_FILES, DIALOG
+    BEGIN
+    END
+
+    IDD_GETSTR, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 92
+    END
+
+    IDD_RECENT_FILES_NEW, DIALOG
+    BEGIN
     END
 
     IDD_NEW_COMPARE, DIALOG
