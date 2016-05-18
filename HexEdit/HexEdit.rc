@@ -1102,40 +1102,6 @@ BEGIN
     END
 END
 
-IDR_CONTEXT_BARS MENU
-BEGIN
-    POPUP "Bar Context"
-    BEGIN
-        POPUP "&Dialog bars"
-        BEGIN
-            MENUITEM "Allow &Docking",              ID_DIALOGS_DOCKABLE
-            MENUITEM SEPARATOR
-            MENUITEM "&Calculator",                 ID_VIEW_CALCULATOR
-            MENUITEM "&Bookmarks",                  ID_VIEW_BOOKMARKS
-            MENUITEM "&Find",                       ID_VIEW_FIND
-            MENUITEM "&Properties",                 ID_VIEW_PROPERTIES
-            MENUITEM "&Explorer",                   ID_VIEW_EXPL
-        END
-        MENUITEM SEPARATOR
-        MENUITEM "&Standard Toolbar",           ID_VIEW_VIEWBAR
-        MENUITEM "&Edit Bar",                   ID_VIEW_EDITBAR
-        MENUITEM "For&mat Bar",                 ID_VIEW_FORMATBAR
-        MENUITEM "&Navigation Bar",             ID_VIEW_NAVBAR
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR1
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR2
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR3
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR4
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR5
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR6
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR7
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR8
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR9
-        MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR10
-        MENUITEM SEPARATOR
-        MENUITEM "C&ustomize...",               ID_CUSTOMIZE
-    END
-END
-
 IDR_CONTEXT_STATBAR MENU
 BEGIN
     POPUP "Status Bar Context"
@@ -1603,6 +1569,10 @@ BEGIN
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
     "Z",            ID_SELECT_LINE,         VIRTKEY, ALT, NOINVERT
     "~",            ID_INVERT,              ASCII,  NOINVERT
+    VK_HOME,        ID_COMP_FIRST,          VIRTKEY, ALT, NOINVERT
+    VK_END,         ID_COMP_LAST,           VIRTKEY, ALT, NOINVERT
+    VK_LEFT,        ID_COMP_PREV,           VIRTKEY, ALT, NOINVERT
+    VK_RIGHT,       ID_COMP_NEXT,           VIRTKEY, ALT, NOINVERT
 END
 
 
