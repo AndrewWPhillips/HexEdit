@@ -15,6 +15,7 @@
 #include "MainFrm.h"
 #include "HexFileList.h"
 #include "HexEditView.h"
+#include "misc.h"
 
 #include <queue>
 
@@ -747,6 +748,7 @@ void CHexFileList::SetupJumpList()
 	{
 		if (open_count_[ii] <= 1)
 		{
+			// We don't consider that a single open is "frequent"
 		}
 		else if (freq.size() < maxSlots/3)  // fill up to 1/3 of total slots available
 		{
@@ -785,7 +787,7 @@ void CHexFileList::SetupJumpList()
 	ASSERT(numRecent + numFreq + numFav <= maxSlots);
 
 	// Make sure we are associated with the extensions of all the files we are adding to the jump list
-	std::set<CString> ext;
+	CaseInsensitiveSet ext;
 
 	// Get extensions of recent files
 	for (int ii = name_.size() - 1; ii >= (int)name_.size() - numRecent; ii--)
@@ -858,7 +860,7 @@ void CHexFileList::SetupJumpList()
 
 	// Put all extensions (that have yet to be registered) into a string for RegisterExtensions
 	CString strExt;
-	for (std::set<CString>::const_iterator pext = ext.begin(); pext != ext.end(); ++pext)
+	for (CaseInsensitiveSet::const_iterator pext = ext.begin(); pext != ext.end(); ++pext)
 	{
         if (RegOpenKeyEx(HKEY_CLASSES_ROOT, *pext + "\\OpenWithProgids", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS &&
 			!pext->IsEmpty() )
@@ -891,7 +893,7 @@ void CHexFileList::SetupJumpList()
 
 	// Only fire up reghelper if need to register something (need_reg is true)
 	// (ie, there are extensions to register OR the appid or exe path is wrong)
-	if (need_reg)
+	if (need_reg && !strExt.IsEmpty())
 	{
 		CString strTmp = strExt;
 		strTmp.Replace("|", "   ");
