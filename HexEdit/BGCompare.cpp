@@ -134,9 +134,12 @@ view_t CHexEditDoc::GetCompareFile(view_t view_type, bool & auto_sync, bool & au
 	// Get previous compare file name (if any) to be used as the default
 	compareFile = GetCompFileName();
 
+	dlg.orig_shared_ = shared_;
+	dlg.compare_type_ = shared_ ? 0 : 1;
+
 	if (compareFile.IsEmpty())
 	{
-		dlg.compare_type_ = 0;                                                               // default to self-compare
+		// Looks like there was no previous compare for this file so use last file name for any file
 		dlg.file_name_ = 	theApp.GetProfileString("File-Settings", "LastCompareFile", ""); // but get last used file name
 	}
 	else if (compareFile.Compare("*") == 0)
@@ -146,7 +149,6 @@ view_t CHexEditDoc::GetCompareFile(view_t view_type, bool & auto_sync, bool & au
 		{
 			return view_type;                 // return asked for view type (or error if asked for type is 0)
 		}
-		dlg.compare_type_ = 0;                                                           // "*" means to use self-compare
 		dlg.file_name_ = 	theApp.GetProfileString("File-Settings", "LastCompareFile", ""); // but also get last used file name (disabled)
 	}
 	else
@@ -155,7 +157,7 @@ view_t CHexEditDoc::GetCompareFile(view_t view_type, bool & auto_sync, bool & au
 		if (!bForcePrompt && _access(compareFile, 0) != -1)
 			return view_type;                 // return asked for view type (or error if asked for type is 0)
 
-		dlg.compare_type_ = 1;
+		dlg.compare_type_ = 1;                // Default to file compare since we have a file name
 		dlg.file_name_ = compareFile;
 	}
 	dlg.compare_display_ = int(view_type) - 1;
@@ -172,7 +174,7 @@ view_t CHexEditDoc::GetCompareFile(view_t view_type, bool & auto_sync, bool & au
 	dlg.auto_sync_ = auto_sync;
 	dlg.auto_scroll_= auto_scroll;
 
-	if (dlg.DoModal() != IDOK)
+	if (dlg.DoModal() != IDOK)              // === run dialog ===
 		return none;
 
 	// Store selected values

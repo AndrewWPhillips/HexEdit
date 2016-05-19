@@ -134,6 +134,14 @@ void CNewCompare::fix_controls()
 
 void CNewCompare::OnBnClickedCompareSelf()
 {
+	if (!orig_shared_)
+	{
+		TaskMessageBox("You can only perform a self-compare if "
+			            "the file is open in shareable mode.");
+		compare_type_ = 1;
+		UpdateData(FALSE);
+		return;
+	}
 	UpdateData();
 	fix_controls();
 }

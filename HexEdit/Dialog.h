@@ -137,7 +137,7 @@ private:
 	BOOL    m_enable_discon_hl;         // Enable checkbox?
 };
 
-// CFileOpenDialog - derived from CFileDialog to support open shared control (see theApp.open_file_shared_)
+// CFileOpenDialog - derived from CFileDialog to support open shared control
 class CFileOpenDialog : public CHexFileDialog
 {
 public:
