@@ -361,7 +361,8 @@ void CFileOpenDialog::OnInitDone()
 // Called when one or more files have been selected (eg OK button clicked)
 BOOL CFileOpenDialog::OnFileNameOK()
 {
-	theApp.WriteProfileInt("File-Settings", "OpenShareable", m_open_shared.GetCheck());
+	open_shareable_ = m_open_shared.GetCheck() == 1;
+	theApp.WriteProfileInt("File-Settings", "OpenShareable", open_shareable_);
 	//theApp.open_file_shared_ = m_open_shared.GetCheck() == 1 ? TRUE : FALSE;
 
 	return CHexFileDialog::OnFileNameOK();

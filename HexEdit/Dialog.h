@@ -152,6 +152,8 @@ public:
 #endif
 	}
 
+	BOOL open_shareable_;
+
 protected:
 	// Overriden members of CFileDialog
 	virtual void OnInitDone();

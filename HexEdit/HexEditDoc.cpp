@@ -348,10 +348,11 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			   data_file_[ii] == NULL );
 #endif
 
-	// Get read-only flag from app (this was the only way to pass it here)
+	// Get read-only and shareable flags from app (this was the only way to pass them here)
 	readonly_ = theApp.open_current_readonly_ == -1 ? FALSE : theApp.open_current_readonly_;
-	shared_ = FALSE;                           // qqq theApp.open_file_shared_;
-	theApp.open_current_readonly_ = -1;        // Set back to -1 to check that it's properly next time too.
+	shared_   = theApp.open_current_shared_   == -1 ? FALSE : theApp.open_current_shared_;
+	theApp.open_current_readonly_ = -1;        // Set back to -1 for next time
+	theApp.open_current_shared_ = -1;
 
 	if (!open_file(lpszPathName))
 		return FALSE;               // open_file has already set mac_error_ = 10

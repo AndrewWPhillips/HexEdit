@@ -134,8 +134,8 @@ view_t CHexEditDoc::GetCompareFile(view_t view_type, bool & auto_sync, bool & au
 	// Get previous compare file name (if any) to be used as the default
 	compareFile = GetCompFileName();
 
-	dlg.orig_shared_ = shared_;
-	dlg.compare_type_ = shared_ ? 0 : 1;
+	dlg.orig_shared_ = shared_ ? true : false;
+	dlg.compare_type_ = shared_ ? 0 : 1;       // default to self-compare if file is opened shared
 
 	if (compareFile.IsEmpty())
 	{

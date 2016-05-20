@@ -1074,6 +1074,7 @@ LONG CMainFrame::OnOpenMsg(UINT, LONG lParam)
 	if (::GlobalGetAtomName((ATOM)lParam, filename, sizeof(filename)) == 0)
 		return FALSE;
 	ASSERT(theApp.open_current_readonly_ == -1);
+	ASSERT(theApp.open_current_shared_ == -1);
 	return theApp.OpenDocumentFile(filename) != NULL;
 }
 

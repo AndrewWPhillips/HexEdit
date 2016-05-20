@@ -128,6 +128,7 @@ void CHexEditApp::macro_play(long play_times /*=1*/, const std::vector<key_macro
 				break;
 			case km_open:
 				ASSERT(theApp.open_current_readonly_ == -1);
+				ASSERT(theApp.open_current_shared_ == -1);
 				theApp.OpenDocumentFile(*(*pk).pss);
 				pv_ = NULL;    // make sure GetView gets real active view
 				plast_view = pv_ = GetView();

@@ -640,11 +640,10 @@ public:
 		return -1;
 	}
 
-	// Current values for open settings
-	//BOOL open_file_readonly_;  // Removed as we always default to read-only flag off
-	//BOOL open_file_shared_;      // Current value of global setting
 	// Temp flags for passing to CHexEditDocument::open_file
-	BOOL open_current_readonly_;
+	// NOTE: This is very confusing indirect information passing (sort of 
+	// like global vars) but other approaches were far too complicated.
+	BOOL open_current_readonly_, open_current_shared_;
 
 	// Startup options
 	BOOL save_exit_;                    // Save settings on exit?
