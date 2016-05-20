@@ -642,7 +642,7 @@ public:
 
 	// Current values for open settings
 	//BOOL open_file_readonly_;  // Removed as we always default to read-only flag off
-	BOOL open_file_shared_;      // Current value of global setting
+	//BOOL open_file_shared_;      // Current value of global setting
 	// Temp flags for passing to CHexEditDocument::open_file
 	BOOL open_current_readonly_;
 

@@ -365,7 +365,7 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	algorithm_ = 0;   // Default to built-in encryption
 
 	m_pbookmark_list = NULL;
-	open_file_shared_ = FALSE;
+	//open_file_shared_ = FALSE;
 	open_current_readonly_ = -1;
 
 	delete_reg_settings_ = FALSE;
@@ -2534,7 +2534,7 @@ void CHexEditApp::LoadOptions()
 	last_save_folder_ = GetProfileString("File-Settings", "DirSave");
 	last_both_folder_ = GetProfileString("File-Settings", "DirBoth");
 	//open_file_readonly_ = GetProfileInt("File-Settings", "OpenReadOnly", 0);
-	open_file_shared_   = GetProfileInt("File-Settings", "OpenShareable", 0);
+	//open_file_shared_   = GetProfileInt("File-Settings", "OpenShareable", 0);
 //    current_save_ = GetProfileString("File-Settings", "Save");
 	current_write_ = GetProfileString("File-Settings", "Write");
 	current_read_ = GetProfileString("File-Settings", "Read");
@@ -2896,7 +2896,7 @@ void CHexEditApp::SaveOptions()
 	WriteProfileString("File-Settings", "DirBoth", last_both_folder_);
 
 	//WriteProfileInt("File-Settings", "OpenReadOnly",  open_file_readonly_);
-	WriteProfileInt("File-Settings", "OpenShareable", open_file_shared_);
+	//WriteProfileInt("File-Settings", "OpenShareable", open_file_shared_);
 //    WriteProfileString("File-Settings", "Save", current_save_);
 	WriteProfileString("File-Settings", "Write", current_write_);
 	WriteProfileString("File-Settings", "Read", current_read_);
