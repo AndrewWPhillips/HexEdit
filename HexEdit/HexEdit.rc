@@ -3770,6 +3770,7 @@ BEGIN
     IDS_BOOKMARK_ALL_NOFILE "No Disk File"
     IDS_OPTION_SAVE_ALL     "Save Defaults?"
     IDS_RECENT_GONE         "Remove Recent File?"
+    IDS_SHARED_FILE_MODIFIED "File Change Detected"
 END
 
 STRINGTABLE

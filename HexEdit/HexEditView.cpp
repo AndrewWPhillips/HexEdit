@@ -1945,6 +1945,7 @@ struct segment_compare
 	}
 };
 
+// OnUpdate is invoked by the document to indicate something has changed (UpdateAllViews)
 // These update hints are handled:
 // CRemoveHint: removes undo info (without undoing anything) - for when document saved
 // CUndoHint: undo changes up to last doc change - called prior to undoing changes

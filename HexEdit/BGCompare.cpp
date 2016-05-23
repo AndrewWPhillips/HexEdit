@@ -215,11 +215,16 @@ bool CHexEditDoc::OrigFileHasChanged()
 	if (pfile1_ == NULL)
 		return false;
 
-	// Get current file time
-	CFileStatus stat;
-	pfile1_->GetStatus(stat);
+	bool retval = false;
 
-	return stat.m_mtime != saved_status_.m_mtime;
+	// Use current knowledge of last change time to see if original file has changed
+	if (prev_mtime_ != prev_comp_mtime_)
+	{
+		retval = true;
+		prev_comp_mtime_ = prev_mtime_;  // keep track of last check
+	}
+
+	return retval;
 }
 
 // Check if file we are comparing against has changed since we last finished comparing
