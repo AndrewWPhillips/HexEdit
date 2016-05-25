@@ -38,6 +38,7 @@ public:
 	UINT minmatch_;       // min match when searching for insertions/deletions
 	int auto_sync_;       // auto sync (0/1)
 	int auto_scroll_;     // auto scroll (0/1)
+	bool orig_shared_;    // can only do self-compare if the original is shareable
 
 public:
 	virtual BOOL OnInitDialog();

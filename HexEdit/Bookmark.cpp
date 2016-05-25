@@ -418,6 +418,7 @@ BOOL CBookmarkList::GoTo(int index)
 	// Open the file (just activates if already open)
 	CHexEditDoc *pdoc;
 	ASSERT(theApp.open_current_readonly_ == -1);
+	ASSERT(theApp.open_current_shared_ == -1);
 	if ((pdoc = (CHexEditDoc*)(theApp.OpenDocumentFile(file_[index]))) != NULL)
 	{
 		// Find the active view and jump to the bookmark location

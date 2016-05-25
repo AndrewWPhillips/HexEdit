@@ -255,6 +255,17 @@ BSTR GetPhysicalDeviceName(LPCTSTR name); // get device name to use with native 
 CString DeviceName(CString name);         // get nice display name for device file name
 int DeviceVolume(LPCTSTR filename);       // get volume (0=A:, 1=B: etc) of physical device (optical/removeable only) or -1 if none
 
+// CaseInsensitiveSet
+// container for case-insensitive set of CStrings - for storing such things as filenames to avoid duplicates
+struct CaseInsensitiveLess
+{
+	bool operator()(const CString & s1, const CString & s2) const
+	{
+		return s1.CompareNoCase(s2) < 0;
+	}
+};
+typedef std::set<CString, CaseInsensitiveLess> CaseInsensitiveSet;
+
 #endif
 
 #ifdef _DEBUG

@@ -106,12 +106,12 @@ size_t CHexEditDoc::GetData(unsigned char *buf, size_t len, FILE_ADDRESS address
 			UINT actual;                // Number of bytes actually read from file
 
 			pfile->Seek(pl->fileaddr + start, CFile::begin);
-			if ((actual = pfile->Read((void *)buf, (UINT)tocopy)) != tocopy)
+			if ((actual = pfile->Read((void *)buf, (UINT)tocopy)) < tocopy)
 			{
-				// If we run out of file there is something wrong with our data
-				ASSERT(0);
-				left -= actual;
-				break;
+				ASSERT(shared_);  // We should only run out of data if underlying file size has changed (should only happen if file was opened shareable)
+
+				// File on disk is now shorter - just fill missing bytes with zero
+				memset(buf + actual, '\0', tocopy - actual);
 			}
 		}
 		else if ((pl->dlen >> 62) == 2)
@@ -1255,13 +1255,23 @@ void CHexEditDoc::regenerate()
 	// Signal that change tracking structures need rebuilding
 	need_change_track_ = true;
 
-#ifndef NDEBUG
-	FILE_ADDRESS debug_tmp;
-	// Check that the length of all the records gels with stored doc length
-	for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
-		debug_tmp = (pl->dlen&doc_loc::mask);
+	// If file is open shared then the underlying file length may change which could affect length_
+	if (shared_)
+	{
+		// Zip through all the bits of the file adding up the length (in pos)
+		for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+			;
 
-	ASSERT(pos == length_);
+		length_ = pos;
+	}
+#ifdef _DEBUG
+	else
+	{
+		// Check that the length of all the records gels with stored doc length
+		for (pos = 0, pl = loc_.begin(); pl != loc_.end(); pos += (pl->dlen&doc_loc::mask), ++pl)
+			;
+		ASSERT(pos == length_);
+	}
 #endif
 
 	// Release any data files that are no longer used (presumably after an undo)

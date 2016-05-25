@@ -137,7 +137,7 @@ private:
 	BOOL    m_enable_discon_hl;         // Enable checkbox?
 };
 
-// CFileOpenDialog - derived from CFileDialog to support open shared control (see theApp.open_file_shared_)
+// CFileOpenDialog - derived from CFileDialog to support open shared control
 class CFileOpenDialog : public CHexFileDialog
 {
 public:
@@ -151,6 +151,8 @@ public:
 		m_wndHook.m_pOwner = this;  // Hook window needs access to this class (eg to store name of selected file)
 #endif
 	}
+
+	BOOL open_shareable_;
 
 protected:
 	// Overriden members of CFileDialog

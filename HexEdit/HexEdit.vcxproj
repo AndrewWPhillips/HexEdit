@@ -107,6 +107,12 @@
     <Manifest>
       <AdditionalManifestFiles>manifest.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>PreBuild.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generate Git Revision Number</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -158,6 +164,12 @@
       <Message>Make help ID map files</Message>
       <Command>MakeHelpV</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>PreBuild.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generate Git Revision Number</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AerialView.cpp" />
@@ -354,6 +366,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PreBuild.bat" />
     <None Include="resource.hm" />
     <None Include="RES\back.bmp" />
     <None Include="RES\back_hot.bmp" />
@@ -584,7 +597,6 @@
     <ClInclude Include="Splasher.h" />
     <ClInclude Include="SRecord.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVNRevision.h" />
     <ClInclude Include="SystemSound.h" />
     <ClInclude Include="TabView.h" />
     <ClInclude Include="timer.h" />

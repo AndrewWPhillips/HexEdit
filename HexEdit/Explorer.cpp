@@ -974,11 +974,13 @@ void CHistoryShellList::HandleCustomCommand(UINT cmd, UINT nSelItems, LPCITEMIDL
 		{
 		case ID_OPEN:
 			ASSERT(theApp.open_current_readonly_ == -1);
+			ASSERT(theApp.open_current_shared_ == -1);
 			theApp.open_current_readonly_ = FALSE;
 			ok = theApp.OpenDocumentFile(full_name) != NULL;
 			break;
 		case ID_OPEN_RO:
 			ASSERT(theApp.open_current_readonly_ == -1);
+			ASSERT(theApp.open_current_shared_ == -1);
 			theApp.open_current_readonly_ = TRUE;
 			ok = theApp.OpenDocumentFile(full_name) != NULL;
 			break;
@@ -1390,6 +1392,7 @@ void CHistoryShellList::OnDblClk(NMHDR * pNMHDR, LRESULT * pResult)
 	if (psl != NULL) psl->Release();
 
 	ASSERT(theApp.open_current_readonly_ == -1);
+	ASSERT(theApp.open_current_shared_ == -1);
 	theApp.OpenDocumentFile(full_name);
 }
 

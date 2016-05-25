@@ -1219,6 +1219,7 @@ void CDataFormatView::InitTree()
 	tree_init_ = true;
 }
 
+#if 0
 // xxx this does not seem to be used???
 COleDateTime CDataFormatView::GetDate(int ii)
 {
@@ -1291,7 +1292,7 @@ COleDateTime CDataFormatView::GetDate(int ii)
 	}
 	return retval;
 }
-
+#endif
 
 // InitTreeCol - ii is current data element being processed, item is used to format grid cell
 // - returns true to indicate that the tree should be expanded to show this element (ie an error)
@@ -2453,7 +2454,6 @@ void CDataFormatView::InitColumnHeadings()
 		{
 			ASSERT(heading[ii] != NULL);
 			grid_.SetColumnCount(curr_col + 1);
-//            grid_.SetColumnWidth(curr_col, width);
 			if (width == 0)
 				grid_.SetColumnWidth(curr_col, 0);              // make column hidden
 			else
@@ -3140,11 +3140,9 @@ void CDataFormatView::SelectAt(FILE_ADDRESS addr)
 {
 	if (!tree_init_) return;
 
-//xxx    GetDocument()->CheckUpdate();       // Make sure tree view matches data
-
 	size_t elt =  GetDocument()->FindDffdEltAt(addr);
 
-// How could this happen?
+	// How could this happen?
 	if (elt >= GetDocument()->df_address_.size())
 	{
 		ASSERT(0);
@@ -3168,8 +3166,6 @@ BOOL CDataFormatView::ReadOnly(FILE_ADDRESS addr, FILE_ADDRESS end_addr /*=-1*/)
 
 	if (!tree_init_)
 		return FALSE;                   // If no template then we can write to any byte
-
-//xxx    pdoc->CheckUpdate();                // Make sure tree view matches data
 
 	if (pdoc->df_type_.size() == 0)
 	{
@@ -3710,7 +3706,7 @@ void CDataFormatView::OnInitialUpdate()
 	grid_.SetGridBkColor(RGB(255,255,255));
 
 #ifdef _DEBUG
-	grid_.SetFixedRowCount(1);
+	grid_.SetFixedRowCount(1);          // in debug builds add a left column with row number for ease of test/debug
 	grid_.SetFixedColumnCount(1);
 	grid_.SetColumnWidth(0, 32);
 #else
@@ -3746,28 +3742,18 @@ void CDataFormatView::OnInitialUpdate()
 	CGridCellCombo *pCell = (CGridCellCombo*) grid_.GetCell(0, grid_.GetFixedColumnCount());
 	pCell->SetOptions(desc_list);
 	pCell->SetStyle(CBS_DROPDOWNLIST|CBS_SORT);
-//    pCell->SetStyle(CBS_SORT);
 
 	CString file_desc = pdoc->GetXMLFileDesc();
 	if (!file_desc.IsEmpty())
 		pCell->SetText(file_desc);
 
 	grid_.ExpandColsNice(FALSE);
-//    grid_.ExpandColumnsToFit();
 }
 
 void CDataFormatView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (GetDocument()->ptree_ == NULL) return;
 
-	//if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CRefreshHint)))
-	//{
-	//    // Document has changed so remember to rebuild the tree
-	//    // xxx this should be fixed to not completely rebuild the tree?
-	//    save_tree_state();
-	//    InitTree();
-	//    restore_tree_state();
-	//}
 	if (pHint != NULL && pHint->IsKindOf(RUNTIME_CLASS(CSaveStateHint)))
 	{
 		save_tree_state();
@@ -3917,35 +3903,8 @@ void CDataFormatView::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
 	TRACE("Left button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
 
-//xxx    GetDocument()->CheckUpdate();       // Make sure tree view matches data
-
 	if (pItem->iRow < grid_.GetFixedRowCount())
 		return;                         // Don't do anything for header rows
-
-// Moved to OnGridEndSelChanged
-//    CHexEditDoc *pdoc = GetDocument();
-//
-//    int ii = pItem->iRow - grid_.GetFixedRowCount();
-//
-//    ASSERT(ii < pdoc->df_address_.size());
-//    ASSERT(pdoc->df_size_.size() == pdoc->df_address_.size());
-//    if (ii < pdoc->df_address_.size())
-//    {
-//        FILE_ADDRESS start = pdoc->df_address_[ii];
-//        FILE_ADDRESS end = pdoc->df_address_[ii] + mac_abs(pdoc->df_size_[ii]);
-//        if (start < 0 || start >= pdoc->length())
-//        {
-//            start = end = pdoc->length();
-//            ((CMainFrame *)AfxGetMainWnd())->StatusBarText("Data address is past EOF");
-//        }
-//        else if (end > pdoc->length())
-//        {
-//            end = pdoc->length();
-//            ((CMainFrame *)AfxGetMainWnd())->StatusBarText("End of data is past EOF");
-//        }
-//        if (phev_->AutoSyncDffd())
-//            phev_->MoveToAddress(start, end, -1, -1, FALSE, TRUE);
-//    }
 }
 
 void CDataFormatView::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
@@ -4004,14 +3963,7 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 	NM_GRIDVIEW* pItem = (NM_GRIDVIEW*) pNotifyStruct;
 	TRACE("Right button click on row %d, col %d\n", pItem->iRow, pItem->iColumn);
 
-//xxx    GetDocument()->CheckUpdate();       // Make sure tree view matches data
-
 	int fcc = grid_.GetFixedColumnCount();
-
-//    // Work out where to display the popup menu
-//    CRect rct;
-//    grid_.GetCellRect(pItem->iRow, pItem->iColumn, &rct);
-//    grid_.ClientToScreen(&rct);
 
 	// Get mouse point so we know where to put the popup menu
 	CPoint mouse_pt;
@@ -4044,9 +3996,10 @@ void CDataFormatView::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 				mouse_pt.x, mouse_pt.y, this);
 		if (item != 0)
 		{
+			// toggle visibility of column selected from the menu
 			item += fcc;
 			if (grid_.GetColumnWidth(item) > 0)
-				grid_.SetColumnWidth(item, 0);
+				grid_.SetColumnWidth(item, 0);            // hide
 			else
 			{
 				grid_.SetColumnWidth(item, 1);

@@ -18,7 +18,8 @@ IMPLEMENT_DYNAMIC(CNewCompare, CHexDialog)
 CNewCompare::CNewCompare(CWnd* pParent /*=NULL*/)
 	: CHexDialog(CNewCompare::IDD, pParent)
 {
-	compare_type_ = compare_display_ = 0;
+	compare_type_ = 1;
+	compare_display_ = 0;
 	insdel_ = 0;
 	minmatch_ = 10;
 	auto_sync_ = auto_scroll_ = 1;
@@ -133,6 +134,14 @@ void CNewCompare::fix_controls()
 
 void CNewCompare::OnBnClickedCompareSelf()
 {
+	if (!orig_shared_)
+	{
+		TaskMessageBox("You can only perform a self-compare if "
+			            "the file is open in shareable mode.");
+		compare_type_ = 1;
+		UpdateData(FALSE);
+		return;
+	}
 	UpdateData();
 	fix_controls();
 }

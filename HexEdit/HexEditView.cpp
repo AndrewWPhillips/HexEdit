@@ -1945,6 +1945,7 @@ struct segment_compare
 	}
 };
 
+// OnUpdate is invoked by the document to indicate something has changed (UpdateAllViews)
 // These update hints are handled:
 // CRemoveHint: removes undo info (without undoing anything) - for when document saved
 // CUndoHint: undo changes up to last doc change - called prior to undoing changes
@@ -15852,7 +15853,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 		// Tell the user about divide by zero errors
 		CString mess;
 		mess.Format("There were %d divide by zero errors while performing %s.  "
-			        "The values at those locations were not changed.", int(div0), desc);
+			        "The values at each of those locations were not changed.", int(div0), desc);
 		TaskMessageBox("Divide by Zero", mess);
 		theApp.mac_error_ = 5;
 	}
@@ -16272,9 +16273,9 @@ void CHexEditView::OnAsr64bit()
 	::OnOperateBinary<__int64>(this, binop_asr, "arithmetic shift right quad words", __int64(0));
 }
 
-template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, size_t count, unary_type op)
+template<class T> void ProcUnary(CHexEditView *pv, T val, T *buf, int count, unary_type op)
 {
-	size_t ii = 0;
+	int ii = 0;
 #ifdef USE_SSE2
 	// This speeds up NOT operation somewhat (though disk is normally limiting factor).
 	// Note that we can only do this easily for NOT as it is the only operation

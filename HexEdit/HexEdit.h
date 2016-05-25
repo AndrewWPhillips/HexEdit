@@ -640,11 +640,10 @@ public:
 		return -1;
 	}
 
-	// Current values for open settings
-	//BOOL open_file_readonly_;  // Removed as we always default to read-only flag off
-	BOOL open_file_shared_;      // Current value of global setting
 	// Temp flags for passing to CHexEditDocument::open_file
-	BOOL open_current_readonly_;
+	// NOTE: This is very confusing indirect information passing (sort of 
+	// like global vars) but other approaches were far too complicated.
+	BOOL open_current_readonly_, open_current_shared_;
 
 	// Startup options
 	BOOL save_exit_;                    // Save settings on exit?
@@ -855,7 +854,7 @@ public:
 	CNavManager navman_;				// Manages list of nav points for Navigate Back/Forward
 	void update_tabs();
 
-#if _MFC_VER >= 0x0A00  // Only needed fo Win7 jump lists which are only supported in MFC 10
+#if _MFC_VER >= 0x0A00                  // Only needed for Win7 jump lists which are only supported in MFC 10+
 	bool RegisterExtensions(LPCTSTR extensions);
 #endif
 	bool RegisterOpenAll();            // Fire up RegHelper (admin priv) to register "open With HexEdit" for all files and all users

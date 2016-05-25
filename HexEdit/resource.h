@@ -174,12 +174,9 @@
 #define IDR_CONTEXT_HEX                 240
 #define IDR_CONTEXT_CHAR                241
 #define IDD_OPT_FILTERS                 241
-#define IDR_CONTEXT_BARS                242
-#define IDD_OPT_WINDOW1                 242
 #define IDR_CONTEXT_STATBAR             243
 #define IDD_PROP_FILE1                  243
 #define IDR_CONTEXT_HIGHLIGHT           244
-#define IDR_MAINFRAME3                  245
 #define IDI_UP                          245
 #define IDR_TOOLBAR                     245
 #define IDR_VIEWBAR                     245
@@ -442,6 +439,7 @@
 #define IDD_PROP_BITMAP                 525
 #define IDD_CALC_HIST                   526
 #define IDD_COMPARE_LIST                527
+#define IDD_OPT_WINCOMPARE              528
 #define IDC_BULB                        1000
 #define IDC_PASSWORD_MASK               1000
 #define IDC_STARTUP                     1001
@@ -1313,6 +1311,7 @@
 #define IDC_DISPLAY_COMP                1707
 #define IDC_DISPLAY_PREVW               1708
 #define IDC_GRID_DIFFS                  1712
+#define IDC_STATIC_COMPARE_NAME         1713
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1876,6 +1875,7 @@
 #define IDS_CONFIRM_OP                  52753
 #define IDS_USE_AERIAL_SCHEME           52754
 #define IDS_CLIPBOARD_FORMAT            52755
+#define IDS_SHARED_FILE_MODIFIED        52756
 #define IDS_UPDATE_AVAILABLE            52799
 #define AFX_IDS_APP_ID                  0xE006
 
@@ -1886,7 +1886,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
 #define _APS_NEXT_COMMAND_VALUE         39240
-#define _APS_NEXT_CONTROL_VALUE         1713
+#define _APS_NEXT_CONTROL_VALUE         1714
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif

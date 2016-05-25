@@ -203,6 +203,8 @@ bool CDFFDStruct::check_data()
 		}
 		if (name_.CompareNoCase("true") == 0 ||
 			name_.CompareNoCase("false") == 0 ||
+			name_.CompareNoCase("index") == 0 ||
+			name_.CompareNoCase("member") == 0 ||
 			name_.CompareNoCase("end") == 0 ||
 			expr_eval::func_token(name_) != expr_eval::TOK_NONE)
 		{

@@ -25,6 +25,10 @@
 // - select all
 // - goto command?
 // - open separately (unless self-compare)
+// - only allow self-compare if opened shareable???
+// - when opened shareable 
+//      - monitor for changes and display imm.
+//      - allow file length changes
 
 extern CHexEditApp theApp;
 

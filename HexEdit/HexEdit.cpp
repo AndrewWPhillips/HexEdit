@@ -365,8 +365,8 @@ CHexEditApp::CHexEditApp() : default_scheme_(""),
 	algorithm_ = 0;   // Default to built-in encryption
 
 	m_pbookmark_list = NULL;
-	open_file_shared_ = FALSE;
 	open_current_readonly_ = -1;
+	open_current_shared_ = -1;
 
 	delete_reg_settings_ = FALSE;
 	delete_all_settings_ = FALSE;
@@ -1135,7 +1135,7 @@ void CHexEditApp::OnFileOpen()
 		strDir = open_folder_;
 	dlgFile.m_ofn.lpstrInitialDir = strDir;
 
-	if (dlgFile.DoModal() != IDOK)
+	if (dlgFile.DoModal() != IDOK)                      // ===== run dialog =======
 	{
 		mac_error_ = 2;
 		return;
@@ -1169,7 +1169,9 @@ void CHexEditApp::OnFileOpen()
 		// Store this here so the document can find out if it has to open read-only
 		// Note; this is done for each file as it is cleared after each use in file_open
 		ASSERT(open_current_readonly_ == -1);
+		ASSERT(open_current_shared_ == -1);
 		open_current_readonly_ = (dlgFile.m_ofn.Flags & OFN_READONLY) != 0;
+		open_current_shared_ = dlgFile.open_shareable_;
 
 		CHexEditDoc *pdoc;
 		if ((pdoc = (CHexEditDoc*)(OpenDocumentFile(filename))) != NULL)
@@ -1191,6 +1193,8 @@ CDocument* CHexEditApp::OpenDocumentFile(LPCTSTR lpszFileName)
 {
 	CWaitCursor wc;
 	CDocument *retval = CWinAppEx::OpenDocumentFile(lpszFileName);
+	open_current_readonly_ = open_current_shared_ = -1;   // just in case OnOpenDocument() not called because file is already open
+
 	if (retval == NULL)
 		return NULL;     // File or device not found (error message has already been shown)
 
@@ -1253,6 +1257,7 @@ BOOL CHexEditApp::OnOpenRecentFile(UINT nID)
 	CString file_name = (*m_pRecentFileList)[nIndex];
 
 	ASSERT(open_current_readonly_ == -1);
+	ASSERT(open_current_shared_ == -1);
 	if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
 	{
 		if (AvoidableTaskDialog(IDS_RECENT_GONE,
@@ -2534,7 +2539,7 @@ void CHexEditApp::LoadOptions()
 	last_save_folder_ = GetProfileString("File-Settings", "DirSave");
 	last_both_folder_ = GetProfileString("File-Settings", "DirBoth");
 	//open_file_readonly_ = GetProfileInt("File-Settings", "OpenReadOnly", 0);
-	open_file_shared_   = GetProfileInt("File-Settings", "OpenShareable", 0);
+	//open_file_shared_   = GetProfileInt("File-Settings", "OpenShareable", 0);
 //    current_save_ = GetProfileString("File-Settings", "Save");
 	current_write_ = GetProfileString("File-Settings", "Write");
 	current_read_ = GetProfileString("File-Settings", "Read");
@@ -2896,7 +2901,7 @@ void CHexEditApp::SaveOptions()
 	WriteProfileString("File-Settings", "DirBoth", last_both_folder_);
 
 	//WriteProfileInt("File-Settings", "OpenReadOnly",  open_file_readonly_);
-	WriteProfileInt("File-Settings", "OpenShareable", open_file_shared_);
+	//WriteProfileInt("File-Settings", "OpenShareable", open_file_shared_);
 //    WriteProfileString("File-Settings", "Save", current_save_);
 	WriteProfileString("File-Settings", "Write", current_write_);
 	WriteProfileString("File-Settings", "Read", current_read_);
@@ -4079,7 +4084,8 @@ void CHexEditApp::OnHelpEmail()
 
 void CHexEditApp::OnUpdateHelpEmail(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(::GetProfileInt("MAIL", "MAPI", 0) == 1);
+	//pCmdUI->Enable(::GetProfileInt("MAIL", "MAPI", 0) == 1);
+	pCmdUI->Enable(TRUE);
 }
 
 void CHexEditApp::OnWebPage()
@@ -4435,6 +4441,7 @@ void CCommandLineParser::ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLas
 		{
 			CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 			ASSERT(aa->open_current_readonly_ == -1);
+			ASSERT(aa->open_current_shared_ == -1);
 
 			if (aa->hwnd_1st_ != (HWND)0 && aa->one_only_)
 			{
@@ -4548,12 +4555,6 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 {
 	BOOL retval = FALSE;
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-
-	if (::GetProfileInt("MAIL", "MAPI", 0) != 1)
-	{
-		AfxMessageBox("MAPI not supported on this machine");
-		return FALSE;                                 // MAPI mail not supported
-	}
 
 	HINSTANCE hmapi = ::LoadLibrary("MAPI32.DLL");
 	if (hmapi == (HINSTANCE)0)

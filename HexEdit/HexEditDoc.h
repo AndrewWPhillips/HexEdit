@@ -625,11 +625,22 @@ private:
 	HICON hicon_;               // Icon for child frame windows
 	CString strTypeName_;       // Type of file (from registry)
 
-	void GetFileStatus();
-	void SetFileStatus(LPCTSTR lpszPathName);
+	// Document wide flags
 	BOOL keep_times_;           // Do we keep same times & attributes of orig file?
-	CFileStatus saved_status_;  // Times and attributes of file when opened
 	int dffd_edit_mode_;        // 0 = false, 1 = true, -1 = unknown
+
+	void GetInitialStatus();    // get file times, length, etc when file is opened
+	void RestoreFileTimes(LPCTSTR lpszPathName); // restore file times & attr to the disk file (after closed)
+
+	// initial file status
+	CTime saved_ctime_;         // creation date/time of file
+	CTime saved_mtime_;         // last modification date/time of file
+	CTime saved_atime_;         // last access date/time of file
+	BYTE saved_attribute_;      // logical OR of CFile::Attribute enum values
+
+	// file status at last moficaTION
+	ULONGLONG prev_size_;       // size of file in bytes
+	CTime prev_mtime_;          // used to check if the file has been modified
 
 	FILE_ADDRESS length_;
 
@@ -1019,6 +1030,7 @@ private:
 	unsigned char *comp_bufa_, *comp_bufb_; // Buffers used for holding data from both files (only used by background thread)
 
 	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress
+	CTime prev_comp_mtime_;     // File time at time of last check if orig file has changed
 
 	class CompResult
 	{

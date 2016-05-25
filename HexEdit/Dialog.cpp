@@ -330,7 +330,7 @@ void CFileOpenDialog::OnInitDone()
 	m_open_shared.Create(_T("Open shareable"),
 					WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE, rct, pp, IDC_OPEN_SHARED);
 	m_open_shared.SetFont(pp->GetDlgItem(IDOK)->GetFont());
-	m_open_shared.SetCheck(theApp.open_file_shared_);
+	m_open_shared.SetCheck(theApp.GetProfileInt("File-Settings", "OpenShareable", 0));
 
 #ifdef FILE_PREVIEW
 	if (theApp.thumbnail_)
@@ -361,7 +361,9 @@ void CFileOpenDialog::OnInitDone()
 // Called when one or more files have been selected (eg OK button clicked)
 BOOL CFileOpenDialog::OnFileNameOK()
 {
-	theApp.open_file_shared_ = m_open_shared.GetCheck() == 1 ? TRUE : FALSE;
+	open_shareable_ = m_open_shared.GetCheck() == 1;
+	theApp.WriteProfileInt("File-Settings", "OpenShareable", open_shareable_);
+	//theApp.open_file_shared_ = m_open_shared.GetCheck() == 1 ? TRUE : FALSE;
 
 	return CHexFileDialog::OnFileNameOK();
 }

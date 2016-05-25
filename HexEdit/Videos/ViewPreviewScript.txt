@@ -1,0 +1,82 @@
+--------------------------------
+switch to Summary Properties page and close Properties dialog
+save splash.pdn as splash.png with transparent bg
+open splash.png, turn off preview view and close again
+make sure default open folder is HexEdit data folder
+delete ToolbarImages.bmp from RFL (leave splash.PNG)
+--------------------------------
+ " Preview is a new feature in HexEdit 5 which allows you to view
+   a bitmap file such as JPEG or PNG. You can even edit the bytes
+   of the file in memory to see what effect it has on the image.
+- Open file from HexEdit data directory, turn on Image filter (*.bmp,...) and open ToolbarImages.bmp
+- turn on preview view (split window)
+
+ " This is the preview of the BMP file.
+   You can scroll the view using the mouse wheel - hold shift key to scroll horizontally
+- demo
+   Or you can just click and drag.
+-demo
+   You can zoom by holding down the Ctrl key and rotating the mouse wheel
+- demo
+   If you don't like the direction of the zoom you can reverse it using the setting
+   in Options/Workspace/Editing/Invert Ctrl+Wheel zoom
+- demo change setting
+   To zoom to actual size just use the menu item
+- demo
+
+~~~~1
+
+ " The really cool feature of the preview view is that you can modify the file's
+   bytes directly in HexEdit to see what effect it might have
+- select a large block of bytes near the end of the file and select Op/NOT
+ " I just inverted all the bits there, if I invert again you will get the old image back
+- Op/NOT
+ "Of course, you can undo any change
+- select Edit/Undo then again
+ " HexEdit includes templates for common image file formats such as BMP and PNG.
+   You can open a template to easily see and change settings
+- open BMP template, turn on DATA column
+- expand info_hdr, and check bitcount (should be 4)
+ " From this we can see that each pixel of the bitmap uses 4 bits
+   which gives 16 colours which we can see in the palette table
+- expand colours table to show 16 entries (0 to 15)
+ " Looking at the hex data we can see that a lot of nybbles have the value "7"
+ " If we open colour 7 in the palette we can see that it is a light grey
+- change R,G,B from 192 to 0
+ " Here we have changed the background colour from light grey to black
+
+~~~~2
+
+ " The preview supports all bit depths including transparency.
+   For example, if we open a 32-bit PNG file with an alpha channel ...
+- open Recent file list
+ " You can see all files of a certain type that you have already opened
+   using the Type column of the recent file dialog
+- turn on "Type" column and click it to sort by Type, scroll to PNG files
+- open Splash.PNG
+ " You can easily see the transparent and semi-transparent pixels using
+   the checkerboard background
+- zoom in on an edge
+ " Or you can try a black or white background
+- switch to white
+ " The standard background is the standard Windows colour for buttons
+   and will change when you change your Windows theme
+- switch to std
+
+~~~~3
+
+ " In the future HexEdit will be extended to support preview of other file types
+ 
+ " Currently it supports just about all bitmap image formats including BMP,
+   PNG, GIF, TIFF, JPEG etc.  It does not use the file extension to detect
+   the file type. If you want to check the file type you can open the Bitmap
+   Properties page
+- right click and select properties and go to bitmap properties page
+
+ " This shows info about the data as it was on disk and as it currently is in memory
+   These will be the same unless you start changing some of the header values like bitcount
+- go to template and change the bitcount from 4 to 8
+
+ " Here you can see that the bit depth in memory is 8 but on disk it is 4.
+   If we saved the file now then they would both become 8
+   

@@ -312,20 +312,30 @@ BOOL CHexEditDoc::OnNewDocument()
 	return TRUE;
 }
 
-void CHexEditDoc::GetFileStatus()
+void CHexEditDoc::GetInitialStatus()
 {
 	ASSERT(pfile1_ != NULL && !IsDevice());
-	VERIFY(pfile1_->GetStatus(saved_status_));
+	CFileStatus status;
+	VERIFY(pfile1_->GetStatus(status));
+
+	saved_ctime_ = status.m_ctime;
+	saved_mtime_ = prev_mtime_ = status.m_mtime;
+	saved_atime_ = status.m_atime;
+	prev_size_ = status.m_size;
+	saved_attribute_ = status.m_attribute;
 }
 
-void CHexEditDoc::SetFileStatus(LPCTSTR lpszPathName)
+void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
 {
-	// Note: any fields of CFileStatus that are zero are not changed, at least
-	// according to the documentation -- but actually this only applies to the
-	// file times (attributes are always set and size/name are never set).
-	saved_status_.m_size = 0;                   // We don't want to set the file length
-	saved_status_.m_szFullName[0] = '\0';       // We don't want to change the file name
-	CFile::SetStatus(lpszPathName, saved_status_);
+	// Note: doc says zero fields are not changed
+	// Testing (Which versions of MFC/Windows?) shosws that this only applies to the
+	// file times (attributes are always set & size/name are never set).
+	CFileStatus status;  // qqq check that other things are zeroed
+	status.m_ctime = saved_ctime_;
+	status.m_mtime = saved_mtime_;
+	status.m_atime = saved_atime_;
+	status.m_attribute = saved_attribute_;   // we must set this to ensure the attributes are not disturbed
+	CFile::SetStatus(lpszPathName, status);
 }
 
 // Called indirectly as part of File/Open command
@@ -348,17 +358,18 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			   data_file_[ii] == NULL );
 #endif
 
-	// Get read-only flag from app (this was the only way to pass it here)
+	// Get read-only and shareable flags from app (this was the only way to pass them here)
 	readonly_ = theApp.open_current_readonly_ == -1 ? FALSE : theApp.open_current_readonly_;
-	shared_   = theApp.open_file_shared_;
-	theApp.open_current_readonly_ = -1;        // Set back to -1 to check that it's properly next time too.
+	shared_   = theApp.open_current_shared_   == -1 ? FALSE : theApp.open_current_shared_;
+	theApp.open_current_readonly_ = -1;        // Set back to -1 for next time
+	theApp.open_current_shared_ = -1;
 
 	if (!open_file(lpszPathName))
 		return FALSE;               // open_file has already set mac_error_ = 10
 
 	// Save file status (times, attributes) so we can restore them if the "keep times" option is on
 	if (!::IsDevice(lpszPathName))
-		GetFileStatus();
+		GetInitialStatus();
 
 	length_ = pfile1_->GetLength();
 	last_view_ = NULL;
@@ -647,12 +658,12 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		{
 			// We must close the file so we can set some attributes
 			pfile1_->Close();
-			SetFileStatus(lpszPathName);
+			RestoreFileTimes(lpszPathName);
 			if (!open_file(lpszPathName))
 				return FALSE;                       // already done: mac_error_ = 10
 		}
 		else if (!IsDevice())
-			GetFileStatus();                        // make sure we have current times as on disk
+			GetInitialStatus();                     // make sure we have current times as on disk
 	}
 	else
 	{
@@ -825,7 +836,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		}
 
 		if (keep_times_ && !::IsDevice(lpszPathName))
-			SetFileStatus(lpszPathName);
+			RestoreFileTimes(lpszPathName);
 
 		base_type_ = 0;                         // Use new file as base for change tracking
 
@@ -835,7 +846,7 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 		// Make sure we have latest file times (unless we have just set them to what they were before)
 		if (!keep_times_ && !::IsDevice(lpszPathName))
-			GetFileStatus();
+			GetInitialStatus();
 	}
 
 	length_ = pfile1_->GetLength();
@@ -1371,6 +1382,40 @@ void CHexEditDoc::SetModifiedFlag(BOOL bMod /*=TRUE*/)
 
 void CHexEditDoc::CheckBGProcessing()
 {
+	// Check if underlying file has been modified
+	if (shared_)
+	{
+		ASSERT(pfile1_ != NULL && !IsDevice());
+		CFileStatus status;
+		VERIFY(pfile1_->GetStatus(status));
+
+		if (status.m_mtime != prev_mtime_)
+		{
+			AvoidableTaskDialog(IDS_SHARED_FILE_MODIFIED,
+					"The file has been modified outside HexEdit.\n",
+					"When a file is opened shareable there is nothing "
+					"to prevent other software from changing it. HexEdit "
+					"does not load the file into memory but uses the "
+					"original file for displaying on screen.\n\n"
+					"If the file is modified outside HexEdit then "
+					"the original file values and even the file length "
+					"may change unexpectedly.");
+
+			if (status.m_size != prev_size_)
+			{
+				// Adjust file length
+				length_ += status.m_size - prev_size_;
+				regenerate();
+
+				prev_size_ = status.m_size;
+			}
+
+			UpdateAllViews(NULL);  // just redraw all views
+
+			prev_mtime_ = status.m_mtime;
+		}
+	}
+
 	// First check if bg processing needs to be restarted due to file changes
 	if (doc_changed_)
 	{
@@ -1485,7 +1530,6 @@ void CHexEditDoc::CheckBGProcessing()
 		VERIFY(MakeTempFile());
 		if (OpenCompFile())
 			StartComp();
-		GetFileStatus();
 	}
 }
 
@@ -1894,8 +1938,8 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			ASSERT(pthread2_ == NULL && pthread3_ == NULL && pthread4_ == NULL && pthread5_ == NULL && pthread6_ == NULL);   // Must modify loc_ before creating threads (else docdata_ needs to be locked)
 			loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
-			// Save original status
-			GetFileStatus();
+			// Get status as when the file was created on disk
+			GetInitialStatus();
 
 			load_icon(file_name);
 			show_icon();

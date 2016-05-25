@@ -817,6 +817,7 @@ void CRecentFileDlg::OnOpen()
 	for (pp = to_open.begin(); pp != to_open.end(); ++pp)
 	{
 		ASSERT(theApp.open_current_readonly_ == -1);
+		ASSERT(theApp.open_current_shared_ == -1);
 		if (theApp.OpenDocumentFile(*pp) != NULL)
 		theApp.SaveToMacro(km_open, *pp);
 	}
@@ -844,6 +845,7 @@ void CRecentFileDlg::OnOpenRO()
 	for (pp = to_open.begin(); pp != to_open.end(); ++pp)
 	{
 		ASSERT(theApp.open_current_readonly_ == -1);
+		ASSERT(theApp.open_current_shared_ == -1);
 		theApp.open_current_readonly_ = TRUE;  // This must be done for each file to ensure open_file opens read_only
 		if (theApp.OpenDocumentFile(*pp) != NULL)
 			theApp.SaveToMacro(km_open, *pp);
