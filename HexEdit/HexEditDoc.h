@@ -629,16 +629,17 @@ private:
 	BOOL keep_times_;           // Do we keep same times & attributes of orig file?
 	int dffd_edit_mode_;        // 0 = false, 1 = true, -1 = unknown
 
-	void GetInitialStatus();    // get file times, length, etc when file is opened
-	void RestoreFileTimes(LPCTSTR lpszPathName); // restore file times & attr to the disk file (after closed)
+	// File times/attr before the file is even opened (for Keep Same Times command)
+	void RetrieveFileTimes(LPCTSTR lpszPathName);  // get file times & attr before the file is opened
+	void RestoreFileTimes(LPCTSTR lpszPathName);   // restore file times & attr to the disk file (after closed)
 
-	// initial file status
 	CTime saved_ctime_;         // creation date/time of file
 	CTime saved_mtime_;         // last modification date/time of file
 	CTime saved_atime_;         // last access date/time of file
 	BYTE saved_attribute_;      // logical OR of CFile::Attribute enum values
 
-	// file status at last moficaTION
+	// file status at last mofication
+	void GetInitialStatus();
 	ULONGLONG prev_size_;       // size of file in bytes
 	CTime prev_mtime_;          // used to check if the file has been modified
 
@@ -726,7 +727,7 @@ public:
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextDiffAll(FILE_ADDRESS from);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetLastDiffAll();
 
-	// xxx just realised that these may not be necessary - eg instead of GetFirstOtherDiff we could call GetFirstDiff then get corresponding other diff
+	// Note: realised these 4 funcs may not be necessary - eg instead of GetFirstOtherDiff we could call GetFirstDiff then get corresponding other diff
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetFirstOtherDiff(int rr = 0);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetPrevOtherDiff(FILE_ADDRESS from, int rr = 0);
 	std::pair<FILE_ADDRESS, FILE_ADDRESS> GetNextOtherDiff(FILE_ADDRESS from, int rr = 0);

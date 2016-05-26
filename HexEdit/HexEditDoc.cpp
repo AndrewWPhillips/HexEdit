@@ -312,30 +312,55 @@ BOOL CHexEditDoc::OnNewDocument()
 	return TRUE;
 }
 
+void CHexEditDoc::RetrieveFileTimes(LPCTSTR lpszPathName)
+{
+	CFileStatus status;
+	if (CFile::GetStatus(lpszPathName, status))
+	{
+		saved_ctime_ = status.m_ctime;
+		saved_mtime_ = status.m_mtime;
+		saved_atime_ = status.m_atime;
+		saved_attribute_ = status.m_attribute;
+	}
+	else
+		saved_ctime_ = CTime();  // qqq test
+}
+
+void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
+{
+	if (saved_ctime_ == CTime())   // qqq test
+		return;
+
+	// Note: doc says zero fields are not changed
+	// Testing (Which versions of MFC/Windows?) shows that this only applies to the
+	// file times (attributes are always set & size/name are never set).
+	CFileStatus status;  // qqq check that other things are zeroed
+	if (CFile::GetStatus(lpszPathName, status))
+	{
+		status.m_ctime = saved_ctime_;
+		status.m_mtime = saved_mtime_;
+		//status.m_atime = saved_atime_;         // This has no effect as setting the status seems to set access time - so we use SetFileTimes (below)
+		status.m_attribute = saved_attribute_;   // we must set this to ensure the attributes are not disturbed (eg archived)
+		CFile::SetStatus(lpszPathName, status);
+	}
+
+	// Convert saved access time to a system time and call SetFileTimes() to change the file access time
+	SYSTEMTIME st;
+	saved_atime_.GetAsSystemTime(st);
+	FILETIME local_time, new_time;
+	SystemTimeToFileTime(&st, &local_time);          // system time (local) to file time (local)
+	LocalFileTimeToFileTime(&local_time, &new_time); // file times are UTC, so convert from local to GMT
+	SetFileTimes(lpszPathName, NULL, &new_time, NULL);
+}
+
 void CHexEditDoc::GetInitialStatus()
 {
 	ASSERT(pfile1_ != NULL && !IsDevice());
 	CFileStatus status;
 	VERIFY(pfile1_->GetStatus(status));
 
-	saved_ctime_ = status.m_ctime;
-	saved_mtime_ = prev_mtime_ = status.m_mtime;
-	saved_atime_ = status.m_atime;
+	prev_mtime_ = status.m_mtime;
 	prev_size_ = status.m_size;
-	saved_attribute_ = status.m_attribute;
-}
-
-void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
-{
-	// Note: doc says zero fields are not changed
-	// Testing (Which versions of MFC/Windows?) shosws that this only applies to the
-	// file times (attributes are always set & size/name are never set).
-	CFileStatus status;  // qqq check that other things are zeroed
-	status.m_ctime = saved_ctime_;
-	status.m_mtime = saved_mtime_;
-	status.m_atime = saved_atime_;
-	status.m_attribute = saved_attribute_;   // we must set this to ensure the attributes are not disturbed
-	CFile::SetStatus(lpszPathName, status);
 }
 
 // Called indirectly as part of File/Open command
@@ -366,10 +391,6 @@ BOOL CHexEditDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if (!open_file(lpszPathName))
 		return FALSE;               // open_file has already set mac_error_ = 10
-
-	// Save file status (times, attributes) so we can restore them if the "keep times" option is on
-	if (!::IsDevice(lpszPathName))
-		GetInitialStatus();
 
 	length_ = pfile1_->GetLength();
 	last_view_ = NULL;
@@ -484,6 +505,12 @@ void CHexEditDoc::OnCloseDocument()
 	}
 
 	DeleteContents();
+
+	// If preserving times/attributes of the file restore them
+	if (keep_times_ && !IsDevice())
+	{
+		RestoreFileTimes(m_strPathName);
+	}
 
 	if (hicon_ != HICON(0))
 	{
@@ -657,13 +684,13 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		if (keep_times_ && !IsDevice())
 		{
 			// We must close the file so we can set some attributes
-			pfile1_->Close();
+			close_file();
 			RestoreFileTimes(lpszPathName);
 			if (!open_file(lpszPathName))
 				return FALSE;                       // already done: mac_error_ = 10
 		}
-		else if (!IsDevice())
-			GetInitialStatus();                     // make sure we have current times as on disk
+//		else if (!IsDevice())
+//			GetInitialStatus();                     // make sure we have current times as on disk
 	}
 	else
 	{
@@ -1080,7 +1107,13 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 		pfile1_ = new CFileNC();
 	}
 	else
+	{
+		// Get file times/attr (before it is opened so last access time is OK) and save them so 
+		// we can restore them if when the file is saved/closed if the "keep times" option is on
+		RetrieveFileTimes(lpszPathName);
+
 		pfile1_ = new CFile64();
+	}
 
 	ASSERT(base_type_ == 0);  // Base for change tracking should be the file opened
 
