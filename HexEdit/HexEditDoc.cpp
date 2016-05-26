@@ -323,18 +323,18 @@ void CHexEditDoc::RetrieveFileTimes(LPCTSTR lpszPathName)
 		saved_attribute_ = status.m_attribute;
 	}
 	else
-		saved_ctime_ = CTime();  // qqq test
+		saved_ctime_ = CTime();
 }
 
 void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
 {
-	if (saved_ctime_ == CTime())   // qqq test
+	if (saved_ctime_ == CTime())
 		return;
 
 	// Note: doc says zero fields are not changed
 	// Testing (Which versions of MFC/Windows?) shows that this only applies to the
 	// file times (attributes are always set & size/name are never set).
-	CFileStatus status;  // qqq check that other things are zeroed
+	CFileStatus status;
 	if (CFile::GetStatus(lpszPathName, status))
 	{
 		status.m_ctime = saved_ctime_;
@@ -679,18 +679,6 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		// (avoid worries about disk space, creating temp files etc)
 		ASSERT(base_type_ == 0);
 		WriteInPlace();
-
-		// Are we keeping the old times/attributes of the file
-		if (keep_times_ && !IsDevice())
-		{
-			// We must close the file so we can set some attributes
-			close_file();
-			RestoreFileTimes(lpszPathName);
-			if (!open_file(lpszPathName))
-				return FALSE;                       // already done: mac_error_ = 10
-		}
-//		else if (!IsDevice())
-//			GetInitialStatus();                     // make sure we have current times as on disk
 	}
 	else
 	{
@@ -862,19 +850,17 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 			return FALSE;
 		}
 
-		if (keep_times_ && !::IsDevice(lpszPathName))
-			RestoreFileTimes(lpszPathName);
+		//if (keep_times_ && !::IsDevice(lpszPathName))
+		//	RestoreFileTimes(lpszPathName);
 
 		base_type_ = 0;                         // Use new file as base for change tracking
 
 		// Open the new file as the document file (pfile1_).
 		if (!open_file(lpszPathName))
 			return FALSE;                       // already done: mac_error_ = 10
-
-		// Make sure we have latest file times (unless we have just set them to what they were before)
-		if (!keep_times_ && !::IsDevice(lpszPathName))
-			GetInitialStatus();
 	}
+	if (!IsDevice())
+		GetInitialStatus();                     // make sure we have current file length/mod time
 
 	length_ = pfile1_->GetLength();
 
@@ -1051,6 +1037,7 @@ void CHexEditDoc::ClearBookmarks()
 //    DeleteBookmarkList();
 }
 
+// Temporarily close the file so we can do something with it
 void CHexEditDoc::close_file()
 {
 	// Close file if it was opened successfully
@@ -1327,28 +1314,22 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 
 void CHexEditDoc::DeleteContents()
 {
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
-	CString strPath;
-
-	// Close file if it was opened successfully
+	// Close the file(s) associated with this document
 	if (pfile1_ != NULL)
 	{
-		strPath = pfile1_->GetFilePath();
 		pfile1_->Close();
 		delete pfile1_;
 		pfile1_ = NULL;
 	}
 
-	if (pthread2_ != NULL)
-		KillSearchThread();
-
 	// KillAerialThread() and KillCompThread() are called here even though they are also killed when
 	// the last view is closed because we need to close the data files (data_file2_ and data_file3_).
+	if (pthread2_ != NULL)
+		KillSearchThread();
 	if (pthread3_ != NULL)
 		KillAerialThread();
 	if (pthread4_ != NULL)
-		KillCompThread();
-
+		KillCompThread();  // qqq check that this closes pfile4_
 	if (pthread5_ != NULL)
 		KillStatsThread();
 	if (pthread6_ != NULL)
@@ -1972,6 +1953,7 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			loc_.push_back(doc_loc(FILE_ADDRESS(0), file_len));
 
 			// Get status as when the file was created on disk
+			RetrieveFileTimes(file_name);
 			GetInitialStatus();
 
 			load_icon(file_name);
