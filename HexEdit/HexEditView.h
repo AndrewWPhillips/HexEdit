@@ -202,11 +202,11 @@ public:
 	CDataFormatView *pdfv_;           // template (tree) view
 	CAerialView *pav_;                // aerial view
 	CCompareView *pcv_;               // view of file comparing with
-	CPrevwView *ppv_;                 // view for preview of bitmaps xxx
+	CPrevwView *ppv_;                 // view for preview of bitmaps
 	int split_width_d_;               // width of dffd view when last in split window
 	int split_width_a_;               // width of aerial view when last in split window
 	int split_width_c_;               // width of compare view when last in split window
-	int split_width_p_;               // width of preview view when last in split window xxx
+	int split_width_p_;               // width of preview view when last in split window
 
 	enum { max_buf = 32767 };
 	CHexEditDoc *GetDocument();

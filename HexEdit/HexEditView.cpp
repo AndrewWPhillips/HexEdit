@@ -5606,7 +5606,7 @@ bool CHexEditView::update_tip(FILE_ADDRESS addr)
 		}
 	}
 
-	CPoint pt(0,0);
+	CPoint pt(0, 0);
 	CRect rct = tip_.GetTotalRect();
 	pt.x = rct.right;
 
@@ -8087,7 +8087,7 @@ void CHexEditView::do_hex_text(CString file_name)
 				if (AbortKeyPress() &&
 					TaskMessageBox("Abort import?", 
 						"You have interrupted the hex text import.\n\n"
-						"Do you want to stop the process?",MB_YESNO) == IDYES)
+						"Do you want to stop the process?", MB_YESNO) == IDYES)
 				{
 					fout.Close();
 					remove(temp_file);
@@ -8322,7 +8322,7 @@ void CHexEditView::OnExportHexText()
 		if (AbortKeyPress() &&
 			TaskMessageBox("Abort export?", 
 				"You have interrupted the hex text export.\n\n"
-				"Do you want to stop the process?",MB_YESNO) == IDYES)
+				"Do you want to stop the process?", MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			goto func_return;
@@ -12819,7 +12819,7 @@ void CHexEditView::OnEditCompare()
 			if (AbortKeyPress() &&
 				TaskMessageBox("Abort comparison?", 
 				    "You have interrupted the comparison.\n\n"
-				    "Do you want to stop the process?",MB_YESNO) == IDYES)
+				    "Do you want to stop the process?", MB_YESNO) == IDYES)
 			{
 				delete[] orig_buf;
 				delete[] comp_buf;
@@ -13270,7 +13270,7 @@ void CHexEditView::DoConversion(convert_type op, LPCSTR desc)
 					CString mess;
 					mess.Format("Abort %s?", desc);
 					if (TaskMessageBox(mess, 
-						"Do you want to stop the process?",MB_YESNO) == IDYES)
+						"Do you want to stop the process?", MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -13748,7 +13748,7 @@ void CHexEditView::OnEncrypt()
 					if (AbortKeyPress() &&
 						TaskMessageBox("Abort encryption?", 
 						    "You have interrupted the encryption.\n\n"
-						    "Do you want to stop the process?",MB_YESNO) == IDYES)
+						    "Do you want to stop the process?", MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -14073,7 +14073,7 @@ void CHexEditView::OnDecrypt()
 					if (AbortKeyPress() &&
 						TaskMessageBox("Abort decryption?", 
 						    "You have interrupted the decryption.\n\n"
-						    "Do you want to stop the process?",MB_YESNO) == IDYES)
+						    "Do you want to stop the process?", MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -14402,7 +14402,7 @@ void CHexEditView::OnCompress()
 				if (AbortKeyPress() &&
 					TaskMessageBox("Abort compression?", 
 					    "You have interrupted the compression.\n\n"
-					    "Do you want to stop the process?",MB_YESNO) == IDYES)
+					    "Do you want to stop the process?", MB_YESNO) == IDYES)
 				{
 					ff.Close();
 					remove(temp_file);
@@ -14696,7 +14696,7 @@ void CHexEditView::OnDecompress()
 				if (AbortKeyPress() &&
 					TaskMessageBox("Abort decompression?", 
 					    "You have interrupted the decompression.\n\n"
-					    "Do you want to stop the process?",MB_YESNO) == IDYES)
+					    "Do you want to stop the process?", MB_YESNO) == IDYES)
 				{
 					ff.Close();
 					remove(temp_file);
@@ -15153,7 +15153,7 @@ template<class T> void DoChecksum(CHexEditView *pv, checksum_type op, LPCSTR des
 		if (AbortKeyPress() &&
 			TaskMessageBox("Abort calculation?", 
 			    "You have interrupted the calculation.\n\n"
-			    "Do you want to stop the process?",MB_YESNO) == IDYES)
+			    "Do you want to stop the process?", MB_YESNO) == IDYES)
 		{
 			theApp.mac_error_ = 10;
 			goto func_return;
@@ -15764,7 +15764,7 @@ template<class T> void OnOperateBinary(CHexEditView *pv, binop_type op, LPCSTR d
 					mess.Format("Abort %s operation?", desc);
 					if (TaskMessageBox(mess, 
 						"You have interrupted the calculation.\n\n"
-						"Do you want to stop the process?",MB_YESNO) == IDYES)
+						"Do you want to stop the process?", MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);
@@ -16482,7 +16482,7 @@ template<class T> void OnOperateUnary(CHexEditView *pv, unary_type op, LPCSTR de
 					mess.Format("Abort %s operation?", desc);
 					if (TaskMessageBox(mess, 
 						"You have interrupted the calculation.\n\n"
-						"Do you want to stop the process?",MB_YESNO) == IDYES)
+						"Do you want to stop the process?", MB_YESNO) == IDYES)
 					{
 						ff.Close();
 						remove(temp_file);

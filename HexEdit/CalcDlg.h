@@ -106,9 +106,9 @@ public:
 
 		// This was added due to linking with release version of mpir.lib causing debug free() to throw an exception because
 		// memory is allocated using release mode malloc but free'd using debug mode free (need to link with debug build of mpir)
-		// xxx we need a better solution since not calling free causes memory leak messages at end of debug session
+		// TBD We need a better solution since not calling free causes memory leak messages at end of debug session
 #ifndef _DEBUG
-		free(ss);
+		free(ss);  // OK in release
 #endif
 		return retval;
 	}

@@ -209,7 +209,7 @@ int CHexEditDoc::AerialProgress()
 {
 	if (length_ == 0)
 	{
-		//ASSERT(0); xxx track down how we get to here when closing file
+		ASSERT(0);      // xxx track down how we get to here when closing file
 		return 100;     // avoid divide by zero
 	}
 
