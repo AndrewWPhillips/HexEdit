@@ -539,7 +539,6 @@
 #define IDC_NICE_ADDRESSES              1051
 #define IDC_RESTORE2                    1051
 #define IDC_BG_NETWORK                  1051
-#define IDC_OPEN_READONLY               1052
 #define IDC_MARK_ADD                    1052
 #define IDC_BACKUP_IF_SIZE              1052
 #define IDC_BG_REMOVEABLE               1052
@@ -792,7 +791,7 @@
 #define IDC_ALGORITHM_HELP              1195
 #define IDC_WATERMARK_OPTS              1195
 #define IDC_OPEN_FILES                  1196
-#define IDC_OPEN_RO                     1197
+#define IDC_OPEN_READONLY               1197
 #define IDC_DISPLAY_RESET               1198
 #define IDC_SHOW_AREA                   1199
 #define IDC_CHARSET                     1200

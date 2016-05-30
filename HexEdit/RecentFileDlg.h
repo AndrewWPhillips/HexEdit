@@ -55,6 +55,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CRecentFileDlg)
 	enum { IDD = IDD_RECENT_FILES_NEW };
+	BOOL open_readonly_, open_shared_;    // flags that control open button behaviour
 	CButton	ctl_remove_;
 	CButton	ctl_open_ro_;
 	CButton	ctl_open_;
@@ -78,7 +79,6 @@ protected:
 	afx_msg void OnValidate();
 	afx_msg void OnOpen();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnOpenRO();
 	afx_msg void OnRemove();
 	afx_msg void OnSearch();
 	virtual void OnOK();
