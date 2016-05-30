@@ -339,11 +339,12 @@ void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
 	{
 		status.m_ctime = saved_ctime_;
 		status.m_mtime = saved_mtime_;
-		//status.m_atime = saved_atime_;         // This has no effect as setting the status seems to set access time - so we use SetFileTimes (below)
+		status.m_atime = saved_atime_;           // This seems to have no effect (may need SetFileTimes() call)
 		status.m_attribute = saved_attribute_;   // we must set this to ensure the attributes are not disturbed (eg archived)
 		CFile::SetStatus(lpszPathName, status);
 	}
 
+#if 0
 	// Convert saved access time to a system time and call SetFileTimes() to change the file access time
 	SYSTEMTIME st;
 	saved_atime_.GetAsSystemTime(st);
@@ -351,6 +352,7 @@ void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
 	SystemTimeToFileTime(&st, &local_time);          // system time (local) to file time (local)
 	LocalFileTimeToFileTime(&local_time, &new_time); // file times are UTC, so convert from local to GMT
 	SetFileTimes(lpszPathName, NULL, &new_time, NULL);
+#endif
 }
 
 void CHexEditDoc::GetInitialStatus()
@@ -506,10 +508,11 @@ void CHexEditDoc::OnCloseDocument()
 
 	DeleteContents();
 
-	// If preserving times/attributes of the file restore them
+	// If preserving times/attributes of the file restore them now
 	if (keep_times_ && !IsDevice())
 	{
 		RestoreFileTimes(m_strPathName);
+		// qqq note that access time keeps getting updated no matter where we put this
 	}
 
 	if (hicon_ != HICON(0))
