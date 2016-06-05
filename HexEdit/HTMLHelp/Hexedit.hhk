@@ -22,6 +22,17 @@
       <param name="Name" value="Workspace Editing Options">
       <param name="Local" value="dlg_options\HIDD_OPT_WORKSPACE.htm">
     </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Preview view">
+      <param name="Name" value="Zoom Actual">
+      <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_ACTUAL.htm">
+      <param name="Name" value="Zoom Fit">
+      <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_FIT.htm">
+      <param name="Name" value="Zoom In">
+      <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_IN.htm">
+      <param name="Name" value="Zoom Out">
+      <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_OUT.htm">
+    </object>
     </ul>
   <li><object type="text/sitemap">
     <param name="Name" value="modes">
@@ -1195,6 +1206,8 @@
       <param name="Local" value="cmd_tools\HID_EDIT_COMPARE.htm">
       <param name="Name" value="Tools">
       <param name="Local" value="overviewtools\other_tools.htm">
+      <param name="Name" value="Compare Menu Commands">
+      <param name="Local" value="menus\menu_compare.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="creating">
@@ -5010,6 +5023,125 @@
     <param name="Name" value="digest">
     <param name="Name" value="SHA 3 512 Command">
     <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Bitmap display">
+    <param name="Name" value="Hide Preview View">
+    <param name="Local" value="cmd_preview\HID_PREVW_HIDE.htm">
+    <param name="Name" value="Preview Menu Commands">
+    <param name="Local" value="menus\preview_menu.htm">
+    <param name="Name" value="Black Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_BLACK.htm">
+    <param name="Name" value="Check Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_CHECK.htm">
+    <param name="Name" value="Split Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_SPLIT.htm">
+    <param name="Name" value="Tabbed Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_TAB.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="BMP">
+    <param name="Name" value="Hide Preview View">
+    <param name="Local" value="cmd_preview\HID_PREVW_HIDE.htm">
+    <param name="Name" value="Preview Menu Commands">
+    <param name="Local" value="menus\preview_menu.htm">
+    <param name="Name" value="Split Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_SPLIT.htm">
+    <param name="Name" value="Tabbed Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_TAB.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="JPEG">
+    <param name="Name" value="Hide Preview View">
+    <param name="Local" value="cmd_preview\HID_PREVW_HIDE.htm">
+    <param name="Name" value="Preview Menu Commands">
+    <param name="Local" value="menus\preview_menu.htm">
+    <param name="Name" value="Tabbed Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_TAB.htm">
+    <param name="Name" value="Split Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_SPLIT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="PNG">
+    <param name="Name" value="Hide Preview View">
+    <param name="Local" value="cmd_preview\HID_PREVW_HIDE.htm">
+    <param name="Name" value="Preview Menu Commands">
+    <param name="Local" value="menus\preview_menu.htm">
+    <param name="Name" value="Split Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_SPLIT.htm">
+    <param name="Name" value="Tabbed Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_TAB.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Preview window">
+    <param name="Name" value="Preview Menu Commands">
+    <param name="Local" value="menus\preview_menu.htm">
+    <param name="Name" value="Black Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_BLACK.htm">
+    <param name="Name" value="Check Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_CHECK.htm">
+    <param name="Name" value="Flip Horizontal">
+    <param name="Local" value="cmd_preview\HID_PREVW_FLIP_HORIZ.htm">
+    <param name="Name" value="Flip Vertical">
+    <param name="Local" value="cmd_preview\HID_PREVW_FLIP_VERT.htm">
+    <param name="Name" value="Hide Preview View">
+    <param name="Local" value="cmd_preview\HID_PREVW_HIDE.htm">
+    <param name="Name" value="No Rotation">
+    <param name="Local" value="cmd_preview\HID_PREVW_ROTATE_NONE.htm">
+    <param name="Name" value="Rotate Left">
+    <param name="Local" value="cmd_preview\HID_PREVW_ROTATE_LEFT.htm">
+    <param name="Name" value="Rotate Right">
+    <param name="Local" value="cmd_preview\HID_PREVW_ROTATE_RIGHT.htm">
+    <param name="Name" value="Rotate To 180">
+    <param name="Local" value="cmd_preview\HID_PREVW_ROTATE_T0180.htm">
+    <param name="Name" value="Rotate To 270">
+    <param name="Local" value="cmd_preview\HID_PREVW_ROTATE_TO270.htm">
+    <param name="Name" value="Rotate To 90">
+    <param name="Local" value="cmd_preview\HID_PREVW_ROTATE_TO90.htm">
+    <param name="Name" value="Split Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_SPLIT.htm">
+    <param name="Name" value="System Default Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_GREY.htm">
+    <param name="Name" value="Tabbed Window">
+    <param name="Local" value="cmd_preview\HID_PREVW_TAB.htm">
+    <param name="Name" value="White Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_WHITE.htm">
+    <param name="Name" value="Zoom Actual">
+    <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_ACTUAL.htm">
+    <param name="Name" value="Zoom Fit">
+    <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_FIT.htm">
+    <param name="Name" value="Zoom In">
+    <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_IN.htm">
+    <param name="Name" value="Zoom Out">
+    <param name="Local" value="cmd_preview\HID_PREVW_ZOOM_OUT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="transparency">
+    <param name="Name" value="Black Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_BLACK.htm">
+    <param name="Name" value="Check Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_CHECK.htm">
+    <param name="Name" value="White Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_WHITE.htm">
+    <param name="Name" value="System Default Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_GREY.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="alpha channel">
+    <param name="Name" value="Black Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_BLACK.htm">
+    <param name="Name" value="Check Background">
+    <param name="Local" value="cmd_preview\HID_PREVW_BG_CHECK.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="flip image">
+    <param name="Name" value="Flip Horizontal">
+    <param name="Local" value="cmd_preview\HID_PREVW_FLIP_HORIZ.htm">
+    <param name="Name" value="Flip Vertical">
+    <param name="Local" value="cmd_preview\HID_PREVW_FLIP_VERT.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="JPG">
   </object>
 </ul>
 </html>
