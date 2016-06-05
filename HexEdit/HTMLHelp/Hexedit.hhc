@@ -511,8 +511,16 @@
         <param name="Local" value="menus\menu_aerial.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Preview Menu">
+        <param name="Local" value="menus\preview_menu.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Tools menu">
         <param name="Local" value="menus\menu_tools.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Compare Menu">
+        <param name="Local" value="menus\menu_compare.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Window menu">
@@ -587,6 +595,10 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Checksum Page">
         <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Bitmap Page">
+        <param name="Local" value="dlg_properties\HIDD_PROP_BITMAP.htm">
       </object>
       </ul>
     <li><object type="text/sitemap">
