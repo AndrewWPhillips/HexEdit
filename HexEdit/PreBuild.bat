@@ -1,3 +1,5 @@
+@echo off
+
 ECHO Get revision number from git
 echo // Automatically generated header file created by Prebuild.bat > GitRevision.h
 
