@@ -399,6 +399,23 @@ macros | overviewtools\macros.htm
 Calculator | overviewtools\calc.htm
 Other Tools | overviewtools\other_tools.htm
 
+[Preview Commands]
+Split Window | cmd_preview\HID_PREVW_SPLIT.htm
+Tabbed Window | cmd_preview\HID_PREVW_TAB.htm
+Hide Preview View | cmd_preview\HID_PREVW_HIDE.htm
+Zoom Actual | cmd_preview\HID_PREVW_ZOOM_ACTUAL.htm
+Zoom Fit | cmd_preview\HID_PREVW_ZOOM_FIT.htm
+Zoom In | cmd_preview\HID_PREVW_ZOOM_IN.htm
+Zoom Out | cmd_preview\HID_PREVW_ZOOM_OUT.htm
+Rotate Left | cmd_preview\HID_PREVW_ROTATE_LEFT.htm
+Rotate Right | cmd_preview\HID_PREVW_ROTATE_RIGHT.htm
+Flip Horizontal | cmd_preview\HID_PREVW_FLIP_HORIZ.htm
+Flip Vertical | cmd_preview\HID_PREVW_FLIP_VERT.htm
+White Background | cmd_preview\HID_PREVW_BG_WHITE.htm
+Black Background | cmd_preview\HID_PREVW_BG_BLACK.htm
+Check Background | cmd_preview\HID_PREVW_BG_CHECK.htm
+System Default Background | cmd_preview\HID_PREVW_BG_GREY.htm
+
 [Printing Dialogs]
 Print Setup Dialog | dlg_printing\AFX_HIDD_PRINTSETUP.htm
 Print Dialog | dlg_printing\AFX_HIDD_PRINT.htm
@@ -411,6 +428,9 @@ Byte Properties Page | dlg_properties\HIDD_PROP_CHAR.htm
 Integer Values Page | dlg_properties\HIDD_PROP_DECIMAL.htm
 Real Values Page | dlg_properties\HIDD_PROP_FLOAT.htm
 Date/Time Values Page | dlg_properties\HIDD_PROP_DATE.htm
+Checksum Page | dlg_properties\HIDD_PROP_STATS.htm
+Counts (Graph) Page | dlg_properties\HIDD_PROP_GRAPH.htm
+Bitmap (Preview) page | dlg_properties\HIDD_PROP_BITMAP.htm
 
 [System commands]
 Restore command | cmd_control\HID_SC_RESTORE.htm
