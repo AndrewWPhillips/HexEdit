@@ -112,6 +112,7 @@ static int CALLBACK rfl_compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSor
 CRecentFileDlg::CRecentFileDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CRecentFileDlg::IDD, pParent)
 {
+	open_readonly_ = open_shared_ = FALSE;
 	//{{AFX_DATA_INIT(CRecentFileDlg)
 	net_retain_ = FALSE;
 	//}}AFX_DATA_INIT
@@ -124,11 +125,12 @@ void CRecentFileDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CRecentFileDlg)
 	DDX_Control(pDX, IDC_REMOVE_FILES, ctl_remove_);
-	DDX_Control(pDX, IDC_OPEN_RO, ctl_open_ro_);
 	DDX_Control(pDX, IDC_OPEN_FILES, ctl_open_);
 	DDX_Check(pDX, IDC_NET_RETAIN, net_retain_);
 	//}}AFX_DATA_MAP
 	DDX_GridControl(pDX, IDC_GRID_RFL, grid_);
+	DDX_Check(pDX, IDC_OPEN_READONLY, open_readonly_);
+	DDX_Check(pDX, IDC_OPEN_SHARED, open_shared_);
 }
 
 
@@ -136,7 +138,6 @@ BEGIN_MESSAGE_MAP(CRecentFileDlg, CDialog)
 	//{{AFX_MSG_MAP(CRecentFileDlg)
 	ON_BN_CLICKED(IDC_VALIDATE, OnValidate)
 	ON_BN_CLICKED(IDC_OPEN_FILES, OnOpen)
-	ON_BN_CLICKED(IDC_OPEN_RO, OnOpenRO)
 	ON_BN_CLICKED(IDC_REMOVE_FILES, OnRemove)
 	ON_BN_CLICKED(IDC_RECENT_FILES_SEARCH, OnSearch)
 	ON_WM_DESTROY()
@@ -145,8 +146,6 @@ BEGIN_MESSAGE_MAP(CRecentFileDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
-	//ON_WM_ERASEBKGND()
-	//ON_WM_CTLCOLOR()
 	ON_NOTIFY(NM_CLICK, IDC_GRID_RFL, OnGridClick)
 	ON_NOTIFY(NM_DBLCLK, IDC_GRID_RFL, OnGridDoubleClick)
 	ON_NOTIFY(NM_RCLICK, IDC_GRID_RFL, OnGridRClick)
@@ -541,10 +540,10 @@ BOOL CRecentFileDlg::OnInitDialog()
 	resizer_.Add(IDC_GRID_RFL, 0, 0, 100, 100);
 	resizer_.Add(IDC_FILES_SELECTED, 100, 0, 0, 0);
 	resizer_.Add(IDC_OPEN_FILES, 100, 0, 0, 0);
-	resizer_.Add(IDC_OPEN_RO, 100, 0, 0, 0);
+	resizer_.Add(IDC_OPEN_READONLY, 100, 0, 0, 0);
+	resizer_.Add(IDC_OPEN_SHARED, 100, 0, 0, 0);
 
 	resizer_.Add(IDOK, 100, 0, 0, 0);
-	//resizer_.Add(IDCANCEL, 100, 0, 0, 0);
 	resizer_.Add(IDC_REMOVE_FILES, 100, 0, 0, 0);
 	resizer_.Add(IDC_VALIDATE, 100, 0, 0, 0);
 	resizer_.Add(IDC_NET_RETAIN, 100, 0, 0, 0);
@@ -659,7 +658,8 @@ void CRecentFileDlg::OnHelp()
 static DWORD id_pairs[] = {
 	IDC_GRID_RFL, HIDC_GRID_RFL,
 	IDC_OPEN_FILES, HIDC_OPEN_FILES,
-	IDC_OPEN_RO, HIDC_OPEN_RO,
+	IDC_OPEN_READONLY, HIDC_OPEN_READONLY,
+	IDC_OPEN_SHARED, HIDC_OPEN_SHARED,
 	IDC_REMOVE_FILES, HIDC_REMOVE_FILES,
 	IDC_FILES_SELECTED, HIDC_FILES_SELECTED,
 	IDC_VALIDATE, HIDC_VALIDATE,
@@ -717,9 +717,11 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		}
 
 	ASSERT(GetDlgItem(IDC_OPEN_FILES) != NULL);
-	ASSERT(GetDlgItem(IDC_OPEN_RO) != NULL);
+	ASSERT(GetDlgItem(IDC_OPEN_READONLY) != NULL);
+	ASSERT(GetDlgItem(IDC_OPEN_SHARED) != NULL);
 	ASSERT(GetDlgItem(IDC_REMOVE_FILES) != NULL);
-	GetDlgItem(IDC_OPEN_RO)->EnableWindow(rows_selected > 0);
+	GetDlgItem(IDC_OPEN_READONLY)->EnableWindow(rows_selected > 0);
+	GetDlgItem(IDC_OPEN_SHARED)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_REMOVE_FILES)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_OPEN_FILES)->EnableWindow(rows_selected > 0 && !ro);
 
@@ -816,42 +818,13 @@ void CRecentFileDlg::OnOpen()
 
 	for (pp = to_open.begin(); pp != to_open.end(); ++pp)
 	{
-		ASSERT(theApp.open_current_readonly_ == -1);
-		ASSERT(theApp.open_current_shared_ == -1);
-		if (theApp.OpenDocumentFile(*pp) != NULL)
-		theApp.SaveToMacro(km_open, *pp);
-	}
-
-	DeleteEntries();
-}
-
-void CRecentFileDlg::OnOpenRO()
-{
-	CHexFileList *pfl = theApp.GetFileList();
-	int fcc = grid_.GetFixedColumnCount();
-	std::set<CString> to_open;
-	CCellRange sel = grid_.GetSelectedCellRange();
-	ASSERT(sel.IsValid());
-
-	// Work out all the files to be opened.  Note that we do it in 2 stages (get list of files
-	// then open them) as opening a file changes the order of files in the list (pfl->name_ etc)
-	for (int row = sel.GetMinRow(); row <= sel.GetMaxRow(); ++row)
-		if (grid_.IsCellSelected(row, fcc))
-			to_open.insert(pfl->name_[grid_.GetItemData(row, fcc + COL_NAME)]);
-
-		std::set<CString>::const_iterator pp;
-
-	// Now open the files
-	for (pp = to_open.begin(); pp != to_open.end(); ++pp)
-	{
-		ASSERT(theApp.open_current_readonly_ == -1);
-		ASSERT(theApp.open_current_shared_ == -1);
-		theApp.open_current_readonly_ = TRUE;  // This must be done for each file to ensure open_file opens read_only
+		ASSERT(theApp.open_current_readonly_ == -1 && theApp.open_current_shared_ == -1);  // check that flags have been reset
+		// Set flags each time since they should reset after opening each file
+		theApp.open_current_readonly_ = open_readonly_;
+		theApp.open_current_shared_ = open_shared_;
 		if (theApp.OpenDocumentFile(*pp) != NULL)
 			theApp.SaveToMacro(km_open, *pp);
 	}
-
-	CDialog::OnOK();
 
 	DeleteEntries();
 }

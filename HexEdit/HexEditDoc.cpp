@@ -339,7 +339,7 @@ void CHexEditDoc::RestoreFileTimes(LPCTSTR lpszPathName)
 	{
 		status.m_ctime = saved_ctime_;
 		status.m_mtime = saved_mtime_;
-		//status.m_atime = saved_atime_;         // This has no effect as setting the status seems to set access time - so we use SetFileTimes (below)
+		status.m_atime = saved_atime_;           // Appears to have no effect - so we also use SetFileTimes (below)
 		status.m_attribute = saved_attribute_;   // we must set this to ensure the attributes are not disturbed (eg archived)
 		CFile::SetStatus(lpszPathName, status);
 	}
@@ -506,10 +506,11 @@ void CHexEditDoc::OnCloseDocument()
 
 	DeleteContents();
 
-	// If preserving times/attributes of the file restore them
+	// If preserving times/attributes of the file restore them now
 	if (keep_times_ && !IsDevice())
 	{
 		RestoreFileTimes(m_strPathName);
+		// qqq note that access time keeps getting updated no matter where we put this
 	}
 
 	if (hicon_ != HICON(0))
@@ -679,6 +680,8 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		// (avoid worries about disk space, creating temp files etc)
 		ASSERT(base_type_ == 0);
 		WriteInPlace();
+
+		GetInitialStatus();                     // make sure we have current file length/mod time
 	}
 	else
 	{
@@ -859,8 +862,6 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		if (!open_file(lpszPathName))
 			return FALSE;                       // already done: mac_error_ = 10
 	}
-	if (!IsDevice())
-		GetInitialStatus();                     // make sure we have current file length/mod time
 
 	length_ = pfile1_->GetLength();
 
@@ -1308,6 +1309,8 @@ BOOL CHexEditDoc::open_file(LPCTSTR lpszPathName)
 			return FALSE;
 		}
 	}
+
+	GetInitialStatus();
 
 	return TRUE;
 }
@@ -1954,7 +1957,6 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 
 			// Get status as when the file was created on disk
 			RetrieveFileTimes(file_name);
-			GetInitialStatus();
 
 			load_icon(file_name);
 			show_icon();

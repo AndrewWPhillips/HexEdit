@@ -4731,12 +4731,14 @@ BOOL CMainFrame::OnShowPopupMenu (CMFCPopupMenu *pMenuPopup)
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_NEXT,  NULL, -1, "Recent Next Difference"), idx+3);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_LAST,  NULL, -1, "Recent Last Difference"), idx+4);
 
+#if 0  // disable commands to move around "all diffs" until they work better
 			// Add the 4 "all diffs" commands to the menu after the dummy one
 			pMenuPopup->InsertSeparator(idx+5);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_FIRST, NULL, -1, "First Difference (all)"), idx+6);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_PREV,  NULL, -1, "Previous Difference (all)"), idx+7);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_NEXT,  NULL, -1, "Next Difference (all)"), idx+8);
 			pMenuPopup->InsertItem(CMFCToolBarMenuButton(ID_COMP_ALL_LAST,  NULL, -1, "Last Difference (all)"), idx+9);
+#endif
 		}
 		else
 		{

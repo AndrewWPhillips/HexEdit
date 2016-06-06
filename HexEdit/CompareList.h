@@ -99,7 +99,7 @@ private:
 	CResizeCtrl m_resizer;              // Used to move controls around when the window is resized
 
 	CHexEditView *phev_;                // ptr to hex view that we are displaying changes for
-	clock_t last_change_;               // time that last chnage was made to the compare info for this view
+	clock_t last_change_;               // time that last change was made to the compare info for this view
 
 	COLORREF inverse_bg_col_;           // background colour for deleted cell (used in AddRow())
 };

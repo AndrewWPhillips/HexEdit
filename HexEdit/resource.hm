@@ -407,6 +407,7 @@
 #define HIDC_OPEN_INFO                  0x8121056b    // IDD_OPEN_SPECIAL
 #define HIDC_OPEN_READONLY              0x8121041c    // IDD_OPEN_SPECIAL
 #define HIDC_OPEN_RO                    0x810e04ad    // IDD_RECENT_FILES
+#define HIDC_OPEN_SHARED                0x81fc05c6    // IDD_RECENT_FILES_NEW
 #define HIDC_OPEN_TREE                  0x81210569    // IDD_OPEN_SPECIAL
 #define HIDC_OP_DISPLAY                 0x8075047b    // IDD_CALC
 #define HIDC_OR                         0x8075042d    // IDD_CALC
