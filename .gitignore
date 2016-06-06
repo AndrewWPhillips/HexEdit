@@ -11,3 +11,6 @@ HexEdit/videos/*.avi
 HexEdit/Videos/Work/
 HexEdit/RegHelper/Debug/
 HexEdit/RegHelper/Release/
+HexEdit/HTMLHelp/*.hhk_backup
+HexEdit/HTMLHelp/*.js
+HexEdit/HTMLHelp/!SkinSubFolder!/
