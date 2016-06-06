@@ -150,6 +150,7 @@ CCompareListDlg::CCompareListDlg() : CDialog()
 {
 	help_hwnd_ = (HWND)0;
 	m_first = true;
+	last_change_ = -1;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -297,6 +298,7 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	if ((pview = GetView()) != NULL &&                 // we have an active view
 		(pdoc = pview->GetDocument()) != NULL)         // all views should have a doc!
 	{
+		// Check if grid needs updating - ie, switched to a different file or new compare done (based on time)
 		if (pview != phev_ || pdoc->LastCompareFinishTime() != last_change_)
 		{
 			CString mess;
@@ -310,22 +312,23 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 
 			if (diffs >= 10000)
 			{
-				AddMessage("Too many differences for list");
+				AddMessage("Too many differences");
 			}
 			else if (diffs >= 0)
 			{
-				FillGrid(pdoc);
+				FillGrid(pdoc);      // fill grid with results
 			}
-			else if (diffs == -4)
+			else if (diffs == -2)
 			{
 				mess.Format("%d%% complete", pdoc->CompareProgress());
 				AddMessage(mess);
+				last_change_ = -1;   // force update of grid while compare is in progress
 			}
 		}
 	}
 	else if (pview == NULL && phev_ != NULL)
 	{
-		last_change_ = 0;
+		last_change_ = -1;
 		phev_ = NULL;
 
 		// Clear the list as there is now no active view
