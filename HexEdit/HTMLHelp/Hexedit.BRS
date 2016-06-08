@@ -367,7 +367,6 @@ Open Special dialog | dlg_other\HIDD_OPEN_SPECIAL.htm
 Choose Font Dialog | dlg_other\AFX_HIDD_FONT.htm
 Window Manager Dialog | dlg_other\HIDD_WINDOW_MANAGER.htm
 Email HexEdit Support Dialog | dlg_other\HIDD_EMAIL.htm
-Reminder Dialog | dlg_other\HIDD_REG_HELP.htm
 
 [Overview]
 Introduction | overviewbasics\intro.htm
