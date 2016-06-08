@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=895>
-<meta name=layout-width content=1564>
+<meta name=layout-height content=946>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -137,9 +137,7 @@
 	width=87.663%>
 <p>You can enter and view comment fields (category, keywords, comments) 
  here.</p>
-<p>You can also see how long the file has been edited or viewed.</p>
-<p>This page also shows the size of the file on disk and in memory (which 
- may be different if bytes have been deleted or added).</td></tr>
+<p>You can also see how long the file has been edited or viewed.</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -175,8 +173,8 @@
 	width=87.663%>
 <p>Shows information about the current file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->None 
  of these values can be modified.</p>
-<p>All fields are as for the file on disk except the size on disk which 
- is shown in the Summary page..</td></tr>
+<p>Shows the size of the file in memory, plus the difference in length 
+ if bytes have been deleted or added</td></tr>
 
 <tr style="x-cell-content-align: top;"
 	valign=top>
@@ -237,7 +235,7 @@
 			padding-left: 10px;"
 	bgcolor=#C0C0C0
 	width=12.337%>
-<p>Decimal</td>
+<p>Integer</td>
 <td colspan=1
 	rowspan=1
 	style="width: 87.663%;
@@ -275,7 +273,7 @@
 			padding-left: 10px;"
 	bgcolor=#C0C0C0
 	width=12.337%>
-<p>IEEE FP</td>
+<p>Real</td>
 <td colspan=1
 	rowspan=1
 	style="width: 87.663%;
@@ -288,8 +286,8 @@
 			padding-right: 10px;
 			padding-left: 10px;"
 	width=87.663%>
-<p>Shows IEEE or IBM floating points formats and C# Decimal. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- mantissa and (signed) exponent are also shown.</p>
+<p>Shows IEEE or IBM floating points formats, plus Real48 (as in Turbo 
+ Pascal and Delphi) and C# Decimal.</p>
 <p>The value can be edited, but the mantissa &amp; exponent cannot be changed 
  separately.</p>
 <p>The IEEE format is by far the most commonly used floating point format 
@@ -385,7 +383,7 @@
 			padding-left: 10px;"
 	bgcolor=#C0C0C0
 	width=12.337%>
-<p>Checksum</td>
+<p>Statistics</td>
 <td colspan=1
 	rowspan=1
 	style="width: 87.663%;
@@ -400,6 +398,43 @@
 	width=87.663%>
 <p>Shows CRC and message digest values <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(if 
  background statistics is turned on).</td></tr>
+
+<tr style="x-cell-content-align: top;"
+	valign=top>
+<td colspan=1
+	rowspan=1
+	style="width: 12.337%;
+			background-color: #c0c0c0;
+			border-left-style: Solid;
+			border-left-color: #000000;
+			border-left-width: 1px;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	bgcolor=#C0C0C0
+	width=12.337%>
+<p>Preview (bitmap)</td>
+<td colspan=1
+	rowspan=1
+	style="width: 87.663%;
+			border-right-style: Solid;
+			border-right-color: #000000;
+			border-right-width: 1px;
+			border-bottom-style: Solid;
+			border-bottom-color: #000000;
+			border-bottom-width: 1px;
+			padding-right: 10px;
+			padding-left: 10px;"
+	width=87.663%>
+<p>Shows info (resolution, bit-depth, etc) is the current file is in a 
+ recognised bitmap (graphics) format.</p>
+<p>Separate columns show information about the file on disk and in memory 
+ (if they are different).</td></tr>
 </table>
 <!--begin!kadov{{--></div><!--}}end!kadov-->
 <p>&nbsp;</p>
@@ -475,7 +510,10 @@
  (Graph) Page</a> to view a graph of byte counts of the active file</p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="../dlg_properties/HIDD_PROP_STATS.htm">Checksum 
- Page</a> to see CRC32, MD5 and SHA1 of the active file</p>
+ Page</a> to see CRC32, MD5, SHA1, and SHA2 of the active file</p>
+
+<p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a HREF="../dlg_properties/HIDD_PROP_BITMAP.htm">Bitmap 
+ (Preview) page</a> to see info on the current bitmap (if preview is open)</p>
 
 <p style="margin-left: 120.50pt; text-indent: -120.50pt;"><a href="..\bars\AFX_HIDW_STATUS_BAR.htm">Status 
  bar</a>&nbsp;to view byte values and invoke the Properties dialog</p>
