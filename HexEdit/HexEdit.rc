@@ -3521,6 +3521,10 @@ BEGIN
     ID_PREVW_HIDE           "Turn off preview of bitmap files\\Preview Off"
     ID_PREVW_SPLIT          "Show preview (bitmaps) in a split window\nPreview Split"
     ID_PREVW_TAB            "Show preview (bitmaps) in a tabbed window\nPreview Tab"
+    ID_PREVW_ZOOM_FIT       "Change preview bitmap size to fit the window\nZoom Fit"
+    ID_PREVW_ZOOM_ACTUAL    "Zoom bitmap preview to actual size\nZoom Actual"
+    ID_PREVW_ZOOM_IN        "Increase magnification for bitmap preview\nZoom In"
+    ID_PREVW_ZOOM_OUT       "Decrease magnification for bitmap preview\nZoom Out"
 END
 
 STRINGTABLE
@@ -3695,6 +3699,8 @@ BEGIN
     ID_COMP_ALL_PREV        "Jump to previous of all differences\nAll Prev Diff"
     ID_COMP_ALL_NEXT        "Jump to next of all differences\nAll Next Diff"
     ID_COMP_ALL_LAST        "Jump to last of all differences\nAll Last Diff"
+    ID_COMP_AUTO_SYNC       "Keep original and compare file selections in sync\nAuto Sync"
+    ID_COMP_AUTO_SCROLL     "Keep original and compare file scroll in sync\nAuto Scroll"
 END
 
 STRINGTABLE
@@ -3776,6 +3782,14 @@ END
 STRINGTABLE
 BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
+END
+
+STRINGTABLE
+BEGIN
+    ID_PREVW_BG_CHECK       "Use checkerboard background to see transparency\nCheck Background"
+    ID_PREVW_BG_WHITE       "Make bitmap preview background white\nWhite Background"
+    ID_PREVW_BG_BLACK       "Make bitmap preview background black\nBlack Background"
+    ID_PREVW_BG_GREY        "Use default window background color\nStandard Background"
 END
 
 #endif    // English (United States) resources
@@ -4985,6 +4999,7 @@ BEGIN
     CONTROL         "Custom1",IDC_GRID_DIFFS,"MFCGridCtrl",WS_GROUP | WS_TABSTOP,0,0,99,49
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog Info
@@ -5148,6 +5163,10 @@ BEGIN
         BOTTOMMARGIN, 200
     END
 
+    IDD_RECENT_FILES, DIALOG
+    BEGIN
+    END
+
     IDD_GETSTR, DIALOG
     BEGIN
         BOTTOMMARGIN, 92
@@ -5162,10 +5181,6 @@ BEGIN
     END
 
     IDD_COMPARE_LIST, DIALOG
-    BEGIN
-    END
-
-    IDD_RECENT_FILES, DIALOG
     BEGIN
     END
 END
