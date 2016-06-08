@@ -42,7 +42,7 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
-<p><span class=HexEdit>HexEdit Pro</span> allows you to encrypt and decrypt 
+<p><span class=HexEdit>HexEdit</span> allows you to encrypt and decrypt 
  all or part of a file by selecting the bytes and using the encryption 
  or decryption command. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  provides all the stream and block encryption algorithms available under 
@@ -76,8 +76,8 @@
 
 <p>&nbsp;</p>
 
-<p>If you are using Windows 95, and <span class=HexEdit>HexEdit Pro</span> 
- only shows one encryption algorithm (the <span class=HexEdit>HexEdit Pro</span> 
+<p>If you are using Windows 95, and <span class=HexEdit>HexEdit</span> 
+ only shows one encryption algorithm (the <span class=HexEdit>HexEdit</span> 
  internal algorithm) then the Crypto API is not available on your computer.</p>
 
 <p>&nbsp;</p>
@@ -86,11 +86,11 @@
 
 <p>&nbsp;</p>
 
-<p><span class=HexEdit>HexEdit Pro</span> only supports use of the single-key 
+<p><span class=HexEdit>HexEdit</span> only supports use of the single-key 
  or symmetric ciphers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
  is the traditional type of computer encryption where the same password 
  or key is used to encrypt and decrypt.) <!--kadov_tag{{<spaces>}}-->&nbsp;<span 
- class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit Pro</span> does not 
+ class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit</span> does not 
  support public-key ciphers, as these are only provided in the Crypto API 
  for encryption of session keys. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  Crypto API provides for two types of single-key cipher: block and stream.</p>
@@ -103,10 +103,10 @@
  then pad bytes will need to be added, hence block ciphers provided by 
  the Crypto API increase the numbers of bytes when encrypting by up to 
  2 blocks. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence, 
- when encrypting in <span class=HexEdit>HexEdit Pro</span> with a Crypto 
+ when encrypting in <span class=HexEdit>HexEdit</span> with a Crypto 
  API block cipher the length of the selected bytes will increase after 
  encryption, and decrease back to the original size after decryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
- is not true for the <span class=HexEdit>HexEdit Pro</span> internal algorithm 
+ is not true for the <span class=HexEdit>HexEdit</span> internal algorithm 
  - see below.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  Microsoft Base Cryptographic Provider v1.0 provides the RC2 block encryption 
  algorithm.</p>
@@ -117,7 +117,7 @@
  of data and produce an encrypted stream. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Hence, 
  unlike block encryption, you can encrypt any number of bytes with stream 
  encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- <span class=HexEdit>HexEdit Pro</span>, when you encrypt with a stream 
+ <span class=HexEdit>HexEdit</span>, when you encrypt with a stream 
  cipher, the encrypted length is the same as before encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
  disadvantage of stream encryption is that the algorithms are typically 
  not as secure, and implementations are slower than block encryption. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
@@ -125,7 +125,7 @@
 
 <p>&nbsp;</p>
 
-<p>The <span class=HexEdit>HexEdit Pro</span> internal algorithm is a block 
+<p>The <span class=HexEdit>HexEdit</span> internal algorithm is a block 
  cipher with a block size of 8 bytes (64 bits). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->As 
  it does not provide padding of any incomplete last block it does not need 
  to increase the length of the encrypted data. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
@@ -147,10 +147,10 @@
 
 <p>&nbsp;</p>
 
-<p><span class=HexEdit>HexEdit Pro</span> has a minimum password length 
+<p><span class=HexEdit>HexEdit</span> has a minimum password length 
  which defaults to 8. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
  as encryption requirements vary this can be changed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, if you are only using <span class=HexEdit>HexEdit Pro</span> 
+ example, if you are only using <span class=HexEdit>HexEdit</span> 
  for testing Crypto API functions then you might want to reduce the minimum 
  required password length.</p>
 
@@ -174,7 +174,7 @@
  password when encrypting or decrypting you can record the &quot;Clear 
  Password&quot; command in the macro; if no password has been entered since 
  last cleared when the Encrypt or Decrypt command is invoked then <span 
- class=HexEdit>HexEdit Pro</span> will prompt for one.</p>
+ class=HexEdit>HexEdit</span> will prompt for one.</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
@@ -183,7 +183,7 @@
 
 <p>&nbsp;</p>
 
-<p>Another form of encryption that <span class=HexEdit>HexEdit Pro</span> 
+<p>Another form of encryption that <span class=HexEdit>HexEdit</span> 
  does not (yet) support is public key encryption. This has many excellent 
  uses that I will not go into here. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
  this form of encryption the two keys (encryption/decryption) are not the 

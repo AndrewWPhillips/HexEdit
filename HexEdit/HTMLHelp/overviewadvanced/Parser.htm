@@ -87,7 +87,7 @@
 <p>The actual size and format of basic data types depends on the compiler 
  used to generate the code. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  example, the &quot;int&quot; type is commonly 16 or 32 bits. <!--kadov_tag{{<spaces>}}-->&nbsp;<span 
- class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit Pro</span> allows you 
+ class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit</span> allows you 
  to configure the template DATA element generated for any standard data 
  type by scanning the file &quot;_standard_types.xml&quot; looking for 
  a type of that name.</p>
@@ -236,7 +236,7 @@
 
 <p>&nbsp;</p>
 
-<p>Enums are very useful in <span class=HexEdit>HexEdit Pro</span> templates 
+<p>Enums are very useful in <span class=HexEdit>HexEdit</span> templates 
  for two reasons. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
  can be used to easily define one or more integer constant values. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
  can also be used to define a type with a restricted set of integer values. 
@@ -322,7 +322,7 @@
 
 <p>&nbsp;</p>
 
-<p>When pointers are added to a <span class=HexEdit>HexEdit Pro</span> 
+<p>When pointers are added to a <span class=HexEdit>HexEdit</span> 
  template the special types &quot;pointer$&quot; and &quot;function_pointer$&quot; 
  are used from &quot;_standard_types.xml&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->By 
  default these are 32-bit unsigned integers (for the VC++ 32-bit compiler).</p>
@@ -539,7 +539,7 @@
 
 <p>&nbsp;</p>
 
-<p>During processing of the template, <span class=HexEdit>HexEdit Pro</span> 
+<p>During processing of the template, <span class=HexEdit>HexEdit</span> 
  looks for consecutive bit-fields (indicated by use of the &quot;bits&quot; 
  attribute) with the same type. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(To 
  match they must both be of &quot;int&quot; type and have <span style="font-weight: bold;">the 
@@ -567,7 +567,7 @@
 				height: 12px;"
 		width=31
 		height=12
-		border=0><span class=HexEdit>HexEdit Pro</span> has the ability 
+		border=0><span class=HexEdit>HexEdit</span> has the ability 
  to use the size of a bitfield &quot;type&quot; as the storage unit size. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This is 
  non-standard C but a common extension. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
@@ -716,7 +716,7 @@
 <p>Like ordinary pointers vtable pointers are useless when written to a 
  file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Moreover, 
  it is probably dangerous to write instances of virtual classes to file 
- and read them back but the <span class=HexEdit>HexEdit Pro</span> parser 
+ and read them back but the <span class=HexEdit>HexEdit</span> parser 
  handles this case anyway. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
  the parser detects that a class is virtual it adds an extra pointer field 
  to the start of the STRUCT element and gives it the name &quot;vptr&quot;.</p>
@@ -727,7 +727,7 @@
 
 <p>&nbsp;</p>
 
-<p>The <span class=HexEdit>HexEdit Pro</span> parser includes full support 
+<p>The <span class=HexEdit>HexEdit</span> parser includes full support 
  for all standard preprocessor directives (#define, #if, #ifdef, #include 
  etc). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  also supports the paste operator (##) and the stringizing operator (#) 
@@ -747,7 +747,7 @@
 
 <p>&nbsp;</p>
 
-<p>The <span class=HexEdit>HexEdit Pro</span> parser supports macros (#define) 
+<p>The <span class=HexEdit>HexEdit</span> parser supports macros (#define) 
  both with and without parameters (ie object-like and function-like macros). 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Macros 
  can be redefined (using #define) and removed (using #undef). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
@@ -879,13 +879,13 @@
 
 <p>&nbsp;</p>
 
-<p>All these .XML files are standard <span class=HexEdit>HexEdit Pro</span> 
+<p>All these .XML files are standard <span class=HexEdit>HexEdit</span> 
  template files. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->They 
  can be edited in a text editor or directly using the template editing 
- facilities in <span class=HexEdit>HexEdit Pro</span> . <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
+ facilities in <span class=HexEdit>HexEdit</span> . <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
  it is recommended that you only make changes to _custom_types.xml (and 
  _custom_constants.txt) as the other files may be overwritten when you 
- upgrade to a newer version of <span class=HexEdit>HexEdit Pro</span>.</p>
+ upgrade to a newer version of <span class=HexEdit>HexEdit</span>.</p>
 
 <p>&nbsp;</p>
 
@@ -899,7 +899,7 @@
  some badly formed code may <span style="font-weight: bold;">not</span> 
  generate a parse error but will generally just be silently ignored. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  is recommended that all code be run through your C/C++ compiler before 
- parsing in <span class=HexEdit>HexEdit Pro</span> to ensure it is valid..</p>
+ parsing in <span class=HexEdit>HexEdit</span> to ensure it is valid..</p>
 
 <p>&nbsp;</p>
 
