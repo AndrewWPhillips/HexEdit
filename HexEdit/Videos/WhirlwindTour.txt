@@ -1,0 +1,421 @@
+open HexEdit
+ensure only Standard toolbar is displayed
+open file that has multi-byte characters
+make sure the file has occurrences of "ABC" in ASCII and EBCDIC
+Also "XYZ", "xyz", etc
+make sure file is in favourites category and is in FAV task list
+make sure there are a few more files in RFL
+make sure there are a few more categories (TBD, Project X, Corrupt)
+turn off change tracking and save as default
+make sure calculator is floating (but hidden)
+
+---------------------------
+Basic View
+
+" This is a whirlwind tour of some of the more useful but less understood features of HexEdit.
+  You probably won't use most of what you see here but you may discover a gem that saves you 
+  time and trouble. This video will move fast so you need to pay attention or pause and replay bits.
+  
+" If you are new to hex editors then this video is NOT for you. I recommend that you look
+  at the HexEdit Intro video before anything else.
+
+" I guess the simplest place to start is to open a file in HexEdit and check out the display
+  You have complete and simple control of how the file is displayed.
+- open a file
+
+" You can easily change the font size by holding down the Ctrl key & using the mouse wheel
+- demo
+
+" Or you can select any font and size using the Format Bar
+- open format bar and change font and size
+
+" Also on the format bar is the ruler toggle which shows ruler at the top of the screen
+  which shows columns and other useful stuff
+- click ruler button twice
+
+" You can completely configure how the rulers look. There are actually 2 rulers - hex and decimal.
+  Switching between hex and decimal addresses displays either the hex or decimal ruler
+- toggle hex/dec addresses
+  
+" Also note that in general hex addresses are shown in red and decimal in blue. This colour coding
+  is really useful as sometimes hex addresses can look like they are decimal. But the actual colours
+  depend on the colour scheme but for the standard colour schemes they are always red and blue.
+- click colour scheme drop list
+  
+" Also note these little handles on the ruler. You can double-click the column handle to turn on AutoFit
+- drag group handle, double-click columns handle
+
+" Or just use the AutoFit button. You can also change the number of columns with these buttons
+- turn off AutoFit, use inc/dec cols buttons
+
+" You can have a huge number of columns - up to 32,000 I think
+- turn off Format Bar
+
+" Looking again at the standard toolbar you can see some very important drop down lists
+  The glasses list determines how the bytes are shown on screen
+- demo char and hex areas
+- return to BOTH areas
+
+" The BOTH option has a typical binary editor display but a lot of users requested an
+  option where each byte is shown as a character with the corresponding hex digits stacked beneath
+- demo stacked mode
+
+" the next drop list determines how characters are displayed. The first 4 have always been in HexEdit
+  but the bottom one "Code Page" allows you to use any Windows code page
+- select code page option
+
+" I'll probably add a Unicode option here soon but Unicode is  a bit of a problem as there
+  is not a one-to-one relation between bytes and characters. Technically, the same problem 
+  occurs with some code pages since some characters have a lead-in byte
+- open Doc/Display options page & switch to code page that demos multi-byte characters
+
+" To change which code page is used you need to go into the Options dialog
+- open Options dialog again
+
+~~~~ 1
+
+Options Dialog
+
+" Lets have a quick look at the Options dialog now
+- expand 3 top-level tree nodes
+
+" First notice that its grouped into 3 sections. The bottom (Document) settings apply to the currently
+  open file.  The middle section (Workspace) is for global display and editing settings.
+  While the top (System) section is for everything else.
+- go to Workspace/Global
+
+" Some people prefer hex digits to be in lower case. Others hate that (since a little-B
+  looks some much like a 6 but a capital B looks nothing like an 8). Here we can change how 
+  hex digits are displayed everywhere in HexEdit.
+- toggle Hex In Uppercase
+
+" There are lots more options, a few of which we will look at later. But let's just look at the display options.
+- go back to Doc/Display page
+
+" This page gives even more control over fonts, columns, etc. You'll notice that there are actually 3 
+  different display fonts that are remembered for each file. The normal font is just for displaying
+  simple English text and is used for ASCII, ANSI and EBCDIC char sets. However, the IBM/OEM has special
+  requirements of its font - it must support MSDOS graphics characters - there are only a few Windows
+  fonts that do that.
+ - select ASCII char set, open Normal font, select name, size, bold, etc
+  
+" Finally for codepage character sets we need a font that has lots of different
+  characters - usually something with Unicode in the name like "Lucida Sans Unicode".
+- open Multibyte font selection
+
+" The Document Edit page has other useful settings.
+- switch to next page
+
+" One of my favourites is the scroll zone which sets
+  how close to the edge of the screen you can get before the display starts scrolling.
+- set scroll zone to 99, close Options and move cursor up/down
+- reopen Options dialog
+
+" Also here you have these two important settings. First, you can avoid accidentally changing a file
+  by making it read-only. Note the RO status bar panel
+- select RO  
+
+" You can also work in overtpe or insert mode. Generally you work in overtype mode as most binary
+  format do not like having bytes inserted or deleted
+- switch between INS and OVR modes
+- close options dialog
+
+~~~~ 2
+
+Advanced View
+
+" You can also toggle these options by double-clicking the status bar panel
+- dclick RO and OVR panels
+
+" If you have multiple windows open on the same file then you could have one RO
+- turn off tabs, open new window, tile horizontally, make one RO and one RW, try to edit RO
+
+" I should just quickly explain what these other std toolbar buttons are for. The star button just 
+  adds the current file to the favourites category. You can put different files into different categories
+  of you choice but the favourites category is special because it adds the file to the Favourites
+  list that you see when you right-click the HexEdit button in the task bar.
+- open Properties dialog and click Categories drop list
+
+" This Properties dialog is very useful and I'll explain about Properties soon
+- close Properties dialog
+
+" The clock button just preserves the times of the file. So even if you change a file
+  its time of last modification, attributes, etc won't change
+  Note that there is currently a problem with access time not being preserved that I am working on
+  
+" These last 2 buttons are for keystroke macros which are a simple way to automate repeated
+  things that you do in HexEdit. They are actually very powerful and I recommend the Macros
+  tutorial if you are interested.
+- open Help/Tutorial/Macros then close it
+  
+* Depending on your character set there may be several non-printing bytes which
+  are often called control characters. For example, in ASCII the byte that is used for TAB
+  has a value of nine. I will just create a file with all 256 byte values in it to demonstrate.
+  To do this I use a keystroke macro I previously recorded and saved on disk.
+- run AllChars macro and change to BOTH areas, ASCII char set
+
+" If you switch to displaying control chars as Alpha the TAB is shown as a red-I, 
+  because TAB is also CTRL-I or control plus I
+- switch to Alpha control chars mode
+
+" If you switch to C escape sequences mode then TAB is displayed as T,
+  because in C/C++/C# TAB is represented by a backslash and T
+- switch to C/C++ control chars mode  
+
+" You can also see here that control characters are shown in RED,
+  except to byte value 9, 10, and 13. These are shown differently as these are
+  TAB, CR and LF which will normally appear in text files whereas the others do not.
+
+Colour Schemes
+  
+" Actually the colour that the characters are displayed in is actually determined by the
+  colour scheme. We are current using the ASCII default colour scheme but if I switch
+  to EBCDIC character set HexEdit automatically switches to the EBCDIC default scheme.
+- switch to EBCDIC
+
+" But if we switch to a non-standard scheme then the automatic switching stops
+- switch to Black & White
+
+" You can actually set the colour each different byte or range of bytes will be displayed in
+- select Modify colours, switch to ASCII default scheme
+
+" Here we can set lots of different colours including those for hex and decimal addresses
+  After the decimal addresses colour have the colours for byte ranges
+- scroll down to ASCII Text
+
+" Here we can see that normal text is BLACK.  TAB,CR, and LF are GREEN and all others are RED.
+- scroll down one line
+
+" Here you can enter a comma-separated list of values or a range
+- scroll down one line
+
+" Its probably a good idea to have the last entry with a range 0 to 255 to catch all values
+  I think bytes with an unassigned colour are simply not displayed
+- switch to MANY scheme
+
+" These colour schemes are very useful for spotting unexpected values.
+  They are especially useful in AERIAL VIEW mode which I will discuss in a minute
+  I usually use the MANY scheme where every byte value has a different colour
+- scroll through the MANY colours
+
+" Of course, you can change any of the colours and even create and delete your own schemes
+- click New Scheme button then cancel
+- select MANY scheme click Delete button
+
+" I just deleted the MANY scheme but its easy to get back by using reset
+- click New Scheme button call it "Many" then click Reset button
+
+~~~~ 3
+
+Basic Editing
+
+" The rest of the buttons on the standard toolbar are typical things for saving, printing, etc.
+- click then close print preview
+
+" Of course, there is full clipboard support. Actually there a many cool keyboard option
+  which I will discuss later
+- select something and click copy button
+
+" Undo in HexEdit is extremely powerful as it not undoes file changes but also cursor moves,
+  selections, and just about anything you can change. For example, if I move the cursor
+- move cursor down 3 lines then up 3 lines
+- select Undo button on toolbar
+
+" If I set the mark I can undo that
+- set mark a few times using context menu
+- undo lots of time using Undo button
+
+" I should explain this blue square called the mark. Every file has one special location called the
+  mark. You can use it to measure distance using the status bar, restrict search scope
+- move cursor around and highlight distance to mark panel  
+
+" The mark is very useful in keystroke macros, especially these options
+- select Edit/Mark/Extend To Mark
+
+" At this point I think we have looked at everything on the std toolbar so we should take a look
+  at the Edit Bar
+- turn on Edit Bar
+
+" Here we have buttons to set the mark and jump to the mark as well as the hex and decimal jump tools
+  some searching tools, and this end "change tracking" button allows you to see all changes you have
+  made (even insertions and deletions) - basically how the file in memory differs from the file on disk
+- move mouse over the Edit Bar buttons then select the highlighter  
+
+Highlighter
+
+" You can highlight a selected block using this button
+- select a block then click highlight
+
+" Or you can click the button to turn on highlighter mode
+- click away, turn on highlighter, select a few blocks, make hole
+
+" The highlighter is used in several areas where we need a disconnected selection
+- open File/Export/Motorola-S and click the bottom-left checkbox, then cancel it
+
+" There are a few more highlighter options on the Format Bar
+- open format bar
+
+" You can quickly go to next and previous highlighted sections
+- demo
+
+" You can hide the highlights without actually deleting them, although this is sometimes confusing.
+  You might be better off just toning down the colour if you don't like so much yellow
+- open colour schemes dialog, scroll up to Highlighting, select a lighter yellow
+
+" The clear button just removes all highlights from the file
+  Of course, if you click it by accident you can just undo
+- click Highlight Clear button, click Undo button
+- hide Format Bar
+
+~~~~ 4
+
+Jump Tools
+
+" Also notice on the Edit Bar the hex and decimal jump tools
+  Just type an address and hit enter to jump to that address
+- type FF into hex tool and press Enter
+
+" Note that as you type into one tool the other tool is updated
+  This is a quick way to do conversion between hex and decimal
+- type 256 into decimal tool
+
+" You can also type in any C/C++ expression, including assigning to variables
+- type "X=" in front of dec address (256) and hit Enter
+- type X-250 into dec address tool and hit Enter to jump to address 6
+
+" For even more powerful jumps just type Ctrl+G
+  This invokes the calculator with the current address
+- Invoke Edit/Go To
+
+" You'll notice that becuase I am displaying hex addresses it has invoked the calculator
+  in hex mode
+- switch to decimal mode
+
+" If I now click the "+" button the 100 and click GO the cursor id moved forward 100 bytes
+- click +, 1, 0, 0, GO
+
+" There's a lot more to the calculator and I think I created a separate video for it
+  It is particularly useful when used in keystroke macros
+  But I guess these drop down lists at the top are the most relevant
+  Here we have the history lists from the hex and decimal jump tools
+- click on lists
+
+" Just like the jump tools you can enter any expression
+  But you also have the ability to find any variable you have created
+- look if Vars list
+
+" You can also see all the functions that you can use in expressions
+- select strlen then enter "ABC" to get value 3
+
+" The only other thing to watch out for when working with addresses is 
+  the bits setting. If you are working with very big file you
+  probably want to use 64 bit integers
+- click 64-bit radio button
+
+" Also be carefule that you know whether you are in hex or decimal
+  mode - though the colour scheme (red for hex, bluer for decimal)
+  should make it obvious
+- switch between hex and decimal modes
+
+" Also note that when you switched to decimal mode that the SIGNED
+  checkbox is silenetly turned on since decimal mode is often used with -ves
+- switch to decimal, turn off signed
+
+" These buttons on the left allow you to modify the file and do other
+  powerful things in keystroke macros but we have no more time to look
+  at the calculator
+- close calculator
+
+~~~~~ 5
+
+Searching
+
+" The other really cool tool is the search tool
+  You can search for hex digits
+- type "414243" into the tool and hit Enter
+
+" Or you can look for a string in the current character set
+  by first typing EQUALS
+- type "=ABC" and hit Enter
+
+" For a case-insensitive search use a TILDE
+- type "~XYZ"
+
+" You can also use the search tool to do conversions
+  between character sets. Say you have 41 42 43 in ASCII.
+  Make sure you are in ASCII mode and put an EQUALS sign at the
+  start and you can see that these value correspond to ABC in ASCII
+- enter "414243" into find tool, then put EQUALS at start
+
+" Now if you switch to the EBCDIC character set you can see
+  the corresponding byte values in EBCDIC
+- switch to EBCDIC mode, delete EQUALS to get C1 C2 C3
+
+" Note that all occurrences in the file have been found
+  because background search is on
+- open Options/Workspace/Background, check/uncheck search checkbox
+
+" You can also see in the search panel the number of occurrences found
+  and the current occurrence. If I press F3 I move to the next occurrence
+- count
+
+" If I double-click the search panel I can bring up the search dialog
+  Here we have 5 different pages for different types of searches
+- switch to Basic page
+
+" The BASIC page lets you quickly search for text but if you type only
+  hex digits then it does a binary search. Maybe FILE scope needs explaining
+- turn on WHOLE FILE scope
+
+" For WHOLE FILE it starts at the top of the file (if direction is DOWN)
+  but after the first occurrence is found it switches to END OF FILE
+  mode in order to find the subsequent occurrences
+- click FIND NEXT
+
+" Of course, if direction is UP then it works in reverse
+- click UP
+
+" The HEX page just lets you search for binary data
+  Here there are a couple more really useful options
+  First you can use the mask to ignore bits
+- click USE MASK and enter "0F0F0F"
+
+" The alignment options are also very useful, for example if you wanted to only
+  search the 3rd byte of each 30-byte record
+- set stride to 30 and offset to 3
+
+" The relative to mark might be used if there was say a 100-byte header at the start
+  of file.  You would set the mark at the start of the first record and use this check box
+- select RELATIVE TO MARK
+
+" The TEXT page
+
+~~~~ 4
+
+Workspace
+
+
+- toolbars
+  - customize
+
+- modeless dialogs
+  - restore
+  - properties
+  - find
+  - calc
+
+- special views
+  - aerial view
+  - template view
+  - preview
+  - compare view
+
+~~~~ 5
+
+Tools  
+
+- tools
+  - cols/etc handles
+  - macros
+  - compare
+  
