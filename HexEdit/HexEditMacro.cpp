@@ -1731,13 +1731,13 @@ exit_play:
 	// If finished playing and display refresh was off refresh the display
 	if (playing_ <= 1 && refresh_off_)
 	{
+		refresh_off_ = bb;
 		if (pv_ != plast_view)
 		{
 			pv_->GetFrame()->MDIActivate();
 			pv_->GetFrame()->SetActiveView(pv_);
 		}
 		refresh_display(true);
-		refresh_off_ = bb;
 		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
 		// xxx Make sure current calc. value is displayed
 		enable_carets();
@@ -1805,8 +1805,10 @@ void CHexEditApp::refresh_display(bool do_all /*=false*/)
 	// Update the calculator
 	if ((do_all || refresh_bars_) && mm->m_paneCalc.IsWindowVisible())
 	{
-		//mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
-		//mm->m_wndCalc.edit_.Put();        // Make sure current calc. value is displayed
+		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
+		mm->m_wndCalc.edit_.put();        // Make sure current calc. value is displayed
+		//mm->m_wndCalc.set_right();
+		//mm->m_wndCalc.update_expr();
 		mm->m_wndCalc.update_controls();
 		mm->m_wndCalc.button_colour(mm->m_wndCalc.GetDlgItem(IDC_MEM_GET), mm->m_wndCalc.memory_ != 0, RGB(0x40, 0x40, 0x40));
 
@@ -1932,6 +1934,7 @@ BOOL CHexEditApp::macro_save(const char *filename, const std::vector<key_macro> 
 			case km_insert_str:
 			case km_focus:
 			case km_scheme:
+			case km_user_str:
 			case km_expression:
 				// Write the string length
 				str_len = (*(*pk).pss).GetLength();
@@ -2058,6 +2061,7 @@ BOOL CHexEditApp::macro_load(const char *filename, std::vector<key_macro> *pmac,
 			case km_insert_str:
 			case km_focus:
 			case km_scheme:
+			case km_user_str:
 			case km_expression:
 				// Get the string length and allocate memory for the string
 				if (ff.Read(&str_len, sizeof(str_len)) < sizeof(str_len)) throw pfe;
