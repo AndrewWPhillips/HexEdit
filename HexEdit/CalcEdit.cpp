@@ -91,8 +91,8 @@ void CCalcEdit::put()
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 
-	if (theApp.refresh_off_ || !pp_->IsVisible())
-		return;
+//	if (theApp.refresh_off_ || !pp_->IsVisible())
+//		return;
 
 	if (pp_->state_ <= CALCERROR)
 	{
