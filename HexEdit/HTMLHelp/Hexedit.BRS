@@ -238,14 +238,14 @@ CRC 32 | cmd_operations\CRC_32.htm
 General CRC command | cmd_operations\CRC_GENERAL.htm
 MD5 Cryptographic Checksum | cmd_operations\HID_MD5.htm
 SHA1 command | cmd_operations\HID_SHA1.htm
-SHA 224 Command | cmd_operations\ID_SHA224.htm
-SHA 256 Command | cmd_operations\ID_SHA_256.htm
+SHA 224 Command | cmd_operations\HID_SHA224.htm
+SHA 256 Command | cmd_operations\HID_SHA_256.htm
 SHA 384 Command | cmd_operations\SHA_384_Command.htm
 SHA 512 Command | cmd_operations\SHA_512_Command.htm
-SHA 3 224 Command | cmd_operations\ID_SHA3_224.htm
-SHA 3 256 Command | cmd_operations\ID_SHA3_256.htm
-SHA 3 384 Command | cmd_operations\ID_SHA3_384.htm
-SHA 3 512 Command | cmd_operations\ID_SHA3_512.htm
+SHA 3 224 Command | cmd_operations\HID_SHA3_224.htm
+SHA 3 256 Command | cmd_operations\HID_SHA3_256.htm
+SHA 3 384 Command | cmd_operations\HID_SHA3_384.htm
+SHA 3 512 Command | cmd_operations\HID_SHA3_512.htm
 Encryption Algorithm | cmd_operations\HID_ENCRYPT_ALG.htm
 Encryption Password | cmd_operations\HID_ENCRYPT_PASSWORD.htm
 Clear Password | cmd_operations\HID_ENCRYPT_CLEAR.htm

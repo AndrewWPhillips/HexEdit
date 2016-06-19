@@ -172,6 +172,8 @@
     <param name="Local" value="cmd_view\Character_Set_Code_Page.htm">
     <param name="Name" value="Character Set Common Code Pages">
     <param name="Local" value="cmd_view\Character_Set_Common_Code_Pages.htm">
+    <param name="Name" value="More (Code Pages)...">
+    <param name="Local" value="cmd_view\HID_OPTIONS_CODEPAGE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="DBCS">
@@ -196,6 +198,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
     <param name="Name" value="Window Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    <param name="Name" value="More (Code Pages)...">
+    <param name="Local" value="cmd_view\HID_OPTIONS_CODEPAGE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="repair">
@@ -1043,6 +1047,8 @@
     <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
     <param name="Name" value="How Do I Change the Default Window Display">
     <param name="Local" value="howdoi\HowDefaultDisplay.htm">
+    <param name="Name" value="More (Code Pages)...">
+    <param name="Local" value="cmd_view\HID_OPTIONS_CODEPAGE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="double word">
@@ -2668,6 +2674,8 @@
     <param name="Local" value="cmd_window\HID_WINDOW_TILE_HORIZ.htm">
     <param name="Name" value="Window Manager Dialog">
     <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
+    <param name="Name" value="Toggle Window Tabs">
+    <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tile window vertically">
@@ -2675,6 +2683,8 @@
     <param name="Local" value="cmd_window\HID_WINDOW_TILE_VERT.htm">
     <param name="Name" value="Window Manager Dialog">
     <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
+    <param name="Name" value="Toggle Window Tabs">
+    <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tip of the day">
@@ -2962,6 +2972,8 @@
       <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
       <param name="Name" value="Window Tabs">
       <param name="Local" value="misc\Window_Tabs.htm">
+      <param name="Name" value="Toggle Window Tabs">
+      <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -4368,21 +4380,21 @@
     <param name="Name" value="SHA1 command">
     <param name="Local" value="cmd_operations\HID_SHA1.htm">
     <param name="Name" value="SHA 224">
-    <param name="Local" value="cmd_operations\ID_SHA224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA224.htm">
     <param name="Name" value="SHA 256">
-    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA_256.htm">
     <param name="Name" value="SHA 384 Command">
     <param name="Local" value="cmd_operations\SHA_384_Command.htm">
     <param name="Name" value="SHA 512 Command">
     <param name="Local" value="cmd_operations\SHA_512_Command.htm">
     <param name="Name" value="SHA 3 224 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_224.htm">
     <param name="Name" value="SHA 3 256 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_256.htm">
     <param name="Name" value="SHA 3 384 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_384.htm">
     <param name="Name" value="SHA 3 512 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
     <param name="Name" value="Checksum Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
   </object>
@@ -4577,6 +4589,8 @@
     <param name="Local" value="misc\Window_Tabs.htm">
     <param name="Name" value="Show Tab Icons command">
     <param name="Local" value="cmd_misc\HID_TAB_ICONS.htm">
+    <param name="Name" value="Toggle Window Tabs">
+    <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="split window">
@@ -4902,19 +4916,19 @@
     <param name="Name" value="Background Processing Page">
     <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
     <param name="Name" value="SHA 256">
-    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA_256.htm">
     <param name="Name" value="SHA 384 Command">
     <param name="Local" value="cmd_operations\SHA_384_Command.htm">
     <param name="Name" value="SHA 512 Command">
     <param name="Local" value="cmd_operations\SHA_512_Command.htm">
     <param name="Name" value="SHA 3 224 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_224.htm">
     <param name="Name" value="SHA 3 256 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_256.htm">
     <param name="Name" value="SHA 3 384 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_384.htm">
     <param name="Name" value="SHA 3 512 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
     <param name="Name" value="SHA1 command">
     <param name="Local" value="cmd_operations\HID_SHA1.htm">
     <param name="Name" value="Error Detection">
@@ -4982,17 +4996,17 @@
   <li><object type="text/sitemap">
     <param name="Name" value="digest">
     <param name="Name" value="SHA 3 512 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
     <param name="Name" value="SHA 224 Command">
-    <param name="Local" value="cmd_operations\ID_SHA224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA224.htm">
     <param name="Name" value="SHA 256 Command">
-    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA_256.htm">
     <param name="Name" value="SHA 3 224 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_224.htm">
     <param name="Name" value="SHA 3 256 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_256.htm">
     <param name="Name" value="SHA 3 384 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_384.htm">
     <param name="Name" value="SHA 384 Command">
     <param name="Local" value="cmd_operations\SHA_384_Command.htm">
     <param name="Name" value="SHA 512 Command">
@@ -5130,5 +5144,10 @@
       <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
     </object>
     </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="user files">
+    <param name="Name" value="Copy User Files">
+    <param name="Local" value="cmd_help\HID_REPAIR_COPYUSERFILES.htm">
+  </object>
 </ul>
 </html>
