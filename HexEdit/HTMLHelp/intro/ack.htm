@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1722>
-<meta name=layout-width content=1564>
+<meta name=layout-height content=1907>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -43,13 +43,14 @@
 <p>&nbsp;</p>
 
 <p style="font-weight: bold; font-size: 12pt;">Code/Libraries used in <span 
- class=HexEdit>HexEdit Pro</span></p>
+ class=HexEdit>HexEdit</span></p>
 
 <p>&nbsp;</p>
 
 <p style="font-weight: bold;"><a title="msdn2.microsoft.com/en-us/library/d06h2x6e(VS.80).aspx"
 								href="http://msdn2.microsoft.com/en-us/library/d06h2x6e(VS.80).aspx"
-								target=_blank>MFC</a> from Microsoft</p>
+								target=_blank>MFC</a> <span style="font-weight: normal;">from</span> 
+ Microsoft</p>
 
 <p>Microsoft Foundation Classes is a useful library which wraps the Windows 
  API in C++ classes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->MFC 
@@ -59,27 +60,81 @@
 
 <p style="font-weight: bold;"><a title="msdn2.microsoft.com/en-us/library/d06h2x6e(VS.80).aspx"
 								href="http://www.boost.org"
-								target=_blank>Boost</a> from various</p>
+								target=_blank>Boost</a> <span style="font-weight: normal;">from 
+ various</span></p>
 
 <p>Boost is an excellent open source C++ template library. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
  first used the BGL (Boost Graph Library) in the late 1900's. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
  have made use of several parts of the library in HexEdit, such as CRCs, 
- PRNGs and boost::tuple.</p>
+ random numbers and boost::tuple.</p>
 
 <p>&nbsp;</p>
 
 <p style="font-weight: bold;"><a title="FreeImage Web Site"
 								href="http://freeimage.sourceforge.net/"
-								target=_blank>FreeImage</a> DLL by Hervé 
- Drolon et al</p>
+								target=_blank>FreeImage</a><span style="font-weight: normal;"> 
+ by</span> Hervé Drolon<span style="font-weight: normal;"> et al</span></p>
 
 <p>FreeImage is a brilliant open source project for dealing with image 
  files and manipulating images in memory. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- made possible the <span class=HexEdit>HexEdit Pro</span> Aerial View bit 
- is also used in other places in <span class=HexEdit>HexEdit Pro</span>. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It has 
- been ported to several platforms but we only use the Win32 DLL that they 
- provide.</p>
+ made possible the <span class=HexEdit>HexEdit</span> Aerial View bit is 
+ also used in other places in <span class=HexEdit>HexEdit</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+ has been ported to several platforms but we only use the Win32 DLL that 
+ they provide.</p>
+
+<p>&nbsp;</p>
+
+<p><a href="http://mpir.org/"
+		style="font-weight: bold;">MPIR</a> - by many and derived from 
+ <a href="https://gmplib.org/">GMP</a> from GNU</p>
+
+<p>Superb quality Multiple Precisions Integer (and Rationals) library used 
+ to replace the BigInteger class for integer calculations in the calculator. 
+ This allows for integers of more than 64-bits to be used (essential for 
+ digests) including the infinite precision option.</p>
+
+<p>&nbsp;</p>
+
+<p><a href="https://www.cryptopp.com/"
+		style="font-weight: bold;"><span style="font-weight: bold;">Crypto++</a> 
+ by Wei Dai</span> et al</p>
+
+<p>Excellent C++ library for encryption and related algorithms. Currently 
+ this is just used for digests (MD5, SHA1, SHA2 and SHA3).</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;"><span 
+ style="font-weight: bold;"><a title="en.wikipedia.org/wiki/MD5"
+								href="http://en.wikipedia.org/wiki/MD5"
+								target=_blank>M</span></span>D5</a> algorithm 
+ by <a title="theory.lcs.mit.edu/~rivest"
+		href="http://theory.lcs.mit.edu/~rivest"
+		target=_blank>Ron Rivest</a></span></p>
+
+<p>This algorithm is a cryptographic checksum (sometimes also called a 
+ one-way hash function or message digest). It generates a 128-bit value 
+ that is often used to check the veracity of files transferred over an 
+ insecure link in order to detect tampering.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><a title="www.zlib.net/"
+								href="http://www.zlib.net/"
+								target=_blank
+								style="font-weight: bold;">ZLIB</a> Compression 
+ library by <a href="http://gailly.net/"
+				target=_blank
+				style="font-weight: bold;">Jean-loup Gailly</a> and <a 
+ href="http://www.alumni.caltech.edu/~madler/"
+	target=_blank
+	style="font-weight: bold;">Mark Adler</a></p>
+
+<p>This is a free general purpose compression library (with C source available) 
+ which is used extensively in the industry. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
+ would consider it to be a de facto standard). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
+ <a href="../dlg_tools/CompressionSettings.htm">Compression Options</a> 
+ dialog offers complete control of all ZLIB options.</p>
 
 <p>&nbsp;</p>
 
@@ -90,7 +145,7 @@
  by Chris Maunder</p>
 
 <p>An excellent MFC grid control, which is used in several places in <span 
- class=HexEdit>HexEdit Pro </span>- for example, in the <a HREF="../dlg_options/Filters.htm">Filters 
+ class=HexEdit>HexEdit </span>- for example, in the <a HREF="../dlg_options/Filters.htm">Filters 
  page</a> and the <a HREF="../dlg_options/HIDD_OPT_TIPS.htm">Info Tips</a> 
  page of the Options dialog, the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent 
  File dialog</a> and also (with Tree Extensions - see below) the template 
@@ -106,7 +161,7 @@
 <p>An extension to the MFC grid control that allows one of the columns 
  to act as a &quot;tree control&quot;. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  allows the effect of a multi-column tree control which is invaluable for 
- the <span class=HexEdit>HexEdit Pro </span>template (tree) view.</p>
+ the <span class=HexEdit>HexEdit </span>template (tree) view.</p>
 
 <p>&nbsp;</p>
 
@@ -146,41 +201,10 @@
 
 <p>A simple to use but very effective class that allows automatic move/resize 
  of controls in a dialog when it is resized. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- is used for all resizable dialogs in <span class=HexEdit>HexEdit Pro </span>such 
+ is used for all resizable dialogs in <span class=HexEdit>HexEdit </span>such 
  as the <a HREF="../dlg_file/Recently_Opened_Files_Dialog.htm">Recent File 
  dialog</a>, <a HREF="../dlg_tools/Bookmarks_dialog.htm">Bookmarks dialog</a> 
  etc.</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;"><span style="font-weight: bold;"><a title="www.zlib.net/"
-	href="http://www.zlib.net/"
-	target=_blank
-	style="font-weight: bold;">ZLIB</a> Compression library by <a href="http://gailly.net/"
-	target=_blank
-	style="font-weight: bold;">Jean-loup Gailly</a> and <a href="http://www.alumni.caltech.edu/~madler/"
-															target=_blank
-															style="font-weight: bold;">Mark 
- Adler</a></span></p>
-
-<p>This is a free general purpose compression library (with C source available) 
- which is used extensively in the industry. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
- would consider it to be a de facto standard). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- <a HREF="../dlg_tools/CompressionSettings.htm">Compression Options</a> 
- dialog offers complete control of all ZLIB options.</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;"><a title="en.wikipedia.org/wiki/MD5"
-								href="http://en.wikipedia.org/wiki/MD5"
-								target=_blank>MD5</a> algorithm by <a title="theory.lcs.mit.edu/~rivest"
-	href="http://theory.lcs.mit.edu/~rivest"
-	target=_blank>Ron Rivest</a></p>
-
-<p>This algorithm is a cryptographic checksum (sometimes also called a 
- one-way hash function or message digest). It generates a 128-bit value 
- that is often used to check the veracity of files transferred over an 
- insecure link in order to detect tampering.</p>
 
 <p>&nbsp;</p>
 
@@ -193,7 +217,7 @@
  class but much more efficiently handles ranges of values, as well as adding 
  facilities to input/output ranges as a string. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->An 
  article on it appeared in the June 1999 C/C++ Users Journal. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Since 
- then it has found numerous uses in <span class=HexEdit>HexEdit Pro </span>such 
+ then it has found numerous uses in <span class=HexEdit>HexEdit </span>such 
  as in the color range selection (<a HREF="../dlg_options/HIDD_OPT_PARTITIONS.htm">Colors 
  page</a> of Options dialog) or the matching range of values for a CASE 
  of a template SWITCH statement.</p>
@@ -212,8 +236,8 @@
  or resize the window etc etc. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->So 
  I wrote the class which extends the standard file open dialog (extending 
  MFC's CFileDialog). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- <span class=HexEdit>HexEdit Pro </span>it is used to select the folder 
- where macros (see <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro Options 
+ <span class=HexEdit>HexEdit </span>it is used to select the folder where 
+ macros (see <a HREF="../dlg_options/HIDD_OPT_MACRO.htm">Macro Options 
  page</a>) and templates (see <a HREF="../dlg_options/HIDD_OPT_TEMPLATE.htm">Template 
  Options</a>) are stored.</p>
 
@@ -225,89 +249,67 @@
  Static Control</a> by <b style="font-weight: bold;">Ali Rafiee</b></span></p>
 
 <p>An MFC class that provides the static controls -- used in the <span 
- class=HexEdit>HexEdit Pro </span>bout box.</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;"><a title="www.codeproject.com/cpp/CppIntegerClass.asp"
-								href="http://www.codeproject.com/cpp/CppIntegerClass.asp"
-								target=_blank>Big Integer class</a> by 
- C<b>ap'n Code</b></p>
-
-<p>In order to be able to display C# Decimal values, I needed to be able 
- to handle 96-bit integers. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- Microsoft compiler only supports integers up to 64-bits but I found this 
- class at CodeProject. Despite some caveats on its use by the author I 
- cannot fault it after extensive testing.</p>
+ class=HexEdit>HexEdit </span>bout box.</p>
 
 <p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
 <p style="font-weight: bold; font-size: 12pt;">Software Used to Develop 
- <span class=HexEdit>HexEdit Pro</span></p>
+ <span class=HexEdit>HexEdit</span></p>
 
 <p style="font-size: 12pt;">&nbsp;</p>
 
 <p style="font-weight: bold;"><a title="msdn2.microsoft.com/en-us/vstudio/default.aspx"
 								href="http://msdn2.microsoft.com/en-us/vstudio/default.aspx"
-								target=_blank>Visual Studio</a> by Microsoft</p>
+								target=_blank>Visual Studio</a> <span style="font-weight: normal;">by</span> 
+ Microsoft</p>
 
-<p><span class=HexEdit>HexEdit Pro</span> has always been developed using 
- Visual Studio and the Microsoft C++ compiler that comes with it.</p>
+<p><span class=HexEdit>HexEdit</span> has always been developed using Visual 
+ Studio and the Microsoft C++ compiler that comes with it.</p>
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;"><a title="www.adobe.com/products/robohelp/"
-								href="http://www.adobe.com/products/robohelp/"
-								target=_blank
-								style="font-weight: bold;">RoboHelp</a> 
- by eHelp (now Adobe)</p>
+<p><a href="https://git-scm.com/"
+		style="font-weight: bold;">GIT</a> source control by Linus Torvalds 
+ et al (previously <a title=subversion.tigris.org
+						href="http://subversion.tigris.org"
+						target=_blank
+						style="font-weight: normal;"><span style="font-weight: normal;">Subversion</a> 
+ source control by Jim Blandy et al)</span></p>
+
+<p>HexEdit now uses Git for version control.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><a href="https://github.com/"
+								style="font-weight: bold;"><span style="font-weight: bold;">GitHub</a></span></p>
+
+<p>HexEdit (open source) is currently hosted on GitHub at <a href="https://github.com/AndrewWPhillips/HexEdit">HexEdit</a>.</p>
+
+<p>&nbsp;</p>
+
+<p style="font-weight: bold;"><span style="font-weight: bold;"><a title="www.adobe.com/products/robohelp/"
+	href="http://www.adobe.com/products/robohelp/"
+	target=_blank
+	style="font-weight: bold;">RoboHelp</a> <span style="font-weight: normal;">by</span> 
+ eHelp (now Adobe)</span></p>
 
 <p>Since HexEdit 2.1 the on-line help has been provided in Html Help format. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It is created 
- using RoboHelp 2000 developed by eHelp (bought out by Adobe).</p>
+ using RoboHelp Office.</p>
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold;"><a title=subversion.tigris.org
-								href="http://subversion.tigris.org"
-								target=_blank>Subversion</a> source control 
- by Jim Blandy et al</p>
+<p style="font-weight: normal;"><a href="http://www.installaware.com/"
+									style="font-weight: bold;">InstallAware</a> 
+ (previously <a title=wix.sourceforge.net
+				href="http://wix.sourceforge.net"
+				target=_blank
+				style="font-weight: normal;">WIX Installer Toolkit</a> 
+ by Rob Mensching et al)</p>
 
-<p>SVN (sub-version) provides an excellent free version control repository. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I have 
- used many version control systems and this is easily the best.</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;"><a title=tortoisesvn.sourceforge.net
-								href="http://tortoisesvn.sourceforge.net"
-								target=_blank
-								style="font-weight: bold;">TortoiseSVN</a> 
- SVN client - Stefan Küng et al </p>
-
-<p>TSVN (TortoiseSVN) provides a very nice interface to SVN, integrating 
- with Windows Explorer. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(SVN 
- itself only provides command line tools.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In 
- the past I have found version control a pain but TSVN actually makes it 
- enjoyable. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The 
- file difference tool is also well done.</p>
-
-<p>&nbsp;</p>
-
-<p style="font-weight: bold;"><a title=wix.sourceforge.net
-								href="http://wix.sourceforge.net"
-								target=_blank>WIX Installer Toolkit</a> 
- by Rob Mensching et al</p>
-
-<p>In HexEdit 3.0 and earlier we used an 10 year old demo version of InstallShield 
- that came with an old version of Visual Studio and it was showing its 
- age. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- HexEdit 3.1 I searched for a free MSI based installer and WIX seemed to 
- be the best. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- produces nice enough installations and is very flexible. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
- it is somewhat difficult to understand and use.</p>
+<p>This installer works OK.</p>
 
 <p>&nbsp;</p>
 
@@ -319,7 +321,7 @@
 
 <p>This software allows running virtual machines with different versions 
  of Windows installed and works very well. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- makes testing <span class=HexEdit>HexEdit Pro </span>on all the different 
+ makes testing <span class=HexEdit>HexEdit </span>on all the different 
  versions of Windows (95,98,98SE,ME,NT,2K,XP,Vista,W7) easy.</p>
 
 <p>&nbsp;</p>
@@ -343,19 +345,22 @@
  Editor</a> by Real World Graphics</p>
 
 <p>Another very well done program. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
- used it to create the icon file used in <span class=HexEdit>HexEdit Pro</span>. 
+ used it to create the icon file used in <span class=HexEdit>HexEdit</span>. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Their &quot;ReplaceVistaIcon.exe&quot; 
  utility was very useful for getting around deficiencies of Visual Studio 
  2003.</p>
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold; font-size: 11pt;"><span style="font-family: Verdana, Arial, sans-serif;"><a 
- title="http://www.zabkat.com/"
-	href="http://www.zabkat.com/"
-	target=_blank
-	style="font-weight: bold; font-size: 11pt;">xplorer</span><span style="font-family: Verdana, Arial, sans-serif;">² 
- lite</span> by Nikos Bozinis</a></p>
+<p style="font-weight: bold;
+			font-family: Arial, sans-serif;
+			font-size: 10pt;"><a title="http://www.zabkat.com/"
+								href="http://www.zabkat.com/"
+								target=_blank
+								style="font-weight: bold;
+										font-family: Arial, sans-serif;
+										font-size: 10pt;"><span style="font-family: Arial, sans-serif; font-size: 10pt;">xplorer² 
+ lite by Nikos Bozinis</a></span></p>
 
 <p>A.wonderful Windows Explorer replacement which I use for all my file 
  management. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->I 
@@ -363,10 +368,14 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold; font-size: 11pt;"><a title=www.camstudio.org
-													href="http://www.camstudio.org"
-													target=_blank
-													style="font-weight: bold; font-size: 11pt;">CamStudio</a></p>
+<p style="font-weight: bold;
+			font-family: Arial, sans-serif;
+			font-size: 10pt;"><a title=www.camstudio.org
+								href="http://www.camstudio.org"
+								target=_blank
+								style="font-weight: bold;
+										font-family: Arial, sans-serif;
+										font-size: 10pt;"><span style="font-family: Arial, sans-serif; font-size: 10pt;">CamStudio</a></span></p>
 
 <p>A.simple but effective free (open source) screen recording <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->tool 
  I use to capture videos for demonstrating <span class=HexEdit>HexEdit 
@@ -374,10 +383,14 @@
 
 <p>&nbsp;</p>
 
-<p style="font-weight: bold; font-size: 11pt;"><a title=www.virtualdub.org
-													href="http://www.virtualdub.org"
-													target=_blank
-													style="font-weight: bold; font-size: 11pt;">VirtualDub</a></p>
+<p style="font-weight: bold;
+			font-family: Arial, sans-serif;
+			font-size: 10pt;"><a title=www.virtualdub.org
+								href="http://www.virtualdub.org"
+								target=_blank
+								style="font-weight: bold;
+										font-family: Arial, sans-serif;
+										font-size: 10pt;"><span style="font-family: Arial, sans-serif; font-size: 10pt;">VirtualDub</a></span></p>
 
 <p>A free video editing tool I use to edit the videos I capture using CamStudio. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I have 
@@ -397,8 +410,8 @@
 <p>Around 1997 I started learning MFC using this book. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(I 
  hadn't really done any serious C++ or Windows programming at the time 
  either.) <!--kadov_tag{{<spaces>}}-->&nbsp;<span class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit 
- Pro </span>started out as an experiment after fiddling with the &quot;HexView&quot; 
- demo program provided with this book.</p>
+ </span>started out as an experiment after fiddling with the &quot;HexView&quot; 
+ demo program provided with this book (which was to be honest pretty poor).</p>
 
 <p>&nbsp;</p>
 

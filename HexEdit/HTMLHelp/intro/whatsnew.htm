@@ -21,8 +21,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=601>
-<meta name=layout-width content=979>
+<meta name=layout-height content=2765>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -39,39 +39,514 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>What’s New in 4.1</font></h2>
+			face=Arial>What’s New in 5.0</font></h2>
 
 <p>&nbsp;</p>
 
-<p>This version of HexEdit has been renamed to <span class=HexEdit>HexEdit 
- Pro 4.1</span>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
- contains a new, improved user interface and many other significant features.</p>
-
-<h3><span style="font-weight: bold;">User Interface</span></h3>
-
-???
-
-<h3>Installer</h3>
-
-<p>new options</p>
-
-<h3><span>Commands</span></h3>
-
-<p>compare</p>
-
-<p>CRC</p>
+<p>Since <span style="font-weight: bold;">HexEdit</span> 4.0 there have 
+ been many new features. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->A 
+ few of these also appeared in HexEdit Pro 4.0, but most are completely 
+ new. (The shareware program HexEdit Pro has been discontinued and all 
+ of its features were incorporated into HexEdit 5.0.)</p>
 
 <p>&nbsp;</p>
 
-<h3><span style="font-weight: bold;">Templates</span></h3>
+<p>There are some major new features, several medium-level additions and 
+ lots of small level improvements and bug fixes.</p>
 
-<p>&nbsp;</p>
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>major features are the new file compare view and 
+ bitmap preview</p></li>
+	
+	<li class=kadov-p><p>the character area now has comprehensive support 
+ for Windows code pages</p></li>
+	
+	<li class=kadov-p><p>other features are background processing + Windows 
+ 7 TaskBar support</p></li>
+	
+	<li class=kadov-p><p>there are also new operations for CRCs, encoding 
+ (Base64 etc) and digests (SHA etc)</p></li>
+	
+	<li class=kadov-p><p>many other new commands and options were added 
+ as well as improvements to existing features</p></li>
+</ul>
 
-<h3><span style="font-weight: bold;">Options</span></h3>
+<h3><span style="font-weight: bold;">New commands</span></h3>
 
-<p>There are many new options:</p>
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p><span style="font-weight: bold;">Make Favorite</span> 
+ (star button on Standard Toolbar) adds the file to the &quot;Favorites&quot; 
+ category</li>
+	
+	<li class=kadov-p
+		class=kadov-p><span style="font-weight: bold;">Display Window Tabs</span> 
+ allows turning off of tabs to allow tiling, cascading, etc of windows</li>
+	
+	<li class=kadov-p
+		class=kadov-p>Many new commands for selecting a code page to use 
+ in the character area (see below)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New <span style="font-weight: bold;">Compare</span> 
+ menu that allows comparing two files (see below)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New <span style="font-weight: bold;">Preview</span> 
+ menu that shows a preview of graphics files (JPEG, BMP, PNG, etc)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New Base32, Base64 and Base64-URL commands to encode/decode 
+ binary data as text</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New CRC commands (CCITT, MPEG2) and improved performance 
+ of existing CRC commands</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New <span style="font-weight: bold;">General CRC</span> 
+ option (see below)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New digest commands SHA, SHA-2 (with 4 size options), 
+ SHA-3 (with 4 size options)</li>
+</ul>
 
-<h3>Properties</h3>
+<h3>Windows 7 <span style="font-weight: normal;">(and Later)</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>long operations now show progress in the HexEdit 
+ Task Bar Icon</p></li>
+	
+	<li class=kadov-p><p>hovering the mouse over the HexEdit icon shows 
+ a thub nail of files currently open</p></li>
+	
+	<li class=kadov-p><p>recently opened files are added to the Task Bar 
+ &quot;Recent Files&quot; list</p></li>
+	
+	<li class=kadov-p><p>commonly opened files are added to the Task Bar 
+ &quot;Most Used&quot; list</p></li>
+	
+	<li class=kadov-p><p><img src="../tip.gif"
+								style="border: none;
+										width: 31px;
+										height: 12px;"
+								width=31
+								height=12
+								border=0>files in the HexEdit &quot;Favorites&quot; 
+ category are added to the Task Bar &quot;Favorites&quot; list</p></li>
+</ul>
+
+<h3><span style="font-weight: bold;">O</span>ptions</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>new File Folders page gives many options for where 
+ the File Open/Save dialogs start</p></li>
+	
+	<li class=kadov-p><p>new Background processing adds many new options 
+ on top of background searching</p></li>
+	
+	<li class=kadov-p><p>new Explorer page adds options related to Explorer 
+ window (wipe strategy etc)</p></li>
+	
+	<li class=kadov-p><p>new Aerial View page allows you to set the maximum 
+ bitmap size used</p></li>
+	
+	<li class=kadov-p><p>new document settings for Preview and Compare 
+ views (see below)</p></li>
+	
+	<li class=kadov-p><p>new Code Page selection as well as invalid/continuation 
+ display character</p></li>
+	
+	<li class=kadov-p><p>ability to select all three character area fonts 
+ (normal/OEM/multi-byte fonts)</p></li>
+</ul>
+
+<h3>Status Bar</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p>The <span style="font-style: italic;">current</span> 
+ search occurrence is shown next to total occurrences in the status bar<br>
+	<img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>search occurrences are only shown if background searches 
+ are turned on</li>
+	
+	<li class=kadov-p
+		class=kadov-p>New differences pane shows the number of differences 
+ found (see Compare Files Feature below)</li>
+</ul>
+
+<h3><span>Tip Window</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p>click and drag the tip window if it is in the way</li>
+	
+	<li class=kadov-p
+		class=kadov-p><!--kadov_tag{{<implicit_p>}}--><img src="../tip.gif"
+															style="border-style: none;
+	border: none;
+	width: 31px;
+	height: 12px;"
+															width=31
+															height=12
+															border=0>relative 
+ position of tip window is remembered</li>
+</ul>
+
+<h3>Background Processing</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>several new options (in addition to background 
+ searches that HexEdit has always had)</p></li>
+	
+	<li class=kadov-p><p>all background processing is done in low-priority 
+ background threads</p></li>
+	
+	<li class=kadov-p><p>ability to count the occurrences of all 256 bytes 
+ values (for display in properties dialog graph)</p></li>
+	
+	<li class=kadov-p><p>calculate SHA and SHA-2 digests and CRC32 on the 
+ whole file</p></li>
+	
+	<li class=kadov-p><p>ability to turn off background processing for 
+ some types of files (network, removeable media, etc)<br>
+	<img src="../tip.gif"
+		style="border-style: none;
+				border: none;
+				width: 31px;
+				height: 12px;"
+		width=31
+		height=12
+		border=0>this can avoid problems like excessive network traffic, 
+ display pauses, etc</p></li>
+</ul>
+
+<h3><span>Copy Formatted Dialog</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p>new options for converting binary to text while placing 
+ on the clipboard</li>
+	
+	<li class=kadov-p
+		class=kadov-p>Renamed from Copy C/C++ Source with addition of &quot;General&quot; 
+ options</li>
+	
+	<li class=kadov-p
+		class=kadov-p>Simplified selection of general options (such as 
+ CSV)</li>
+	
+	<li class=kadov-p
+		class=kadov-p><!--kadov_tag{{<implicit_p>}}--><img src="../tip.gif"
+															style="border-style: none;
+	border: none;
+	width: 31px;
+	height: 12px;"
+															width=31
+															height=12
+															border=0>new 
+ Preview display shows exactly what you will get</li>
+</ul>
+
+<h3><span>Recent File List</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p>OK button changed to Close/Save to avoid confusion</li>
+	
+	<li class=kadov-p><p>fixed flicker of selection count</p></li>
+	
+	<li class=kadov-p><p><img src="../tip.gif"
+								style="border-style: none;
+										border: none;
+										width: 31px;
+										height: 12px;"
+								width=31
+								height=12
+								border=0>use the new Search button to quickly 
+ find a file by keyword/category/etc</p></li>
+	
+	<li class=kadov-p><p>Open Read Only checkbox</p></li>
+	
+	<li class=kadov-p><p>Open Shareable checkbox</p></li>
+</ul>
+
+<h3>Tool Windows <span style="font-weight: normal;">(Modeless Dialogs)</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p>default position of dialogs has been improved</li>
+	
+	<li class=kadov-p
+		class=kadov-p><!--kadov_tag{{<implicit_p>}}--><img src="../tip.gif"
+															style="border-style: none;
+	border: none;
+	width: 31px;
+	height: 12px;"
+															width=31
+															height=12
+															border=0>easily 
+ restore layout (Help -&gt; Repair -&gt; Restore Dialog Layout)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>new <span style="font-weight: bold;">Calculator Tape</span> 
+ window - shows history of all calculations</li>
+	
+	<li class=kadov-p
+		class=kadov-p>new <span style="font-weight: bold;">Compare List</span> 
+ shows all differences between compared files (see below)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>improvements and bug fixes to <span style="font-weight: bold;">Calculator,</span> 
+ <span style="font-weight: bold;">Bookmarks</span> and <span style="font-weight: bold;">Explorer</span> 
+ (see below)</li>
+	
+	<li class=kadov-p
+		class=kadov-p>three new pages in <span style="font-weight: bold;">Properties</span> 
+ dialog</li>
+</ul>
+
+<h3><span>Calculator</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>integer calculations now support any precision<img 
+ src="../tip.gif"
+	style="border-style: none;
+			border: none;
+			width: 31px;
+			height: 12px;"
+	width=31
+	height=12
+	border=0>including Infinite</p></li>
+	
+	<li class=kadov-p><p>digest and CRC results are dumped into calculator 
+ for easy use in macros</p></li>
+	
+	<li class=kadov-p><p>easy selection of any radix from 2 to 36</p></li>
+	
+	<li class=kadov-p><p>easy selection of any number of bits 1 to Infinite</p></li>
+	
+	<li class=kadov-p><p>select signed or unsigned</p></li>
+	
+	<li class=kadov-p><p>display of current expression above text entry 
+ box</p></li>
+	
+	<li class=kadov-p><p>select previously entered expression to re-evaluate 
+ using drop-list</p></li>
+	
+	<li class=kadov-p><p>see complete history of calculations using <span 
+ style="font-weight: bold;">Calculator Tape</span> window</p></li>
+	
+	<li class=kadov-p
+		class=kadov-p>bottom 64 bits display is shown in red/blue to show 
+ hex/decimal mode<br>
+	(the actual colors depend on the color scheme in use)</li>
+</ul>
+
+<h3><span>Bookmarks</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p
+		class=kadov-p>simpler (icon not text) buttons at the top of the 
+ window</li>
+	
+	<li class=kadov-p
+		class=kadov-p>in-place edit of bookmark names - simply click and 
+ type</li>
+	
+	<li class=kadov-p
+		class=kadov-p><!--kadov_tag{{<implicit_p>}}--><img src="../tip.gif"
+															style="border-style: none;
+	border: none;
+	width: 31px;
+	height: 12px;"
+															width=31
+															height=12
+															border=0>quickly 
+ create a new bookmark with one click (then optionally enter a name)</li>
+</ul>
+
+<h3><span>Properties</span></h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>Floating point page: now supports Real48 (as in 
+ Delphi, Turbo Pascal)</p></li>
+	
+	<li class=kadov-p><p>Time page: now supports most common time64_t (C/C++) 
+ format</p></li>
+	
+	<li class=kadov-p><p>new Counts page: graph of byte counts (see Background 
+ Processing)</p></li>
+	
+	<li class=kadov-p><p>new Stats page: CRC32, MD5, SHA, SHA-2 of whole 
+ file (Background Processing)</p></li>
+	
+	<li class=kadov-p
+		class=kadov-p>new Bitmap page shows bitmap properties if Preview 
+ is open (see below)</li>
+</ul>
+
+<h3>Explorer Window</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>custom context menu when a file is right-clicked</p></li>
+	
+	<li class=kadov-p><p>quickly set a file time based on a DATE var (or 
+ now)</p></li>
+	
+	<li class=kadov-p><p>quickly set all file times (created/modified/accessed)</p></li>
+	
+	<li class=kadov-p><p>quickly set/clear common file flags (read-only 
+ etc)</p></li>
+	
+	<li class=kadov-p><p><img src="../tip.gif"
+								style="border-style: none;
+										border: none;
+										width: 31px;
+										height: 12px;"
+								width=31
+								height=12
+								border=0>even set/clear SYSTEM flag bit</p></li>
+	
+	<li class=kadov-p><p>quickly set/clear compressed and encrypted flags</p></li>
+	
+	<li class=kadov-p><p>delete file(s) from disk</p></li>
+	
+	<li class=kadov-p><p>&quot;wipe&quot; file(s) with 3 options trading 
+ speed for security</p></li>
+</ul>
+
+<h3>Preview Feature</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>preview graphics format files (JPEG, PNG, BMP, 
+ etc)</p></li>
+	
+	<li class=kadov-p><p>display in split or tabbed window</p></li>
+	
+	<li class=kadov-p><p><img src="../tip.gif"
+								style="border-style: none;
+										border: none;
+										width: 31px;
+										height: 12px;"
+								width=31
+								height=12
+								border=0>modify bitmap in memory and instantly 
+ see the effects</p></li>
+	
+	<li class=kadov-p><p>complete control of zoom/pan using menus or mouse</p></li>
+	
+	<li class=kadov-p><p>full display for transparency (alpha channel)</p></li>
+	
+	<li class=kadov-p><p>4 different backgrounds for viewing transparency</p></li>
+	
+	<li class=kadov-p><p><img src="../tip.gif"
+								style="border-style: none;
+										border: none;
+										width: 31px;
+										height: 12px;"
+								width=31
+								height=12
+								border=0>checkerboard background allows 
+ better view of partial transparency</p></li>
+	
+	<li class=kadov-p><p>new Bitmap Properties page shows bitmap info (on 
+ disk + in memory)</p></li>
+</ul>
+
+<h3>File Compare Feature</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>compare with a different disk file</p></li>
+	
+	<li class=kadov-p><p>other file view is shown in split or tabbed window</p></li>
+	
+	<li class=kadov-p><p>synchronous scrolling of both views</p></li>
+	
+	<li class=kadov-p><p>synchronize selection between both views</p></li>
+	
+	<li class=kadov-p><p>copy to clipboard in compare window</p></li>
+	
+	<li class=kadov-p><p>Compare List tool window lists all differences</p></li>
+	
+	<li class=kadov-p><p>menu/keyboard commands to move through differences</p></li>
+	
+	<li class=kadov-p><p>Option to find insertions/deletions</p></li>
+	
+	<li class=kadov-p><p>Option to compare a file with itself to see changes 
+ over time</p></li>
+	
+	<li class=kadov-p><p>uses SSE2 (SIMD) instructions for huge performance 
+ boost</p></li>
+</ul>
+
+<h3>Technical Notes</h3>
+
+<ul style="list-style: disc;"
+	type=disc>
+	
+	<li class=kadov-p><p>The Wix installer is no longer used - we now use 
+ InstallAware</p></li>
+	
+	<li class=kadov-p><p>HexEdit uses the Boost library for many things 
+ - of particular recent note is CRCs</p></li>
+	
+	<li class=kadov-p><p>Crypto++ is now also used - for digests (MD5, 
+ SHA, etc) and encoding (Base64 etc)</p></li>
+	
+	<li class=kadov-p><p>Infiinite precision integers (as used in the calculator) 
+ are now handled by MPIR library</p></li>
+	
+	<li class=kadov-p><p>SVN is no longer used for version control - we 
+ now use Git</p></li>
+	
+	<li class=kadov-p><p>HexEdit source is no longer hosted by SourceForge, 
+ instead by GitHub</p></li>
+	
+	<li class=kadov-p><p>Visual Studio 2010 or later is required as HexEdit 
+ now uses SSE2 intrinsics<br>
+	for greatly improved performance (eg, NOT operation and file compare)</p></li>
+</ul>
 
 <p>&nbsp;</p>
 
