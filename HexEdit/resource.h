@@ -1202,7 +1202,6 @@
 #define IDC_FOOTER                      1599
 #define IDC_FIRST_HEADER_OPTS           1600
 #define IDC_FIRST_HEADER                1601
-#define IDC_WATERMARK                   1602
 #define IDC_FIRST_HEADER_DIFF           1603
 #define IDC_PRINT_WATERMARK             1604
 #define IDC_FIRST_FOOTER_OPTS           1605
@@ -1270,15 +1269,11 @@
 #define IDC_AERIAL_MAX                  1666
 #define IDC_SPIN_AERIAL_MAX             1667
 #define IDC_TABICONS                    1668
-#define IDC_TABCLOSE                    1669
-#define IDC_TABCOLOUR                   1670
-#define IDC_CUSTOM_MENU                 1671
-#define IDC_SYNC_TREE                   1672
 #define IDC_WIPE_FAST                   1673
 #define IDC_WIPE_GOOD                   1674
 #define IDC_WIPE_THOROUGH               1675
-#define IDC_SHOW_INDEXED                1676
-#define IDC_SHOW_NOT_INDEXED            1677
+#define IDC_CUSTOM_MENU                 1676
+#define IDC_SYNC_TREE                   1677
 #define IDC_COMPARE_SELF                1678
 #define IDC_COMPARE_FILE                1679
 #define IDC_COMPARE_AUTOSYNC            1680
@@ -1311,6 +1306,11 @@
 #define IDC_DISPLAY_PREVW               1708
 #define IDC_GRID_DIFFS                  1712
 #define IDC_STATIC_COMPARE_NAME         1713
+#define IDC_WATERMARK                   1714
+#define IDC_TABCLOSE                    1715
+#define IDC_TABCOLOUR                   1716
+#define IDC_SHOW_INDEXED                1717
+#define IDC_SHOW_NOT_INDEXED            1718
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1885,7 +1885,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
 #define _APS_NEXT_COMMAND_VALUE         39240
-#define _APS_NEXT_CONTROL_VALUE         1714
+#define _APS_NEXT_CONTROL_VALUE         1720
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
