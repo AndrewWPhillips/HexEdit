@@ -1,0 +1,104 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<html>
+
+<!--(==============================================================)-->
+<!--(Document created with RoboEditor. )============================-->
+<!--(==============================================================)-->
+
+<head>
+
+<title>Aerial View</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=content-type content="text/html; charset=windows-1252">
+<meta name=generator content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name=generator-major-version content=0.1>
+<meta name=generator-minor-version content=1>
+<meta name=filetype content=kadov>
+<meta name=filetype-version content=1>
+<meta name=page-count content=1>
+<meta name=layout-height content=706>
+<meta name=layout-width content=1228>
+
+
+<!--(Links)=========================================================-->
+
+<link rel="StyleSheet" href="..\Hexedit.css">
+
+
+
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body>
+
+<h2 style="font-family: Arial;"><span>Aerial View Page</span></h2>
+
+<p style="text-align: center;"
+	align=center>&nbsp;</p>
+
+<p style="text-align: center;"
+	align=center><img src="OptAerial.gif"
+						style="border-style: none;
+								border: none;
+								width: 612px;
+								height: 289px;"
+						width=612
+						height=289
+						border=0></p>
+
+<p>&nbsp;</p>
+
+<p>This page allows you to change global options relating to aerial view 
+ windows.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;"><span 
+ style="font-weight: bold;">Maximum aerial view bitmap size</span></span></p>
+
+<p style="margin-left: 18.00pt;">This is the largest bitmap that HexEdit 
+ will create in memory for the aerial view display for any single file.</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">If the file is too big then the aerial 
+ view bitmap will be subject to <span style="font-style: italic;">pixel 
+ merging</span>. That is each pixel will represent 2, 4, 8, 16, ... bytes 
+ of the file to keep within the limit. Note that even in this case some 
+ information is retained as the pixel for any group of bytes (2, 4, 8, 
+ etc) has a pixel color which is a combination of the colors for all the 
+ bytes of the group (as determined by the color scheme in effect).</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;">The exact size of the when <span style="font-style: italic;">pixel 
+ merging</span> occurs is one-third of the maximum aerial view bitmap size. 
+ (Each pixel in the bitmap is 24-bits or 3 bytes.) For example, if the 
+ maximum aerial view bitmap size is 1.5 GBytes then when a file greater 
+ than 0.5 GBytes will require pixel merging in the aerial view display.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><img src="../tip.gif"
+										style="border-style: none;
+												border: none;
+												width: 31px;
+												height: 12px;"
+										width=31
+										height=12
+										border=0>You can see how many bytes 
+ are merged into one pixel by double-clicking any pixel in the aerial view. 
+ This will select the corresponding byte(s) in the hex view. If pixel merging 
+ was required the number of bytes thus selected will be a power of 2 (2, 
+ 4, 8, 16, ...).</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+</body>
+
+</html>
