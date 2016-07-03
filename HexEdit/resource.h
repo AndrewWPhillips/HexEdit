@@ -996,7 +996,6 @@
 #define IDC_PRINT_UNITS                 1388
 #define IDC_CSRC_HELP                   1389
 #define IDC_DFFD_EXPR                   1390
-#define IDC_PREVIEW                     1390
 #define IDC_DFFD_EXPR_VAR               1391
 #define IDC_DFFD_DISPLAY_ERROR          1392
 #define IDC_DFFD_DISPLAY_RESULT         1393
@@ -1263,12 +1262,12 @@
 #define IDC_THUMB_SIZE                  1661
 #define IDC_THUMB_TYPE                  1662
 #define IDC_SPIN_SIZE                   1663
-#define IDC_THUMB_SIZE2                 1664
 #define IDC_THUMB_REMOVE                1664
 #define IDC_SPIN_REMOVE                 1665
-#define IDC_AERIAL_MAX                  1666
-#define IDC_SPIN_AERIAL_MAX             1667
-#define IDC_TABICONS                    1668
+#define IDC_PREVIEW                     1666
+#define IDC_AERIAL_MAX                  1670
+#define IDC_SPIN_AERIAL_MAX             1671
+#define IDC_TABICONS                    1672
 #define IDC_WIPE_FAST                   1673
 #define IDC_WIPE_GOOD                   1674
 #define IDC_WIPE_THOROUGH               1675

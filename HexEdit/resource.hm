@@ -577,7 +577,6 @@
 #define HIDC_WIPE_GOOD                  0x81ff068a    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_WIPE_THOROUGH              0x81ff068b    // IDD_OPT_EXPLORER [English (United States)]
 #define HIDC_XOR                        0x8075042c    // IDD_CALC
-#define HIDOK                           0x82000001    // IDD_NEW_COMPARE
 #define HID_DFFD_CLONE                  0x81150533    // IDD_DFFD_DATA
 #define HID_DFFD_HELP                   0x8119016f    // IDD_DFFD_GLOBAL
 #define HID_DFFD_NEXT                   0x81150532    // IDD_DFFD_DATA
