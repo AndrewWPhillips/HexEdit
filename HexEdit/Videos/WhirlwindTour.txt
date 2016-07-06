@@ -19,8 +19,8 @@ make sure there are a few more categories (TBD, Project A, Corrupt)
 Basic View
 
 " This is a whirlwind tour of some of the more useful but less understood features of HexEdit.
-  You probably won't use most of what you see here but you may discover a gem that saves you 
-  time and trouble. This video will move fast so you need to pay attention or pause and replay bits.
+  You probably won't use most of what you see here but you may discover something that you will 
+  later find indispensable. This video will move fast so you need to pay attention or pause and replay bits.
   
 " If you are new to hex editors then this video is NOT for you. I recommend that you look
   at the HexEdit Intro video before anything else.
@@ -33,25 +33,35 @@ Basic View
 - demo
 
 " Or you can select any font and size using the Format Bar
-- open format bar and change font and size
+- open format bar, select font COURIER NEW size 14
 
-" Also on the format bar is the ruler toggle which shows ruler at the top of the screen
-  which shows columns and other useful stuff
+" Note that you can get help on any button or menu item and many other things by pressing SF1
+  and clicking on the item.
+- menu: Help/Context Help then select menu: View/Font
+
+" Note that the mouse changes to have a question marks to show you
+  are in context help mode
+- menu: Help/Context Help then click status bar
+
+Ruler
+
+" Also on the left of the format bar is the ruler toggle. The RULER at the top of the screen
+  shows columns and other useful stuff
 - click ruler button twice
 
-" You can completely configure how the rulers look. There are actually 2 rulers - hex and decimal.
+" You can completely configure the ruler look. There are actually 2 rulers - hex and decimal.
   Switching between hex and decimal addresses displays either the hex or decimal ruler
 - toggle hex/dec addresses
   
-" Also note that in general hex addresses are shown in red and decimal in blue. This colour coding
-  is really useful as sometimes hex addresses can look like they are decimal. But the actual colours
+" Also note that in general hex addresses are shown in red & decimal in blue. This colour coding
+  is really useful as sometimes hex addresses can look like they are decimal. The actual colours
   depend on the colour scheme. For the built-in colour schemes they are always RED and BLUE.
 - click colour scheme drop list
   
-" Also note these little handles on the ruler. You can double-click the column handle to turn on AutoFit
+" Also note these little ruler handles. You can double-click the column handle to turn on AutoFit
 - drag group handle, double-click columns handle
 
-" Or just use the AutoFit button. You can also change the number of columns with these buttons
+" Or just use the AutoFit button.
 - turn off AutoFit, use inc/dec cols buttons
 
 " You can have a huge number of columns - up to 32,000 I think
@@ -60,27 +70,32 @@ Basic View
 Character Display
 
 " Looking again at the standard toolbar you can see some very important drop down lists
-  The glasses list determines how the bytes are shown on screen
-- demo char and hex areas
-- return to BOTH areas
+  The spectacles list determines how the bytes are shown on screen
+- demo both and char areas
+
+" The hex area is what gives HexEdit it's name. Each byte is shown as TWO HEX DIGITS.
+- demo hex and BOTH areas
 
 " The BOTH option has a typical binary editor display but a lot of users requested an
   option where each byte is shown as a character with the corresponding hex digits stacked beneath
 - demo stacked mode
 
-" the next drop list determines how characters are displayed. The first 4 have always been in HexEdit
-  but the bottom one "Code Page" allows you to use any Windows code page
+" the next drop list determines how characters are displayed in the char area.
+  The first 4 options have always been in HexEdit but the bottom one (Code Page) is new
+  and allows you to use any Windows code page
 - select code page option
 
-" I'll probably add a Unicode option here soon but Unicode is  a bit of a problem as there
+" I'll probably add a Unicode option here soon but Unicode is a bit of a problem as there
   is not a one-to-one relation between bytes and characters. Actually, this problem 
   occurs with some code pages since some characters have a lead-in byte. So what you
   see in the character area may not correspond to the exact text for multi-byte characters.
 - open Doc/Display options page & switch to code page that demos multi-byte characters
 
-" To change which code page is used you need to go into the Options dialog
+" If you want to see every possible code page you need to go into the Options dialog
 - Select View/Character Set/Code Pages/More...
-- select the code page drop list
+
+" Here they are sorted in numeric order
+- select UTF-7 the code page drop list
 
 ~~~~ 1
 
@@ -760,8 +775,8 @@ File Handling
 View Windows
 
 " I guess it is now time to explain about Aerial view and
-  the 3 other view windows you can have open for any file
-  These open special views which allow you to look at the
+  other alternate views you can have on a file.
+  You can open special views which allow you to look at the
   data in different ways. They correpsond to the 4 menus:
   TEMPLATE, AERIAL, PREVIEW and COMPARE
 - move mouse over the 4 menus
@@ -778,15 +793,188 @@ View Windows
   Document/General page
 - menu: Options/Document/General
 
-  - aerial view
-  - preview
-  - compare view
+" Templates are a bit tricky so I'll leave them till later
+  An aerial view is simply an image or BITMAP where each
+  pixel represents one byte of the file.
+
+Aerial View
+
+" Aerial view is called that because it tries to give
+  a high-level view like from an aerial photograph
+  I'll just create a file with
+  all 256 byte values in it demonstrate
+- menu: Tools/Play Macro/AllChars, switch to HEX view
+- menu: Aerial/Split window
+
+" Each pixel has the colour of the byte value from the
+  current colour scheme. 
+- switch to MANY colour scheme
+
+" ACtually this has been automatically zoomed 
+  in as there is lots of space but if I resize the 
+  AERIAL view to make it smaller
+- make aerial view narrower to reduce zoom
+
+" You may also need to create a new colour scheme
+  to suit the data you are viewing. Without a good
+  colour scheme the AERIAL view is useless
+- switch to B/W colour scheme then ASCII
+
+" The right colours mean you can get an overview of the data
+- open TEST.ISO
+
+" Here we can see that most of the file is fairly random
+  data. This speckled look is typical of compressed or
+  encrypted data
+- scroll to the end
+
+" But here we can see there is something different
+  I can quickly zoom by holding down the Ctrl key
+  and spinning the mouse wheel
+- zoom in on white area
+
+" Notice that the mouse cursor moves to always be over
+  the same pixel. If I double-click the pixel it is
+  selected in the normal view
+- double-click a white pixel
+
+" Now there is one thing to note. Obviously there is an
+  upper limit on the size of bitmaps that Windows can
+  support. So at some point a pixel must be used to
+  represent mopre than one byte.
+- highlight the selection
+
+" In this case the colour of the pixel will probably not
+  even be in the colour scheme as it is the average of
+  the colour of all the contributing bytes
+
+" There's lots of other stuff that makes the aerial view
+  useful like highlights and search occurrences but
+  I'll let you try them for yourself.
 
 ~~~~ 11
 
-  - templates
+Compare View
+
+" The compare view is a new feature. It lets you compare
+  a file to another file showing the 2nd file in the 
+  other view window
+- menu: Compare/New
+- close dialog
+
+" Note that HexEdit has always had the compare windows
+  command invoked with Alt-C, which lets you compare
+  bytes in different files or 2 parts of the same file.
+- menu: Tools/Compare Windows
+
+" You can still use this but the new feature has
+  advantages. It also appears to be faster as I
+  use SSE2 instructions
+- menu: Compare/New
+- enter file name to compare with
+
+" The most interesting option here
+  is the ability to detect insertions and deletions
+- turn on checkbox
+
+" When HexEdit encounters a difference it tries to scan
+  forward in both files until if can re-synchronise and
+  the MATCH LENGTH field lets you say how many
+  consecutive identical byte make a match
+- use match length spin controls
+
+" This is actually quite CPU intensive so can be slow
+  so we will leave it off for now
+- turn off checkbox
+- turn off auto-scroll and auto-sync
+- click OK
+
+" I didn't look at the Other options as they are obvious.
+- right-click compare view and select auto-sync
+
+" With  AUTO-SYNC if you move or select in one window
+  it automatically selects in the other
+- make small selection in one window
+
+" You can of course copy to the clipboard in either
+- right-click in compare view and select COPY
+
+" One important thing is that the COMPARE LIST
+  tool window shows a list of all differences between
+  the two files
+- right-click menu bar and select Compare List
+
+Bitmap Preview
+
+" The preview view is intended to let you see what
+  a file looks like in its REAL form. For example,
+  you can open an image file and see it in HexEdit
+- open a DRAWER.PNG file
+- open preview view
+
+" It has full support for transparency
+- right-click and select white background
+
+" The checkerboard background is a great option
+  for lookin at partially transparent pixels
+- right-click and select chek background
+  
+" You can actually modify the bytes of the file in
+  memory and instantly see the results
+- select a block of memory and NOT it
+
+" The file format is now invalid so
+  nothing is displayed in the preview
+- close preview
+
+" If you open the aerial view you can see that
+  the pattern is speckled so it looks like the
+  pixels in this file are compressed in some way
+- open aerial view
+
+" Let's try this small test file I created in Paint
+- open SMALL.BMP
+- change some bytes in hex view
+
+" Obviously you need to know what you are doing
+  especially if you what to change the header
+  to adjust the bit depth of whatever
+
+" If you open a template for the type of file
+  we are looking at you can do better
+- menu: Template/Open File Type/Bitmap image
+- expand info-header in tree view
+- right-click column header and turn on DATA
+
+" Here you can see that the bitmap is 3 x 2
+  using 24-bit pixels - ie each pixel can
+  have one of 16 million different colours
+- change to 6 x 1
+
+" You might be able to get more info on a field
+  using the COMMENTS column
+- right-click column header and turn on COMMENTS
+
+" Finally you can see the differences in the 
+  Bitmap properties page
+- open Properties, switch to Bitmap page
 
 ~~~~ 12
+
+Templates
+
+" Templates are one of the most powerful features
+  of HexEdit. We just saw how easy it is to use
+  a template to view and edit a BMP file
+
+
+- create file of 100 bytes
+- C parser to create int count;
+- C parser to create struct {int x,y; } coord[12]; 
+- edit coord to change length from "8" to "count"
+- change y coord ro display as red
+
+~~~~ 13
 
 " There is still a lot I have not covered like
   keystroke macros and all the things on the
@@ -802,3 +990,6 @@ View Windows
   We saw before that if you hold the mouse
   over a bookmark then a little tip window pops up
 
+- cust (context menus)
+- help control (F1 or right-click)
+- help commands (SF1)
