@@ -355,6 +355,7 @@ Workspace Display Options | dlg_options\HIDD_OPT_WORKDISPLAY.htm
 Workspace Editing Options | dlg_options\HIDD_OPT_WORKSPACE.htm
 Background Processing Page | dlg_options\HIDD_OPT_BACKGROUND.htm
 Info Tips Page | dlg_options\HIDD_OPT_TIPS.htm
+Aerial View | dlg_options\HIDD_OPT_AERIAL.htm
 Template Options | dlg_options\HIDD_OPT_TEMPLATE.htm
 Document General Options | dlg_options\Document_General_Options.htm
 Document Display Options page | dlg_options\HIDD_OPT_WINDOW.htm
@@ -365,6 +366,7 @@ New Scheme Dialog | dlg_options\New_Scheme_Dialog.htm
 [Other Dialogs]
 Open Special dialog | dlg_other\HIDD_OPEN_SPECIAL.htm
 Choose Font Dialog | dlg_other\AFX_HIDD_FONT.htm
+New Compare | dlg_other\HIDD_NEW_COMPARE.htm
 Window Manager Dialog | dlg_other\HIDD_WINDOW_MANAGER.htm
 Email HexEdit Support Dialog | dlg_other\HIDD_EMAIL.htm
 
