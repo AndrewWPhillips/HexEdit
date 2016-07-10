@@ -21,7 +21,7 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=2765>
+<meta name=layout-height content=2813>
 <meta name=layout-width content=1228>
 
 
@@ -63,8 +63,8 @@
 	<li class=kadov-p><p>the character area now has comprehensive support 
  for Windows code pages</p></li>
 	
-	<li class=kadov-p><p>other features are background processing + Windows 
- 7 TaskBar support</p></li>
+	<li class=kadov-p><p>other features are background processing (CRC/digests) 
+ + Windows 7 TaskBar support</p></li>
 	
 	<li class=kadov-p><p>there are also new operations for CRCs, encoding 
  (Base64 etc) and digests (SHA etc)</p></li>
@@ -109,7 +109,7 @@
 	
 	<li class=kadov-p
 		class=kadov-p>New <span style="font-weight: bold;">General CRC</span> 
- option (see below)</li>
+ option allows entering/saving of all CRC parameters</li>
 	
 	<li class=kadov-p
 		class=kadov-p>New digest commands SHA, SHA-2 (with 4 size options), 
@@ -125,16 +125,17 @@
  Task Bar Icon</p></li>
 	
 	<li class=kadov-p><p>hovering the mouse over the HexEdit icon shows 
- a thub nail of files currently open</p></li>
+ a thumb nail of files currently open</p></li>
 	
 	<li class=kadov-p><p>recently opened files are added to the Task Bar 
- &quot;Recent Files&quot; list</p></li>
+ &quot;Recently Used&quot; list</p></li>
 	
 	<li class=kadov-p><p>commonly opened files are added to the Task Bar 
  &quot;Most Used&quot; list</p></li>
 	
 	<li class=kadov-p><p><img src="../tip.gif"
-								style="border: none;
+								style="border-style: none;
+										border: none;
 										width: 31px;
 										height: 12px;"
 								width=31
@@ -211,6 +212,13 @@
 															height=12
 															border=0>relative 
  position of tip window is remembered</li>
+	
+	<li class=kadov-p
+		class=kadov-p>transparency is easily adjusted</li>
+	
+	<li class=kadov-p
+		class=kadov-p>new parameters available (eg current disk block) 
+ when creating your own tips</li>
 </ul>
 
 <h3>Background Processing</h3>
@@ -218,8 +226,8 @@
 <ul style="list-style: disc;"
 	type=disc>
 	
-	<li class=kadov-p><p>several new options (in addition to background 
- searches that HexEdit has always had)</p></li>
+	<li class=kadov-p><p>several new options in addition to background 
+ searches (which HexEdit has always had)</p></li>
 	
 	<li class=kadov-p><p>all background processing is done in low-priority 
  background threads</p></li>
@@ -314,7 +322,7 @@
 															width=31
 															height=12
 															border=0>easily 
- restore layout (Help -&gt; Repair -&gt; Restore Dialog Layout)</li>
+ restore factory layout (Help -&gt; Repair -&gt; Restore Dialog Layout)</li>
 	
 	<li class=kadov-p
 		class=kadov-p>new <span style="font-weight: bold;">Calculator Tape</span> 
@@ -442,23 +450,27 @@
 										height: 12px;"
 								width=31
 								height=12
-								border=0>even set/clear SYSTEM flag bit</p></li>
+								border=0>set/clear SYSTEM flag bit (you 
+ cannot do this normally)</p></li>
 	
 	<li class=kadov-p><p>quickly set/clear compressed and encrypted flags</p></li>
 	
 	<li class=kadov-p><p>delete file(s) from disk</p></li>
 	
-	<li class=kadov-p><p>&quot;wipe&quot; file(s) with 3 options trading 
+	<li class=kadov-p><p>&quot;wipe&quot; file(s) with 3 strategies trading 
  speed for security</p></li>
 </ul>
 
-<h3>Preview Feature</h3>
+<h3>Bitmap Preview Feature</h3>
 
 <ul style="list-style: disc;"
 	type=disc>
 	
 	<li class=kadov-p><p>preview graphics format files (JPEG, PNG, BMP, 
  etc)</p></li>
+	
+	<li class=kadov-p><p>(will be extended for other types of files in 
+ the future)</p></li>
 	
 	<li class=kadov-p><p>display in split or tabbed window</p></li>
 	

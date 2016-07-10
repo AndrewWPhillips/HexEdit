@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1427>
-<meta name=layout-width content=1564>
+<meta name=layout-height content=1534>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -571,12 +571,20 @@
  there is no file selected in the list then this button is disabled. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->You 
  can also double-click an entry in the list to open just that file.</p>
 
-<p style="margin-top: 3.00pt; font-weight: bold;"><span>Open read-only</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;"><span 
+ style="font-weight: bold;"><span style="font-weight: bold;"><span>O</span></span>pen 
+ read-only</span></span></p>
 
-<p style="margin-left: 18.00pt;">This is the same as the <span style="font-weight: bold;">Open</span> 
- button except that the file(s) are opened in read-only mode.</p>
+<p style="margin-left: 18.00pt;">When the file(s) are opened they are opened 
+ in read-only mode.</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;"><span style="font-weight: bold;">C</span>lose/Save</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;"><span style="font-weight: bold;">Open 
+ shareable</span></p>
+
+<p style="margin-left: 18.00pt;">When the file(s) are opened they are opened 
+ in shareable mode.</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Close/Save</p>
 
 <p style="margin-left: 18.00pt;">This closes the dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  items have been deleted (using the <span style="font-weight: bold;">Validate 
@@ -595,26 +603,43 @@
 
 <p style="margin-top: 3.00pt; font-weight: bold;">Remove</p>
 
-<p style="margin-left: 18.00pt;">This removes all selected files from the 
- recently opened files list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Of 
- course, the files themselves are not deleted or affected in any way.</p>
+<p style="margin-left: 18.00pt;">This marks selected file(s) for removal 
+ from the recently opened files list. The files are not actually removed 
+ until you hit <span style="font-weight: bold;">Enter</span> or click the 
+ <span style="font-weight: bold;">Save</span> button; if you chnage your 
+ mind just close the dialog or press <span style="font-weight: bold;">Escape</span>.</p>
 
-<p style="margin-left: 18.00pt;">&nbsp;</p>
-
-<p style="margin-left: 18.00pt;">Note that this also loses formatting (font, 
- the number of columns/offset/grouping, autofit, decimal addresses etc), 
- display (window position, hex/char area display), editing (RO/RW and OVR/INS 
- modes) and other information (highlights, mark etc) associated with the 
- file(s). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
+<p style="margin-left: 18.00pt;"><img src="../ex_red_sm.jpg"
+										style="border: none;
+												width: 17px;
+												height: 20px;"
+										width=17
+										height=20
+										border=0> Removing a file loses 
+ formatting (font, the number of columns/offset/grouping, autofit, decimal 
+ addresses etc), display (window position, hex/char area display), editing 
+ (RO/RW and OVR/INS modes) and other information (highlights, mark etc) 
+ associated with the file. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
  information is stored with the entry for each recently opened file.) <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
  bookmarks for the file(s) are retained.</p>
+
+<p style="margin-left: 18.00pt;"><img src="../tip.gif"
+										style="border: none;
+												width: 31px;
+												height: 12px;"
+										width=31
+										height=12
+										border=0>The disk file(s) themselves 
+ are not affected by removal from the list.</p>
 
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Validate 
  All</span></p>
 
 <p style="margin-left: 18.00pt;">Use this to check the validity of the 
  files in the recently use list. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- a file is not found on disk then it is removed from the list.</p>
+ a file is not found on disk then it is removed from the list. The files 
+ are not actually removed until you click the <span style="font-weight: bold;">Save</span> 
+ button; if you chnage your mind just close the dialog or press <span style="font-weight: bold;">Escape</span>.</p>
 
 <p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Keep network 
  and removeable files</span></p>
