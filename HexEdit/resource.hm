@@ -14,6 +14,7 @@
 #define HIDC_ADDR_DEC                   0x810c04b4    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_ADDR_HEX                   0x810c04b3    // IDD_OPT_WINDISPLAY [English (United States)]
 #define HIDC_ADD_SCHEME                 0x80e60453    // IDD_OPT_COLOURS [English (United States)]
+#define HIDC_AERIAL_MAX                 0x81fe0686    // IDD_OPT_AERIAL [English (United States)]
 #define HIDC_ALG                        0x80ee048e    // IDD_ALGORITHM [English (United States)]
 #define HIDC_ALG_BLOCKLEN               0x80ee048f    // IDD_ALGORITHM [English (United States)]
 #define HIDC_ALG_KEYLEN                 0x80ee0490    // IDD_ALGORITHM [English (United States)]
@@ -394,7 +395,7 @@
 #define HIDC_MULTIPLY                   0x80750427    // IDD_CALC
 #define HIDC_NAME                       0x80e50436    // IDD_EMAIL
 #define HIDC_NAMES                      0x80e6044c    // IDD_OPT_COLOURS [English (United States)]
-#define HIDC_NET_RETAIN                 0x810f04a6    // IDD_RECENT_FILES
+#define HIDC_NET_RETAIN                 0x810e04a6    // IDD_RECENT_FILES
 #define HIDC_NEW                        0x80f10471    // IDD_OPT_FILTERS [English (United States)]
 #define HIDC_NICE_ADDR                  0x80eb0418    // IDD_OPT_WORKDISPLAY [English (United States)]
 #define HIDC_NO_RECENT                  0x819b0419    // IDD_OPT_HISTORY [English (United States)]
@@ -413,6 +414,7 @@
 #define HIDC_OPEN_FOLDER_SPECIFIED      0x81b90654    // IDD_OPT_FOLDERS [English (United States)]
 #define HIDC_OPEN_INFO                  0x8121056b    // IDD_OPEN_SPECIAL
 #define HIDC_OPEN_READONLY              0x8121041c    // IDD_OPEN_SPECIAL
+#define HIDC_OPEN_READ_ONLY             0x81fc06b8    // IDD_RECENT_FILES_NEW
 #define HIDC_OPEN_SHARED                0x81fc05c6    // IDD_RECENT_FILES_NEW
 #define HIDC_OPEN_TREE                  0x81210569    // IDD_OPEN_SPECIAL
 #define HIDC_OP_DISPLAY                 0x8075047b    // IDD_CALC
@@ -455,6 +457,7 @@
 #define HIDC_RADIX                      0x80750449    // IDD_CALC
 #define HIDC_RANGES                     0x80e60451    // IDD_OPT_COLOURS [English (United States)]
 #define HIDC_RECENT_FILES               0x819b04c6    // IDD_OPT_HISTORY [English (United States)]
+#define HIDC_RECENT_FILES_SEARCH        0x81fc0516    // IDD_RECENT_FILES_NEW
 #define HIDC_REFRESH_BARS               0x80a9045c    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_REFRESH_KEYS               0x80a90442    // IDD_OPT_MACRO [English (United States)]
 #define HIDC_REFRESH_NEVER              0x80a9043e    // IDD_OPT_MACRO [English (United States)]

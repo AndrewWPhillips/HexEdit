@@ -47,4 +47,7 @@ public:
 	afx_msg void OnBnClickedCompareFile();
 	afx_msg void OnBnClickedAttachmentBrowse();
 	afx_msg void OnBnClickedInsDel();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnHelp();
 };

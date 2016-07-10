@@ -11,6 +11,9 @@
 #include "NewCompare.h"
 #include "afxdialogex.h"
 
+#include <HtmlHelp.h>
+#include "resource.hm"
+
 // CNewCompare dialog
 
 IMPLEMENT_DYNAMIC(CNewCompare, CHexDialog)
@@ -52,7 +55,10 @@ BEGIN_MESSAGE_MAP(CNewCompare, CHexDialog)
 	ON_BN_CLICKED(IDC_COMPARE_SELF, &CNewCompare::OnBnClickedCompareSelf)
 	ON_BN_CLICKED(IDC_COMPARE_FILE, &CNewCompare::OnBnClickedCompareFile)
 	ON_BN_CLICKED(IDC_COMPARE_BROWSE, &CNewCompare::OnBnClickedAttachmentBrowse)
-	ON_BN_CLICKED(IDC_COMPARE_INSDEL, &CNewCompare::OnBnClickedInsDel)
+	ON_BN_CLICKED(IDC_COMPARE_INSDEL, &CNewCompare::OnBnClickedInsDel)	ON_WM_HELPINFO()
+	ON_WM_HELPINFO()
+	ON_WM_CONTEXTMENU()
+	ON_BN_CLICKED(IDC_COMPARE_HELP, OnHelp)
 END_MESSAGE_MAP()
 
 BOOL CNewCompare::OnInitDialog()
@@ -131,6 +137,43 @@ void CNewCompare::fix_controls()
 }
 
 // CNewCompare message handlers
+
+static DWORD id_pairs[] = {
+	IDC_COMPARE_SELF, HIDC_COMPARE_SELF,
+	IDC_COMPARE_SELF, HIDC_COMPARE_SELF, 
+	IDC_COMPARE_FILE, HIDC_COMPARE_FILE, 
+	IDC_COMPARE_AUTOSYNC, HIDC_COMPARE_AUTOSYNC, 
+	IDC_COMPARE_AUTOSCROLL, HIDC_COMPARE_AUTOSCROLL, 
+	IDC_COMPARE_FILENAME, HIDC_COMPARE_FILENAME, 
+	IDC_COMPARE_COMMENT, HIDC_COMPARE_SPLIT, 
+	IDC_COMPARE_SPLIT, HIDC_COMPARE_SPLIT, 
+	IDC_COMPARE_TABBED, HIDC_COMPARE_TABBED, 
+	IDC_COMPARE_BROWSE, HIDC_COMPARE_BROWSE, 
+	IDC_COMPARE_INSDEL, HIDC_COMPARE_INSDEL, 
+	IDC_COMPARE_STATIC1, HIDC_COMPARE_MINMATCH, 
+	IDC_COMPARE_MINMATCH, HIDC_COMPARE_MINMATCH, 
+	IDC_COMPARE_MINMATCH_SPIN, HIDC_COMPARE_MINMATCH, 
+	IDC_COMPARE_HELP, HIDC_HELP_BUTTON, 
+	IDOK, HID_COMPARE,
+	0,0
+};
+
+BOOL CNewCompare::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	theApp.HtmlHelpWmHelp((HWND)pHelpInfo->hItemHandle, id_pairs);
+	return TRUE;
+}
+
+void CNewCompare::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	theApp.HtmlHelpContextMenu(pWnd, id_pairs);
+}
+
+void CNewCompare::OnHelp()
+{
+	if (!::HtmlHelp(AfxGetMainWnd()->m_hWnd, theApp.htmlhelp_file_, HH_HELP_CONTEXT, HIDD_NEW_COMPARE_HELP))
+		AfxMessageBox(AFX_IDP_FAILED_TO_LAUNCH_HELP);
+}
 
 void CNewCompare::OnBnClickedCompareSelf()
 {

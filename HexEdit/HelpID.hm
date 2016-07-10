@@ -40,7 +40,8 @@
 #define HIDD_RECENT_FILES_HELP        0x010B0
 #define HIDD_NEW_SCHEME_HELP          0x010C0
 #define HIDD_CSRC_HELP                0x010D0
-#define HIDC_STATS_GRAPH              0x010E0
+#define HIDD_NEW_COMPARE_HELP         0x010D8
+#define HID_COMPARE                   0x010D9
 
 #define HIDD_CUST_COMMANDS            0x01100
 #define HIDD_CUST_TOOLBARS            0x01101
@@ -49,7 +50,9 @@
 #define HIDD_CUST_MENU                0x01104
 #define HIDD_CUST_MOUSE               0x01105
 #define HIDD_CUST_OPTIONS             0x01106
+#define HIDC_STATS_GRAPH              0x01108
 #define HIDC_CLEAR_LISTS              0x0110A
+#define HIDC_OPEN_PREVIEW             0x0110C
 
 #define HIDD_FIND_SIMPLE_HELP         0x01110
 #define HIDD_FIND_HEX_HELP            0x01111

@@ -1310,6 +1310,7 @@
 #define IDC_TABCOLOUR                   1716
 #define IDC_SHOW_INDEXED                1717
 #define IDC_SHOW_NOT_INDEXED            1718
+#define IDC_OPEN_READ_ONLY              1720
 #define ID_AUTOFIT                      32771
 #define ID_FONT                         32772
 #define ID_ADDR_TOGGLE                  32773
@@ -1884,7 +1885,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        530
 #define _APS_NEXT_COMMAND_VALUE         39240
-#define _APS_NEXT_CONTROL_VALUE         1720
+#define _APS_NEXT_CONTROL_VALUE         1721
 #define _APS_NEXT_SYMED_VALUE           252
 #endif
 #endif
