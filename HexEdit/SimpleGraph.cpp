@@ -46,6 +46,16 @@ void CSimpleGraph::update()
 	{
 		m_rct = rct;
 
+		CWnd *pAnc;
+		if ((pAnc = GetParent()) != NULL && (pAnc = pAnc->GetParent()) != NULL)
+		{
+			CRect rctAnc;
+			pAnc->GetClientRect(rctAnc);
+
+			// Somehow when the Properties windows is resized small or -ve the graph window
+			// becomes bigger than its container so we work out the adjustment here.
+			m_rct.bottom = rctAnc.Height() - 39;
+		}
 		// Delete old DC/bitmap
 		if (m_pdc != NULL)
 		{
@@ -82,7 +92,7 @@ void CSimpleGraph::update()
 		pc[ii] = add_contrast(m_col[ii], m_back);
 
 	// Draw background
-	m_pdc->FillSolidRect(0, 0, m_rct.Width(), m_rct.Height(), m_back);
+	m_pdc->FillSolidRect(0, 0, rct.Width(), rct.Height(), m_back);
 	draw_axes();
 
 	int width = m_rct.Width() - m_left - m_right;     // width of the actual graph area
