@@ -1731,15 +1731,14 @@ exit_play:
 	// If finished playing and display refresh was off refresh the display
 	if (playing_ <= 1 && refresh_off_)
 	{
+		refresh_off_ = bb;
 		if (pv_ != plast_view)
 		{
 			pv_->GetFrame()->MDIActivate();
 			pv_->GetFrame()->SetActiveView(pv_);
 		}
 		refresh_display(true);
-		refresh_off_ = bb;
 		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
-		// xxx Make sure current calc. value is displayed
 		enable_carets();
 	}
 
@@ -1806,7 +1805,7 @@ void CHexEditApp::refresh_display(bool do_all /*=false*/)
 	if ((do_all || refresh_bars_) && mm->m_paneCalc.IsWindowVisible())
 	{
 		//mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
-		//mm->m_wndCalc.edit_.Put();        // Make sure current calc. value is displayed
+		mm->m_wndCalc.edit_.put();        // Make sure current calc. value is displayed
 		mm->m_wndCalc.update_controls();
 		mm->m_wndCalc.button_colour(mm->m_wndCalc.GetDlgItem(IDC_MEM_GET), mm->m_wndCalc.memory_ != 0, RGB(0x40, 0x40, 0x40));
 
