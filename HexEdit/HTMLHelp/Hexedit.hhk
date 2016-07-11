@@ -172,6 +172,8 @@
     <param name="Local" value="cmd_view\Character_Set_Code_Page.htm">
     <param name="Name" value="Character Set Common Code Pages">
     <param name="Local" value="cmd_view\Character_Set_Common_Code_Pages.htm">
+    <param name="Name" value="More (Code Pages)...">
+    <param name="Local" value="cmd_view\HID_OPTIONS_CODEPAGE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="DBCS">
@@ -196,6 +198,8 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
     <param name="Name" value="Window Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
+    <param name="Name" value="More (Code Pages)...">
+    <param name="Local" value="cmd_view\HID_OPTIONS_CODEPAGE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="repair">
@@ -653,11 +657,6 @@
     <param name="Local" value="troubleshooting\problem_Toolbar_buttons..htm">
   </object>
   <li><object type="text/sitemap">
-    <param name="Name" value="buying">
-    <param name="Name" value="Registration Dialog">
-    <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
-  </object>
-  <li><object type="text/sitemap">
     <param name="Name" value="byte">
     <param name="Name" value="Character Properties Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_CHAR.htm">
@@ -1048,6 +1047,8 @@
     <param name="Local" value="cmd_view\HID_DISPLAY_RESET.htm">
     <param name="Name" value="How Do I Change the Default Window Display">
     <param name="Local" value="howdoi\HowDefaultDisplay.htm">
+    <param name="Name" value="More (Code Pages)...">
+    <param name="Local" value="cmd_view\HID_OPTIONS_CODEPAGE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="double word">
@@ -1253,8 +1254,6 @@
       <param name="Local" value="cmd_file\HID_FILE_PRINT_PREVIEW.htm">
       <param name="Name" value="File Print Setup command">
       <param name="Local" value="cmd_file\HID_FILE_PRINT_SETUP.htm">
-      <param name="Name" value="Printer Options">
-      <param name="Local" value="dlg_options\Printer_Options.htm">
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="saving">
@@ -1338,6 +1337,8 @@
     <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
     <param name="Name" value="Show Highlights in Aerial View Border">
     <param name="Local" value="cmd_aerial\HID_IND_HL.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="find">
@@ -1772,10 +1773,6 @@
   </object>
   <ul>
     <li><object type="text/sitemap">
-      <param name="Name" value="shortcuts">
-      <param name="See Also" value="accelerator keys">
-    </object>
-    <li><object type="text/sitemap">
       <param name="Name" value="customization">
       <param name="Name" value="Customize Commands page">
       <param name="Local" value="dlg_custom\HIDD_CUST_COMMANDS.htm">
@@ -2116,8 +2113,6 @@
     <param name="Local" value="dlg_options\HIDD_OPT_WINDOW.htm">
     <param name="Name" value="Filters page">
     <param name="Local" value="dlg_options\Filters.htm">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Options Dialog">
     <param name="Local" value="overviewadvanced\opt.htm">
   </object>
@@ -2196,8 +2191,6 @@
     <param name="Local" value="dlg_printing\AFX_HIDD_PRINTSETUP.htm">
     <param name="Name" value="File Page Setup Command">
     <param name="Local" value="cmd_file\HID_FILE_PAGE_SETUP.htm">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Page header or footer is not printed">
     <param name="Local" value="troubleshooting\problem_header_missing.htm">
     <param name="Name" value="I can't print page 34567">
@@ -2289,16 +2282,10 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="registration">
-    <param name="Name" value="Registration Dialog">
-    <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
     <param name="Name" value="Registration Form">
     <param name="Local" value="HID_REG_FORM.htm">
     <param name="Name" value="Registration Page command">
     <param name="Local" value="cmd_help\HID_HELP_REGISTRATION.htm">
-    <param name="Name" value="Hex Edit Order Form">
-    <param name="Local" value="HID_REG_FORM_US.htm">
-    <param name="Name" value="Activation Dialog">
-    <param name="Local" value="dlg_other\HIDD_REGISTER_HELP.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="removing">
@@ -2555,10 +2542,10 @@
     <param name="Local" value="dlg_options\HIDD_OPT_MACRO.htm">
     <param name="Name" value="Display Options page">
     <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Filters page">
     <param name="Local" value="dlg_options\Filters.htm">
+    <param name="Name" value="Printer General Options">
+    <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -2687,6 +2674,8 @@
     <param name="Local" value="cmd_window\HID_WINDOW_TILE_HORIZ.htm">
     <param name="Name" value="Window Manager Dialog">
     <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
+    <param name="Name" value="Toggle Window Tabs">
+    <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tile window vertically">
@@ -2694,6 +2683,8 @@
     <param name="Local" value="cmd_window\HID_WINDOW_TILE_VERT.htm">
     <param name="Name" value="Window Manager Dialog">
     <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
+    <param name="Name" value="Toggle Window Tabs">
+    <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="tip of the day">
@@ -2981,6 +2972,8 @@
       <param name="Local" value="dlg_other\HIDD_WINDOW_MANAGER.htm">
       <param name="Name" value="Window Tabs">
       <param name="Local" value="misc\Window_Tabs.htm">
+      <param name="Name" value="Toggle Window Tabs">
+      <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3025,8 +3018,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="page printing options">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="I can't print page 34567">
     <param name="Local" value="troubleshooting\problem_print_page.htm">
     <param name="Name" value="How Do I Change the Printer Margins?">
@@ -3038,8 +3029,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="header, printer">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Page header or footer is not printed">
     <param name="Local" value="troubleshooting\problem_header_missing.htm">
     <param name="Name" value="Printer General Options">
@@ -3049,8 +3038,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="footer, printer">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Page header or footer is not printed">
     <param name="Local" value="troubleshooting\problem_header_missing.htm">
     <param name="Name" value="Printer General Options">
@@ -3060,22 +3047,16 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="line spacing, printer">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Printer General Options">
     <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="dates, printing file">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Printing Decorations page">
     <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="margins, printer page">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Printer General Options">
     <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
@@ -3148,8 +3129,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="privacy">
-    <param name="Name" value="Registration Dialog">
-    <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
     <param name="Name" value="History List Options">
     <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
   </object>
@@ -3494,8 +3473,6 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="printing file time">
-      <param name="Name" value="Printer Options">
-      <param name="Local" value="dlg_options\Printer_Options.htm">
       <param name="Name" value="Printing Decorations page">
       <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
     </object>
@@ -3518,8 +3495,6 @@
     </object>
     <li><object type="text/sitemap">
       <param name="Name" value="printing">
-      <param name="Name" value="Printer Options">
-      <param name="Local" value="dlg_options\Printer_Options.htm">
       <param name="Name" value="Printing Decorations page">
       <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
     </object>
@@ -3719,6 +3694,8 @@
       <param name="Local" value="cmd_operations\HID_MD5.htm">
       <param name="Name" value="Background Processing Page">
       <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
+      <param name="Name" value="SHA1 command">
+      <param name="Local" value="cmd_operations\HID_SHA1.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -3739,10 +3716,10 @@
     <param name="Local" value="binary_files\Error_Checking.htm">
     <param name="Name" value="MD5 Cryptographic Checksum">
     <param name="Local" value="cmd_operations\HID_MD5.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="hash function">
-    <param name="See Also" value="cryptographic checksum">
+    <param name="Name" value="SHA1 command">
+    <param name="Local" value="cmd_operations\HID_SHA1.htm">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Aborting a search or comparison">
@@ -3795,6 +3772,11 @@
       <param name="Local" value="cmd_misc\HID_BOOKMARKS_CLEAR.htm">
       <param name="Name" value="History List Options">
       <param name="Local" value="dlg_options\HIDD_OPT_HISTORY.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="printing">
+      <param name="Name" value="Printer General Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
     </object>
     </ul>
   <li><object type="text/sitemap">
@@ -4241,8 +4223,6 @@
     <param name="Name" value="change tracking">
     <param name="Name" value="Track Changes command">
     <param name="Local" value="cmd_misc\HID_TRACK_CHANGES.htm">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Document Edit Options">
     <param name="Local" value="dlg_options\HIDD_OPT_WINEDIT.htm">
     <param name="Name" value="Printer General Options">
@@ -4299,8 +4279,6 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     <param name="Name" value="Printing Decorations page">
@@ -4321,8 +4299,6 @@
     <param name="Local" value="dlg_properties\HIDD_PROP_SUMMARY.htm">
     <param name="Name" value="Recently Opened Files Dialog">
     <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Explorer Dialog">
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     <param name="Name" value="Printing Decorations page">
@@ -4404,25 +4380,23 @@
     <param name="Name" value="SHA1 command">
     <param name="Local" value="cmd_operations\HID_SHA1.htm">
     <param name="Name" value="SHA 224">
-    <param name="Local" value="cmd_operations\ID_SHA224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA224.htm">
     <param name="Name" value="SHA 256">
-    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA_256.htm">
     <param name="Name" value="SHA 384 Command">
     <param name="Local" value="cmd_operations\SHA_384_Command.htm">
     <param name="Name" value="SHA 512 Command">
     <param name="Local" value="cmd_operations\SHA_512_Command.htm">
     <param name="Name" value="SHA 3 224 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_224.htm">
     <param name="Name" value="SHA 3 256 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_256.htm">
     <param name="Name" value="SHA 3 384 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_384.htm">
     <param name="Name" value="SHA 3 512 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="message digest">
-    <param name="See Also" value="cryptographic checksum">
+    <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="template">
@@ -4615,6 +4589,8 @@
     <param name="Local" value="misc\Window_Tabs.htm">
     <param name="Name" value="Show Tab Icons command">
     <param name="Local" value="cmd_misc\HID_TAB_ICONS.htm">
+    <param name="Name" value="Toggle Window Tabs">
+    <param name="Local" value="cmd_window\HID_TOGGLE_TABS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="split window">
@@ -4820,8 +4796,6 @@
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="borders (printing)">
-    <param name="Name" value="Printer Options">
-    <param name="Local" value="dlg_options\Printer_Options.htm">
     <param name="Name" value="Printer General Options">
     <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
   </object>
@@ -4874,10 +4848,6 @@
     <param name="Local" value="dlg_options\HIDD_OPT_WORKLAYOUT.htm">
     <param name="Name" value="Find Dialog">
     <param name="Local" value="overviewtools\Searching.htm">
-  </object>
-  <li><object type="text/sitemap">
-    <param name="Name" value="modeless dialogs">
-    <param name="See Also" value="tool windows">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="bit-field">
@@ -4946,19 +4916,23 @@
     <param name="Name" value="Background Processing Page">
     <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
     <param name="Name" value="SHA 256">
-    <param name="Local" value="cmd_operations\ID_SHA_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA_256.htm">
     <param name="Name" value="SHA 384 Command">
     <param name="Local" value="cmd_operations\SHA_384_Command.htm">
     <param name="Name" value="SHA 512 Command">
     <param name="Local" value="cmd_operations\SHA_512_Command.htm">
     <param name="Name" value="SHA 3 224 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_224.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_224.htm">
     <param name="Name" value="SHA 3 256 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_256.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_256.htm">
     <param name="Name" value="SHA 3 384 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_384.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_384.htm">
     <param name="Name" value="SHA 3 512 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
+    <param name="Name" value="SHA1 command">
+    <param name="Local" value="cmd_operations\HID_SHA1.htm">
+    <param name="Name" value="Error Detection">
+    <param name="Local" value="binary_files\Error_Checking.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="background statistics">
@@ -5022,7 +4996,27 @@
   <li><object type="text/sitemap">
     <param name="Name" value="digest">
     <param name="Name" value="SHA 3 512 Command">
-    <param name="Local" value="cmd_operations\ID_SHA3_512.htm">
+    <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
+    <param name="Name" value="SHA 224 Command">
+    <param name="Local" value="cmd_operations\HID_SHA224.htm">
+    <param name="Name" value="SHA 256 Command">
+    <param name="Local" value="cmd_operations\HID_SHA_256.htm">
+    <param name="Name" value="SHA 3 224 Command">
+    <param name="Local" value="cmd_operations\HID_SHA3_224.htm">
+    <param name="Name" value="SHA 3 256 Command">
+    <param name="Local" value="cmd_operations\HID_SHA3_256.htm">
+    <param name="Name" value="SHA 3 384 Command">
+    <param name="Local" value="cmd_operations\HID_SHA3_384.htm">
+    <param name="Name" value="SHA 384 Command">
+    <param name="Local" value="cmd_operations\SHA_384_Command.htm">
+    <param name="Name" value="SHA 512 Command">
+    <param name="Local" value="cmd_operations\SHA_512_Command.htm">
+    <param name="Name" value="SHA1 command">
+    <param name="Local" value="cmd_operations\HID_SHA1.htm">
+    <param name="Name" value="MD5 Cryptographic Checksum">
+    <param name="Local" value="cmd_operations\HID_MD5.htm">
+    <param name="Name" value="Checksum Page">
+    <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Bitmap display">
@@ -5141,7 +5135,19 @@
     <param name="Local" value="cmd_preview\HID_PREVW_FLIP_VERT.htm">
   </object>
   <li><object type="text/sitemap">
-    <param name="Name" value="JPG">
+    <param name="Name" value="units">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="printing">
+      <param name="Name" value="Printer General Options">
+      <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="user files">
+    <param name="Name" value="Copy User Files">
+    <param name="Local" value="cmd_help\HID_REPAIR_COPYUSERFILES.htm">
   </object>
 </ul>
 </html>

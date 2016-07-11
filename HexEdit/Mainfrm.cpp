@@ -1067,6 +1067,12 @@ void CMainFrame::RecalcLayout(BOOL bNotify)
 	CMDIFrameWndEx::RecalcLayout(bNotify);
 }
 
+void CMainFrame::AdjustDockingLayout(HDWP hdwp)
+{
+	CMDIFrameWndEx::AdjustDockingLayout(hdwp);
+	Invalidate(TRUE);
+}
+
 LONG CMainFrame::OnOpenMsg(UINT, LONG lParam)
 {
 	char filename[256];

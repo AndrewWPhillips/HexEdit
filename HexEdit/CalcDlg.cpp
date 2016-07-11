@@ -2881,13 +2881,14 @@ void CCalcDlg::OnEquals()               // Calculate result
 	else if (state_ >= CALCINTEXPR)
 	{
 		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
-		//if (state_ == CALCINTEXPR)
-		//	state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_
 	}
 
 	// If the value in current_ is not there as a result of a calculation then
 	// save it before it is lost.
 	save_value_to_macro();
+
+	if (state_ == CALCINTEXPR)
+		state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_
 
 	calc_binary();
 	check_for_error();   // check for overflow/error

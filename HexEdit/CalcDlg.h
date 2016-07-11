@@ -85,7 +85,7 @@ public:
 	bool IsVisible() { return (GetStyle() & WS_VISIBLE) != 0; }
 	void Set(mpz_class t) { current_ = t; state_ = CALCINTUNARY; edit_.put(); edit_.get(); set_right(); }
 	void Set(unsigned __int64 v) { mpz_set_ui64(current_.get_mpz_t(), v); state_ = CALCINTUNARY; edit_.put(); edit_.get(); set_right(); }
-	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); state_ = edit_.update_value(false); }
+	void SetStr(CString ss)  { current_str_ = ss; state_ = CALCOTHRES; edit_.put(); state_ = edit_.update_value(false); set_right(); }
 	void SetFromFile(FILE_ADDRESS addr);
 	void set_right();
 	ExprStringType inc_right_operand(const ExprStringType &expr);

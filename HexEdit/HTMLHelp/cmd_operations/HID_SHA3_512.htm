@@ -8,7 +8,7 @@
 
 <head>
 
-<title>SHA 224 Command</title>
+<title>SHA 3 512 Command</title>
 
 <!--(Meta)==========================================================-->
 
@@ -25,7 +25,7 @@
 
 <!--(Links)=========================================================-->
 
-<link rel="StyleSheet" href="..\Hexedit.css">
+<link rel=StyleSheet href="..\Hexedit.css">
 
 
 
@@ -37,20 +37,25 @@
 <body>
 
 <h2><font style="font-family: Arial;"
-			face=Arial>SHA 224 command</font></h2>
+			face=Arial>SHA 3 512 command</font></h2>
 
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>This performs a cryptographic checksum (also called a message digest 
- or one-way hash function) on the currently selected bytes using SHA 2. 
- <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->The result 
- is a 224-bit integer which is placed in the <a href="../overviewtools/calc.htm">Calculator</a> 
- and (optionally) displayed as hex (as is conventional) in a popup window.</p>
+ or one-way hash function) on the currently selected bytes using SHA 3. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->SHA 3 was 
+ developed due to concerns that SHA 2 may be (or may have been) compromised. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It consequently 
+ uses a very different algorithm (unrelated to MD5, SHA1 and SHA2). However, 
+ it is currently believed that both SHA 2 and SHA 3 should be safe to use 
+ for some time yet.</p>
 
 <p>&nbsp;</p>
 
-<p>If not already in that mode the calculator is switched to hex and to 
- use (at least) 224 bits.</p>
+<p>Like SHA 512, SHA 3 512 leaves a 512-bit integer in the <a href="../overviewtools/calc.htm">Calculator</a> 
+ and (optionally) displayed as hex in a dialog. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
+ not already in that mode the calculator is switched to hex (base 16) and 
+ to use (at least) 512 bits.</p>
 
 <p>&nbsp;</p>
 
@@ -66,9 +71,9 @@
 <p>&nbsp;</p>
 
 <p>It is strongly believed to be computationally infeasible for someone 
- to calculate a set of bytes that would generate a specified SHA2 value. 
+ to calculate a set of bytes that would generate a specified SHA 3 value. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->In other 
- words if you know the SHA2 value for a set of bytes you can be sure they 
+ words if you know the SHA 3 value for a set of bytes you can be sure they 
  have not been tampered with by checking that they still generate the same 
  value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->(This 
  contrasts with CRCs which, although excellent for detecting accidental 
@@ -77,9 +82,9 @@
 
 <p>&nbsp;</p>
 
-<p>Like MD5 and SHA1, SHA 2 can be used to verify that files downloaded 
+<p>Like MD5 and SHA1, SHA 3 can be used to verify that files downloaded 
  from the Internet have not been modified. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->SHA 
- 2 (and SHA 3) are considered more secure than SHA 1 and especially MD5.</p>
+ 3 (and SHA 2) are considered more secure than SHA 1 and especially MD5.</p>
 
 <p>&nbsp;</p>
 
@@ -110,16 +115,15 @@
 <param name="UseButton" value="-1" >
 <param name="ControlLabel" value="Related Topics" >
 <param name="UseIcon" value="0" >
-<param name="Items" value="Error Detection;..\binary_files\Error_Checking.htm$$**$$MD5 Cryptographic Checksum;HID_MD5.htm$$**$$SHA 256 Command;ID_SHA_256.htm$$**$$SHA 384 Command;SHA_384_Command.htm$$**$$SHA 512 Command;SHA_512_Command.htm$$**$$SHA1 command;HID_SHA1.htm$$**$$" >
-<param name="Image" value="" >
+<param name="Items" value="Error Detection;..\binary_files\Error_Checking.htm$$**$$MD5 Cryptographic Checksum;HID_MD5.htm$$**$$SHA 3 256 Command;HID_SHA3_256.htm$$**$$SHA 512 Command;SHA_512_Command.htm$$**$$SHA1 command;HID_SHA1.htm$$**$$">
+<param name="Image" value>
 <param name="FontInfo" value="MS Sans Serif,8,0,," >
-<param name="_CURRENTFILEPATH" value="N:\andrew\cpp\HexEdit\HexEdit\HTMLHelp\cmd_operations\ID_SHA224.htm" >
+<param name="_CURRENTFILEPATH" value="N:\andrew\cpp\HexEdit\HexEdit\HTMLHelp\cmd_operations\ID_SHA3_512.htm" >
 <param name="_ID" value="RelatedTopics" >
 <param name="UseMenu" value="-1" >
 <param name="Frame" value="" >
 <param name="Window" value="" >
-</object>-->
-<OBJECT
+</object> --><OBJECT
   CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
   ID="RelatedTopics"  TYPE="application/x-oleobject" >
   <PARAM  NAME="Command"  VALUE="Related Topics,MENU">
@@ -127,10 +131,9 @@
   <PARAM  NAME="Font"  VALUE="MS Sans Serif,8,0,,">
   <PARAM  NAME="Item1"  VALUE="Error Detection;..\binary_files\Error_Checking.htm">
   <PARAM  NAME="Item2"  VALUE="MD5 Cryptographic Checksum;HID_MD5.htm">
-  <PARAM  NAME="Item3"  VALUE="SHA 256 Command;ID_SHA_256.htm">
-  <PARAM  NAME="Item4"  VALUE="SHA 384 Command;SHA_384_Command.htm">
-  <PARAM  NAME="Item5"  VALUE="SHA 512 Command;SHA_512_Command.htm">
-  <PARAM  NAME="Item6"  VALUE="SHA1 command;HID_SHA1.htm">
+  <PARAM NAME="Item3" VALUE="SHA 3 256 Command;HID_SHA3_256.htm">
+  <PARAM  NAME="Item4"  VALUE="SHA 512 Command;SHA_512_Command.htm">
+  <PARAM  NAME="Item5"  VALUE="SHA1 command;HID_SHA1.htm">
 </OBJECT>
 
 <!--Metadata type="DesignerControl" endspan-->

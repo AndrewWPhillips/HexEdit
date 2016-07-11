@@ -309,6 +309,7 @@ public:
 
 	void InitDockWindows();
 	void FixPanes();
+	virtual void AdjustDockingLayout(HDWP hdwp = NULL);
 
 private:
 

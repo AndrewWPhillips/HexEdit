@@ -24,7 +24,7 @@ public:
 	#define UNICODE_NAME "Unicode default"
 	#define CODEPAGE_NAME "CodePage default"
 	#define PLAIN_NAME "Black & white"
-	//#define PRETTY_NAME "Rainbow"
+	#define PRETTY_NAME "Rainbow"
 	#define MULTI_NAME "Many"
 
 	CScheme(const char *nn) : name_(nn)

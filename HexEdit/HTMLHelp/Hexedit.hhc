@@ -515,6 +515,10 @@
         <param name="Local" value="menus\preview_menu.htm">
       </object>
       <li><object type="text/sitemap">
+        <param name="Name" value="Compare Menu">
+        <param name="Local" value="menus\menu_compare.htm">
+      </object>
+      <li><object type="text/sitemap">
         <param name="Name" value="Tools menu">
         <param name="Local" value="menus\menu_tools.htm">
       </object>
@@ -903,10 +907,6 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Email Support Dialog">
         <param name="Local" value="dlg_other\HIDD_EMAIL.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Reminder Dialog">
-        <param name="Local" value="dlg_other\HIDD_REG_HELP.htm">
       </object>
       </ul>
     <li><object type="text/sitemap">

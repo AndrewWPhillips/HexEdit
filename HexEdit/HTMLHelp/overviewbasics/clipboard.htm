@@ -130,7 +130,7 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p style="margin-top: 0; margin-bottom: 0;">You have a choice of how <span 
- class=HexEdit>HexEdit Pro</span> works with the clipboard, but first you 
+ class=HexEdit>HexEdit</span> works with the clipboard, but first you 
  need to understand how data is stored on the Windows clipboard. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->There 
  are actually three different ways that are used depending on the circumstances:</p>
 
@@ -168,7 +168,7 @@
 			class=kadov-p><p style="margin-top: 0; margin-bottom: 0;">text 
  format, where each byte is stored as two hex digits (plus space and end 
  of line characters) - data can be copied and pasted in <span class=HexEdit>HexEdit 
- Pro</span> (with no lost information) and pasted as hex text into a text 
+ </span> (with no lost information) and pasted as hex text into a text 
  editor</p></li>
 	</ul>
 	
@@ -198,7 +198,7 @@
  interact with the clipboard, all of which work with text. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->First, 
  you need to understand that text on the clipboard is stored internally 
  as Unicode (in versions of Windows derived from NT). <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->When 
- you copy or paste text data in <span class=HexEdit>HexEdit Pro</span> 
+ you copy or paste text data in <span class=HexEdit>HexEdit</span> 
  the text will be automatically converted according to the current character 
  set. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  you are using EBCDIC then anything you cut or copy to the clipboard will 
@@ -208,13 +208,13 @@
 
 <p style="margin-top: 0; margin-bottom: 0;">When pasting from the clipboard 
  the reverse conversion is supplied, so if you are pasting from a Windows 
- text editor into <span class=HexEdit>HexEdit Pro</span> in EBCDIC mode 
+ text editor into <span class=HexEdit>HexEdit</span> in EBCDIC mode 
  the text would automatically be converted from ASCII or Unicode to EBCDIC. 
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However 
- if you are copying and pasting within HexEdit Pro then the binary format 
+ if you are copying and pasting within HexEdit then the binary format 
  data is used in preference to the text data and hence no conversion is 
  performed. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
- you want to copy and paste within <span class=HexEdit>HexEdit Pro</span> 
+ you want to copy and paste within <span class=HexEdit>HexEdit</span> 
  and convert between character sets you need instead to use one of the 
  <a HREF="../cmd_edit/HID_PASTE_ASCII.htm">Paste As ASCII</a>, <a HREF="../cmd_edit/HID_PASTE_EBCDIC.htm">Paste 
  As EBCDIC</a>, or <a HREF="../cmd_edit/HID_PASTE_UNICODE.htm">Paste As 
@@ -237,7 +237,7 @@
 
 <p>The clipboard is great for working with small to medium sized blocks 
  of data, but will not work for blocks of more than about 16 Mbytes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Furthermore, 
- when you paste data into <span class=HexEdit>HexEdit Pro</span> the pasted 
+ when you paste data into <span class=HexEdit>HexEdit</span> the pasted 
  data is stored in memory. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->If 
  you paste a lot of large blocks of data you will cause Windows to slow 
  down or even crash through memory exhaustion.</p>

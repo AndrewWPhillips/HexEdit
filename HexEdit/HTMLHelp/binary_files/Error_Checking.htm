@@ -20,8 +20,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1251>
-<meta name=layout-width content=1564>
+<meta name=layout-height content=1411>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -59,8 +59,8 @@
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For example, 
  magnetic media such as disks and tapes are susceptible to corruption from 
  magnetic fields. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Even 
- the RAM in your computer probably now has error detection to make sure 
- the processor gets back the same byte(s) that it wrote to it.</p>
+ the RAM in your computer may have error detection to make sure the processor 
+ gets back the same byte(s) that it wrote to it.</p>
 
 <p>&nbsp;</p>
 
@@ -114,8 +114,8 @@
 
 <p>&nbsp;</p>
 
-<p>A similar but less common &quot;checksum&quot; is obtained by XORing 
- all the values together rather than adding them.</p>
+<p>A similar &quot;checksum&quot; is obtained by XORing all the values 
+ together rather than adding them.</p>
 
 <p>&nbsp;</p>
 
@@ -171,7 +171,7 @@
  example, in WinZip open the Configuration dialog (Options/Configuration) 
  then in the View page make sure the CRC column is on. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
  CRC in a zip file should match a CRC-32 of the same file done in <span 
- class=HexEdit>HexEdit Pro</span>.</p>
+ class=HexEdit>HexEdit</span>.</p>
 
 <p>&nbsp;</p>
 
@@ -201,13 +201,13 @@
  <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Error correction 
  is also useful in storage systems where if the data is corrupted it is 
  not possible to get back the original value. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example, error correcting memory is becoming very common in computers.</p>
+ example, error correcting memory is used in fail-safe systems.</p>
 
 <p>&nbsp;</p>
 
 <p>Error-correction algorithms can correct simple errors while still detecting 
- gross errors. <!--kadov_tag{{<spaces>}}-->&nbsp;<span class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit 
- Pro</span> does not currently implement any of these algorithms.</p>
+ gross errors. <!--kadov_tag{{<spaces>}}-->&nbsp;<span class=HexEdit><!--kadov_tag{{</spaces>}}-->HexEdit</span> 
+ does not currently implement any of these algorithms.</p>
 
 <p>&nbsp;</p>
 
@@ -216,7 +216,7 @@
 <p style="margin-top: 0; margin-bottom: 0;">&nbsp;</p>
 
 <p>CRCs are good for detecting random errors and even many types of structured 
- errors, however, they cannot protect against deliberate changes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
+ errors. However, they cannot protect against deliberate changes. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
  this you need to use a message digest, also called a cryptographic checksum 
  or one-way hash function.</p>
 
@@ -233,9 +233,9 @@
 
 <p>Obviously, there are multiple data sets that will generate the same 
  message digest. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->However, 
- because of the algorithm and that the message digest is such a large number, 
- it would take a very long time, using a very fast computer to find a set 
- of data that has a particular message digest.</p>
+ because of the algorithm and because the message digest is such a large 
+ number, it would take a very long time, using a very fast computer to 
+ find a set of data that has a particular message digest.</p>
 
 <p>&nbsp;</p>
 
@@ -248,10 +248,23 @@
 
 <p>&nbsp;</p>
 
-<p><span class=HexEdit>HexEdit Pro </span>now supports the MD5 message 
- digest algorithm. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
- is often used on the Internet to verify that downloaded files have not 
- been tampered with.</p>
+<p><span style="font-weight: bold;">HexEdit</span> from early on supported 
+ the MD5 (and later SHA) algorithm as these have traditionally been used 
+ to verify files downloaded from the Internet. Nowadays MD5 is considered 
+ insecure and there is some doubt about the original SHA algorithm (now 
+ called SHA1). This is why HexEdit added support for SHA2 and then SHA3. 
+ <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->SHA2 and 
+ SHA3 also support larger digest values (up to 512 bits), which also greatly 
+ assists their security.</p>
+
+<p>&nbsp;</p>
+
+<p>Note that SHA3 was developed in anticipation of vulnerabilities being 
+ discovered in SHA2, since SHA2 is related to SHA1. However, these vulnerabilities 
+ have not eventuated (yet). Given a choice you can use SHA2 or SHA3 as 
+ both are very secure.</p>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 

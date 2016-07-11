@@ -17,11 +17,10 @@ Adjust position of help window.
     the type of information that a file can contain, but if not you can read
     the excellent introduction to binary files in the help.
 - open help and click a few "All ABout Binary Files" pages
-- scroll down in bit manipulation section
 
   " I'll just open any file now to demonstrate a few features.
     I'll just go into the HexEdit directory where there are a lot of XML files
-    and select _BMP.XML and I'll open it read so I don't accidentally change anything.
+    and select _BMP.XML and I'll open it read only so I don't accidentally change anything.
 - Open _bmp.xml - read-only
 
 ~~~~ 1
@@ -33,7 +32,7 @@ Adjust position of help window.
     since each byte can contain any combination of bits not just
     text characters. Hex editors are often called binary file editors.
 
-  " This is a typical binary editor display where the addresses on the left
+  " This is a typical binary editor display where the addresses are on the left,
     hex values in the middle, and the corresponding text characters on the right.
 
   " The first byte of the file is highlighted in light blue - this is called

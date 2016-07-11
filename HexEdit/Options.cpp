@@ -3157,8 +3157,11 @@ void CColourSchemes::OnSchemeReset()
 		scheme_[scheme_no_] = theApp.default_unicode_scheme_;
 	else if (scheme_[scheme_no_].name_ == CODEPAGE_NAME)
 		scheme_[scheme_no_] = theApp.default_codepage_scheme_;
-	else if (scheme_[scheme_no_].name_ == MULTI_NAME)
+	else if (scheme_[scheme_no_].name_.CompareNoCase(MULTI_NAME) == 0 ||
+		     scheme_[scheme_no_].name_.CompareNoCase(PRETTY_NAME) == 0 )  // Make it easy to get hold of many colours
+	{
 		scheme_[scheme_no_] = theApp.default_multi_scheme_;
+	}
 	else
 		scheme_[scheme_no_] = theApp.default_scheme_;
 

@@ -1,3 +1,15 @@
+.topic HIDC_WIPE_FAST
+Fast wipe strategy where all bytes of the file are overwritten with FF (hex).
+
+.topic HIDC_THUMB_SIZE
+Determines the resolution of the preview image saved.
+
+.topic HIDC_THUMB_MAINVIEW
+Small preview image captures only the main (hex) view, not template, aerial view, etc.
+
+.topic HIDC_BMP_BPP_DISK
+Bit depth (bits per pixel) of the bitmap on disk
+
 .topic HIDC_SAVE_FOLDER_DOC
 The File Save As dialog defaults to the same folder as active file.  If the active file has not yet been saved then the "specified" folder (below) is used.
 
@@ -112,6 +124,18 @@ For some character sets, especially multi-byte ones, not all byte sequences repr
 .topic HIDD_FILE_COMPARE
 Find differences between the current file and another selected file.
 
+.topic HIDC_FIRST_HEADER_OPTS
+Select from a list of defined substitution parameters that can be used in the header.
+
+.topic HIDC_WIPE_GOOD
+More thorough wipe strategy where all bytes of the file are overwritten 3 times.
+
+.topic HIDC_THUMB_ZOOM
+Sets the zoom level when the preview image is displayed (in File Open dialog, or Recent File List).
+
+.topic HIDC_COMPARE_BROWSE
+Browse for a file to compare with
+
 .topic HIDC_SAVE_FOLDER_BOTH
 The Save As dialog opens to the same folder as the last time the File Open or Save As dialog was used.  If they have not been previously opened then the "specified" folder (below) is used.
 
@@ -187,6 +211,15 @@ Uses "hex text" when working with the clipboard.  Using this option when binary 
 .topic HIDC_PRINT_CHANGE
 Changes made to the file will be printed.  On a color printer this will use the current change tracking color.
 
+.topic HIDC_THUMB_REMOVE
+Number of days before any unused preview files are deleted.
+
+.topic HIDC_BMP_FORMAT
+What sort of graphics data is it (BMP, JPEG, etc)
+
+.topic HIDC_BMP_BPP
+Bit depth (bits per pixel) of the bitmap in memory
+
 .topic HIDC_OPEN_FOLDER_LAST
 The File Open dialog defaults to the same folder as the last time it was used.  If not previously used then the "specified" folder (below) is used.
 
@@ -194,7 +227,7 @@ The File Open dialog defaults to the same folder as the last time it was used.  
 Displays a list of functions available in HexEdit expressions. [A few functions, such as addressof, that are only useful in templates are not displayed.]  Select the function and fill in any required parameters.  Some functions have optional parameters and min/max can take any number of parameters.
 
 .topic HIDC_TABICONS
-Displays icons in the window tabs representing the types of file open.
+Displays icons in the window tabs representing the type of file.
 
 .topic HIDC_LINENOS
 Displays line numbers in the address area (on the left side of the window).
@@ -285,6 +318,15 @@ Display the current expression that would be evaluated if the EQUALS (=) button 
 
 .topic HIDC_PRINT_COMPARE
 Shows differences with the current comparison file.  If printing on a color printer it shows differences according to the color scheme in effect.
+
+.topic HIDC_TABCLOSE
+Shows a close button in each file tab.
+
+.topic HIDC_BMP_HEIGHT
+Height in pixels of the bitmap in memory
+
+.topic HIDC_BG_STATS_CRC32
+CRC32 of the whole file
 
 .topic HIDC_PRINT_MARK
 The mark will be printed.  On a color printer this will use the current mark color from the color scheme.
@@ -379,6 +421,12 @@ Deletes a user-defined CRC.  First you need to select a CRC from the list that w
 .topic HIDC_CSRC_FOR
 Different programming languages have slightly different rules for initializing arrays etc.
 
+.topic HIDC_BOOKMARKS_HELP
+Displays the Bookmarks Help page
+
+.topic HIDC_COMPARE_MINMATCH
+Number of consecutive bytes to compare equal when resynchronizing after a mismatch.
+
 .topic HIDC_BASE_STORAGE_UNIT
 The C standard says that bit-fields use a specified storage unit usually the same size as an int (typically 32 bits).  A common extension is to allow the bit-field storage unit to be taken from the base type.  Using this option a bit-field of type short would use a 16-bit storage unit, unsigned char would use an 8-bit storage unit.
 
@@ -465,6 +513,9 @@ Shows the values for the bottom 64 bits of the current calculator value if it is
 
 .topic HIDC_CRC_REFLECTREM
 Determines bit-order of the final value (before final XOR).
+
+.topic HIDC_BMP_HEIGHT_DISK
+Height in pixels of the bitmap on disk
 
 .topic HIDC_CRC_BITS
 Size of the CRC.  Also determines the maximum size of the polynomial, Final XOR and Initial Remainder values (below).
@@ -700,6 +751,15 @@ Set the minimum password length that is required for your purposes.
 .topic HIDC_FILENAME
 The name of the active file.
 
+.topic HIDD_COMPARE_LIST_HELP
+Compare List
+
+.topic HIDC_WIPE_THOROUGH
+All bytes are wiped by overwriting many times with different patterns of data and random values.
+
+.topic HIDC_BMP_WIDTH_DISK
+Width in pixels of the bitmap on disk
+
 .topic HIDC_SAVE_FOLDER_SPECIFIED
 The Save As dialog always uses the same folder.
 
@@ -807,6 +867,12 @@ Footer for the first printed page.
 
 .topic HIDC_CRC_FINALXOR
 Value that is XOR'ed with the final result of the CRC calculation.
+
+.topic HIDD_CALC_HIST_HELP
+Calc hist
+
+.topic HIDC_THUMB_TYPE
+Determines the type of preview image saved. Highly compressed JPEG images do not look as good as PNG.
 
 .topic HIDC_WATERMARK_OPTS
 Select the text to display as a background watermark.
@@ -918,6 +984,12 @@ Select from a list of defined substitution parameters that can be used in a foot
 
 .topic HIDC_DFFD_COLOUR_PICKER
 This is the background color used for all instances of the field in the main view.
+
+.topic HIDC_SHOW_NOT_INDEXED
+When a file's NOT INDEXED flag is on (to indicate it has not been indexed for fast searches) this is shown with a capital N in the Attributes column.
+
+.topic HIDC_BG_STATS_SHA1
+SHA digest of the whole file
 
 .topic HIDC_OPEN_FOLDER_DOC
 The File Open dialog defaults to the same folder as active file.  If there is no file open then the "specified" folder (below) is used.
@@ -1105,6 +1177,18 @@ Header for the first printed page.
 .topic HIDC_CRC_REFLECTIN
 Determines bit-order of the input values.
 
+.topic HIDC_CUSTOM_MENU
+Shows the HexEdit custom menu next to the Windows Explorer menu when you right-click a file in the Explorer file window.
+
+.topic HIDC_TABCOLOUR
+Shows each file tab and thin border in a different color for ease of indentification.
+
+.topic HIDC_CALC_HIST_CLEAR
+Clears the calculator history log
+
+.topic HIDC_BG_STATS_SHA256
+SHA2 (256 bit) digest of the whole file
+
 .topic HIDC_PRINT_WATERMARK
 Prints a "watermark" on each page.  This is large text in a light background color printed behind the rest of the page.
 
@@ -1240,6 +1324,18 @@ Text for the footer that is printed at the bottom of each page.  This may includ
 .topic HIDC_CRC_POLY
 Hexaddecimal value representing the truncated polynomial (not including the top bit).
 
+.topic HIDC_FILTERS_PAGE
+Jump to the File Filters page which affects the Filter List drop down.
+
+.topic HIDC_SHOW_INDEXED
+When a file's NOT INDEXED flag is OFF this is shown with a capital I in the Attributes column or nothing if it is ON.
+
+.topic HIDC_WATERMARK
+The text that is displayed as a background to each printed page. This may include a pre-defined substitution parameter such as the current date.
+
+.topic HIDC_THUMB_ALLVIEWS
+Small preview image captures the whole file view including templates, aerial view, preview view etc
+
 .topic HIDC_PRINT_HIGHLIGHTS
 Highlights will be printed.  On a color printer this will use the current color scheme color.
 
@@ -1338,6 +1434,12 @@ Select this to check for updates via the Internet.  Checks are performed no more
 
 .topic HIDC_CRC_INITREM
 Initial remainder used before CRC algorithm begins.
+
+.topic HIDC_SYNC_TREE
+When the active folder is chnaged in the Explorer file window the tree (folder) window is updated to reflect the location.
+
+.topic HIDC_COMPARE_FILENAME
+File to compare with.
 
 .topic HIDC_PREVIEW
 Displays a preview of the text that will be copied to the clipboard.
@@ -1471,6 +1573,9 @@ Specifies that the first printed page has a different footer to the following pa
 .topic HIDC_INFBIT
 Use infinite precision (signed) integers.
 
+.topic HIDC_BG_STATS_SHA512
+SHA2 (512 bit) digest of the whole file
+
 .topic HIDC_RULER_DEC_NUMS
 Says how often numbers are shown on the decimal ruler.
 
@@ -1570,6 +1675,15 @@ Click this button to toggle the preview area.
 .topic HIDC_HEADER
 Text printed at the top of each page.
 
+.topic HIDC_OPEN_SHARED
+When the file is opened other programs are not prevented from reading or modifying it. Of course, the underlying file may then chnage at any time.
+
+.topic HIDC_DISPLAY_PREVW
+Allows you to choose how to display the bitmap preview.
+
+.topic HIDC_BMP_FORMAT_DISK
+What graphics format is represented by the data on disk
+
 .topic HIDC_EVEN_REVERSE
 Headers and footers are split into 3 parts (left, middle and right).  This options reverses the left and right parts for even pages.  This is typically used for duplex (double-sided) printing.
 
@@ -1665,6 +1779,12 @@ Use this to save the current settings.  You need to enter a unique name before y
 
 .topic HIDC_CSRC_ALIGN
 Select this option to have the output  values aligned in columns.
+
+.topic HIDC_BMP_WIDTH
+Width in pixels of the bitmap in memory
+
+.topic HIDC_BG_STATS_MD5
+MD5 digest of the whole file
 
 .topic HIDC_DISPLAY_TEMPLATE
 Allows you to select how to display the template (tree) view, which given the appropriate template (.XML) file, lets you view and edit the data in a structured format.

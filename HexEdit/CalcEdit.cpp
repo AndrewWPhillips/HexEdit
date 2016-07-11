@@ -91,8 +91,11 @@ void CCalcEdit::put()
 	ASSERT(pp_ != NULL);
 	ASSERT(pp_->radix_ > 1 && pp_->radix_ <= 36);
 
-	if (theApp.refresh_off_ || !pp_->IsVisible())
-		return;
+	// This code is disabled as it causes the expression display to
+	// not work after a macro call (right_ is always set to "0").
+	// TBD Work out a better soln that does not slow down macros.
+	//if (theApp.refresh_off_ || !pp_->IsVisible())
+	//	return;
 
 	if (pp_->state_ <= CALCERROR)
 	{
