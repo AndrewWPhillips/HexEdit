@@ -2881,8 +2881,8 @@ void CCalcDlg::OnEquals()               // Calculate result
 	else if (state_ >= CALCINTEXPR)
 	{
 		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
-		if (state_ == CALCINTEXPR)
-			state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_
+		//if (state_ == CALCINTEXPR)
+		//	state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_
 	}
 
 	// If the value in current_ is not there as a result of a calculation then
@@ -2895,6 +2895,7 @@ void CCalcDlg::OnEquals()               // Calculate result
 
 	// We have a valid result so add it to the history list (even if just added)
 	add_hist();
+	if (state_ == CALCINTEXPR) state_ = CALCINTLIT;
 	edit_.put();    // removing from hist list (in add_hist) seems to clear the edit box sometimes so put it back
 
 	switch (state_)

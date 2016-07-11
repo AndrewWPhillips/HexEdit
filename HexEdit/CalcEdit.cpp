@@ -103,6 +103,7 @@ void CCalcEdit::put()
 		TRACE("++++++ Put: error\r\n");
 		return;
 	}
+//	else if (pp_->state_ <= CALCINTLIT || pp_->state_ == CALCINTEXPR)
 	else if (pp_->state_ <= CALCINTLIT)
 	{
 		// Get value from current_ (integer)
