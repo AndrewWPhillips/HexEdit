@@ -13,6 +13,7 @@ public:
 	void SetData(FILE_ADDRESS, std::vector<FILE_ADDRESS> val, std::vector<COLORREF> col);
 
 protected:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
@@ -29,6 +30,8 @@ private:
 	static const int m_right = 2;                       // right margin
 	static const int m_top = 2;                         // top margin
 	static const int m_bottom = 6;                      // bottom margin
+
+	int m_heightAdjust;
 
 	// These are used to draw the bitmap offscreen - must be re-created whenever the control is resized)
 	CDC * m_pdc;
