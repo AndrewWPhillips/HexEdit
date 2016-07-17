@@ -1,5 +1,4 @@
 !HexEdit/lib/*.lib
-!HexEdit/bin/*.exe
 *.opensdf
 *.sdf
 HexEdit/GitRevision.h
@@ -24,3 +23,6 @@ HexEdit/HTMLHelp/*.hhk
 HexEdit/HTMLHelp/*.js
 HexEdit/HTMLHelp/*.h
 HexEdit/HTMLHelp/*.chm
+HexEdit/HTMLHelp/!chm_tmp_folder_0/
+HexEdit/Install/Release/
+HexEdit/include/OLD/
