@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=705>
-<meta name=layout-width content=1564>
+<meta name=layout-height content=929>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -43,9 +43,14 @@
 	align=center>&nbsp;</p>
 
 <p style="text-align: center;"
-	align=center><img src="OptWSBackground.png" style="border: none;
+	align=center><img src="OptWSBackground.png"
+						style="border-style: none;
+								border: none;
 								width: 627px;
-								height: 304px;" width="627" height="304" border="0"></p>
+								height: 304px;"
+						width=627
+						height=304
+						border=0></p>
 
 <p>&nbsp;</p>
 
@@ -60,8 +65,8 @@
  (either in the Find Tool or the Find dialog) a background search is started 
  for all other occurrences of the same text. The search is done using low-priority 
  background thread(s), so that you should not notice any difference to 
- your normal use of <span class=HexEdit>HexEdit</span>. (The search 
- is done using a background thread with PRIORITY_LOWEST in the active file 
+ your normal use of <span class=HexEdit>HexEdit</span>. (The search is 
+ done using a background thread with PRIORITY_LOWEST in the active file 
  and even lower-priority (PRIORITY_IDLE) threads for any other open files.)</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
@@ -79,9 +84,10 @@
 <p style="margin-left: 18.00pt;">You would normally leave this option on 
  unless you had reason not to. You might turn it off if you do not need 
  the facility and you are working with large files on a network and the 
- file access is slowing down the network. Or perhaps you have another background 
- task that is CPU intensive, so you want to give CPU time to that instead 
- of the background searches.</p>
+ file access is slowing down the network (but see option below to exclude 
+ network files). Or perhaps you have another background task that is CPU 
+ intensive, so you want to give CPU time to that instead of the background 
+ searches.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
@@ -93,6 +99,31 @@
  results are shown in the graph in <a HREF="../dlg_properties/HIDD_PROP_GRAPH.htm">Counts 
  (Statistics) Page</a>, and the CRC and message digest values in <a HREF="../dlg_properties/HIDD_PROP_STATS.htm">Checksum 
  Page</a>.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><span style="font-weight: bold;">CRC32</span> 
+ - calculates the CRC32 of the whole file</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><span style="font-weight: bold;">MD5</span> 
+ - calculates the MD5 digest of the whole file</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><span style="font-weight: bold;">SHA</span> 
+ - calculates the SHA 1 digest of the whole file</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><span style="font-weight: bold;">SHA 256</span> 
+ - calculates the SHA 2 (256 bit) digest of the whole file</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><span style="font-weight: bold;">SHA 512</span> 
+ - calculates the SHA 2 (512 bit) digest of the whole file</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 

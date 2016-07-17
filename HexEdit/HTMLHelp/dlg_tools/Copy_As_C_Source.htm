@@ -8,7 +8,7 @@
 
 <head>
 
-<title>Copy As C Source Dialog</title>
+<title>Copy As Formatted Text Dialog</title>
 
 <!--(Meta)==========================================================-->
 
@@ -19,8 +19,8 @@
 <meta name=filetype content=kadov>
 <meta name=filetype-version content=1>
 <meta name=page-count content=1>
-<meta name=layout-height content=1188>
-<meta name=layout-width content=1564>
+<meta name=layout-height content=1508>
+<meta name=layout-width content=1228>
 
 
 <!--(Links)=========================================================-->
@@ -36,7 +36,7 @@
 
 <body>
 
-<h2 style="font-family: Arial;">Copy As C Source dialog</h2>
+<h2 style="font-family: Arial;">Copy As Formatted Text dialog</h2>
 
 <p>&nbsp;</p>
 
@@ -52,12 +52,12 @@
 
 <p>&nbsp;</p>
 
-<p>This dialog is invoked bye the <a HREF="..\cmd_edit\HID_COPY_CCHAR.htm">Edit/Copy 
- As/C Source command</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
+<p>This dialog is invoked with the <a HREF="..\cmd_edit\HID_COPY_CCHAR.htm">Edit/Copy 
+ As/Formatted Text command</a>. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->It 
  allows you to copy the selected bytes to the clipboard in many different 
- text formats. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->These 
- formats are suitable for pasting into a C or C++ program to initialise 
- an array.</p>
+ text formats. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->This 
+ has many uses such as for pasting into a table or document or into source 
+ code to initialise an array.</p>
 
 <p>&nbsp;</p>
 
@@ -68,10 +68,9 @@
 				height: 12px;"
 		width=31
 		height=12
-		border=0> This is not just useful for generating source code. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->For 
- example the integer and floating point options generate text in the CSV 
- (comma-separated values) format suitable for importing into many programs 
- such as spreadsheets.</p>
+		border=0> The integer and floating point options generate text 
+ in the CSV (comma-separated values) format suitable for importing into 
+ many programs such as spreadsheets.</p>
 
 <p>&nbsp;</p>
 
@@ -95,23 +94,69 @@
 
 <p>&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Indent</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">For:</span></p>
+
+<p style="margin-left: 18.00pt;">Choose an option depending on the intended 
+ use of the data. When the <span style="font-weight: bold;">C/C++ languages</span> 
+ option is selected then the data is embellished with characters so that 
+ the text is suitable for initializing an array or string. For example, 
+ hexadecimal numbers are preceded with 0x; whereas for the <span style="font-weight: bold;">General</span> 
+ option hex numbers simply consist of hex digits separated by commas.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-left: 18.00pt;"><img src="../tip.gif"
+										style="border: none;
+												width: 31px;
+												height: 12px;"
+										width=31
+										height=12
+										border=0>The <span style="font-weight: bold;">C/C++ 
+ languages</span> option is in many cases suitable for other languages. 
+ (In the future other programming languages will be fully supported depending 
+ on demand.)</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">Indent</p>
 
 <p style="margin-left: 18.00pt;">Sets the number of spaces that are added 
  to the start of each line of text.</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Include 
- File Address</span></p>
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Align Columns</span></p>
 
-<p style="margin-left: 18.00pt;">If selected the address within the file 
- of the start of each line of text is prefixed (after the indent) with 
- the address within C style (/* ... */) comment tokens.</p>
+<p style="margin-left: 18.00pt;">Spacing after some numbers is added so 
+ that numbers align to columns (when displayed with a monospaced font).</p>
 
 <p style="margin-left: 18.00pt;">&nbsp;</p>
 
-<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">String</span></p>
+<p style="margin-top: 3.00pt; font-weight: bold;">Include File Address</p>
+
+<p style="margin-left: 18.00pt;">If selected the address within the file 
+ of the start of each line of text is prefixed (after the indent). In C/C++ 
+ mode the address is enclosed in (/* ... */) comment tokens.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Copy</span></p>
+
+<p style="margin-left: 18.00pt;">Select the <span style="font-weight: bold;">Copy</span> 
+ button to copy the text to the clipboard and close the dialog..</p>
+
+<p>&nbsp;</p>
+
+<p style="margin-top: 3.00pt;"><span style="font-weight: bold;">Preview 
+ &gt;&gt;</span></p>
+
+<p style="margin-left: 18.00pt;">Select the <span style="font-weight: bold;">Preview&gt;&gt;</span> 
+ button to expand the dialog to see a preview of the first few lines of 
+ text that would be placed on the clipboard.</p>
+
+<p style="margin-left: 18.00pt;">&nbsp;</p>
+
+<p style="margin-top: 3.00pt; font-weight: bold;">String</p>
 
 <p style="margin-left: 18.00pt;">Each line from the selection is converted 
  to a string, suitable for initialising a char array. <!--kadov_tag{{<spaces>}}-->&nbsp;<!--kadov_tag{{</spaces>}}-->Special 
