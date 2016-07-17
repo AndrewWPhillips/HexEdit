@@ -20,7 +20,7 @@
   </object>
   <ul>
     <li><object type="text/sitemap">
-      <param name="Name" value="What Is HexEdit Pro?">
+      <param name="Name" value="What Is HexEdit?">
       <param name="Local" value="intro\intro.htm">
     </object>
     <li><object type="text/sitemap">
@@ -797,6 +797,14 @@
         <param name="Name" value="Print Progress Dialog">
         <param name="Local" value="dlg_printing\AFX_HIDD_PRINTDLG.htm">
       </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Printer General Options">
+        <param name="Local" value="dlg_options\HIDD_OPT_PRINT_GENERAL.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Printing Decorations page">
+        <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
+      </object>
       </ul>
     <li><object type="text/sitemap">
       <param name="Name" value="Tools Dialogs">
@@ -809,10 +817,6 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Copy As C Source Dialog">
         <param name="Local" value="dlg_tools\Copy_As_C_Source.htm">
-      </object>
-      <li><object type="text/sitemap">
-        <param name="Name" value="Insert Block Dialog">
-        <param name="Local" value="dlg_tools\Insert_Block_Dialog.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Compression Settings Dialog">
@@ -829,6 +833,10 @@
       <li><object type="text/sitemap">
         <param name="Name" value="General CRC Dialog">
         <param name="Local" value="dlg_tools\HIDD_CRC.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Insert Block Dialog">
+        <param name="Local" value="dlg_tools\Insert_Block_Dialog.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Replay Macro dialog">
@@ -895,6 +903,10 @@
       <li><object type="text/sitemap">
         <param name="Name" value="Open Special dialog">
         <param name="Local" value="dlg_other\HIDD_OPEN_SPECIAL.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="New Compare Dialog">
+        <param name="Local" value="dlg_other\HIDD_NEW_COMPARE.htm">
       </object>
       <li><object type="text/sitemap">
         <param name="Name" value="Font Dialog">
