@@ -129,7 +129,7 @@ void CRecentFileDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_NET_RETAIN, net_retain_);
 	//}}AFX_DATA_MAP
 	DDX_GridControl(pDX, IDC_GRID_RFL, grid_);
-	DDX_Check(pDX, IDC_OPEN_READONLY, open_readonly_);
+	DDX_Check(pDX, IDC_OPEN_READ_ONLY, open_readonly_);
 	DDX_Check(pDX, IDC_OPEN_SHARED, open_shared_);
 }
 
@@ -540,7 +540,7 @@ BOOL CRecentFileDlg::OnInitDialog()
 	resizer_.Add(IDC_GRID_RFL, 0, 0, 100, 100);
 	resizer_.Add(IDC_FILES_SELECTED, 100, 0, 0, 0);
 	resizer_.Add(IDC_OPEN_FILES, 100, 0, 0, 0);
-	resizer_.Add(IDC_OPEN_READONLY, 100, 0, 0, 0);
+	resizer_.Add(IDC_OPEN_READ_ONLY, 100, 0, 0, 0);
 	resizer_.Add(IDC_OPEN_SHARED, 100, 0, 0, 0);
 
 	resizer_.Add(IDOK, 100, 0, 0, 0);
@@ -658,13 +658,14 @@ void CRecentFileDlg::OnHelp()
 static DWORD id_pairs[] = {
 	IDC_GRID_RFL, HIDC_GRID_RFL,
 	IDC_OPEN_FILES, HIDC_OPEN_FILES,
-	IDC_OPEN_READONLY, HIDC_OPEN_READONLY,
+	IDC_OPEN_READ_ONLY, HIDC_OPEN_READ_ONLY, 
 	IDC_OPEN_SHARED, HIDC_OPEN_SHARED,
 	IDC_REMOVE_FILES, HIDC_REMOVE_FILES,
 	IDC_FILES_SELECTED, HIDC_FILES_SELECTED,
 	IDC_VALIDATE, HIDC_VALIDATE,
 	IDC_NET_RETAIN, HIDC_NET_RETAIN,
 	IDC_NET_RETAIN_DESC, HIDC_NET_RETAIN,
+	IDC_OPEN_PREVIEW, HIDC_OPEN_PREVIEW,
 	0,0
 };
 
@@ -717,10 +718,10 @@ LRESULT CRecentFileDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		}
 
 	ASSERT(GetDlgItem(IDC_OPEN_FILES) != NULL);
-	ASSERT(GetDlgItem(IDC_OPEN_READONLY) != NULL);
+	ASSERT(GetDlgItem(IDC_OPEN_READ_ONLY) != NULL);
 	ASSERT(GetDlgItem(IDC_OPEN_SHARED) != NULL);
 	ASSERT(GetDlgItem(IDC_REMOVE_FILES) != NULL);
-	GetDlgItem(IDC_OPEN_READONLY)->EnableWindow(rows_selected > 0);
+	GetDlgItem(IDC_OPEN_READ_ONLY)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_OPEN_SHARED)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_REMOVE_FILES)->EnableWindow(rows_selected > 0);
 	GetDlgItem(IDC_OPEN_FILES)->EnableWindow(rows_selected > 0 && !ro);
