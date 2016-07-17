@@ -56,7 +56,7 @@ Provides a description of the selected command.
 Browse for the program to run. It can be a .EXE or .BAT file.
 
 .topic HIDC_BCGBARRES_SAVE
-Select a command from the list in order to delete or change the order in the Tool menu, or to chnage its name or parameters.
+Select a command from the list in order to delete or change the order in the Tool menu, or to change its name or parameters.
 
 .topic HIDC_BCGBARRES_MENU_SHADOWS
 Draw menus with a drop-shadow.
