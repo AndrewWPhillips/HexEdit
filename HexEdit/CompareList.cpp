@@ -1,4 +1,4 @@
-// CompareList.cpp - implements the calculator history (tape)
+// CompareList.cpp - implements the file compare list
 //
 // Copyright (c) 2015 by Andrew W. Phillips
 //
@@ -310,7 +310,7 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 
 			int diffs = pdoc->CompareDifferences();
 
-			if (diffs >= 10000)
+			if (diffs >= 32000)
 			{
 				AddMessage("Too many differences");
 			}
@@ -320,9 +320,10 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 			}
 			else if (diffs == -2)
 			{
-				mess.Format("%d%% complete", pdoc->CompareProgress());
-				AddMessage(mess);
-				last_change_ = -1;   // force update of grid while compare is in progress
+				// We are already displaying progress in the status bar - this is redundant (and may slow the search as it updates too often)
+				//mess.Format("%d%% complete", pdoc->CompareProgress());
+				//AddMessage(mess);
+				//last_change_ = -1;   // force update of grid while compare is in progress
 			}
 		}
 	}

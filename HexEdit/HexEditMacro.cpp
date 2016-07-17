@@ -1739,7 +1739,6 @@ exit_play:
 		}
 		refresh_display(true);
 		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
-		// xxx Make sure current calc. value is displayed
 		enable_carets();
 	}
 

@@ -20,6 +20,7 @@ CSimpleGraph::CSimpleGraph()
 {
 	m_pdc = NULL;
 	m_bar = -1;
+	m_heightAdjust = 39;
 }
 
 void CSimpleGraph::SetData(FILE_ADDRESS maximum, std::vector<FILE_ADDRESS> val, std::vector<COLORREF> col)
@@ -46,6 +47,16 @@ void CSimpleGraph::update()
 	{
 		m_rct = rct;
 
+		CWnd *pAnc;
+		if ((pAnc = GetParent()) != NULL && (pAnc = pAnc->GetParent()) != NULL)
+		{
+			CRect rctAnc;
+			pAnc->GetClientRect(rctAnc);
+
+			// Somehow when the Properties windows is resized small or -ve the graph window
+			// becomes bigger than its container so we work out the adjustment here.
+			m_rct.bottom = rctAnc.Height() - m_heightAdjust;
+		}
 		// Delete old DC/bitmap
 		if (m_pdc != NULL)
 		{
@@ -82,7 +93,7 @@ void CSimpleGraph::update()
 		pc[ii] = add_contrast(m_col[ii], m_back);
 
 	// Draw background
-	m_pdc->FillSolidRect(0, 0, m_rct.Width(), m_rct.Height(), m_back);
+	m_pdc->FillSolidRect(0, 0, rct.Width(), rct.Height(), m_back);
 	draw_axes();
 
 	int width = m_rct.Width() - m_left - m_right;     // width of the actual graph area
@@ -224,6 +235,7 @@ int CSimpleGraph::get_bar(CPoint pt)
 }
 
 BEGIN_MESSAGE_MAP(CSimpleGraph, CWnd)
+	ON_WM_CREATE()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETCURSOR()
@@ -233,6 +245,15 @@ BEGIN_MESSAGE_MAP(CSimpleGraph, CWnd)
 END_MESSAGE_MAP()
 
 // CSimpleGraph message handlers
+int CSimpleGraph::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	m_heightAdjust = (int)(m_heightAdjust * GetDC()->GetDeviceCaps(LOGPIXELSY) / 96.0);
+	return 0;
+}
+
 void CSimpleGraph::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
