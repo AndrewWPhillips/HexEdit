@@ -12,6 +12,7 @@ open file that has multi-byte characters (eg .ISO file)
   make sure the file has occurrences of "ABC" in ASCII and EBCDIC
   Also "XYZ", "xyz", etc
   make sure file is in favourites category and is in FAV task list
+  file should be more than 10K (eg DRAWER.PNG)
 make sure there are a few more files in RFL
 make sure there are a few more categories (TBD, Project A, Corrupt)
 
@@ -20,7 +21,8 @@ Basic View
 
 " This is a whirlwind tour of some of the more useful but less understood features of HexEdit.
   You probably won't use most of what you see here but you may discover something that you will 
-  later find indispensable. This video will move fast so you need to pay attention or pause and replay bits.
+  later find indispensable. This video will move fast so you need to pay attention or pause 
+  and replay bits.
   
 " If you are new to hex editors then this video is NOT for you. I recommend that you look
   at the HexEdit Intro video before anything else.
@@ -106,7 +108,7 @@ Options Dialog
 
 " First - it's grouped into 3 sections. The bottom (Document) settings apply to the currently
   open file. You can see some of the same display settings for the file we are looking at.
-- go to Document/General
+- go to Document/Display
 
 " The middle section (Workspace) is for global display and editing settings.
 - go to Workspace/Display
@@ -140,8 +142,8 @@ Options Dialog
 " The Document Edit page has other useful settings.
 - switch to next page
 
-" One of my favourites is the scroll zone which sets
-  how close to the edge of the screen you can get before the display starts scrolling.
+" One of my favourites is the scroll zone which sets how close to the edge of the screen you can 
+  get before the display starts scrolling.
 - set scroll zone to 5, close Options and move cursor up/down to demo
 - reopen Options dialog
 
@@ -967,12 +969,81 @@ Templates
   of HexEdit. We just saw how easy it is to use
   a template to view and edit a BMP file
 
+" There are templates for a few common file formats
+  but it's also quite easy to create your own.
+  As an example we will quickly create a template
+  for an array of points. The first thing we will
+  do is create a header for the file which just contains
+  the number of points. But first we need an example
+  file say of for 10 points each of 8 bytes plus the
+  4 bytes header.
+- create file of 84 bytes
+- change first byte to "0A"
 
-- create file of 100 bytes
-- C parser to create int count;
-- C parser to create struct {int x,y; } coord[12]; 
-- edit coord to change length from "8" to "count"
-- change y coord ro display as red
+" To create a template just select Template/New
+- create new template
+- turn on Hex and Data columns
+
+" This just has one field called none which eats
+  up all bytes to end of file since its length is blank
+- Expand default, double-click "none" field
+- right-click "default", select Edit, change name to Whirlwind
+
+" Its really easy to add one ore more fields using the C parser
+- right click "none" and select Insert/Parse C Declarations
+- type "long count;" and click OK
+
+" Here we have added a 32-bit integer field
+- right click column header and turn on size
+
+" You can add structs, arrays, or any sort of data that
+  you could declare in C++
+- right click "none" and select Insert/Parse C Declarations
+- type "struct {int x,y; } coord[10];" and click OK
+
+" Now you can see that the "none" field is empty
+  We don't need it now so we delete it
+- right-click "none" and select Delete
+
+" Now we can look closely at the template and
+  make a few adjustments
+- double-click tree root (Whirlwind)
+- select "count" and click Edit
+
+" You can see that count is a 4-byte (or 32-bit) int
+  If we go to the next item we see it is a FOR element
+  which is like an array
+= click >> button
+
+" Here we can see that the array length is 10 but
+  we want it to be taken from the previous "count" field
+- click right-arrow and select "count"
+
+" Finally we can see that the array contains "count" structs
+- click Edit button next to [STRUCT]
+
+" and each struct has an x and a y element
+  If you select the BLANK last element past the end of the list
+  you can see that the total size of the struct is 8 bytes
+- select blank element after "y"
+
+" One cool feature that a user requested was the ability
+  to highlight template fields in the hex view. Say, for example
+  we are just interested in the Y coordinates
+- select y and click Edit
+
+" So we will make the background of all Y coordinates pink
+  by selecting cyan and increasing luminance  (I know the 
+  spelling of luminance is wrong but that's a BCG/MFC bug)
+- click Background colour selection, select other
+  select cyan, switch to CUSTOM tab. drag luminance up
+- click OK five times
+
+" Finally you can edit the fields in the template view
+- change some of the X and Y coordinates in DATA column
+
+" Finally, you should save your template
+- menu: Template/Save As...
 
 ~~~~ 13
 
@@ -980,16 +1051,136 @@ Templates
   keystroke macros and all the things on the
   operations menu
 
-- compression
-  - giant files
-- CRC
-- encryption
+" You can do all sorts of amazing things with keystroke
+  macros, especially when combined with the calculator.
+
+" Some time ago someone asked for a command to XOR all bytes
+  of a file with another file. This is easy to do with a
+  macro so I created a tutorial to shows how
+- menu: Help/Tutorials/
+
+" The commands on the Operations menu perform some sort
+  of transformation or calculation on the current selection
+- make a selection and open Operations menu 
+
+" There are simple conversions, checksums, message digests
+  (that is one-way hashes) and encryption. Actually I need
+  to expand the encryption facilities to add public key
+  encryption including the latest ECC algorithms.
+  
+" One thing you might miss is that there is complete control
+  over CRC generation. Say you want to check a CRC that
+  uses X-Modem with a different initialiser
+- menu: Operations/Checksum/CRC...
+- select CRC XModem from the drop list
+- change initial remainder to FFFF
+
+" You can then save the settings so you can get them back later
+- type "XModem F" into the Name field
+- click Save button
+- click drop list to show new "XModem F" entry at the bottom
+
+"  Of course, the prebuilt CRCs are faster
+- close dialog
+- menu: Operations/Checksum/CRC32
+
+" Here you can see that the result of the CRC is put into the
+  calculator. This allows further use of the number for
+  example in a macro.
+
+" So CRC support is pretty cool as is support for compression
+- menu: Operations/compression/Settings
+
+" There is full support for all ZLIB options. If you don't know
+  ZLIB is - it's an open-source de facto compression standard
+  used in protocols like HTTP and file formats like ZIP.
+- change to GZIP header and click OK
+- select the whole file
+- menu Operations/Compression/Compress
+
+" Note that you can compress any selection length. Like all
+  operations if the selection is very large it gets done a
+  chunk at a time. If the result of the compression is too
+  big for memory then a temporary file is created but this
+  should all happen seamlessly.
+~~~~ 14
 
 " I was about to wrap this up but I just remembered One more 
   thing that is very useful - that is INFOTIPS
   We saw before that if you hold the mouse
   over a bookmark then a little tip window pops up
+- press Ctrl+F2 to set a few bookmarks
+- hold mouse over one to see tip window
 
-- cust (context menus)
-- help control (F1 or right-click)
-- help commands (SF1)
+" This is the INFO TIP window which you can customise
+  to display all sorts of information about the place
+  in the file you are hovering over
+  
+" But first notice that the window is transparent.
+  If you move the mouse over the window it becomes
+  fully opaque. And you can even drag the window
+  to a different position if it gets in the way.
+- demo dragging the tip window
+
+" If we open the Options dialog we can see all the options
+- menu: Tool/Options/Workspace/Info Tips
+
+" If I turn on the Address tip it will show the current
+  address in either hex or decimal depending on how addresses
+  are shown in the window
+- turn on Address tip
+
+" Lets also add a tip line which is the current double word
+  with all bits inverted
+- select Address line and click NEW
+- enter "Word Invert" for name
+- select uword from drop list and add tilde (~) to invert
+
+" Why don't we also display the result in binary rather than hex
+- select "bin" from the Format drop list
+
+" And just for fun why don't we show the current time
+- New: "Time", now(), click OK button
+- hold mouse over a byte
+
+" Here you can see the address of the byte and the
+  inverted bits of the byte and the following byte
+  But there are a couple of problems here:
+  1. first the word should be 16 bits but it is displaying with 64
+     this is because int calcs are done as 64-bit integers
+     so the WORD (16bit) value has been extended from 2 to 8 bytes
+  2. The Time field is displaying the date + we don't need seconds
+- right-click and select Options
+- change "Word Invert" expression to: (~uword) & 0xFFFF
+- change "Time" Format to: "%H:%M"
+
+ALSO mention INFO TIPS in customization tutorial (page 6)
+
+~~~~ 15
+
+" Finally I will mention one last point.
+  You may have noticed the context menu I just used by
+  right-clicking on the screen. There are about ten different
+  context menus available depending on where you click.
+- right click status bar, right click address area
+
+" You can completely customise them
+- right-click a bookmark and select "Customize"
+- select Menu tab, click cotext menu drop-list
+- select "hex area"
+
+" I can move item from other toolbars or menus, but
+  if I hold down the CONTROL key it will copy them
+- drag "star" from standard toolbar to "hex area" context menu
+
+" There is a lot more to customization that I have not covered.
+  For example you can save kestroke macros and attach the to a 
+  key or toolbar button
+
+" In fact there are many other features of HexEdit that I have
+  only touched on or skipped entirely. If you liked this video
+  and want me to go into more details send an email about what
+  you want to see.
+
+--- END ---
+  
