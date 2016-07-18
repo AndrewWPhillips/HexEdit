@@ -26,3 +26,5 @@ HexEdit/HTMLHelp/*.chm
 HexEdit/HTMLHelp/!chm_tmp_folder_0/
 HexEdit/Install/Release/
 HexEdit/include/OLD/
+HexEdit/Graphics/About.jpg
+HexEdit/Graphics/Splash.bmp
