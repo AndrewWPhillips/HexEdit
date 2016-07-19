@@ -1,4 +1,4 @@
-\\VIOLET\work\andrew\cpp\HexEdit\Install\HexEdit.mia
+\\gil-w2k8\Work\andrew\cpp\HexEdit\HexEdit\Install\HexEdit.mia
 componentstree.dfm
 componentstree.dfm.miaf
 destination.dfm
@@ -424,14 +424,6 @@ $
 
 
 
-
-
-
-
-
-
-
-
 $
 $
 1
@@ -439,23 +431,23 @@ $
 TRUE
 
 Expert Commercial Software Pty Ltd
-HexEdit Pro
+HexEdit
 {72FC9DEA-4803-4D67-9989-3B5C5BDB0A66}
 {AFE0735C-699F-4138-8D01-38EBE37DD9A6}
-4.5
+5.0
 English
-HexEdit Pro
-HexEdit Pro Installation
+HexEdit
+HexEdit Installation
 Expert Commercial Software Pty Ltd
-Copyright 2015.  All rights reserved.
-{E02CD283-20C7-4E0C-A76F-267E5E21DE17}
+Copyright 2016.  All rights reserved.
+{97B46CD6-B248-4BDB-BB5E-AFFAAD26CC3A}
 ECSoftware
 A.Phillips
 http://www.hexedit.com/contact_form.aspx
 http://www.hexedit.com/downloads.aspx
-Copyright 2015. All rights reserved.
+Copyright 2016. All rights reserved.
 FALSE
-HexEditPro4_5
+HexEdit5_0
 TRUE
 FALSE
 

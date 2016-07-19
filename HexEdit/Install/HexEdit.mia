@@ -6,11 +6,6 @@ If
 MessageBox
 Terminate Install
 End
-Get System Settings
-If
-MessageBox
-Terminate Install
-End
 Code Folding Region
 Comment
 Code Folding Region
@@ -259,7 +254,6 @@ Install Files
 Install Files
 Install Files
 Install Files
-Install Files
 Write Registry
 Write Registry
 Write Registry
@@ -275,8 +269,6 @@ Create Shortcut
 Create Shortcut
 Create Shortcut
 Create Shortcut
-Create Shortcut
-Create Shortcut
 End
 Install Files
 Install Files
@@ -286,67 +278,67 @@ Install Files
 Install Files
 Install Files
 Install Files
-Install Files
-Web Media Block
-Get Component State
-If
-Install Files
-Install Files
-Install Files
-End
-Web Media Block
-Get Component State
-If
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-Install Files
-End
-Web Media Block
-Get Component State
-If
 Write Registry
+Install Files
+Web Media Block
+Get Component State
+If
+Install Files
+Install Files
+Install Files
+End
+Web Media Block
+Get Component State
+If
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+Install Files
+End
+Web Media Block
+Get Component State
+If
 Write Registry
 Write Registry
 Write Registry
@@ -397,16 +389,11 @@ $
 {EAB25353-C1D7-48FC-8064-E89DEA7BA9D4}
 {7483D4EF-42D2-4140-A58B-EF8ABECE925C}
 {6D24E801-39DE-4D39-A529-06D54D2514D0}
-{8C152601-B2F0-402C-A744-4FB0E4FF9E86}
-{D52E272D-8F94-453D-9008-3F00FE2850E8}
-{F19829DA-7380-40AF-B6BA-5D988821546D}
-{FEE8166C-5D55-4948-A4B1-12B2681A6772}
-{6D67818D-3EB7-4AB4-8B79-143833D498D7}
-{0BDA6136-8E2A-40FC-AF61-23AB0C562B7B}
-{841D339E-CA4E-46E6-87D6-2ABE406F19F3}
-{E2F67E60-FAC8-43C2-B635-F8D4F560CB5F}
-{2EBE3855-9B86-4CC7-93EA-084587A7E20B}
-{A1EF78C0-32F4-48E4-B4D6-0A4429A8C358}
+{A92E5BFC-C6B9-4C43-A6CB-2639A036335A}
+{5747CFC7-94CE-4A31-97EE-BE03AEA91179}
+{3A78AAD0-8FF5-405F-ABD7-941AB01A3F1C}
+{A546BB7D-695A-4FF7-BC46-0A20BD2254CA}
+{F179AC0E-6BD4-4F25-85C7-37308A6D6FD3}
 {8D5D343F-32EE-4D2F-BE33-0596DA214FC4}
 {AAED7AF8-87AD-4709-9E02-1E7659C546E3}
 {8242AC40-CF00-4FA2-9F24-D2FBB5A8BC55}
@@ -654,7 +641,6 @@ $
 {E67C6BAC-E802-401F-93F5-B7004E2380FA}
 {E14853D6-AD79-4A59-9ACE-E300A16CE109}
 {EB7EB42A-66BE-40A4-9F2F-453540A5763B}
-{DED30668-8F7A-4FF3-B1BE-A8FCDC12D8B8}
 {F1944E5A-C454-4E92-84E4-3879E2D01C3E}
 {6C2C1A69-EC93-4ED3-8EC4-24F48FA8B6FC}
 {D945EADD-C81C-4F95-BFF9-40EFD36EAC2D}
@@ -668,13 +654,10 @@ $
 {FD1E2B41-2F31-46A2-B61C-E2A91BE86880}
 {A67BEC18-A94E-41FD-B41B-6D0F5FFAA558}
 {DFD5AA4C-DF14-41B1-A30D-7715B00E89B5}
-{D2715C57-3F9A-481D-A82F-C77A71197DFF}
 {68F9853C-BC58-4A9D-B3A7-6941E0E89983}
-{464B252A-745F-40EF-A659-694A6D1567CE}
 {A34B8A5F-8892-4861-9211-15B8B1209058}
 {26485343-C874-4762-8C31-4A5749555285}
 {C3EC7819-4709-4716-8EC4-348FCE916F34}
-{2B30E1CB-0C15-4134-8B15-BB5E71663DDD}
 {E588705E-F011-41D5-AB95-15996A6A8B94}
 {C3493625-17C1-4E14-A021-A8F63CD71640}
 {DC4816DA-319A-4BDB-A59E-DC68A36B328D}
@@ -683,6 +666,8 @@ $
 {4D2E388B-3518-4245-AE1F-3078B5271754}
 {0A2016A4-F026-4326-A966-8390986020F3}
 {6300E3D6-1F7D-41F8-8B5F-71CA1C65335C}
+{11C2DDE1-CD15-47B6-AF6B-D6D2078923D9}
+{6D6ECCB6-5F78-40EE-8FE5-11D70800F154}
 {6517CF36-D2BC-4366-8732-E5A9286C1BEE}
 {DF144B1B-DB1E-41E9-9FAD-90BEBDCE187D}
 {1D06B7C8-B82D-4387-B4EB-A8BCDFC361EB}
@@ -742,7 +727,6 @@ $
 {F3F9FD3B-955F-430A-B446-421F0FB70CEC}
 {FD717CCB-0DC6-4F63-8CFD-D5C6F798004D}
 {848603DA-C4D2-4C5B-9263-EDD52D2EC896}
-{035BC19F-49F8-47F5-8D2C-C421244CA8B3}
 {BD169D2E-C035-41A5-B600-E4A7115C2DBD}
 {5E3E91E3-2ED4-40CC-959C-8E423F4CB701}
 {A37DC71A-C800-46F5-BA06-FD3CE913AA28}
@@ -1159,16 +1143,6 @@ REMOVESETTINGS
 0
 TRUE
 FALSE
-{841D339E-CA4E-46E6-87D6-2ABE406F19F3}
-CHECKSYSTEM
-0
-TRUE
-TRUE
-{D52E272D-8F94-453D-9008-3F00FE2850E8}
-CHECKSYSTEM
-0
-TRUE
-TRUE
 {1D06B7C8-B82D-4387-B4EB-A8BCDFC361EB}
 SELECTED
 0
@@ -1179,6 +1153,11 @@ EXESHORTCUT
 0
 TRUE
 FALSE
+{5747CFC7-94CE-4A31-97EE-BE03AEA91179}
+CHECKSYSTEM
+0
+TRUE
+TRUE
 {C5D8BEA5-CD51-4AFF-BA11-C7536ED801EF}
 $TITLE$ Setup
 Your computer needs to be restarted before $TITLE$ Setup can continue.$NEWLINE$$NEWLINE$Please save your work in all running programs and click OK to restart your computer. Setup will resume once your computer restarts.$NEWLINE$$NEWLINE$If you click CANCEL, setup will exit. You will have to run setup again at a later time to install $TITLE$.
@@ -1191,15 +1170,9 @@ Unable to uninstall old version of $TITLE$. Please uninstall it yourself using C
 2
 1
 
-{E2F67E60-FAC8-43C2-B635-F8D4F560CB5F}
+{3A78AAD0-8FF5-405F-ABD7-941AB01A3F1C}
 $TITLE$ Setup Error
-This product requires at least Windows 2000.$NEWLINE$$NEWLINE$Setup cannot continue.
-3
-1
-
-{F19829DA-7380-40AF-B6BA-5D988821546D}
-$TITLE$ Setup Error
-This product requires at least Internet Explorer 5.01 Service Pack 1.$NEWLINE$$NEWLINE$Setup cannot continue.
+This product requires at least Windows Vista.$NEWLINE$$NEWLINE$Setup cannot continue.
 3
 1
 
@@ -1329,15 +1302,15 @@ Help and support files for tutorials etc.
 {5BD7EBC5-D56A-435D-BDA8-CB4ED369DDE0}
 Templates
 TRUE
-Many templates for standard file formats.
+Installs templates for a few standard file formats.
 {A7115446-031C-42F1-8351-8A4878E8BA49}
 Explorer Context Menu
 TRUE
-Adds an "Open with HexEdit Pro" option to the Windows Explorer Shell context menu you see when you right click on a file.
+Adds an "Open with HexEdit" option to the Windows Explorer Shell context menu you see when you right click on a file.
 {72337E3D-9EC4-4EA5-9132-058D2985DF79}
 Desktop Shortcut
 FALSE
-Adds a shortcut to HexEdit Pro to your Desktop.$NEWLINE$
+Adds a shortcut to HexEdit to your Desktop.$NEWLINE$
 {C071DD66-BE6F-44F8-8F7A-F76653DBB726}
 Help Files
 FALSE
@@ -1436,14 +1409,11 @@ FALSE
 {E8D431B4-CAC6-4576-9AD9-9340751D2238}
 ISNT
 18
-{0BDA6136-8E2A-40FC-AF61-23AB0C562B7B}
+{A92E5BFC-C6B9-4C43-A6CB-2639A036335A}
 CHECKSYSTEM
-24
-{8C152601-B2F0-402C-A744-4FB0E4FF9E86}
-CHECKSYSTEM
-44
+69
 {92E0ED88-0123-40C0-893B-6B06EAEE70F6}
-D:\andrew\cpp\HexEdit\Install\Templates\_ani.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_ani.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1456,7 +1426,7 @@ FALSE
 FALSE
 FALSE
 {B33D576A-7AF3-4FDB-9CE6-122C42D0085A}
-D:\andrew\cpp\HexEdit\Install\Templates\_bmp.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_bmp.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1469,7 +1439,7 @@ FALSE
 FALSE
 FALSE
 {319A1D18-39A7-4981-A4CD-09CD5C7B6F7C}
-D:\andrew\cpp\HexEdit\Install\Templates\_class.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_class.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1482,7 +1452,7 @@ FALSE
 FALSE
 FALSE
 {63D8EA95-DA39-4674-8C9E-95CA3CCA9153}
-D:\andrew\cpp\HexEdit\Install\Templates\_dbf.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_dbf.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1495,7 +1465,7 @@ FALSE
 FALSE
 FALSE
 {D49BEDD2-53F2-47AF-8D46-2D4F20E1A75F}
-D:\andrew\cpp\HexEdit\Install\Templates\_dbg.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_dbg.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1508,7 +1478,7 @@ FALSE
 FALSE
 FALSE
 {F3334759-F8F7-4C36-B3C2-8190E12EE6E0}
-D:\andrew\cpp\HexEdit\Install\Templates\_dbx.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_dbx.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1521,7 +1491,7 @@ FALSE
 FALSE
 FALSE
 {C0036027-95E4-486C-9552-23F45AE62ABD}
-D:\andrew\cpp\HexEdit\Install\Templates\_emf.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_emf.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1534,7 +1504,7 @@ FALSE
 FALSE
 FALSE
 {F4C81E35-2CB8-4010-9BFD-B7F1E4D68084}
-D:\andrew\cpp\HexEdit\Install\Templates\_exe.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_exe.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1547,7 +1517,7 @@ FALSE
 FALSE
 FALSE
 {D0B358B3-84CD-4ECF-9654-B9444B8DE76F}
-D:\andrew\cpp\HexEdit\Install\Templates\_gif.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_gif.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1560,7 +1530,7 @@ FALSE
 FALSE
 FALSE
 {97455860-BDED-4070-AA0D-EF73BE031DE4}
-D:\andrew\cpp\HexEdit\Install\Templates\_ico.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_ico.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1573,7 +1543,7 @@ FALSE
 FALSE
 FALSE
 {1F5FAF50-409C-4EE1-BFDC-0E68E3DD3E46}
-D:\andrew\cpp\HexEdit\Install\Templates\_iff.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_iff.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1586,7 +1556,7 @@ FALSE
 FALSE
 FALSE
 {A2793759-7E0D-490C-B16E-D01FF3050073}
-D:\andrew\cpp\HexEdit\Install\Templates\_jpg.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_jpg.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1599,7 +1569,7 @@ FALSE
 FALSE
 FALSE
 {E2F332F2-45AA-44B1-9D94-FEDC5C681A0D}
-D:\andrew\cpp\HexEdit\Install\Templates\_mid.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_mid.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1612,7 +1582,7 @@ FALSE
 FALSE
 FALSE
 {F373DA73-2645-40BB-BA0C-D31E896373E6}
-D:\andrew\cpp\HexEdit\Install\Templates\_mp3.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_mp3.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1625,7 +1595,7 @@ FALSE
 FALSE
 FALSE
 {9C4C6B7D-8429-44A6-B09E-ED5CB3F2C3CD}
-D:\andrew\cpp\HexEdit\Install\Templates\_mpg.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_mpg.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1638,7 +1608,7 @@ FALSE
 FALSE
 FALSE
 {248F98B7-7D04-46E1-BA62-9C0A55EFA98C}
-D:\andrew\cpp\HexEdit\Install\Templates\_png.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_png.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1651,7 +1621,7 @@ FALSE
 FALSE
 FALSE
 {3A6A0C20-F403-41D7-BD55-4477CAAE389A}
-D:\andrew\cpp\HexEdit\Install\Templates\_sgy.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_sgy.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1664,7 +1634,7 @@ FALSE
 FALSE
 FALSE
 {B4D4FE73-66A1-4810-B367-777BF6013E96}
-D:\andrew\cpp\HexEdit\Install\Templates\_swf.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_swf.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1677,7 +1647,7 @@ FALSE
 FALSE
 FALSE
 {6F8C4CEA-77AF-48AF-8278-8FDFA0D990B2}
-D:\andrew\cpp\HexEdit\Install\Templates\_tga.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_tga.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1690,7 +1660,7 @@ FALSE
 FALSE
 FALSE
 {0878CF97-E33D-43B6-B626-7D37F87010EA}
-D:\andrew\cpp\HexEdit\Install\Templates\_wav.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_wav.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1703,7 +1673,7 @@ FALSE
 FALSE
 FALSE
 {E3EA0A7B-D962-4EEA-A28A-44128FA33DD2}
-D:\andrew\cpp\HexEdit\Install\Templates\Floppy.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\Floppy.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1716,7 +1686,7 @@ FALSE
 FALSE
 FALSE
 {567AAA12-5DFF-4EB0-A203-4AF69DFD8D43}
-D:\andrew\cpp\HexEdit\Install\Templates\mp3_full.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\mp3_full.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1729,7 +1699,7 @@ FALSE
 FALSE
 FALSE
 {BEEE4529-14A8-46E2-9283-ED09A1210B70}
-D:\andrew\cpp\HexEdit\Install\Templates\default.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\default.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1742,7 +1712,7 @@ FALSE
 FALSE
 FALSE
 {131A9A59-CBA3-41CC-A40D-2DEF2B7433F3}
-D:\andrew\cpp\HexEdit\Install\Templates\_common_types.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_common_types.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1755,7 +1725,7 @@ FALSE
 FALSE
 FALSE
 {23F08B5B-F4EA-4377-8C24-2208395E677E}
-D:\andrew\cpp\HexEdit\Install\Templates\_standard_types.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_standard_types.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1768,7 +1738,7 @@ FALSE
 FALSE
 FALSE
 {58EAAB7E-DA79-4D24-AB81-54E74F379B50}
-D:\andrew\cpp\HexEdit\Install\Templates\_windows_constants.txt
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_windows_constants.txt
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1781,7 +1751,7 @@ FALSE
 FALSE
 FALSE
 {A6209532-3D19-4A6D-9D5A-117964BFF627}
-D:\andrew\cpp\HexEdit\Install\Templates\_windows_types.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_windows_types.XML
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1794,7 +1764,7 @@ FALSE
 FALSE
 FALSE
 {E6AC3294-81CC-44E0-91EA-28974A68D080}
-D:\andrew\cpp\HexEdit\Install\Templates\BinaryFileFormat.DTD
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\BinaryFileFormat.DTD
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1807,7 +1777,7 @@ FALSE
 FALSE
 FALSE
 {209B2A83-E6A7-4F42-A2EF-73DDA613E9EE}
-D:\andrew\cpp\HexEdit\TestData\_charinc.hem
+E:\Work\andrew\cpp\HexEdit\HexEdit\TestData\_charinc.hem
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1820,7 +1790,7 @@ FALSE
 FALSE
 FALSE
 {14658EA1-8F5B-4B4B-B780-EE8B18BFD25A}
-D:\andrew\cpp\HexEdit\TestData\AllChars.hem
+E:\Work\andrew\cpp\HexEdit\HexEdit\TestData\AllChars.hem
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1833,7 +1803,7 @@ FALSE
 FALSE
 FALSE
 {D0C84776-9574-4F6B-B53E-1AD6994F3F75}
-D:\andrew\cpp\HexEdit\Graphics\Splash.bmp
+E:\Work\andrew\cpp\HexEdit\HexEdit\Graphics\Splash.bmp
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1846,7 +1816,7 @@ FALSE
 FALSE
 FALSE
 {A8C0CA38-7DED-49CA-B406-DB8FCB39A0CB}
-D:\andrew\cpp\HexEdit\Graphics\About.jpg
+E:\Work\andrew\cpp\HexEdit\HexEdit\Graphics\About.jpg
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1859,7 +1829,7 @@ FALSE
 FALSE
 FALSE
 {CF29D604-C398-4C0B-9075-2C36318FDE84}
-D:\andrew\cpp\HexEdit\Graphics\Backgrnd.bmp
+E:\Work\andrew\cpp\HexEdit\HexEdit\Graphics\Backgrnd.bmp
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1872,7 +1842,7 @@ FALSE
 FALSE
 FALSE
 {D57F78C7-42C6-48A0-93F9-FDA56BD926B8}
-D:\andrew\cpp\HexEdit\Install\DLLs\FreeImage.dll
+E:\Work\andrew\cpp\HexEdit\HexEdit\DLL\FreeImage.dll
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1885,7 +1855,7 @@ FALSE
 FALSE
 FALSE
 {E67C6BAC-E802-401F-93F5-B7004E2380FA}
-D:\andrew\cpp\HexEdit\DefaultToolbarImages.bmp
+E:\Work\andrew\cpp\HexEdit\HexEdit\DefaultToolbarImages.bmp
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1898,7 +1868,7 @@ FALSE
 FALSE
 FALSE
 {E14853D6-AD79-4A59-9ACE-E300A16CE109}
-D:\andrew\cpp\HexEdit\Ebcdic.tab
+E:\Work\andrew\cpp\HexEdit\HexEdit\Ebcdic.tab
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1911,20 +1881,7 @@ FALSE
 FALSE
 FALSE
 {EB7EB42A-66BE-40A4-9F2F-453540A5763B}
-D:\andrew\cpp\HexEdit\Release\HexEditPro.exe
-FALSE|
-$TARGETDIR$
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-{DED30668-8F7A-4FF3-B1BE-A8FCDC12D8B8}
-D:\andrew\cpp\HexEdit\Install\Order.Txt
+E:\Work\andrew\cpp\HexEdit\HexEdit\Output\Release\HexEdit.exe
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1937,7 +1894,7 @@ FALSE
 FALSE
 FALSE
 {F1944E5A-C454-4E92-84E4-3879E2D01C3E}
-D:\andrew\cpp\HexEdit\HexeditPro.tip
+E:\Work\andrew\cpp\HexEdit\HexEdit\Hexedit.tip
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1950,7 +1907,7 @@ FALSE
 FALSE
 FALSE
 {EB3CD9E5-1254-47AB-8B93-99FC38E1AEEF}
-D:\andrew\cpp\HexEdit\HTMLHelp\HexeditPro.chm
+E:\Work\andrew\cpp\HexEdit\HexEdit\HTMLHelp\Hexedit.chm
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1963,7 +1920,7 @@ FALSE
 FALSE
 FALSE
 {E8046052-081E-4589-AE6E-83B1B7CF702F}
-D:\andrew\cpp\HexEdit\TestData\tutorial.heg
+E:\Work\andrew\cpp\HexEdit\HexEdit\TestData\tutorial.heg
 FALSE|
 $TARGETDIR$
 FALSE
@@ -1976,7 +1933,7 @@ FALSE
 FALSE
 FALSE
 {87FA172F-C2A7-45AC-9A2E-1C0DB7ACB4E6}
-D:\andrew\cpp\HexEdit\Install\DLLs\HHActiveX.dll
+E:\Work\andrew\cpp\HexEdit\HexEdit\DLL\HHActiveX.dll
 FALSE|
 $WINSYSDIR$
 FALSE
@@ -1988,21 +1945,8 @@ FALSE
 FALSE
 FALSE
 FALSE
-{2B30E1CB-0C15-4134-8B15-BB5E71663DDD}
-D:\andrew\cpp\HexEdit\Install\DLLs\MLtaskdialogs.dll
-FALSE|
-$TARGETDIR$
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-FALSE
 {E588705E-F011-41D5-AB95-15996A6A8B94}
-D:\andrew\cpp\HexEdit\TestData\_charinc.hem
+E:\Work\andrew\cpp\HexEdit\HexEdit\TestData\_charinc.hem
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2015,7 +1959,7 @@ FALSE
 FALSE
 FALSE
 {C3493625-17C1-4E14-A021-A8F63CD71640}
-D:\andrew\cpp\HexEdit\TestData\AllChars.hem
+E:\Work\andrew\cpp\HexEdit\HexEdit\TestData\AllChars.hem
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2028,7 +1972,7 @@ FALSE
 FALSE
 FALSE
 {DC4816DA-319A-4BDB-A59E-DC68A36B328D}
-D:\andrew\cpp\HexEdit\Install\Templates\default.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\default.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2041,7 +1985,7 @@ FALSE
 FALSE
 FALSE
 {CC8A4471-1056-4D38-905C-86FFF753883D}
-D:\andrew\cpp\HexEdit\Install\Templates\BinaryFileFormat.dtd
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\BinaryFileFormat.dtd
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2054,7 +1998,7 @@ FALSE
 FALSE
 FALSE
 {F1AA1A37-21BC-43F1-8FC2-FBC0D09B2B87}
-D:\andrew\cpp\HexEdit\Install\Templates\_windows_types.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_windows_types.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2067,7 +2011,7 @@ FALSE
 FALSE
 FALSE
 {4D2E388B-3518-4245-AE1F-3078B5271754}
-D:\andrew\cpp\HexEdit\Install\Templates\_windows_constants.txt
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_windows_constants.txt
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2080,7 +2024,7 @@ FALSE
 FALSE
 FALSE
 {0A2016A4-F026-4326-A966-8390986020F3}
-D:\andrew\cpp\HexEdit\Install\Templates\_standard_types.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_standard_types.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2093,7 +2037,7 @@ FALSE
 FALSE
 FALSE
 {6300E3D6-1F7D-41F8-8B5F-71CA1C65335C}
-D:\andrew\cpp\HexEdit\Install\Templates\_common_types.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_common_types.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2106,7 +2050,7 @@ FALSE
 FALSE
 FALSE
 {FC44D596-57B6-439A-AC76-A969FE7E7B0D}
-D:\andrew\cpp\HexEdit\Install\Templates\_ani.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_ani.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2119,7 +2063,7 @@ FALSE
 FALSE
 FALSE
 {8B2340E1-6FB1-4B82-A2E9-963F61F1DE2D}
-D:\andrew\cpp\HexEdit\Install\Templates\_bmp.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_bmp.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2132,7 +2076,7 @@ FALSE
 FALSE
 FALSE
 {039579B8-C435-406B-A106-3D87FE24B251}
-D:\andrew\cpp\HexEdit\Install\Templates\_class.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_class.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2145,7 +2089,7 @@ FALSE
 FALSE
 FALSE
 {443ADAD1-7FBF-486D-A752-1D8AA2E0FECD}
-D:\andrew\cpp\HexEdit\Install\Templates\_dbf.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_dbf.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2158,7 +2102,7 @@ FALSE
 FALSE
 FALSE
 {0041FAB4-7D27-4155-B8CA-E8995A815F5B}
-D:\andrew\cpp\HexEdit\Install\Templates\_dbg.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_dbg.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2171,7 +2115,7 @@ FALSE
 FALSE
 FALSE
 {D7E6BD69-218E-4976-A36D-0B0A6F4C0C02}
-D:\andrew\cpp\HexEdit\Install\Templates\_DBX.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_DBX.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2184,7 +2128,7 @@ FALSE
 FALSE
 FALSE
 {5778C21F-9595-47E9-A353-0779485E46ED}
-D:\andrew\cpp\HexEdit\Install\Templates\_EMF.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_EMF.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2197,7 +2141,7 @@ FALSE
 FALSE
 FALSE
 {2CB3FC0B-6A46-4F3F-869F-3C39C3843155}
-D:\andrew\cpp\HexEdit\Install\Templates\_EXE.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_EXE.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2210,7 +2154,7 @@ FALSE
 FALSE
 FALSE
 {3E25523F-D387-474A-B2E2-A16CD3F510CA}
-D:\andrew\cpp\HexEdit\Install\Templates\_GIF.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_GIF.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2223,7 +2167,7 @@ FALSE
 FALSE
 FALSE
 {05178C53-9DE8-4DE5-A954-2EC994919698}
-D:\andrew\cpp\HexEdit\Install\Templates\_ico.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_ico.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2236,7 +2180,7 @@ FALSE
 FALSE
 FALSE
 {8DCE1AA7-5456-482D-B129-75FD849A5F8A}
-D:\andrew\cpp\HexEdit\Install\Templates\_IFF.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_IFF.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2249,7 +2193,7 @@ FALSE
 FALSE
 FALSE
 {AB64F338-30AA-4BC1-9C83-98A3A32A3A27}
-D:\andrew\cpp\HexEdit\Install\Templates\_JPG.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_JPG.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2262,7 +2206,7 @@ FALSE
 FALSE
 FALSE
 {7FF5086D-6048-460A-BCE0-11C8C6BE4CE2}
-D:\andrew\cpp\HexEdit\Install\Templates\_mid.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_mid.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2275,7 +2219,7 @@ FALSE
 FALSE
 FALSE
 {52F1852F-D4FC-4913-BBCE-045336AA5699}
-D:\andrew\cpp\HexEdit\Install\Templates\_mp3.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_mp3.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2288,7 +2232,7 @@ FALSE
 FALSE
 FALSE
 {3B8794DA-78D1-4A59-9F92-C0FE5377A82A}
-D:\andrew\cpp\HexEdit\Install\Templates\_MPG.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_MPG.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2301,7 +2245,7 @@ FALSE
 FALSE
 FALSE
 {70403D2A-84C3-44F8-8215-8082D3620B05}
-D:\andrew\cpp\HexEdit\Install\Templates\_png.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_png.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2314,7 +2258,7 @@ FALSE
 FALSE
 FALSE
 {E2295FE2-ACE2-493C-92BF-FFE81BFA17BE}
-D:\andrew\cpp\HexEdit\Install\Templates\_RS.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_RS.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2327,7 +2271,7 @@ FALSE
 FALSE
 FALSE
 {6DAB7EBF-30CA-4CEE-8FE5-096295694D22}
-D:\andrew\cpp\HexEdit\Install\Templates\_SGY.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_SGY.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2340,7 +2284,7 @@ FALSE
 FALSE
 FALSE
 {95F0834E-8583-49A2-8F35-10293673971D}
-D:\andrew\cpp\HexEdit\Install\Templates\_SWF.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_SWF.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2353,7 +2297,7 @@ FALSE
 FALSE
 FALSE
 {BF9ECCE7-FCDF-4C6A-886F-B9BE430407B1}
-D:\andrew\cpp\HexEdit\Install\Templates\_TGA.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_TGA.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2366,7 +2310,7 @@ FALSE
 FALSE
 FALSE
 {086C9DF8-B3B0-4A74-B0A3-84A52B0923E2}
-D:\andrew\cpp\HexEdit\Install\Templates\_wav.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_wav.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2379,7 +2323,7 @@ FALSE
 FALSE
 FALSE
 {D8EFB12F-B5D9-401E-A33F-3001F53D87D0}
-D:\andrew\cpp\HexEdit\Install\Templates\floppy.xml
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\floppy.xml
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2392,7 +2336,7 @@ FALSE
 FALSE
 FALSE
 {65ADF258-7E94-4F4E-8571-1A59CF9EFC08}
-D:\andrew\cpp\HexEdit\Install\Templates\mp3_full.XML
+E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\mp3_full.XML
 FALSE|
 $MYAPPDATA$\ECSoftware\HexEdit
 FALSE
@@ -2404,47 +2348,50 @@ FALSE
 FALSE
 FALSE
 FALSE
+{6D6ECCB6-5F78-40EE-8FE5-11D70800F154}
+E:\Work\andrew\cpp\HexEdit\HexEdit\DLL\mpir.dll
+FALSE|
+$TARGETDIR$
+FALSE
+FALSE
+FALSE
+FALSE
+FALSE
+FALSE
+FALSE
+FALSE
+FALSE
 {28D986A0-0434-44CA-A306-929C6A1C4AE6}
-$TARGETDIR$\HexeditPro.exe
+$TARGETDIR$\Hexedit.exe
 FALSE
 
 FALSE
 
 {E6A9315F-E8D9-420E-96E4-16E44383B7DA}
-$TARGETDIR$\HexEditPro.exe
-HexEdit Pro
+$TARGETDIR$\HexEdit.exe
+HexEdit
 $DESKTOPDIR$
-Runs HexEdit Pro
+Runs HexEdit
 
 $TARGETDIR$\
-D:\andrew\cpp\HexEdit\RES\hexedit2.ico
+e:\work\andrew\cpp\hexedit\hexedit\res\hexedit2.ico
 0
 0
 {26485343-C874-4762-8C31-4A5749555285}
 $UNINSTALLLINK$
-Uninstall HexEdit Pro
+Uninstall HexEdit
 $SHORTCUTFOLDER$
-Removes HexEdit Pro
+Removes HexEdit
 
 
 
 
 0
 {A34B8A5F-8892-4861-9211-15B8B1209058}
-$TARGETDIR$\HexeditPro.chm
+$TARGETDIR$\Hexedit.chm
 Help Manual
 $SHORTCUTFOLDER$
-Launches HexEdit Pro Help
-
-$TARGETDIR$\
-
-
-0
-{464B252A-745F-40EF-A659-694A6D1567CE}
-$TARGETDIR$\Order.Txt
-Order Form
-$SHORTCUTFOLDER$
-Open Printable Order Form
+Launches HexEdit Help
 
 $TARGETDIR$\
 
@@ -2454,17 +2401,7 @@ $TARGETDIR$\
 http://www.hexedit.com/forums.htm
 Support Forums
 $SHORTCUTFOLDER$
-Browse to the HexEdit Pro Support page.
-
-
-
-
-0
-{D2715C57-3F9A-481D-A82F-C77A71197DFF}
-http://www.hexedit.com/register.html
-Register Now
-$SHORTCUTFOLDER$
-Open your browser to HexEdit Pro Registration page.
+Browse to the HexEdit Support page.
 
 
 
@@ -2474,30 +2411,30 @@ Open your browser to HexEdit Pro Registration page.
 http://www.hexedit.com
 Home Page
 $SHORTCUTFOLDER$
-Go to HexEdit Pro web site.
+Go to HexEdit web site.
 
 
 
 
 0
 {82D93A56-702A-4E04-865E-610F13BE458C}
-$TARGETDIR$\HexEditPro.exe
-HexEdit Pro
+$TARGETDIR$\HexEdit.exe
+HexEdit
 $UTILFOLDER$
-Runs HexEdit Pro
+Runs HexEdit
 
 $TARGETDIR$\
-D:\andrew\cpp\HexEdit\RES\hexedit2.ico
+e:\work\andrew\cpp\hexedit\hexedit\res\hexedit2.ico
 0
 0
 {A67BEC18-A94E-41FD-B41B-6D0F5FFAA558}
-$TARGETDIR$\HexEditPro.exe
-HexEdit Pro
+$TARGETDIR$\HexEdit.exe
+HexEdit
 $SHORTCUTFOLDER$
-Runs HexEdit Pro
+Runs HexEdit
 
 $TARGETDIR$\
-D:\andrew\cpp\HexEdit\RES\hexedit2.ico
+e:\work\andrew\cpp\hexedit\hexedit\res\hexedit2.ico
 0
 0
 {FAAD510F-9A74-4691-A7C9-EDF7F25BF748}
@@ -2522,17 +2459,9 @@ FALSE
 {BD169D2E-C035-41A5-B600-E4A7115C2DBD}
 0
 0
-*\Shell\HexEditPro
+*\Shell\HexEdit
 
-Open with HexEdit Pro
-TRUE
-FALSE
-{035BC19F-49F8-47F5-8D2C-C421244CA8B3}
-0
-0
-*\Shell\HexEditPro\command
-
-"$TARGETDIR$\HexEditPro.exe" "%1"
+Open with HexEdit
 TRUE
 FALSE
 {6C2C1A69-EC93-4ED3-8EC4-24F48FA8B6FC}
@@ -2589,6 +2518,14 @@ FALSE
 Software\ECSoftware\HexEdit
 InstallDir
 $TARGETDIR$
+TRUE
+FALSE
+{11C2DDE1-CD15-47B6-AF6B-D6D2078923D9}
+0
+0
+*\Shell\HexEdit\command
+
+"$TARGETDIR$\HexEdit.exe" "%1"
 TRUE
 FALSE
 {5559BB13-17F9-4BAF-B4B0-474136F50166}
@@ -3128,23 +3065,7 @@ $
 
 
 
-
-
-
-
-
-
-
-
 $
-
-
-
-
-
-
-
-
 
 
 
