@@ -715,7 +715,7 @@ BEGIN_MESSAGE_MAP(CHexEditView, CScrView)
 
 /////////////////////////////////////////////////////////////////////////////
 // CHexEditView construction/destruction
-CHexEditView::CHexEditView()
+	CHexEditView::CHexEditView() : tip_(INFOTIPS_OPTIONS_PAGE), sel_tip_(DISPLAY_OPTIONS_PAGE), ruler_tip_(DISPLAY_OPTIONS_PAGE)
 {
 	nav_moves_ = -1;
 	expr_.SetView(this);
@@ -6594,12 +6594,14 @@ void CHexEditView::view_context(CPoint point)
 	ScreenToClient(&cli_pt);
 	CPointAp doc_pt = ConvertFromDP(cli_pt);
 
+#if 0  // comment this out so we always get some context menu
 	if (( (display_.vert_display || display_.char_area) && doc_pt.x >= char_pos(rowsize_)+text_width_ ||
 		 !(display_.vert_display || display_.char_area) && doc_pt.x >= hex_pos(rowsize_) )  )
 	{
 		// Don't do anything if off to right
 		return;
 	}
+#endif
 
 	if (doc_pt.x < hex_pos(0))
 		pCMM->ShowPopupMenu(IDR_CONTEXT_ADDRESS, point.x, point.y, this);
