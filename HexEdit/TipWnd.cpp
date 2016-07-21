@@ -26,7 +26,7 @@ PFSetLayeredWindowAttributes CTipWnd::m_pSLWAfunc = 0;
 
 IMPLEMENT_DYNAMIC(CTipWnd, CWnd)
 
-CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
+CTipWnd::CTipWnd(signed char opt /*=-1*/, UINT fmt /*=DT_NOCLIP|DT_NOPREFIX|DT_EXPANDTABS*/)
 {
 	static CString strClass;
 	if (strClass.IsEmpty())
@@ -35,6 +35,8 @@ CTipWnd::CTipWnd(UINT fmt /* = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS */)
 		strClass = AfxRegisterWndClass(0);
 		ASSERT(!strClass.IsEmpty());
 	}
+
+	m_opt_page = opt;
 
 	m_hovering = m_visible = m_down = false;
 	m_fmt = fmt;
@@ -81,6 +83,7 @@ BEGIN_MESSAGE_MAP(CTipWnd, CWnd)
 	ON_WM_TIMER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_RBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_SETCURSOR()
 	ON_MESSAGE(WM_MOUSEHOVER, OnMouseHover)
@@ -415,6 +418,13 @@ void CTipWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		m_down = false;
 	}
 	CWnd::OnLButtonUp(nFlags, point) ;
+}
+
+void CTipWnd::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	CWnd::OnRButtonDown(nFlags, point);
+	if (m_opt_page > -1)
+		theApp.display_options(m_opt_page, TRUE);
 }
 
 BOOL CTipWnd::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
