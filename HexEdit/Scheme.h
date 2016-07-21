@@ -35,8 +35,8 @@ public:
 		bg_col_ = mark_col_ = hi_col_ = bm_col_ = search_col_ = trk_col_ = comp_col_ = sector_col_ = -1;
 		addr_bg_col_ = hex_addr_col_ = dec_addr_col_ = -1;  // Init here just in case lines below are removed
 		mark_col_     = RGB(0, 224, 224);    // Cyan (-1 gives grey in default colour scheme)
-		hex_addr_col_ = RGB(128, 0, 0);      // Dark red (-1 gives grey)
-		dec_addr_col_ = RGB(0, 0, 128);      // Dark blue (-1 gives grey)
+		hex_addr_col_ = RGB(192, 0, 0);      // Dark red (-1 gives grey)
+		dec_addr_col_ = RGB(0, 0, 192);      // Dark blue (-1 gives grey)
 	}
 	void AddRange(const CString &nn = "", COLORREF cc = 0, const char *rr = NULL)
 	{
