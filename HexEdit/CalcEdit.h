@@ -49,7 +49,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CTipWnd tip_;
+	CTipWnd tip_;    // shows full text of a drop-down item entry
 	int curr_;       // item we are currently showing a tip window for
 };
 

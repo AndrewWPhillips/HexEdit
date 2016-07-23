@@ -23,7 +23,7 @@ class CTipWnd : public CWnd
 	friend class CHexEditView;
 
 public:
-	CTipWnd(UINT fmt = DT_NOCLIP|DT_NOPREFIX|DT_EXPANDTABS);
+	explicit CTipWnd(signed char opt = -1, UINT fmt = DT_NOCLIP | DT_NOPREFIX | DT_EXPANDTABS);
 
 	void Show(int delay = 0, int fade = 200);
 	void Hide(int fade = 200);
@@ -59,6 +59,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg LRESULT OnMouseHover(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnMouseLeave(WPARAM wp, LPARAM lp);
 	DECLARE_MESSAGE_MAP()
@@ -67,12 +68,14 @@ private:
 	UINT  m_fmt;                // Default format flags passed to DrawText
 	CSize m_margins;            // Default margins around the text
 
-	COLORREF m_bg_colour;          // Colour of background
-	COLORREF m_text_colour;        // Colour of text
+	COLORREF m_bg_colour;       // Colour of background
+	COLORREF m_text_colour;     // Colour of text
 	int m_stock_font;
 	bool  m_visible;            // Is window visible or about to be?
 	bool  m_down;               // Is mouse down?
 	CPoint m_down_pt;           // Point when left mouse button went down
+
+	int m_opt_page;             // Options page to display when window is right-clicked
 
 #if _MSC_VER >= 1300
 	typedef CStringW StringType;

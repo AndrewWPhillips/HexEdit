@@ -360,6 +360,12 @@ void COptSheet::page_init()
 	case EXPLORER_OPTIONS_PAGE:
 		pPage = &explorerPage_;
 		break;
+	case INFOTIPS_OPTIONS_PAGE:
+		pPage = &tipsPage_;
+		break;
+	case DISPLAY_OPTIONS_PAGE:
+		pPage = &workspacedisplayPage_;
+		break;
 	}
 
 	// Set initial active page
