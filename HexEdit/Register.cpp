@@ -66,37 +66,41 @@ END_MESSAGE_MAP()
 // xxx add Boost and MPIR
 static const char *ack_name[] =
 {
+	"Boost C++ template library - various",
+	"FreeImage DLL - Hervé Drolon (+ F. van den Berg)",
+	"MPIR (based on GMP) - various",
+	"Crypto++ - We Dai + others",
+	"ZLIB compression - J. Gailly and M. Adler",
 	"MFC Grid Control - Chris Maunder",
 	"Tree control for MFC Grid - Ken Bertelson",
 	"Dialog Resize class (MFC) - Herbert Menke",
-	"ZLIB compression - J. Gailly and M. Adler",
-	"MD5 Message-Digest Alg - RSA Data Security",
 	"Window Splitter class (MFC) - Robert A. T. Káldy",
 	"Splash screen (MFC) - P. J. Naughter",
-	"FreeImage DLL - Hervé Drolon (+ F. van den Berg)",
 	"Transparent controls (MFC) - Ali Rafiee",
-	"range_set class - Andrew W. Phillips",
+	"range_set class - Andrew W. Phillips (me)",
 	"Folder Selection Dialog - Andrew Phillips",
-	"SVN source control - Jim Blandy et al",
-	"TortoiseSVN SVN client - Stefan Küng et al",
+	"Git (version control) - Linus Torvalds + others",
+	"GiHub (open-source repository)",
 	NULL
 };
 
 static const char *ack_url[] =
 {
+	"http://www.boost.org/",
+	"http://freeimage.sourceforge.net/",
+	"http://mpir.org/",
+	"https://www.cryptopp.com/",
+	"http://www.zlib.net/",
 	"http://www.codeproject.com/KB/miscctrl/gridctrl.aspx",
 	"http://www.codeproject.com/KB/miscctrl/gridtreectrl.aspx",
 	"http://www.codeproject.com/KB/dialog/resizectrl.aspx",
-	"http://www.zlib.net/",
-	"http://theory.lcs.mit.edu/~rivest/md5.c",
 	"http://www.codeproject.com/KB/splitter/kaldysimplesplitter.aspx",
 	"http://www.codeproject.com/KB/dialog/splasher.aspx",
-	"http://freeimage.sourceforge.net/",
 	"http://www.codeproject.com/KB/static/TransparentStaticCtrl.aspx",
 	"http://www.ddj.com/dept/cpp/184403660",
 	"http://www.codeguru.com/cpp/w-d/dislog/dialogforselectingfolders/article.php/c1885/",
-	"http://subversion.tigris.org/",
-	"http://tortoisesvn.sourceforge.net/",
+	"https://git-scm.com/",
+	"https://github.com/AndrewWPhillips/HexEdit",
 	NULL
 };
 
