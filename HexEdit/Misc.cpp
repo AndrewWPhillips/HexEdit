@@ -703,6 +703,64 @@ void AddSpaces(CString &str)
 	delete[] out;
 }
 
+CStringW MakePlural(const CStringW & ss)
+{
+	size_t len = ss.GetLength();
+
+	// For single character nouns just add an "s"
+	if (len < 2)
+	{
+		return ss + L"s";
+	}
+
+	// We need the last 2 characters to analyse how to make the plural
+	TCHAR ult = toupper(ss[len - 1]);
+	TCHAR penult = toupper(ss[len - 2]);
+
+	// When the noun ends in SS, SH, CH or X, we add -ES
+	if (penult == 'S' && ult == 'S' ||  // eg: kiss
+		penult == 'S' && ult == 'H' ||  // eg: dish
+		penult == 'C' && ult == 'H' ||  // eg: church
+		ult == 'X')                     // eg: tax
+	{
+		return ss + L"es";
+	}
+
+	// When the noun ends in a VOWEL + Y, we add -S
+	if (ult == 'Y' && CStringW(L"AEIOU").Find(penult) != -1)  // eg: bay, boy, guy
+	{
+		return ss + L"s";
+	}
+
+	// When the noun ends in a CONSONANT + Y, we remove Y and add -IES
+	if (ult == 'Y')                     // eg: city
+	{
+		return ss.Left(len - 1) + L"ies";
+	}
+
+	// If the noun ends in F, we remove the F and add -VES
+	if (ult == 'F')                     // eg: leaf
+	{
+		return ss.Left(len - 1) + L"ves";
+	}
+
+	// If the noun ends in FE, we remove the FE and add -VES
+	if (penult == 'F' && ult == 'E')    // eg: life
+	{
+		return ss.Left(len - 2) + L"ves";
+	}
+
+	// If the noun ends in IS, we change it to ES
+	if (penult == 'I' && ult == 'S')    // eg:crisis
+	{
+		return ss.Left(len - 2) + L"es";
+	}
+
+	// Just append an S for all others
+	return ss + L"s";
+}
+
+
 //-----------------------------------------------------------------------------
 // Conversions
 

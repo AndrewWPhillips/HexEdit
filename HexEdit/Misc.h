@@ -120,6 +120,8 @@ inline std::ostream &operator<<(std::ostream &ss, const __int64 &ii)
 }
 #endif // #ifndef _LONGLONG
 
+CStringW MakePlural(const CStringW & ss);
+
 unsigned long str_hash(const char *str);   // hash value from string
 
 void rand_good_seed(unsigned long seed);
