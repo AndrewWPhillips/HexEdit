@@ -938,6 +938,8 @@
     <param name="Local" value="cmd_tools\HID_CUSTOMIZE.htm">
     <param name="Name" value="Customization Tutorial">
     <param name="Local" value="tute_customize\CustomizeTute0.htm">
+    <param name="Name" value="Application Look Commands">
+    <param name="Local" value="cmd_view\HID_VIEW_APPLOOK.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="cut to clipboard">
@@ -4283,6 +4285,8 @@
     <param name="Local" value="dlg_file\Explorer_Dialog.htm">
     <param name="Name" value="Printing Decorations page">
     <param name="Local" value="dlg_options\HIDD_OPT_PRINT_DECORATIONS.htm">
+    <param name="Name" value="Make Favorite command">
+    <param name="Local" value="cmd_misc\HID_MAKE_FAVORITE.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="keywords">
@@ -4397,6 +4401,8 @@
     <param name="Local" value="cmd_operations\HID_SHA3_512.htm">
     <param name="Name" value="Checksum Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="template">
@@ -4724,6 +4730,8 @@
     <param name="Local" value="overviewtools\AerialView.htm">
     <param name="Name" value="Aerial View menu commands">
     <param name="Local" value="menus\menu_aerial.htm">
+    <param name="Name" value="Aerial View">
+    <param name="Local" value="dlg_options\HIDD_OPT_AERIAL.htm">
   </object>
   <ul>
     <li><object type="text/sitemap">
@@ -5017,6 +5025,8 @@
     <param name="Local" value="cmd_operations\HID_MD5.htm">
     <param name="Name" value="Checksum Page">
     <param name="Local" value="dlg_properties\HIDD_PROP_STATS.htm">
+    <param name="Name" value="Background Processing Page">
+    <param name="Local" value="dlg_options\HIDD_OPT_BACKGROUND.htm">
   </object>
   <li><object type="text/sitemap">
     <param name="Name" value="Bitmap display">
@@ -5148,6 +5158,37 @@
     <param name="Name" value="user files">
     <param name="Name" value="Copy User Files">
     <param name="Local" value="cmd_help\HID_REPAIR_COPYUSERFILES.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="comparing files">
+    <param name="Name" value="New Compare">
+    <param name="Local" value="dlg_other\HIDD_NEW_COMPARE.htm">
+    <param name="Name" value="New Comparison">
+    <param name="Local" value="cmd_compare\HID_COMP_NEW.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="shareable">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="opening files">
+      <param name="Name" value="File Open dialog">
+      <param name="Local" value="dlg_file\AFX_HIDD_FILEOPEN.htm">
+      <param name="Name" value="Recently Opened Files Dialog">
+      <param name="Local" value="dlg_file\Recently_Opened_Files_Dialog.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="favorite category">
+    <param name="Name" value="Make Favorite command">
+    <param name="Local" value="cmd_misc\HID_MAKE_FAVORITE.htm">
+  </object>
+  <li><object type="text/sitemap">
+    <param name="Name" value="jump list">
+    <param name="Name" value="Standard Toolbar">
+    <param name="Local" value="bars\Standard_Toolbar.htm">
+    <param name="Name" value="Make Favorite command">
+    <param name="Local" value="cmd_misc\HID_MAKE_FAVORITE.htm">
   </object>
 </ul>
 </html>

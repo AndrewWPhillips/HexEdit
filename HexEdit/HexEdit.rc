@@ -2136,12 +2136,12 @@ CAPTION "About HexEdit"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "HexEdit 5.0",IDC_LINE1,150,24,166,8
-    LTEXT           "Copyright 1999-2016 Expert Commercial Software Pty Ltd",IDC_LINE2,150,38,96,18
+    LTEXT           "Copyright 1999-2016 Expert Commercial Software Pty Ltd",IDC_LINE2,150,42,96,18
     PUSHBUTTON      "&Email...",IDC_EMAIL,322,38,61,14
-    PUSHBUTTON      "URL",IDC_BUTTON_URL,150,59,166,14,WS_GROUP
-    LTEXT           "Third party software used in HexEdit:",IDC_LINE4,150,165,166,8
-    LISTBOX         IDC_ACK,150,179,166,51,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | WS_VSCROLL
-    PUSHBUTTON      "&More Info...",IDC_ACK_MORE,322,179,61,14
+    PUSHBUTTON      "URL",IDC_BUTTON_URL,150,73,166,14,WS_GROUP
+    LTEXT           "Third party software used in HexEdit:",IDC_LINE4,150,105,166,8
+    LISTBOX         IDC_ACK,150,122,166,105,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_NODATA | WS_VSCROLL
+    PUSHBUTTON      "&More Info...",IDC_ACK_MORE,322,133,61,14
     DEFPUSHBUTTON   "OK",IDOK,322,244,61,14,WS_GROUP
     LTEXT           "Double-click an entry above to open the associated web site.",IDC_LINE5,150,233,166,24
 END

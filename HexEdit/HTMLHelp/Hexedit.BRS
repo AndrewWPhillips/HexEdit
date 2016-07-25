@@ -49,7 +49,7 @@ Cut command | cmd_edit\HID_EDIT_CUT.htm
 Copy command | cmd_edit\HID_EDIT_COPY.htm
 Paste command | cmd_edit\HID_EDIT_PASTE.htm
 Copy As Hex Text | cmd_edit\HID_COPY_HEX.htm
-Copy As C Source | cmd_edit\HID_COPY_CCHAR.htm
+Copy As Formatted Text | cmd_edit\HID_COPY_CCHAR.htm
 Paste As ASCII | cmd_edit\HID_PASTE_ASCII.htm
 Paste As Unicode Text | cmd_edit\HID_PASTE_UNICODE.htm
 Paste As EBCDIC Text | cmd_edit\HID_PASTE_EBCDIC.htm
@@ -493,7 +493,7 @@ Play command | cmd_tools\HID_MULTI_PLAY.htm
 
 [Tools Dialogs]
 Bookmarks dialog | dlg_tools\Bookmarks_dialog.htm
-Copy As C Source Dialog | dlg_tools\Copy_As_C_Source.htm
+Copy As Formatted Text Dialog | dlg_tools\Copy_As_C_Source.htm
 Insert Block Dialog | dlg_tools\Insert_Block_Dialog.htm
 Compression Settings Dialog | dlg_tools\CompressionSettings.htm
 Encryption Algorithm Dialog | dlg_tools\HIDD_ALGORITHM.htm
