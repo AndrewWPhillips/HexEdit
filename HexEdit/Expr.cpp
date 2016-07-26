@@ -152,6 +152,56 @@ expr_eval::tok_t expr_eval::prec_assign(value_t &val)
 			var_changed_ = clock();
 		}
 	}
+	else if (next_tok == TOK_ADD_ASSIGN)
+	{
+		vname.MakeUpper();
+		if (vname.IsEmpty())
+		{
+			strcpy(error_buf_, "Variable name required on the left of +=");
+			return TOK_NONE;
+		}
+
+		if (error(next_tok = prec_assign(val), "Expected expression for +="))
+			return TOK_NONE;
+
+		if (var_[vname].typ == TYPE_INT && val.typ == TYPE_INT)
+		{
+			val.int64 += var_[vname].int64;
+			// Only assign the value if side effects allowed
+			if (changes_on_)
+				var_[vname].int64 = val.int64;
+		}
+		else if (var_[vname].typ == TYPE_REAL && val.typ == TYPE_REAL)
+		{
+			val.real64 += var_[vname].real64;
+			// Only assign the value if side effects allowed
+			if (changes_on_)
+				var_[vname].real64 = val.real64;
+		}
+		else if (var_[vname].typ == TYPE_REAL && val.typ == TYPE_INT)
+		{
+			val.typ = TYPE_REAL;
+			val.real64 = var_[vname].real64 + (double)val.int64;
+			// Only assign the value if side effects allowed
+			if (changes_on_)
+				var_[vname].real64 = val.real64;
+		}
+		else if (var_[vname].typ == TYPE_STRING && val.typ == TYPE_STRING)
+		{
+			*(val.pstr) = *(var_[vname].pstr) + *(val.pstr);
+			// Only assign the value if side effects allowed
+			if (changes_on_)
+				*(var_[vname].pstr) = *(val.pstr);
+		}
+		else
+		{
+			strcpy(error_buf_, "Incompatible types for +=");
+			return TOK_NONE;
+		}
+
+		if (changes_on_)
+			var_changed_ = clock();
+	}
 	else if (val.typ == TYPE_NONE)
 	{
 		if (error_buf_[0] == '\0')
@@ -4097,6 +4147,8 @@ expr_eval::tok_t expr_eval::get_next()
 			return TOK_AND;
 		else if (strcmp(buf, "||") == 0)
 			return TOK_OR;
+		else if (strcmp(buf, "+=") == 0)
+			return TOK_ADD_ASSIGN;
 		else
 		{
 			sprintf(error_buf_, "Unexpected characters \"%.200s\"", buf);
