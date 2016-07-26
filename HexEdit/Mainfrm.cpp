@@ -2253,16 +2253,9 @@ void CMainFrame::StatusBarText(const char *mess /*=NULL*/)
 		m_wndStatusBar.SetPaneText(0, mess);            // Display immediately
 }
 
-// Saves a decimal address or expression for later retrieval
-void CMainFrame::SetDecAddress(const char *ss)
-{
-	current_dec_address_ = ss;
-	current_hex_address_.Empty();
-	CString dummy1, dummy2;
-	(void)GetDecAddress(dummy1, dummy2);
-}
-
-// Saves an expression (involving hex ints) for later retrieval
+// Saves a string (hex number or integer expression or part thereof) which
+// is what the user has or is typing or what they selected from a drop-down
+// before possibly jumping to it (eg by pressing Enter in hex jump tool)
 void CMainFrame::SetHexAddress(const char *ss)
 {
 	current_hex_address_ = ss;
@@ -2271,52 +2264,27 @@ void CMainFrame::SetHexAddress(const char *ss)
 	(void)GetHexAddress(dummy1, dummy2);
 }
 
-FILE_ADDRESS CMainFrame::GetDecAddress(CString &ss, CString &err_str)
+// Get the current entered/selected hex address and return it (+ possible error message)
+// Returns the address or -1 if there was an error (such as invalid hex expression).
+// If side_effects == false then no side effects are performed (eg ++) when evaluating the expression.
+FILE_ADDRESS CMainFrame::GetHexAddress(CString &ss, CString &err_str, bool side_effects /*=false*/)
 {
-	ss = current_dec_address_;
-
-	// Work out address from dec address string
-	int ac;
-	CJumpExpr::value_t vv;
-	if (current_dec_address_.IsEmpty())
-	{
-		err_str = "Expression is empty";
-		return -1;
-	}
-
-	vv = expr_.evaluate(current_dec_address_, 0 /*unused*/, ac /*unused*/, 10 /*dec ints*/);
-
-	if (vv.typ == CJumpExpr::TYPE_INT)
-		return current_address_ = vv.int64;
-	else if (vv.typ == CJumpExpr::TYPE_NONE)
-	{
-		err_str = expr_.get_error_message();
-		return -1;
-	}
-	else
-	{
-		err_str = "Expression does not return an integer";
-		return -1;
-	}
-}
-
-FILE_ADDRESS CMainFrame::GetHexAddress(CString &ss, CString &err_str)
-{
-	ss = current_hex_address_;
-
-	// Work out address from hex address string
-	int ac;
-	CJumpExpr::value_t vv;
 	if (current_hex_address_.IsEmpty())
 	{
 		err_str = "Expression is empty";
 		return -1;
 	}
 
-	vv = expr_.evaluate(current_hex_address_, 0 /*unused*/, ac /*unused*/, 16 /*hex int*/);
+	// First store the hex number/expression (text)
+	ss = current_hex_address_;
+
+	// Work out address from hex address string
+	int ac;
+	CJumpExpr::value_t vv;
+	vv = expr_.evaluate(current_hex_address_, 0 /*unused*/, ac /*unused*/, 16 /*hex int*/, side_effects);
 
 	if (vv.typ == CJumpExpr::TYPE_INT)
-		return current_address_ = vv.int64;
+		return current_address_ = vv.int64;   // save and return the address
 	else if (vv.typ == CJumpExpr::TYPE_NONE)
 	{
 		err_str = expr_.get_error_message();
@@ -2324,23 +2292,24 @@ FILE_ADDRESS CMainFrame::GetHexAddress(CString &ss, CString &err_str)
 	}
 	else
 	{
-		err_str = "Expression does not return an integer";
+		err_str = "Expression does not evaluate to an integer";
 		return -1;
 	}
 }
 
-// Add an address to the list of hex address combo
-void CMainFrame::AddHexHistory(const CString &ss)
+// Update jump controls and history list of a new hex address jump
+void CMainFrame::NewHexJump(const CString &ss)
 {
 	if (ss.IsEmpty()) return;
 
-	SetHexAddress(ss);
+	SetHexAddress(ss);   // allow other jump tools to update with new address
 
 	// If recording macro indicate jump & save address jumped to
 //    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_address_tool, current_address_);
 
+	// Store in the history vector so anybody can check hex jump hist
 	if (hex_hist_.size() > 0 && hex_hist_.back() == ss)
-		return;
+		return;                 // already at end of list so nothing further needed
 
 	// Remove any duplicate entry from the list
 	for (std::vector<CString>::iterator ps = hex_hist_.begin();
@@ -2353,20 +2322,66 @@ void CMainFrame::AddHexHistory(const CString &ss)
 		}
 	}
 
+	// Add to end of list
 	hex_hist_.push_back(ss);
 	hex_hist_changed_ = clock();
 }
 
-// Add an address to the list of dec address combo
-void CMainFrame::AddDecHistory(const CString &ss)
+// Saves a string (decimal number or int expression or part thereof) which
+// is what the user has or is typing or what they selected from a drop-down
+// before possibly jumping to it (eg by pressing Enter in decimal jump tool)
+void CMainFrame::SetDecAddress(const char *ss)
+{
+	current_dec_address_ = ss;
+	current_hex_address_.Empty();
+	CString dummy1, dummy2;
+	(void)GetDecAddress(dummy1, dummy2);
+}
+
+// Get the current entered/selected decimal address and return it (+ possible error message)
+// Returns the address or -1 if there was an error (such as invalid decimal expression).
+// If side_effects == false then no side effects are performed (eg ++) when evaluating the expression.
+FILE_ADDRESS CMainFrame::GetDecAddress(CString &ss, CString &err_str, bool side_effects /*=false*/)
+{
+	if (current_dec_address_.IsEmpty())
+	{
+		err_str = "Expression is empty";
+		return -1;
+	}
+
+	// First store the decimal text
+	ss = current_dec_address_;
+
+	// Work out address from dec address string
+	int ac;
+	CJumpExpr::value_t vv;
+	vv = expr_.evaluate(current_dec_address_, 0 /*unused*/, ac /*unused*/, 10 /*dec ints*/, side_effects);
+
+	if (vv.typ == CJumpExpr::TYPE_INT)
+		return current_address_ = vv.int64;
+	else if (vv.typ == CJumpExpr::TYPE_NONE)
+	{
+		err_str = expr_.get_error_message();
+		return -1;
+	}
+	else
+	{
+		err_str = "Expression does not evaluate to an integer";
+		return -1;
+	}
+}
+
+// Update jump controls and history after a decimal jump
+void CMainFrame::NewDecJump(const CString &ss)
 {
 	if (ss.IsEmpty()) return;
 
-	SetDecAddress(ss);
+	SetDecAddress(ss);   // This allows other jump tools to see th new address
 
 	// If recording macro indicate jump & save address jumped to
 //    ((CHexEditApp *)AfxGetApp())->SaveToMacro(km_address_tool, current_address_);
 
+	// Store in the history vector so anybody can check hex jump hist
 	if (dec_hist_.size() > 0 && dec_hist_.back() == ss)
 		return;
 
@@ -2381,6 +2396,7 @@ void CMainFrame::AddDecHistory(const CString &ss)
 		}
 	}
 
+	// Latest entry is at end of list
 	dec_hist_.push_back(ss);
 	dec_hist_changed_ = clock();
 }
@@ -5117,7 +5133,7 @@ void CMainFrame::OnUpdateSearchCombo(CCmdUI* pCmdUI)
 
 void CMainFrame::OnHexCombo()
 {
-	// We can't search if there is no file open
+	// We can't jump if there is no file open
 	if (GetView() == NULL)
 		return;
 
@@ -5163,7 +5179,7 @@ void CMainFrame::OnHexCombo()
 		pCombo->SetCurSel(0);
 
 		// Force the jump
-		AddHexHistory(ss);
+		NewHexJump(ss);                     // update jump tools with new address
 		SendMessage(WM_COMMAND, ID_JUMP_HEX_START);
 		SetFocus();
 	}
@@ -5227,7 +5243,9 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
 				int ac;
 				CJumpExpr::value_t vv(-1);
 				if (!strCurr.IsEmpty())
-					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 16 /*hex int*/);
+				{
+					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 16 /*hex int*/, false);
+				}
 
 				if (strCurr != current_hex_address_ && vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
 				{
@@ -5248,7 +5266,7 @@ void CMainFrame::OnUpdateHexCombo(CCmdUI* pCmdUI)
 
 void CMainFrame::OnDecCombo()
 {
-	// We can't search if there is no file open
+	// We can't jump if there is no file open
 	if (GetView() == NULL)
 		return;
 
@@ -5295,7 +5313,7 @@ void CMainFrame::OnDecCombo()
 		pCombo->SetCurSel(0);
 
 		// Force the jump
-		AddDecHistory(ss);
+		NewDecJump(ss);
 		SendMessage(WM_COMMAND, ID_JUMP_DEC_START);
 		SetFocus();
 	}
@@ -5360,7 +5378,9 @@ void CMainFrame::OnUpdateDecCombo(CCmdUI* pCmdUI)
 				int ac;
 				CJumpExpr::value_t vv(-1);
 				if (!strCurr.IsEmpty())
-					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 10 /*decimal int*/);
+				{
+					vv = expr_.evaluate(strCurr, 0 /*unused*/, ac /*unused*/, 10 /*decimal int*/, false);
+				}
 
 				if (strCurr != current_dec_address_ && vv.typ == CJumpExpr::TYPE_INT && vv.int64 != current_address_)
 				{

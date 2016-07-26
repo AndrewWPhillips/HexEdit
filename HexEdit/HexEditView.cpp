@@ -12380,11 +12380,10 @@ void CHexEditView::OnSwapMark()
 
 void CHexEditView::OnJumpDec()           // message from BCG edit bar combo
 {
-	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
 	CString addr_str, err_str;
-	FILE_ADDRESS address = mm->GetDecAddress(addr_str, err_str);
+	FILE_ADDRESS address = mm->GetDecAddress(addr_str, err_str, true);
 
 	if (address == -1)
 	{
@@ -12396,21 +12395,8 @@ void CHexEditView::OnJumpDec()           // message from BCG edit bar combo
 	}
 
 	// If recording macro indicate jump & store address jumped to
-	aa->SaveToMacro(km_address_dec, addr_str);
-
-#if 0
-	// Try to go to the address requested
-	FILE_ADDRESS actual;
-	if ((actual = GoAddress(address)) != address)
-	{
-		// Could not go to the requested address - tell user
-		AfxMessageBox("Invalid address entered. Address set to EOF");
-	}
-	SaveMove();          // Save prev pos in undo array
-	DisplayCaret();
-#else
+	theApp.SaveToMacro(km_address_dec, addr_str);
 	MoveWithDesc("Jump (Decimal Jump Tool) ", address);  // space at end means significant nav pt
-#endif
 }
 
 void CHexEditView::OnJumpHex()           // message from BCG edit bar combo
@@ -12418,7 +12404,7 @@ void CHexEditView::OnJumpHex()           // message from BCG edit bar combo
 	CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 
 	CString addr_str, err_str;
-	FILE_ADDRESS address = mm->GetHexAddress(addr_str, err_str);
+	FILE_ADDRESS address = mm->GetHexAddress(addr_str, err_str, true);
 
 	if (address == -1)
 	{
