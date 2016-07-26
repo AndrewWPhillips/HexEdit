@@ -39,6 +39,62 @@ static char THIS_FILE[] = __FILE__;
 
 extern CHexEditApp theApp;
 
+static ExprStringType MakePlural(ExprStringType ss)
+{
+	size_t len = ss.GetLength();
+
+	// For single character nouns just add an "s"
+	if (len < 2)
+	{
+		return ss + ExprStringType("s");
+	}
+
+	TCHAR ult = toupper(ss[len - 1]);
+	TCHAR penult = toupper(ss[len - 2]);
+
+	// When the noun ends in SS, SH, CH or X, we add -ES
+	if (penult == 'S' && ult == 'S' ||
+		penult == 'S' && ult == 'H' || 
+		penult == 'C' && ult == 'H' || 
+		ult == 'X')
+	{
+		return ss + ExprStringType("es");
+	}
+
+	// When the noun ends in a VOWEL + Y, we add -S
+	if ((penult == 'A' || penult == 'E' || penult == 'O' || penult == 'U') &&
+		ult == 'Y')
+	{
+		return ss + ExprStringType("s");
+	}
+
+	// When the noun ends in a CONSONANT + Y, we remove Y and add -IES
+	if (ult == 'Y')
+	{
+		return ss.Left(len - 1) + ExprStringType("ies");
+	}
+
+	// If the noun ends in F, we remove the F and add -VES
+	if (ult == 'F')
+	{
+		return ss.Left(len - 1) + ExprStringType("ves");
+	}
+
+	// If the noun ends in FE, we remove the FE and add -VES
+	if (penult == 'F' && ult == 'E')
+	{
+		return ss.Left(len - 2) + ExprStringType("ves");
+	}
+
+	// If the noun ends in IS, we change it to ES
+	if (penult == 'I' && ult == 'S')
+	{
+		return ss.Left(len - 2) + ExprStringType("es");
+	}
+
+	return ss + ExprStringType("s");
+}
+
 //-----------------------------------------------------------------------------
 // We have to derive our grid class from CGridCtrl so that we can override 
 // Mouse click handling in order to have a useable combo box in the grid header
@@ -1348,7 +1404,7 @@ bool CDataFormatView::InitTreeCol(int ii, GV_ITEM & item)
 			item.iImage = IMAGE_FOR_GREY;
 		else
 			item.iImage = IMAGE_FOR;
-		item.strText += ExprStringType("s");
+		item.strText = MakePlural(item.strText); // += ExprStringType("s");
 		break;
 	case CHexEditDoc::DF_MORE:
 		if (pdoc->df_size_[ii] == 0 || pdoc->df_address_[ii] == -1)
