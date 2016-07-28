@@ -713,6 +713,13 @@ CStringW MakePlural(const CStringW & ss)
 		return ss + L"s";
 	}
 
+	// English has a number of special plurals (men, women, feet, geese, mice,
+	// etc) but probably the only one we are likely to encounter is "children".
+	if (ss.CompareNoCase(L"child") == 0)
+	{
+		return ss + L"ren";
+	}
+
 	// We need the last 2 characters to analyse how to make the plural
 	TCHAR ult = toupper(ss[len - 1]);
 	TCHAR penult = toupper(ss[len - 2]);
