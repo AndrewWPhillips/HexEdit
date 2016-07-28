@@ -57,8 +57,8 @@ public:
 
 	void LoadJumpHistory(CHexEditApp *aa);
 	void SaveJumpHistory(CHexEditApp *aa);
-	void AddHexHistory(const CString &);
-	void AddDecHistory(const CString &);
+	void NewHexJump(const CString &);
+	void NewDecJump(const CString &);
 	void StatusBarText(const char *mess = NULL);
 	void bar_context(CPoint point);
 	void SaveFrameOptions();
@@ -300,8 +300,8 @@ public:
 	void SetAddress(FILE_ADDRESS fa) { current_address_ = fa; current_hex_address_="-1"; current_dec_address_="-1"; }
 	void SetHexAddress(const char *ss);
 	void SetDecAddress(const char *ss);
-	FILE_ADDRESS GetHexAddress(CString &expr_str, CString &err_str);
-	FILE_ADDRESS GetDecAddress(CString &expr_str, CString &err_str);
+	FILE_ADDRESS GetDecAddress(CString &expr_str, CString &err_str, bool side_effects = false);
+	FILE_ADDRESS GetHexAddress(CString &expr_str, CString &err_str, bool side_effects = false);
 
 	int preview_page_;  // global value which was the only way I could work out how to pass the print preview page to CPreviewView
 

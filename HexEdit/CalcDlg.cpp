@@ -2710,12 +2710,12 @@ void CCalcDlg::OnGo()                   // Move cursor to current value
 	}
 	else if (radix_ == 16)
 	{
-		mm_->AddHexHistory(ss);
+		mm_->NewHexJump(ss);             // update jump tools with new address
 		ss = "Go To (hex) " + ss + " ";
 	}
 	else if (radix_ == 10)
 	{
-		mm_->AddDecHistory(ss);
+		mm_->NewDecJump(ss);
 		ss = "Go To (decimal) " + ss + " ";
 	}
 	else

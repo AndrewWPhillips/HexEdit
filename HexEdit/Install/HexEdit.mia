@@ -6,6 +6,11 @@ If
 MessageBox
 Terminate Install
 End
+Get System Settings
+If
+MessageBox
+Terminate Install
+End
 Code Folding Region
 Comment
 Code Folding Region
@@ -390,6 +395,11 @@ $
 {EAB25353-C1D7-48FC-8064-E89DEA7BA9D4}
 {7483D4EF-42D2-4140-A58B-EF8ABECE925C}
 {6D24E801-39DE-4D39-A529-06D54D2514D0}
+{EAFD4695-6C5F-47AE-B9E2-B7F69EC19720}
+{080A7693-8D9B-4D5D-8659-68CE874A330B}
+{5C9C2E2C-5D40-4D1D-A855-AC166AB72BBB}
+{2B09EA96-47D4-4782-8258-A6B0CB19E71D}
+{D28B4D44-E559-4CD5-BBAC-852B488CD7E2}
 {A92E5BFC-C6B9-4C43-A6CB-2639A036335A}
 {5747CFC7-94CE-4A31-97EE-BE03AEA91179}
 {3A78AAD0-8FF5-405F-ABD7-941AB01A3F1C}
@@ -1160,6 +1170,11 @@ CHECKSYSTEM
 0
 TRUE
 TRUE
+{080A7693-8D9B-4D5D-8659-68CE874A330B}
+CHECKSYSTEM
+0
+TRUE
+TRUE
 {C5D8BEA5-CD51-4AFF-BA11-C7536ED801EF}
 $TITLE$ Setup
 Your computer needs to be restarted before $TITLE$ Setup can continue.$NEWLINE$$NEWLINE$Please save your work in all running programs and click OK to restart your computer. Setup will resume once your computer restarts.$NEWLINE$$NEWLINE$If you click CANCEL, setup will exit. You will have to run setup again at a later time to install $TITLE$.
@@ -1175,6 +1190,12 @@ Unable to uninstall old version of $TITLE$. Please uninstall it yourself using C
 {3A78AAD0-8FF5-405F-ABD7-941AB01A3F1C}
 $TITLE$ Setup Error
 This product requires at least Windows Vista.$NEWLINE$$NEWLINE$Setup cannot continue.
+3
+1
+
+{5C9C2E2C-5D40-4D1D-A855-AC166AB72BBB}
+$TITLE$ Setup Error
+This product requires at least Windows XP.$NEWLINE$$NEWLINE$Setup cannot continue.
 3
 1
 
@@ -1414,6 +1435,9 @@ ISNT
 {A92E5BFC-C6B9-4C43-A6CB-2639A036335A}
 CHECKSYSTEM
 69
+{EAFD4695-6C5F-47AE-B9E2-B7F69EC19720}
+CHECKSYSTEM
+25
 {92E0ED88-0123-40C0-893B-6B06EAEE70F6}
 E:\Work\andrew\cpp\HexEdit\HexEdit\Install\Templates\_ani.XML
 FALSE|
@@ -3081,7 +3105,17 @@ $
 
 
 
+
+
+
+
+
 $
+
+
+
+
+
 
 
 

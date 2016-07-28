@@ -77,6 +77,9 @@ public:
 		TOK_ROL, TOK_ROR, TOK_ASR,      // Bit manipulation with bit count
 		TOK_GET,                        // Get value from file at an address
 
+		// These were added in 5.0
+		TOK_ADD_ASSIGN,                 // +=
+
 		// Leave end of line token at the end
 		TOK_EOL
 	};
