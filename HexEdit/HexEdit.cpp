@@ -3543,15 +3543,21 @@ void CHexEditApp::set_options(struct OptValues &val)
 	                      bg_exclude_removeable_ != val.bg_exclude_removeable_ ||
 	                      bg_exclude_optical_ != val.bg_exclude_optical_;
 	bool stats_changed = bg_stats_ != val.bg_stats_ ||
-	                     bg_stats_crc32_ != val.bg_stats_crc32_ || 
-	                     bg_stats_md5_ != val.bg_stats_md5_ || 
-						 bg_stats_sha1_ != val.bg_stats_sha1_ ||
-						 bg_stats_sha256_ != val.bg_stats_sha256_ ||
-						 bg_stats_sha512_ != val.bg_stats_sha512_ ||
 	                     bg_exclude_device_ != val.bg_exclude_device_ ||
 	                     bg_exclude_network_ != val.bg_exclude_network_ ||
 	                     bg_exclude_removeable_ != val.bg_exclude_removeable_ ||
 	                     bg_exclude_optical_ != val.bg_exclude_optical_;
+	bool stats_restart = false;
+	if (!stats_changed && val.bg_stats_)
+	{
+		// Stats was on and is still on - we need to check if it needs to restart
+		stats_restart =
+			!bg_stats_crc32_ && val.bg_stats_crc32_ ||
+			!bg_stats_md5_ && val.bg_stats_md5_ ||
+			!bg_stats_sha1_ && val.bg_stats_sha1_ ||
+			!bg_stats_sha256_ && val.bg_stats_sha256_ ||
+			!bg_stats_sha512_ && val.bg_stats_sha512_;
+	}
 
 	bg_search_ = val.bg_search_;
 	bg_stats_ = val.bg_stats_;
@@ -3583,6 +3589,26 @@ void CHexEditApp::set_options(struct OptValues &val)
 			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
 			ASSERT(pdoc != NULL);
 			pdoc->AlohaStats();  // say hello or goodbye to the bg stats thread
+		}
+	}
+	else if (stats_restart)
+	{
+		ASSERT(bg_stats_);  // stats should be on before we restart them
+		bg_stats_ = FALSE;
+		POSITION posn = m_pDocTemplate->GetFirstDocPosition();
+		while (posn != NULL)
+		{
+			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+			ASSERT(pdoc != NULL);
+			pdoc->AlohaStats();  // stop
+		}
+		bg_stats_ = TRUE;
+		posn = m_pDocTemplate->GetFirstDocPosition();
+		while (posn != NULL)
+		{
+			CHexEditDoc *pdoc = dynamic_cast<CHexEditDoc *>(m_pDocTemplate->GetNextDoc(posn));
+			ASSERT(pdoc != NULL);
+			pdoc->AlohaStats();  // restart
 		}
 	}
 

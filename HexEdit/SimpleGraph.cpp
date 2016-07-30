@@ -250,6 +250,7 @@ int CSimpleGraph::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	// Fix the height adjustment for current DPI (Windows default is 96 dots/inch)
 	m_heightAdjust = (int)(m_heightAdjust * GetDC()->GetDeviceCaps(LOGPIXELSY) / 96.0);
 	return 0;
 }
