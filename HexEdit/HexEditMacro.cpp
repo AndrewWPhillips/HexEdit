@@ -1805,7 +1805,7 @@ void CHexEditApp::refresh_display(bool do_all /*=false*/)
 	if ((do_all || refresh_bars_) && mm->m_paneCalc.IsWindowVisible())
 	{
 		mm->m_wndCalc.UpdateData(FALSE);  // Update base/bits radio buttons etc
-		mm->m_wndCalc.edit_.put();        // Make sure current calc. value is displayed
+		//mm->m_wndCalc.edit_.put();   // With this line record "1+2.3" plays back as result (3.3), but we just need "1+2.3" in the calc text box
 		//mm->m_wndCalc.set_right();
 		//mm->m_wndCalc.update_expr();
 		mm->m_wndCalc.update_controls();
