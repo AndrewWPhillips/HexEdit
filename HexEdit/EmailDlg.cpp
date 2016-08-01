@@ -34,7 +34,7 @@ CEmailDlg::CEmailDlg(CWnd* pParent /*=NULL*/)
 {
 		//{{AFX_DATA_INIT(CEmailDlg)
 		to_ = _T("");
-		subject_ = _T("");
+		subject_ = _T("[hexedit]");
 		systype_ = _T("");
 		text_ = _T("");
 		type_ = -1;
@@ -45,7 +45,7 @@ CEmailDlg::CEmailDlg(CWnd* pParent /*=NULL*/)
 
 	CHexEditApp *aa = dynamic_cast<CHexEditApp *>(AfxGetApp());
 
-	to_ = "aphillips@HexEdit.com";
+	to_ = "HexEditSup@GMail.com";
 	type_ = 1;
 	systype_ = "This system";
 //    version_ = CString("Version ") + CString(aa->version_);
@@ -105,7 +105,8 @@ void CEmailDlg::OnOK()
 	if (!UpdateData(TRUE))
 		return;
 
-	if (subject_.IsEmpty())
+	subject_.Trim();
+	if (subject_.IsEmpty() || subject_.CompareNoCase(_T("[hexedit]")) == 0)
 	{
 		TaskMessageBox("Empty Subject", "Please enter a brief description.");
 		ASSERT(GetDlgItem(IDC_SUBJECT) != NULL);
