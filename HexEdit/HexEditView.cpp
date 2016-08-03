@@ -15439,9 +15439,11 @@ void CHexEditView::DoDigest(CryptoPP::HashTransformation * digest, int mac_id)
 		}
 
 		// Load the value into the calculator ensuring bits is at least big enough and radix is hex
-		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() < result_len*8)
-			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(result_len*8);
-		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
+		if (((CMainFrame *)AfxGetMainWnd())->m_wndCalc.get_bits() <= result_len * 8)
+		{
+			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_bits(result_len * 8);
+			((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_signed(false);  // avoid overflow if top bit is on
+		}
 		((CMainFrame *)AfxGetMainWnd())->m_wndCalc.change_base(16);       // Digests are traditionally shown in hex
 
 		//((CMainFrame *)AfxGetMainWnd())->m_wndCalc.SetStr(ss);
