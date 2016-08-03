@@ -1027,7 +1027,7 @@ private:
 	enum BG_STATE   comp_state_;
 	enum BG_COMMAND comp_command_;
 	bool comp_fin_;             // Flags that the bg scan is finished and the view needs updating
-	clock_t comp_clock_;        // Remember when the last compare finished so we don't update the compare list unnecissarily
+	clock_t comp_clock_;        // Remember when the last compare finished so we don't update the compare list unnecessarily
 	unsigned char *comp_bufa_, *comp_bufb_; // Buffers used for holding data from both files (only used by background thread)
 
 	FILE_ADDRESS comp_progress_; // Distance through the file is used to estimate progress
