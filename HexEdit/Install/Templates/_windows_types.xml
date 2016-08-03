@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE binary_file_format SYSTEM "BinaryFileFormat.dtd">
-<binary_file_format name="WindowsTypes" comment="Types from Windows/MFC headers. This file is used in parsing C/C++ source code for declarations.">
+<binary_file_format name="WindowsTypes" comment="Types extracted from MS Windows/MFC headers. This file is used in parsing C/C++ source code for declarations.">
 	<data type="int" name="HANDLE" format="unsigned" len="4" display="hex" type_name="HANDLE"/>
 	<data type="int" name="HWND" format="unsigned" len="4" display="hex" type_name="HWND"/>
 	<data type="int" name="INT8" format="signed" len="1" type_name="INT8" comment="typedef signed char"/>

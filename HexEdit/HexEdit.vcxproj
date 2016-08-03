@@ -384,6 +384,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Install\Templates\BinaryFileFormat.dtd" />
+    <None Include="Install\Templates\default.xml" />
+    <None Include="Install\Templates\_common_types.xml" />
+    <None Include="Install\Templates\_standard_types.xml" />
+    <None Include="Install\Templates\_windows_constants.txt" />
+    <None Include="Install\Templates\_windows_types.xml" />
     <None Include="PreBuild.bat" />
     <None Include="resource.hm" />
     <None Include="RES\back.bmp" />
@@ -499,31 +505,13 @@
     <None Include="HelpID.hm" />
     <None Include="HLP\HexEdit.rtf" />
     <None Include="MakehelpV.bat" />
-    <None Include="TestData\_xxx.xml" />
-    <None Include="TestData\Address_RegUser.txt" />
-    <None Include="TestData\BinaryFileFormat.dtd" />
-    <None Include="TestData\CONTROL" />
-    <None Include="TestData\default.xml" />
-    <None Include="TestData\dffd.txt" />
     <None Include="Ebcdic.tab" />
     <None Include="HexEdit.tip" />
-    <None Include="TestData\License.txt" />
-    <None Include="TestData\NewWebSite.txt" />
-    <None Include="TestData\NOTES.TXT" />
-    <None Include="Install\Order.Txt" />
-    <None Include="Install\ReadMe.txt" />
     <None Include="ReadMe.txt" />
-    <None Include="TestData\ReadMeTemplate.txt" />
-    <None Include="TestData\reguser.txt" />
-    <None Include="Install\RelNotes.txt" />
-    <None Include="touch2.bat" />
-    <None Include="touch3.bat" />
     <None Include="Touchf.bat" />
-    <None Include="TestData\WebSearch.txt" />
     <None Include="manifest.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="TestData\ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HexEdit.rc" />

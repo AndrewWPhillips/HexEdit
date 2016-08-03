@@ -1,20 +1,20 @@
-This directory (including certain subirectories) contains
-all the files required to build HexEdit 4.0 (HexEdit.exe) and
-its installer.  It includes all the C++ source code (*.cpp and
+This directory (including certain subirectories) contains all 
+the files required to build HexEdit.exe apart from some (open-
+source) libraries.  It includes all the C++ source code (*.cpp and
 *.h files), resource source files (HexEdit.rc, etc), etc.
 
-The help source files are not included as these require RoboHelp,
-but the latest help file (HexEdit.chm) is included.
+The help source files are also included but require RoboHelp,
+though the latest help file (HexEdit.chm) is included. The
+installer files are also included but require InstallAware.
 
-Also included is the Visual Studio project For VS2010 and later and
-the project file for VS2008 (HexEditVS2008.vcproj and .sln files).
+Also included is the Visual Studio project For VS2010 and later.
 
 A description of some of the files is provided below.
 
 If you extracted these files from a .ZIP file then you must have a
 means of extracting using long file names.  Also you must use any
 options that extract sub-directories, since there are files in the
-RES and HLP sub-directories.
+RES and other sub-directories.
 
 Note that a prebuilt release of HexEdit is available separately
 at the web site http://www.hexedit.com.

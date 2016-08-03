@@ -4,7 +4,7 @@ REM MakeHelpV.bat - make help files (updated for use with VS2010)
 REM It creates the help map files used by RoboHelp to do context
 REM help and What's this help when building HexEdit.chm.
 
-REM Work out location of sed
+REM Work out location of sed (assumes Git is installed)
 set SEDCMD=sed
 IF EXIST "C:\Program Files (x86)\SmartGit\git\bin\sed.exe" set SEDCMD=C:\Program Files (x86)\SmartGit\git\bin\sed.exe
 IF EXIST "C:\Program Files (x86)\Git\bin\sed.exe"          set SEDCMD=C:\Program Files (x86)\Git\bin\sed.exe
