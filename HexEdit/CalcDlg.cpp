@@ -2878,14 +2878,13 @@ void CCalcDlg::OnEquals()               // Calculate result
 		not_int_error();
 		return;
 	}
-	else if (state_ >= CALCINTEXPR)
-	{
-		state_ = edit_.update_value(true);           // re-eval the expression allowing side-effects now
-	}
-
-	// If the value in current_ is not there as a result of a calculation then
-	// save it before it is lost.
+	// If the current calc. value is not there as a result of a calculation then save it before 
+	// it is lost. We need to do this before update_value() wipes out the expr. with the result.
 	save_value_to_macro();
+
+	// Now we can eval. the expression with side effects and placing reult in current_str_
+	if (state_ >= CALCINTEXPR)
+		state_ = edit_.update_value(true);
 
 	if (state_ == CALCINTEXPR)
 		state_ = CALCINTLIT;   // This is so that edit_.put() [below] will use current_ instead of current_str_

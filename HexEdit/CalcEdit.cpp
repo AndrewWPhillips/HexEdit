@@ -184,12 +184,6 @@ void CCalcEdit::put()
 		::SetWindowTextW(m_hWnd, (LPCWSTR)pp_->current_str_);
 		SetSel(pp_->current_str_.GetLength(), -1, FALSE);     // move caret to end
 		TRACE("++++++ Put: expr %s\r\n", (const char *)CString(pp_->current_str_));
-
-#if 0 // I don't think this is necessary and makes other code more complicated
-		// Finally we need to make sure that state_ etc match what the string contains.
-		// Eg current_str_ may actually be an integer literal, in which case we update state_/current_
-		pp_->state_ = update_value(false);
-#endif
 	}
 
 	add_sep();
@@ -279,68 +273,80 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 		break;
 
 	case CHexExpr::TYPE_REAL:
+		if (side_effects)
+		{
 #ifdef UNICODE_TYPE_STRING
-		pp_->current_str_.Format(L"%g", vv.real64);
+			pp_->current_str_.Format(L"%g", vv.real64);
 #else
-		pp_->current_str_.Format("%g", vv.real64);
+			pp_->current_str_.Format("%g", vv.real64);
 #endif
+		}
 		retval = CALCREALEXPR;
 		break;
 
 	case CHexExpr::TYPE_BOOLEAN:
-		pp_->current_str_ = vv.boolean ? "TRUE" : "FALSE";
+		if (side_effects)
+			pp_->current_str_ = vv.boolean ? "TRUE" : "FALSE";
 		retval = CALCBOOLEXPR;
 		break;
 
 	case CHexExpr::TYPE_STRING:
-		pp_->current_str_ = *vv.pstr;
-		// Escape special characters
+		if (side_effects)
+		{
+			pp_->current_str_ = *vv.pstr;
+			// Escape special characters
 #ifdef UNICODE_TYPE_STRING
-		pp_->current_str_.Replace(L"\a", L"\\a");
-		pp_->current_str_.Replace(L"\b", L"\\b");
-		pp_->current_str_.Replace(L"\t", L"\\t");
-		pp_->current_str_.Replace(L"\n", L"\\n");
-		pp_->current_str_.Replace(L"\v", L"\\n");
-		pp_->current_str_.Replace(L"\f", L"\\n");
-		pp_->current_str_.Replace(L"\r", L"\\n");
-		pp_->current_str_.Replace(L"\0", L"\\0");
-		pp_->current_str_.Replace(L"\"", L"\\\"");
-		pp_->current_str_ = L"\"" + pp_->current_str_ + L"\"";
+			pp_->current_str_.Replace(L"\a", L"\\a");
+			pp_->current_str_.Replace(L"\b", L"\\b");
+			pp_->current_str_.Replace(L"\t", L"\\t");
+			pp_->current_str_.Replace(L"\n", L"\\n");
+			pp_->current_str_.Replace(L"\v", L"\\n");
+			pp_->current_str_.Replace(L"\f", L"\\n");
+			pp_->current_str_.Replace(L"\r", L"\\n");
+			pp_->current_str_.Replace(L"\0", L"\\0");
+			pp_->current_str_.Replace(L"\"", L"\\\"");
+			pp_->current_str_ = L"\"" + pp_->current_str_ + L"\"";
 #else
-		pp_->current_str_.Replace("\a", "\\a");
-		pp_->current_str_.Replace("\b", "\\b");
-		pp_->current_str_.Replace("\t", "\\t");
-		pp_->current_str_.Replace("\n", "\\n");
-		pp_->current_str_.Replace("\v", "\\n");
-		pp_->current_str_.Replace("\f", "\\n");
-		pp_->current_str_.Replace("\r", "\\n");
-		pp_->current_str_.Replace("\0", "\\0");
-		pp_->current_str_.Replace("\"", "\\\"");
-		pp_->current_str_ = "\"" + pp_->current_str_ + "\"";
+			pp_->current_str_.Replace("\a", "\\a");
+			pp_->current_str_.Replace("\b", "\\b");
+			pp_->current_str_.Replace("\t", "\\t");
+			pp_->current_str_.Replace("\n", "\\n");
+			pp_->current_str_.Replace("\v", "\\n");
+			pp_->current_str_.Replace("\f", "\\n");
+			pp_->current_str_.Replace("\r", "\\n");
+			pp_->current_str_.Replace("\0", "\\0");
+			pp_->current_str_.Replace("\"", "\\\"");
+			pp_->current_str_ = "\"" + pp_->current_str_ + "\"";
 #endif
+		}
 		retval = CALCSTREXPR;
 		break;
 
 	case CHexExpr::TYPE_DATE:
-		if (vv.date <= -1e30)
-			pp_->current_str_ = "##Invalid date##";
-		else
+		if (side_effects)
 		{
-			// Convert the date to an expression that evaluates to that date.  Since we don't have date 
-			// literals we need to use a function and a date string.  Thence we can put the expression 
-			// back into the calc edit box and it will evaluates to the same date.
-			COleDateTime odt;
-			odt.m_dt = vv.date;
-			odt.m_status = COleDateTime::valid;
-			double whole, frac = modf(vv.date, &whole);
-			if (vv.date > 0.0 && vv.date < 1.0)
-				pp_->current_str_ = "TIME(\"" + odt.Format("%X") + "\")";   // Just show time of day part (no date)
-			else if (frac == 0.0)
-				pp_->current_str_ = "DATE(\"" + odt.Format("%x") + "\")";   // Just show date part (no time of day)
+			if (vv.date <= -1e30)
+				pp_->current_str_ = "##Invalid date##";
 			else
-				pp_->current_str_ = "DATE(\"" + odt.Format("%x %X") + "\")"; // Date and time
-			retval = CALCDATEEXPR;
+			{
+				// Convert the date to an expression that evaluates to that date.  Since we don't have date 
+				// literals we need to use a function and a date string.  Thence we can put the expression 
+				// back into the calc edit box and it will evaluates to the same date.
+				COleDateTime odt;
+				odt.m_dt = vv.date;
+				odt.m_status = COleDateTime::valid;
+				double whole, frac = modf(vv.date, &whole);
+				if (vv.date > 0.0 && vv.date < 1.0)
+					pp_->current_str_ = "TIME(\"" + odt.Format("%X") + "\")";   // Just show time of day part (no date)
+				else if (frac == 0.0)
+					pp_->current_str_ = "DATE(\"" + odt.Format("%x") + "\")";   // Just show date part (no time of day)
+				else
+					pp_->current_str_ = "DATE(\"" + odt.Format("%x %X") + "\")"; // Date and time
+				retval = CALCDATEEXPR;
+			}
 		}
+		else
+			retval = CALCDATEEXPR;
 		break;
 
 	default:
