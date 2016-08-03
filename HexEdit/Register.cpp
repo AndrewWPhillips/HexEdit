@@ -80,7 +80,7 @@ static const char *ack_name[] =
 	"range_set class - Andrew W. Phillips (me)",
 	"Folder Selection Dialog - Andrew Phillips",
 	"Git (version control) - Linus Torvalds + others",
-	"GiHub (open-source repository)",
+	"GitHub (open-source repository)",
 	NULL
 };
 

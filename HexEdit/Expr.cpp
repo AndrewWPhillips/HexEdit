@@ -74,6 +74,10 @@ expr_eval::expr_eval(int mr /*=10*/, bool csa /*=false*/)
 expr_eval::value_t expr_eval::evaluate(const char *expr, int reference, int &ref_ac,
 									   int radix /* = 10 */, bool side_effects /* = true */)
 {
+#ifdef _DEBUG
+	if (side_effects)
+		TRACE("Eval: <%s>\n", expr);    // good spot for a breakpoint
+#endif
 	value_t retval;                     // Returned value of the expression
 	tok_t next_tok;                     // Last token found (TOK_EOL if no error)
 
