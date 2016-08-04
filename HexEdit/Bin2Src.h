@@ -1,6 +1,11 @@
-// Bin2Src.h: interface for the Bin2Src class.
+// Bin2Src.h: Bin2Src class converts binary data to text (eg for C array initializer list)
 //
-//////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
 
 #if !defined(BIN2SRC_H_)
 #define BIN2SRC_H_

@@ -1,6 +1,6 @@
-// boyer.h : interface of the boyer class for byte searches
+// boyer.h : boyer class for fast searching
 //
-// Copyright (c) 2015 by Andrew W. Phillips
+// Copyright (c) 2016 by Andrew W. Phillips
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.

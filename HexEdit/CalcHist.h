@@ -1,5 +1,11 @@
 // CalcHist.h - header file for calculator history dialog
 //
+// Copyright (c) 2016 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
 
 #ifndef CALCHIST__INCLUDED_
 #define CALCHIST__INCLUDED_

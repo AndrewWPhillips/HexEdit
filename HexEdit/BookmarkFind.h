@@ -1,11 +1,18 @@
+// BookmarkFind.h : dialog for overwrite/append to a set of bookmarks
+//
+// Copyright (c) 2016 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
+
 #if !defined(AFX_BOOKMARKFIND_H__29747AED_4ACB_44F6_8663_104FB819A341__INCLUDED_)
 #define AFX_BOOKMARKFIND_H__29747AED_4ACB_44F6_8663_104FB819A341__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-// BookmarkFind.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CBookmarkFind dialog

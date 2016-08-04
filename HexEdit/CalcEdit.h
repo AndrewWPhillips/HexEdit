@@ -1,3 +1,12 @@
+// CalcEdit.h : edit control (text box) used in calculator for data entry/result
+//
+// Copyright (c) 2016 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
+
 #if !defined(AFX_CALCEDIT_H__5F719241_DA25_11D3_A23F_0020AFDC3196__INCLUDED_)
 #define AFX_CALCEDIT_H__5F719241_DA25_11D3_A23F_0020AFDC3196__INCLUDED_
 
@@ -6,9 +15,6 @@
 #endif // _MSC_VER > 1000
 
 #include "TipWnd.h"
-
-// CalcEdit.h : header file
-//
 
 enum CALCSTATE {
 	CALCERROR,         // The last operation generated an error, E is displayed in the status
