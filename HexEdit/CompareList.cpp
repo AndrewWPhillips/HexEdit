@@ -301,30 +301,39 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		// Check if grid needs updating - ie, switched to a different file or new compare done (based on time)
 		if (pview != phev_ || pdoc->LastCompareFinishTime() != last_change_)
 		{
-			CString mess;
-			last_change_ = pdoc->LastCompareFinishTime();
-			phev_ = pview;
-
-			// Clear the list in preparation for redrawing
-			grid_.SetRowCount(grid_.GetFixedRowCount());
+			phev_ = pview;     // track which view we last used
 
 			int diffs = pdoc->CompareDifferences();
 
 			if (diffs >= 32000)
 			{
 				AddMessage("Too many differences");
+				last_change_ = pdoc->LastCompareFinishTime();
 			}
 			else if (diffs >= 0)
 			{
+				// Clear the list in preparation for redrawing
+				grid_.SetRowCount(grid_.GetFixedRowCount());
 				FillGrid(pdoc);      // fill grid with results
+				last_change_ = pdoc->LastCompareFinishTime();
 			}
 			else if (diffs == -2)
 			{
-				// We are already displaying progress in the status bar - this is redundant (and may slow the search as it updates too often)
-				//mess.Format("%d%% complete", pdoc->CompareProgress());
-				//AddMessage(mess);
-				//last_change_ = -1;   // force update of grid while compare is in progress
+				static int last_progress;
+
+				int progress = pdoc->CompareProgress();
+				if (progress != last_progress)
+				{
+					CString mess;
+					mess.Format("%d%% ...", progress);
+					AddMessage(mess);
+					grid_.Refresh();
+					last_change_ = -1;   // force update of grid while compare is in progress
+					last_progress = progress;
+				}
 			}
+			else
+				grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
 		}
 	}
 	else if (pview == NULL && phev_ != NULL)
@@ -347,7 +356,7 @@ void CCompareListDlg::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult
 		return;                         // Don't do anything for header rows
 
 	// Do a sanity check on the current view
-	if (phev_ != GetView() && phev_->pcv_ != NULL)
+	if (phev_ != GetView() || phev_->pcv_ == NULL)
 	{
 		ASSERT(0);
 		return;
@@ -586,13 +595,19 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 	}
 }
 
+// Clear the grid to a single row and put a message left cell
 void CCompareListDlg::AddMessage(const char * mess)
 {
+	int frc = grid_.GetFixedRowCount();
 	int fcc = grid_.GetFixedColumnCount();
 
+	// Ensure we have just one normal row
+	if (grid_.GetRowCount() != frc + 1)
+		grid_.SetRowCount(frc + 1);
+
 	GV_ITEM item;
-	item.row = grid_.GetRowCount();
-	grid_.SetRowCount(item.row + 1);                        // append a row
+	item.col = fcc;  // 1st column
+	item.row = frc;
 
 	// Set item attributes that are the same for each field (column)
 	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR|GVIF_BKCLR;
@@ -601,10 +616,11 @@ void CCompareListDlg::AddMessage(const char * mess)
 	item.crFgClr = CLR_DEFAULT;
 	item.crBkClr = CLR_DEFAULT;
 
-	item.col = fcc + COL_ORIG_TYPE;
+	// Put the message in left column (top row) cell
 	item.strText = mess;
 	grid_.SetItem(&item);
 
+	// Clear the text in the rest of the cells in the row
 	item.strText = "";
 	for (++item.col; item.col < fcc + COL_LAST; ++item.col)
 	{
