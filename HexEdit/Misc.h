@@ -54,6 +54,8 @@ void SaveHist(std::vector<CString> const & hh, LPCSTR name, size_t smax);
 inline double fround(double r) { return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5); }
 
 // Number conversion/analysis
+bool int2str(char * buf, size_t buflen, unsigned __int64 val,
+             int radix = 10, int sep = 3, char sep_char = ',', bool ucase = true);
 CString NumScale(double val);
 CString	bin_str(__int64 val,int bits);
 void AddCommas(CString &str);

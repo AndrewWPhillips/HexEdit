@@ -607,6 +607,51 @@ CString NumScale(double val)
 	return retval;
 }
 
+// Convert a 64 bit integer to a string with several options.
+// buf = where to write the result
+// buflen = size of the buffer (returns error if buffer is too small)
+// val = the integer value to convert
+// radix = which base to use from 2 to 36 (default 10)
+// sep = how often to add a separator character (default 3), use 0 for none
+// sep_char = character to use as a separator (default is comma)
+// ucase = when radix is greater than 10 this says to use lower/upper-case letters
+// return false on error (invalid parameter or buflen is too small)
+bool int2str(char * buf, size_t buflen, unsigned __int64 val,
+	int radix /*=10*/, int sep /*=3*/, char sep_char /*=','*/, bool ucase /*=true*/)
+{
+	static char upper[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
+	static char lower[] = "0123456789abcdefghijklmnopqrstuvwxyz?";
+
+	if (radix < 2 || radix > sizeof(upper) - 1)
+		return false;
+
+	char *pp = buf, *end = buf + buflen;
+	for (int dig = 1; ; ++dig)
+	{
+		if (ucase)
+			*pp++ = upper[(unsigned)(val%radix)];
+		else
+			*pp++ = lower[(unsigned)(val%radix)];
+		if (pp >= end)
+			return false;  // buf is full
+
+		// Remove the digit we just did and stop when there are no more
+		if ((val /= radix) == 0)
+			break;
+
+		if (sep > 0 && dig%sep == 0)
+			*pp++ = sep_char;    // add separator
+
+		if (pp >= end)
+			return false;       // buf is full
+	}
+	*pp++ = '\0';               // terminate the string
+
+	// Since we built the string from the least sig. digit we need to reverse it
+	flip_bytes((unsigned char *)buf, pp - buf);
+	return true;
+}
+
 // Make a string of binary digits from a number (64 bit int)
 CString bin_str(__int64 val, int bits)
 {
