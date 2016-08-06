@@ -25,8 +25,23 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// Number the different columns we can display
+// Note these columns must match the heading strings in InitColumnHeadings
+enum
+{
+	COL_ORIG_TYPE,        // Same, insert, delete, or replace
+	COL_ORIG_HEX,         // Hex address in original file of the difference
+	COL_ORIG_DEC,         // Dec address in original file of the difference
+	COL_LEN_HEX,          // # of bytes inserted, deleted or replaced (hex)
+	COL_LEN_DEC,          // # of bytes (decimal)
+	COL_COMP_HEX,         // Hex address in compare file of the difference
+	COL_COMP_DEC,         // Dec address in compare file of the difference
+	COL_COMP_TYPE,        // Same as COL_ORIG_TYPE, except insert<->delete
+	COL_LAST              // leave at end (not a real column but signals end of list)
+};
+
 // Grid column headings (array indices need to match the column enum)
-static char *headingLong[CCompareListDlg::COL_LAST+1] =
+static char *headingLong[COL_LAST+1] =
 {
 	"Original Type",
 	"Orig Addr hex",
@@ -39,7 +54,7 @@ static char *headingLong[CCompareListDlg::COL_LAST+1] =
 	NULL
 };
 
-static char *heading[CCompareListDlg::COL_LAST+1] =
+static char *heading[COL_LAST+1] =
 {
 	"Orig Type",
 	"Orig Addr",
@@ -52,7 +67,7 @@ static char *heading[CCompareListDlg::COL_LAST+1] =
 	NULL
 };
 
-static char *headingShort[CCompareListDlg::COL_LAST+1] =
+static char *headingShort[COL_LAST+1] =
 {
 	"Type",
 	"Addr",
@@ -65,7 +80,7 @@ static char *headingShort[CCompareListDlg::COL_LAST+1] =
 	NULL
 };
 
-static char *headingTiny[CCompareListDlg::COL_LAST+1] =
+static char *headingTiny[COL_LAST+1] =
 {
 	"T",
 	"A",
@@ -76,6 +91,163 @@ static char *headingTiny[CCompareListDlg::COL_LAST+1] =
 	"A",
 	"T",
 	NULL
+};
+
+class RowAdder
+{
+public:
+	RowAdder(CGridCtrlComp & g, CHexEditView * phev) : grid_(g)
+	{
+		fcc_ = grid_.GetFixedColumnCount();
+
+		// Set fields for default item
+		ClearItem(item_);
+
+		// Set fields for text items
+		ClearItem(item_ins_);
+		item_ins_.strText = "Inserted";
+		item_ins_.crBkClr = phev->GetCompareBgCol();
+		ClearItem(item_rep_);
+		item_rep_.strText = "Replaced";
+		item_rep_.crFgClr = phev->GetCompareCol();
+		item_rep_.crBkClr = phev->GetBackgroundCol();
+		ClearItem(item_del_);
+		item_del_.strText = "Deleted";
+		item_del_.crFgClr = phev->GetCompareCol();
+		item_del_.crBkClr = ::opp_hue(phev->GetCompareBgCol());
+		ClearItem(item_equ_);
+		item_equ_.strText = "Equal";
+
+		// Set fields for address/length items
+		ClearItem(item_hex_);
+		item_hex_.nFormat = DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS;
+		item_hex_.crBkClr = phev->GetBackgroundCol();
+		item_hex_.crFgClr = phev->GetHexAddrCol();
+		ClearItem(item_dec_);
+		item_dec_.nFormat = DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS;
+		item_dec_.crBkClr = phev->GetBackgroundCol();
+		item_dec_.crFgClr = phev->GetDecAddrCol();
+
+		item_.row = grid_.GetRowCount();       // start adding at the end
+	}
+
+	int RowCount() const { return item_.row; }
+
+	void AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp)
+	{
+		char disp[128];                                         // for generating displayed text
+
+		grid_.SetRowCount(item_.row + 1);                        // append a row
+		item_ins_.row = item_del_.row = item_rep_.row = item_equ_.row =
+			item_hex_.row = item_dec_.row = item_.row;
+
+		switch (typ)
+		{
+		case CHexEditDoc::Deletion:
+			// Original Type
+			item_del_.col = fcc_ + COL_ORIG_TYPE;
+			grid_.SetItem(&item_del_);
+
+			// Compare  Type
+			item_ins_.col = fcc_ + COL_COMP_TYPE;
+			grid_.SetItem(&item_ins_);
+			break;
+		case CHexEditDoc::Replacement:
+			// Original Type
+			item_rep_.col = fcc_ + COL_ORIG_TYPE;
+			grid_.SetItem(&item_rep_);
+
+			// Compare  Type
+			item_rep_.col = fcc_ + COL_COMP_TYPE;
+			grid_.SetItem(&item_rep_);
+			break;
+		case CHexEditDoc::Insertion:
+			// Original Type
+			item_ins_.col = fcc_ + COL_ORIG_TYPE;
+			grid_.SetItem(&item_ins_);
+
+			// Compare  Type
+			item_del_.col = fcc_ + COL_COMP_TYPE;
+			grid_.SetItem(&item_del_);
+			break;
+		case CHexEditDoc::Equal:
+			// Original Type
+			item_equ_.col = fcc_ + COL_ORIG_TYPE;
+			grid_.SetItem(&item_equ_);
+
+			// Compare  Type
+			item_equ_.col = fcc_ + COL_COMP_TYPE;
+			grid_.SetItem(&item_equ_);
+			break;
+		}
+
+		// Orig Addr hex
+		item_hex_.col = fcc_ + COL_ORIG_HEX;
+		if (theApp.hex_ucase_)
+			int2str(disp, sizeof(disp), orig, 16, 4, ' ', true);
+		else
+			int2str(disp, sizeof(disp), orig, 16, 4, ' ', false);
+		item_hex_.strText = disp;
+		grid_.SetItem(&item_hex_);
+
+		// Orig Addr dec
+		item_dec_.col = fcc_ + COL_ORIG_DEC;
+		int2str(disp, sizeof(disp), orig);
+		item_dec_.strText = disp;
+		grid_.SetItem(&item_dec_);
+
+		// Length - hex
+		item_hex_.col = fcc_ + COL_LEN_HEX;
+		if (theApp.hex_ucase_)
+			int2str(disp, sizeof(disp), len, 16, 4, ' ', true);
+		else
+			int2str(disp, sizeof(disp), len, 16, 4, ' ', false);
+		item_hex_.strText = disp;
+		grid_.SetItem(&item_hex_);
+
+		// Length - dec
+		item_dec_.col = fcc_ + COL_LEN_DEC;
+		int2str(disp, sizeof(disp), len);
+		item_dec_.strText = disp;
+		grid_.SetItem(&item_dec_);
+
+		// Comp Addr hex
+		item_hex_.col = fcc_ + COL_COMP_HEX;
+		if (theApp.hex_ucase_)
+			int2str(disp, sizeof(disp), comp, 16, 4, ' ', true);
+		else
+			int2str(disp, sizeof(disp), comp, 16, 4, ' ', false);
+		item_hex_.strText = disp;
+		grid_.SetItem(&item_hex_);
+
+		// Comp Addr dec
+		item_dec_.col = fcc_ + COL_COMP_DEC;
+		int2str(disp, sizeof(disp), comp);
+		item_dec_.strText = disp;
+		grid_.SetItem(&item_dec_);
+
+		++item_.row;
+	}
+
+private:
+	static void ClearItem(GV_ITEM &item)
+	{
+		item.mask = GVIF_STATE | GVIF_FORMAT | GVIF_TEXT | GVIF_FGCLR | GVIF_BKCLR;
+		item.nState = GVIS_READONLY;
+		item.nFormat = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+		item.crFgClr = CLR_DEFAULT;
+		item.crBkClr = CLR_DEFAULT;
+	}
+
+	CGridCtrlComp & grid_;         // the grid we are adding rows to the end of
+	int fcc_;                      // number of fixed colums
+	GV_ITEM item_;                 // Default cell colours, attributes, etc
+	GV_ITEM item_ins_;             // "Inserted"
+	GV_ITEM item_rep_;             // "Replaced"
+	GV_ITEM item_del_;             // "Deleted"
+	GV_ITEM item_equ_;             // "Equal" (bytes in both files are the same)
+	GV_ITEM item_hex_;             // Hex address/length field
+	GV_ITEM item_dec_;             // Decimal address/length
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -115,7 +287,7 @@ BOOL CGridCtrlComp::OnResizeColumn(int col, UINT size)
 
 void CGridCtrlComp::FixHeading(int col, UINT size)
 {
-	if (col < 0 || col >= CCompareListDlg::COL_LAST)
+	if (col < 0 || col >= COL_LAST)
 	{
 		assert(0);
 		return;
@@ -150,7 +322,7 @@ CCompareListDlg::CCompareListDlg() : CDialog()
 {
 	help_hwnd_ = (HWND)0;
 	m_first = true;
-	last_change_ = -1;
+	last_change_ = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -298,42 +470,44 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 	if ((pview = GetView()) != NULL &&                 // we have an active view
 		(pdoc = pview->GetDocument()) != NULL)         // all views should have a doc!
 	{
-		// Check if grid needs updating - ie, switched to a different file or new compare done (based on time)
-		if (pview != phev_ || pdoc->LastCompareFinishTime() != last_change_)
+		int diffs = pdoc->CompareDifferences();
+		clock_t curr_change = pdoc->LastCompareFinishTime();
+
+		if (diffs == -4)
+			grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
+		else if (diffs == -2)
 		{
+			static int last_progress;
+
+			int progress = pdoc->CompareProgress();
+			if (progress != last_progress)
+			{
+				CString mess;
+				mess.Format("%d%% ...", progress);
+				AddMessage(mess);
+				grid_.Refresh();
+				last_progress = progress;
+			}
+		}
+		else if (curr_change != 0 && (pview != phev_ || curr_change != last_change_))
+		{
+			ASSERT(diffs >= 0);
+			// Grid needs updating (switched to diff view or compare just finished)
 			phev_ = pview;     // track which view we last used
 
-			int diffs = pdoc->CompareDifferences();
-
-			if (diffs >= 32000)
+			if (diffs >= 10000)
 			{
 				AddMessage("Too many differences");
-				last_change_ = pdoc->LastCompareFinishTime();
+				grid_.Refresh();
+				last_change_ = curr_change;
 			}
 			else if (diffs >= 0)
 			{
 				// Clear the list in preparation for redrawing
 				grid_.SetRowCount(grid_.GetFixedRowCount());
 				FillGrid(pdoc);      // fill grid with results
-				last_change_ = pdoc->LastCompareFinishTime();
+				last_change_ = curr_change;
 			}
-			else if (diffs == -2)
-			{
-				static int last_progress;
-
-				int progress = pdoc->CompareProgress();
-				if (progress != last_progress)
-				{
-					CString mess;
-					mess.Format("%d%% ...", progress);
-					AddMessage(mess);
-					grid_.Refresh();
-					last_change_ = -1;   // force update of grid while compare is in progress
-					last_progress = progress;
-				}
-			}
-			else
-				grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
 		}
 	}
 	else if (pview == NULL && phev_ != NULL)
@@ -344,7 +518,6 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		// Clear the list as there is now no active view
 		grid_.SetRowCount(grid_.GetFixedRowCount());
 	}
-
 	return FALSE;
 }
 
@@ -525,9 +698,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 	FILE_ADDRESS endB = pdoc->CompLength();
 	int curr_replace = 0, curr_insert = 0, curr_delete = 0; // current indices into the arrays
 
-	// Work out some field colours
-	//inverse_col_ = ::opp_hue(phev_->GetCompareCol());
-	inverse_bg_col_ = ::opp_hue(phev_->GetCompareBgCol());
+	RowAdder rowAdder(grid_, phev_);
 
 	for (addrA = addrB = 0; addrA < endA || addrB < endB; )
 	{
@@ -565,13 +736,13 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 		{
 			// There are matching blocks before the next difference
 			ASSERT(newA - addrA == newB - addrB);       // if they are the same they must have the same length
-			AddRow(CHexEditDoc::Equal, addrA, newA - addrA, addrB);
+			rowAdder.AddRow(CHexEditDoc::Equal, addrA, newA - addrA, addrB);
 		}
 		if (next_diff == CHexEditDoc::Equal)
 			break;                                      // we ran out of differences
 
 		// Add the row for the found difference
-		AddRow(next_diff, newA, len, newB);
+		rowAdder.AddRow(next_diff, newA, len, newB);
 
 		// Move to the next one
 		addrA = newA;
@@ -628,136 +799,3 @@ void CCompareListDlg::AddMessage(const char * mess)
 	}
 }
 
-void CCompareListDlg::AddRow(CHexEditDoc::diff_t typ, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp)
-{
-	ASSERT(phev_ != NULL);
-	char disp[128];                                         // for generating displayed text
-	int fcc = grid_.GetFixedColumnCount();
-
-	GV_ITEM item;
-	item.row = grid_.GetRowCount();
-	grid_.SetRowCount(item.row + 1);                        // append a row
-
-	// Set item attributes that are the same for each field (column)
-	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR|GVIF_BKCLR;
-	item.nState = GVIS_READONLY;
-
-	item.col = fcc + COL_ORIG_TYPE;
-	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
-	item.crFgClr = CLR_DEFAULT;
-	item.crBkClr = CLR_DEFAULT;
-	switch (typ)
-	{
-	case CHexEditDoc::Deletion:
-		item.strText = "Deleted";
-		item.crFgClr = phev_->GetCompareCol();
-		item.crBkClr = inverse_bg_col_;
-		break;
-	case CHexEditDoc::Replacement:
-		item.strText = "Replaced";
-		item.crFgClr = phev_->GetCompareCol();
-		item.crBkClr = phev_->GetBackgroundCol();
-		break;
-	case CHexEditDoc::Insertion:
-		item.strText = "Inserted";
-		//item.crFgClr = inverse_col_;
-		item.crBkClr = phev_->GetCompareBgCol();
-		break;
-
-	case CHexEditDoc::Equal:
-		item.strText = "Equal";
-		break;
-	}
-	grid_.SetItem(&item);
-
-	// Set background back to the default for the rest of the fields
-	if (typ == CHexEditDoc::Equal)
-		item.crBkClr = CLR_DEFAULT;
-	else
-		item.crBkClr = phev_->GetBackgroundCol();
-
-	item.col = fcc + COL_ORIG_HEX;
-	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-	if (theApp.hex_ucase_)
-		sprintf(disp, "%I64X", orig);
-	else
-		sprintf(disp, "%I64x", orig);
-	item.strText = disp;
-	::AddSpaces(item.strText);
-	item.crFgClr = phev_->GetHexAddrCol();
-	grid_.SetItem(&item);
-
-	item.col = fcc + COL_ORIG_DEC;
-	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-	sprintf(disp, "%I64d", orig);
-	item.strText = disp;
-	::AddCommas(item.strText);
-	item.crFgClr = phev_->GetDecAddrCol();
-	grid_.SetItem(&item);
-
-	item.col = fcc + COL_LEN_HEX;
-	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-	if (theApp.hex_ucase_)
-		sprintf(disp, "%I64X", len);
-	else
-		sprintf(disp, "%I64x", len);
-	item.strText = disp;
-	::AddSpaces(item.strText);
-	item.crFgClr = phev_->GetHexAddrCol();
-	grid_.SetItem(&item);
-
-	item.col = fcc + COL_LEN_DEC;
-	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-	sprintf(disp, "%I64d", len);
-	item.strText = disp;
-	::AddCommas(item.strText);
-	item.crFgClr = phev_->GetDecAddrCol();
-	grid_.SetItem(&item);
-
-	item.col = fcc + COL_COMP_HEX;
-	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-	if (theApp.hex_ucase_)
-		sprintf(disp, "%I64X", comp);
-	else
-		sprintf(disp, "%I64x", comp);
-	item.strText = disp;
-	::AddSpaces(item.strText);
-	item.crFgClr = phev_->GetHexAddrCol();
-	grid_.SetItem(&item);
-
-	item.col = fcc + COL_COMP_DEC;
-	item.nFormat = DT_RIGHT|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS;
-	sprintf(disp, "%I64d", comp);
-	item.strText = disp;
-	::AddCommas(item.strText);
-	item.crFgClr = phev_->GetDecAddrCol();
-	grid_.SetItem(&item);
-
-	item.col = fcc + COL_COMP_TYPE;
-	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
-	item.crFgClr = CLR_DEFAULT;
-	item.crBkClr = CLR_DEFAULT;
-	switch (typ)
-	{
-	case CHexEditDoc::Deletion:
-		item.strText = "Inserted";  // Deletion in orig == insertion in compare
-		//item.crFgClr = inverse_col_;
-		item.crBkClr = phev_->GetCompareBgCol();
-		break;
-	case CHexEditDoc::Replacement:
-		item.strText = "Replaced";
-		item.crFgClr = phev_->GetCompareCol();
-		item.crBkClr = phev_->GetBackgroundCol();
-		break;
-	case CHexEditDoc::Insertion:
-		item.strText = "Deleted";  // Insertion in orig == deletion in compare file
-		item.crFgClr = phev_->GetCompareCol();
-		item.crBkClr = inverse_bg_col_;
-		break;
-
-	case CHexEditDoc::Equal:
-		item.strText = "Equal";
-		break;
-	}
-	grid_.SetItem(&item);
-}
