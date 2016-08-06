@@ -3797,6 +3797,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
+    IDS_TOO_MANY_DIFFS      "Too Many differences"
 END
 
 STRINGTABLE
