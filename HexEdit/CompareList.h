@@ -36,22 +36,6 @@ private:
 
 class CCompareListDlg : public CDialog
 {
-public:
-	// Number the different columns we can display
-	// Note these columns must match the heading strings in InitColumnHeadings
-	enum
-	{
-		COL_ORIG_TYPE,        // Same, insert, delete, or replace
-		COL_ORIG_HEX,         // Hex address in original file of the difference
-		COL_ORIG_DEC,         // Dec address in original file of the difference
-		COL_LEN_HEX,          // # of bytes inserted, deleted or replaced (hex)
-		COL_LEN_DEC,          // # of bytes (decimal)
-		COL_COMP_HEX,         // Hex address in compare file of the difference
-		COL_COMP_DEC,         // Dec address in compare file of the difference
-		COL_COMP_TYPE,        // Same as COL_ORIG_TYPE, except insert<->delete
-		COL_LAST              // leave at end (not a real column but signals end of list)
-	};
-
 // Construction
 public:
 	CCompareListDlg(); // standard constructor
@@ -91,8 +75,6 @@ protected:
 
 private:
 	void FillGrid(CHexEditDoc * pdoc);
-	void AddRow(CHexEditDoc::diff_t type, FILE_ADDRESS orig, FILE_ADDRESS len, FILE_ADDRESS comp);
-	//void AddRow(std::pair<FILE_ADDRESS, FILE_ADDRESS> next);
 	void AddMessage(const char * mess);
 
 	bool m_first;                       // Remember first call to OnKickIdle (we can't add the controls to the resizer till then)
@@ -100,8 +82,6 @@ private:
 
 	CHexEditView *phev_;                // ptr to hex view that we are displaying changes for
 	clock_t last_change_;               // time that last change was made to the compare info for this view
-
-	COLORREF inverse_bg_col_;           // background colour for deleted cell (used in AddRow())
 };
 
 //{{AFX_INSERT_LOCATION}}

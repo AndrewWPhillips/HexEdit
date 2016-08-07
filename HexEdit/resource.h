@@ -1875,6 +1875,7 @@
 #define IDS_USE_AERIAL_SCHEME           52754
 #define IDS_CLIPBOARD_FORMAT            52755
 #define IDS_SHARED_FILE_MODIFIED        52756
+#define IDS_TOO_MANY_DIFFS              52757
 #define IDS_UPDATE_AVAILABLE            52799
 #define AFX_IDS_APP_ID                  0xE006
 

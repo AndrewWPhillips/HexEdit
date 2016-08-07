@@ -1100,7 +1100,7 @@ void CHexEditDoc::StartComp()
 
 	comp_command_ = NONE;
 	comp_fin_ = false;
-	comp_clock_ = clock();
+	comp_clock_ = 0; //clock();
 	docdata_.Unlock();
 
 	// Now that the compare is stopped we need to update all views to remove existing compare display
