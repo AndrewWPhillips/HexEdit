@@ -4604,7 +4604,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 	if (def_type == 2)
 	{
 		dlg.to_ = "info@HexEdit.com";
-		dlg.subject_ = "License";
+		dlg.subject_ = "[hexedit] License";
 	}
 
 	// If bug report then default attachment file name to be the active file
