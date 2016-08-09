@@ -1904,7 +1904,6 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 		}
 	}
 
-
 	return CWinAppEx::OnIdle(lCount);
 }
 

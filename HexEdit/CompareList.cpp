@@ -501,52 +501,77 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		help_hwnd_ = (HWND)0;
 	}
 
-	CHexEditView * pview;
-	CHexEditDoc * pdoc;
-	if ((pview = GetView()) != NULL &&                 // we have an active view
-		(pdoc = pview->GetDocument()) != NULL)         // all views should have a doc!
+	CHexEditView * pview = GetView();     // active file's view (or NULL if none)
+	CHexEditDoc * pdoc = NULL;            // active file's doc
+	int diffs = -1;                       // number of diffs, or -2 if bg compare in progress
+	clock_t curr_change = -1;             // time that current compare finished
+	int curr_progress = 0;                // progress value if background compare in progress
+	if (pview != NULL)
 	{
-		int diffs = pdoc->CompareDifferences();
-		clock_t curr_change = pdoc->LastCompareFinishTime();
+		pdoc = pview->GetDocument();
+		ASSERT(pdoc != NULL);
+		diffs = pdoc->CompareDifferences();
+		curr_change = pdoc->LastCompareFinishTime();
+	}
 
-		if (diffs == -4)
-			grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
-		else if (diffs == -2)
+	// First work out if we have to redraw the list
+	bool redraw = false;
+	if (pview != phev_)
+	{
+		redraw = true;         // we have to redraw after switching files
+		phev_ = pview;         // track which view we last used
+	}
+	// Check if we have to redraw because the current file status has changed
+	if (!redraw && pview != NULL)
+	{
+		if (diffs == -2)
 		{
+			// Currently comparing (background) - check if we need to update progress
 			static int last_progress;
-
-			int progress = pdoc->CompareProgress();
-			if (progress != last_progress)
+			curr_progress = (pdoc->CompareProgress()/5) * 5;  // nearest 5%
+			if (curr_progress != last_progress)
 			{
-				grid_.SetRowCount(grid_.GetFixedRowCount());   // Clear grid before adding message
-
-				RowAdder rowAdder(grid_, pview);
-
-				CString mess;
-				mess.Format("%d%% ...", progress);
-				rowAdder.AddMessage(mess, IDS_COMPARE_INPROGRESS);
-				last_progress = progress;
+				last_progress = curr_progress;
+				redraw = true;             // need to update progress
 			}
 		}
-		else if (curr_change != 0 && (pview != phev_ || curr_change != last_change_))
+		else if (diffs >= 0  && curr_change != 0 && curr_change != last_change_)
 		{
-			ASSERT(diffs >= 0);
-			// Grid needs updating (switched to diff view or compare just finished)
-			phev_ = pview;     // track which view we last used
-
-			grid_.SetRowCount(grid_.GetFixedRowCount());   // Clear grid before refilling
-			FillGrid(pdoc);                                // fill grid with results
-			last_change_ = curr_change;
+			redraw = true;                // need to redraw the whole list
 		}
 	}
-	else if (pview == NULL && phev_ != NULL)
-	{
-		last_change_ = -1;
-		phev_ = NULL;
 
-		// Clear the list as there is now no active view
-		grid_.SetRowCount(grid_.GetFixedRowCount());
+	if (redraw)
+	{
+		TRACE("]]]] %p %p %d %d %d\n", pview, pdoc, diffs, (int)last_change_, (int)curr_change);
+		if (pview == NULL)
+		{
+			grid_.SetRowCount(grid_.GetFixedRowCount());   // No view so display empty list
+		}
+		else if (diffs >= 0)
+		{
+			last_change_ = curr_change;
+
+			// Grid needs updating (switched to diff view or compare just finished)
+			grid_.SetRowCount(grid_.GetFixedRowCount());   // Clear grid before refilling
+			FillGrid(pdoc);                                // fill grid with results
+		}
+		else if (diffs == -2)
+		{
+			grid_.SetRowCount(grid_.GetFixedRowCount());   // Clear grid before adding message
+
+			RowAdder rowAdder(grid_, pview);
+
+			CString mess;
+			mess.Format("%d%% ...", curr_progress);
+			rowAdder.AddMessage(mess, IDS_COMPARE_INPROGRESS);
+		}
+		else
+		{
+			grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
+		}
 	}
+
 	return FALSE;
 }
 
@@ -779,7 +804,7 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 
 		if (rowAdder.RowCount() > 10000)
 		{
-			rowAdder.AddMessage("Too Many ...", IDS_TOO_MANY_DIFFS);
+			rowAdder.AddMessage("Too Many", IDS_TOO_MANY_DIFFS);
 			break;
 		}
 

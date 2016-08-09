@@ -270,8 +270,8 @@ struct CaseInsensitiveLess
 };
 typedef std::set<CString, CaseInsensitiveLess> CaseInsensitiveSet;
 
-#endif
-
 #ifdef _DEBUG
 void test_misc();
+#endif
+
 #endif
