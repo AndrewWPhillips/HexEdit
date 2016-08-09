@@ -648,7 +648,7 @@ bool int2str(char * buf, size_t buflen, unsigned __int64 val,
 	*pp++ = '\0';               // terminate the string
 
 	// Since we built the string from the least sig. digit we need to reverse it
-	flip_bytes((unsigned char *)buf, pp - buf);
+	flip_bytes((unsigned char *)buf, pp - buf - 1);
 	return true;
 }
 
