@@ -328,16 +328,17 @@ void CGridCtrlComp::FixHeading(int col, UINT size)
 		assert(0);
 		return;
 	}
+	double fact = GetDC()->GetDeviceCaps(LOGPIXELSX) / 96.0;  // Size comparison need to be adjusted for current DPI setting
 
-	if (size > 96)
+	if (size > int(96*fact))
 	{
 		SetItemText(0, col, headingLong[col]);
 	}
-	else if (size > 70)
+	else if (size > int(70*fact))
 	{
 		SetItemText(0, col, heading[col]);
 	}
-	else if (size > 33)
+	else if (size > int(33*fact))
 	{
 		SetItemText(0, col, headingShort[col]);
 	}
