@@ -36,6 +36,7 @@ bool ConvertToFileTime(time_t tt, FILETIME *ft);
 
 // System utils
 BOOL IsUs();     // This is just to handle a few differences in American spelling
+__int64 AvailableSpace(const char *filename);  // free space on file's drive
 CString GetExePath();
 BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
