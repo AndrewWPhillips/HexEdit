@@ -1895,8 +1895,8 @@ int CHexEditDoc::add_branch(CXmlTree::CElt parent, FILE_ADDRESS addr, unsigned c
 				df_info_.pop_back();
 			}
 
-			// Update scan progress no more than once a second
-			if (length_ > 0 && addr > 0 && (clock() - m_last_checked)/CLOCKS_PER_SEC > 1 && !in_jump_)
+			// Update scan progress no more than once every 5 seconds
+			if (length_ > 0 && addr > 0 && (clock() - m_last_checked)/CLOCKS_PER_SEC > 5 && !in_jump_)
 			{
 				((CMainFrame *)AfxGetMainWnd())->Progress(addr < length_ ? int((addr*100)/length_) : 100);
 				m_last_checked = clock();

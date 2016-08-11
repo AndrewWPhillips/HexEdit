@@ -953,7 +953,7 @@ void CHexEditDoc::WriteInPlace()
 
 					// Update progress
 					total_done += count;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 					{
 						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
@@ -989,7 +989,7 @@ void CHexEditDoc::WriteInPlace()
 
 					// Update progress
 					total_done += count;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 					{
 						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
@@ -1012,7 +1012,7 @@ void CHexEditDoc::WriteInPlace()
 #ifdef INPLACE_MOVE
 				// Update progress bar
 				total_done += (pl->dlen&doc_loc::mask);
-				if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+				if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 				{
 					mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 					last_checked = clock();
@@ -1043,7 +1043,7 @@ void CHexEditDoc::WriteInPlace()
 #ifdef INPLACE_MOVE
 					// Update progress bar
 					total_done += tocopy;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 					{
 						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
@@ -1172,8 +1172,8 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 			ASSERT(got > 0);
 
 			ff.Write(buf, got);
-			// Update scan progress no more than once every 1 seconds
-			if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+			// Update save progress no more than once every 5 seconds
+			if ((clock() - last_checked)/CLOCKS_PER_SEC > 5)
 			{
 				mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
 				last_checked = clock();
