@@ -617,7 +617,8 @@ CString NumScale(double val)
 // ucase = when radix is greater than 10 this says to use lower/upper-case letters
 // return false on error (invalid parameter or buflen is too small)
 bool int2str(char * buf, size_t buflen, unsigned __int64 val,
-	int radix /*=10*/, int sep /*=3*/, char sep_char /*=','*/, bool ucase /*=true*/)
+	int radix /*=10*/, int sep /*=3*/, char sep_char /*=','*/, 
+	bool ucase /*=true*/, int min_dig /*=0*/, int max_dig /*=0*/)
 {
 	static char upper[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
 	static char lower[] = "0123456789abcdefghijklmnopqrstuvwxyz?";
@@ -636,7 +637,10 @@ bool int2str(char * buf, size_t buflen, unsigned __int64 val,
 			return false;  // buf is full
 
 		// Remove the digit we just did and stop when there are no more
-		if ((val /= radix) == 0)
+		if ((val /= radix) == 0 && dig >= min_dig)
+			break;
+
+		if (max_dig > 0 && dig >= max_dig)
 			break;
 
 		if (sep > 0 && dig%sep == 0)
