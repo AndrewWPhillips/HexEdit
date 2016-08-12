@@ -1104,9 +1104,9 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 	}
 
 	// Open the file for overwriting (or appending)
-	const size_t copy_buf_len = 16384;
 	CFile64 ff;
 	CFileException fe;
+	FILE_ADDRESS start_pos = 0;
 	UINT flags = CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
 	if (append)
 		flags = CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
@@ -1114,59 +1114,15 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 	// Open the file to write to
 	if (!ff.Open(filename, flags, &fe))
 	{
-#if 0
-		// Display info about why the open failed
-		CString mess;
-		mess.Format("File \"%s\"",filename);
-		CFileStatus fs;
-
-		switch (fe.m_cause)
-		{
-		case CFileException::badPath:
-			mess += "\ris an invalid file name";
-			break;
-		case CFileException::tooManyOpenFiles:
-			mess += "\r- too many files already open";
-			break;
-		case CFileException::directoryFull:
-			mess += "\r- directory is full";
-			break;
-		case CFileException::accessDenied:
-			if (!CFile::GetStatus(filename, fs))
-				mess += "\rcannot be created";
-			else
-			{
-				if (fs.m_attribute & CFile::directory)
-					mess += "\ris a directory";
-				else if (fs.m_attribute & (CFile::volume|CFile::hidden|CFile::system))
-					mess += "\ris a special file";
-				else if (fs.m_attribute & CFile::readOnly)
-					mess += "\ris a read only file";
-				else
-					mess += "\rcannot be used (reason unknown)";
-			}
-			break;
-		case CFileException::sharingViolation:
-		case CFileException::lockViolation:
-			mess += "\ris in use";
-			break;
-		case CFileException::hardIO:
-			mess += "\r- hardware error";
-			break;
-		default:
-			mess += "\rcould not be opened (reason unknown)";
-			break;
-		}
-		AfxMessageBox(mess);
-#else
 		TaskMessageBox("File Open Error", ::FileErrorMessage(&fe, CFile::modeWrite));
-#endif
-
 		theApp.mac_error_ = 10;
 		return FALSE;
 	}
+	if (append)
+		start_pos = ff.GetLength();
 
 	// Get memory for a buffer
+	const size_t copy_buf_len = 16384;
 	unsigned char *buf = new unsigned char[copy_buf_len];   // Where we store data
 	size_t got;                                 // How much we got from GetData
 
@@ -1203,9 +1159,12 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 
 		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
 
-		// Close and delete the (probably incomplete) file
+		// Close the file and restore things as they were
+		if (append)
+			ff.SetLength(start_pos);   // truncate to original length
 		ff.Close();
-		remove(filename);
+		if (!append)
+			remove(filename);
 		delete[] buf;
 
 		theApp.mac_error_ = 10;
