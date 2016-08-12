@@ -1145,9 +1145,11 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 			// Update save progress no more than once every 5 seconds
 			if ((clock() - last_checked)/CLOCKS_PER_SEC > 5)
 			{
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
+				mm->Progress(int(((address-start)*100)/(end-start)));
 				last_checked = clock();
-				AfxGetApp()->OnIdle(0);
+				//mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
+				//last_checked = clock();
+				//AfxGetApp()->OnIdle(0);
 			}
 		}
 		ASSERT(address == end);
@@ -1157,7 +1159,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 		TaskMessageBox("File Write Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 		pfe->Delete();
 
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+		mm->Progress(-1);
 
 		// Close the file and restore things as they were
 		if (append)
@@ -1171,7 +1173,7 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 		return FALSE;
 	}
 
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);
 
 	ff.Close();
 	delete[] buf;
