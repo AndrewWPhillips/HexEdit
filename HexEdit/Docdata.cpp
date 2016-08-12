@@ -1090,6 +1090,20 @@ void CHexEditDoc::WriteInPlace()
 // The range to write is given by 'start' and 'end'.
 BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADDRESS end, BOOL append /*=FALSE*/)
 {
+	// First warn if there may not be enough disk space
+	if (AvailableSpace(filename) < end - start)
+	{
+		if (TaskMessageBox("Insufficient Disk Space",
+			"There may not be enough disk space to write to the file.\n\n"
+			"Do you want to continue?",
+			MB_YESNO) == IDNO)
+		{
+			theApp.mac_error_ = 2;
+			return FALSE;
+		}
+	}
+
+	// Open the file for overwriting (or appending)
 	const size_t copy_buf_len = 16384;
 	CFile64 ff;
 	CFileException fe;
