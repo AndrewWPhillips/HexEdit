@@ -8748,7 +8748,7 @@ CString CHexEditView::copy2cb_file(FILE_ADDRESS start, FILE_ADDRESS end)
 
 	if (!GetDocument()->WriteData(TempFileName, start, end))
 	{
-		AfxMessageBox("Error writing clipboard to disk");
+		AfxMessageBox("Error storing temp clipboard data on disk");
 		theApp.mac_error_ = 10;
 		return CString();
 	}

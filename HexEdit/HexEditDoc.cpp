@@ -676,6 +676,20 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	if (!do_backup && only_over() && lpszPathName == pfile1_->GetFilePath())
 #endif
 	{
+		// Even though we are writing in place the file length may be increased so
+		// check that we have enough disk space.
+		if (length_ - pfile1_->GetLength() > AvailableSpace(pfile1_->GetFilePath()))
+		{
+			if (TaskMessageBox("Insufficient Disk Space",
+				"There may not be enough disk space to write to the file.\n\n"
+				"Do you want to continue?",
+				MB_YESNO) == IDNO)
+			{
+				theApp.mac_error_ = 10;
+				return TRUE;      // return TRUE to prevent trying to delete lpszPathName (which was not created)
+			}
+		}
+
 		// Just write changes back to file in place
 		// (avoid worries about disk space, creating temp files etc)
 		ASSERT(base_type_ == 0);
@@ -718,12 +732,12 @@ BOOL CHexEditDoc::OnSaveDocument(LPCTSTR lpszPathName)
 		if (ii >= 1000)
 		{
 			aa->mac_error_ = 20;
-			return FALSE;
+			return TRUE;      // return TRUE because there is no file to delete
 		}
 
 		// Save current file to temp file
 		if (!WriteData(temp_name, 0, length_))
-			return FALSE;                       // already done: mac_error_ = 10
+			return TRUE;     // return TRUE because there is no file to delete
 
 		// If we have a file open then close it
 		close_file();
