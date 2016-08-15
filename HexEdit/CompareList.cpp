@@ -229,14 +229,50 @@ public:
 		++item_.row;
 	}
 
+	// Add a message row to the end of the grid
+	void AddMessage(const char * mess, int id = 0)
+	{
+		grid_.SetRowCount(item_.row + 1);                        // append a row
+
+		// Clear all the cells in the new row (before adding mess)
+		item_.strText = CString("");
+		item_.lParam = id;
+
+		int widest_col, best_width = -1;   // used to work out the widest column
+		for (item_.col = fcc_ + COL_ORIG_TYPE; item_.col < fcc_ + COL_LAST; ++item_.col)
+		{
+			// Check if the column of this cell is widest so far
+			int width = grid_.GetColumnWidth(item_.col);
+			if (width > best_width)
+			{
+				best_width = width;
+				widest_col = item_.col;
+			}
+
+			// Clear the cell
+			grid_.SetItem(&item_);
+		}
+		ASSERT(best_width > -1);
+
+		// Add the message to the widest cell
+		item_.col = widest_col;
+		item_.strText = CString(mess);
+		grid_.SetItem(&item_);
+
+		++item_.row;
+	}
 private:
 	static void ClearItem(GV_ITEM &item)
 	{
-		item.mask = GVIF_STATE | GVIF_FORMAT | GVIF_TEXT | GVIF_FGCLR | GVIF_BKCLR;
+		item.row = item.col = -1;  // row, col and strText are filled in later
+		item.mask = GVIF_STATE | GVIF_FORMAT | GVIF_TEXT | GVIF_FGCLR | GVIF_BKCLR | GVIF_PARAM;
 		item.nState = GVIS_READONLY;
 		item.nFormat = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
 		item.crFgClr = CLR_DEFAULT;
 		item.crBkClr = CLR_DEFAULT;
+		//item.iImage = -1;          // GVIF_IMAGE
+		item.lParam = 0;           // GVIF_PARAM
+		//item.nMargin = 0;          // GVIF_MARGIN
 	}
 
 	CGridCtrlComp & grid_;         // the grid we are adding rows to the end of
@@ -292,16 +328,17 @@ void CGridCtrlComp::FixHeading(int col, UINT size)
 		assert(0);
 		return;
 	}
+	double fact = GetDC()->GetDeviceCaps(LOGPIXELSX) / 96.0;  // Size comparison need to be adjusted for current DPI setting
 
-	if (size > 96)
+	if (size > int(96*fact))
 	{
 		SetItemText(0, col, headingLong[col]);
 	}
-	else if (size > 70)
+	else if (size > int(70*fact))
 	{
 		SetItemText(0, col, heading[col]);
 	}
-	else if (size > 33)
+	else if (size > int(33*fact))
 	{
 		SetItemText(0, col, headingShort[col]);
 	}
@@ -465,59 +502,77 @@ LRESULT CCompareListDlg::OnKickIdle(WPARAM, LPARAM lCount)
 		help_hwnd_ = (HWND)0;
 	}
 
-	CHexEditView * pview;
-	CHexEditDoc * pdoc;
-	if ((pview = GetView()) != NULL &&                 // we have an active view
-		(pdoc = pview->GetDocument()) != NULL)         // all views should have a doc!
+	CHexEditView * pview = GetView();     // active file's view (or NULL if none)
+	CHexEditDoc * pdoc = NULL;            // active file's doc
+	int diffs = -1;                       // number of diffs, or -2 if bg compare in progress
+	clock_t curr_change = -1;             // time that current compare finished
+	int curr_progress = 0;                // progress value if background compare in progress
+	if (pview != NULL)
 	{
-		int diffs = pdoc->CompareDifferences();
-		clock_t curr_change = pdoc->LastCompareFinishTime();
+		pdoc = pview->GetDocument();
+		ASSERT(pdoc != NULL);
+		diffs = pdoc->CompareDifferences();
+		curr_change = pdoc->LastCompareFinishTime();
+	}
 
-		if (diffs == -4)
-			grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
+	// First work out if we have to redraw the list
+	bool redraw = false;
+	if (pview != phev_)
+	{
+		redraw = true;         // we have to redraw after switching files
+		phev_ = pview;         // track which view we last used
+	}
+	// Check if we have to redraw because the current file status has changed
+	if (!redraw && pview != NULL)
+	{
+		if (diffs == -2)
+		{
+			// Currently comparing (background) - check if we need to update progress
+			static int last_progress;
+			curr_progress = (pdoc->CompareProgress()/5) * 5;  // nearest 5%
+			if (curr_progress != last_progress)
+			{
+				last_progress = curr_progress;
+				redraw = true;             // need to update progress
+			}
+		}
+		else if (diffs >= 0  && curr_change != 0 && curr_change != last_change_)
+		{
+			redraw = true;                // need to redraw the whole list
+		}
+	}
+
+	if (redraw)
+	{
+		TRACE("]]]] %p %p %d %d %d\n", pview, pdoc, diffs, (int)last_change_, (int)curr_change);
+		if (pview == NULL)
+		{
+			grid_.SetRowCount(grid_.GetFixedRowCount());   // No view so display empty list
+		}
+		else if (diffs >= 0)
+		{
+			last_change_ = curr_change;
+
+			// Grid needs updating (switched to diff view or compare just finished)
+			grid_.SetRowCount(grid_.GetFixedRowCount());   // Clear grid before refilling
+			FillGrid(pdoc);                                // fill grid with results
+		}
 		else if (diffs == -2)
 		{
-			static int last_progress;
+			grid_.SetRowCount(grid_.GetFixedRowCount());   // Clear grid before adding message
 
-			int progress = pdoc->CompareProgress();
-			if (progress != last_progress)
-			{
-				CString mess;
-				mess.Format("%d%% ...", progress);
-				AddMessage(mess);
-				grid_.Refresh();
-				last_progress = progress;
-			}
+			RowAdder rowAdder(grid_, pview);
+
+			CString mess;
+			mess.Format("%d%% ...", curr_progress);
+			rowAdder.AddMessage(mess, IDS_COMPARE_INPROGRESS);
 		}
-		else if (curr_change != 0 && (pview != phev_ || curr_change != last_change_))
+		else
 		{
-			ASSERT(diffs >= 0);
-			// Grid needs updating (switched to diff view or compare just finished)
-			phev_ = pview;     // track which view we last used
-
-			if (diffs >= 10000)
-			{
-				AddMessage("Too many differences");
-				grid_.Refresh();
-				last_change_ = curr_change;
-			}
-			else if (diffs >= 0)
-			{
-				// Clear the list in preparation for redrawing
-				grid_.SetRowCount(grid_.GetFixedRowCount());
-				FillGrid(pdoc);      // fill grid with results
-				last_change_ = curr_change;
-			}
+			grid_.SetRowCount(grid_.GetFixedRowCount());  // clear list if no compare done
 		}
 	}
-	else if (pview == NULL && phev_ != NULL)
-	{
-		last_change_ = -1;
-		phev_ = NULL;
 
-		// Clear the list as there is now no active view
-		grid_.SetRowCount(grid_.GetFixedRowCount());
-	}
 	return FALSE;
 }
 
@@ -528,46 +583,50 @@ void CCompareListDlg::OnGridDoubleClick(NMHDR *pNotifyStruct, LRESULT* /*pResult
 	if (pItem->iRow < grid_.GetFixedRowCount())
 		return;                         // Don't do anything for header rows
 
-	// Do a sanity check on the current view
+	CCellRange sel = grid_.GetSelectedCellRange();
+
+	if (!sel.IsValid() || sel.GetMinRow() != sel.GetMaxRow())
+		return;                        // Don't do anything for multiple selected rows
+
 	if (phev_ != GetView() || phev_->pcv_ == NULL)
+		return;                        // Don't do anything if there is no compare view
+
+	int row = sel.GetMinRow();
+	int id = (int)grid_.GetItemData(row, COL_ORIG_TYPE);
+	if (id != 0)
 	{
-		ASSERT(0);
+		AvoidableTaskDialog(id);
 		return;
 	}
 
-	CCellRange sel = grid_.GetSelectedCellRange();
-	if (sel.IsValid() && sel.GetMinRow() == sel.GetMaxRow())
-	{
-		FILE_ADDRESS addr, len = 0;     // bytes to select
-		int row = sel.GetMinRow();
-		CString ss;
-		char cType = 'E';
+	FILE_ADDRESS addr, len = 0;     // bytes to select
+	CString ss;
+	char cType = 'E';
 
-		bool sync_saved = phev_->AutoSyncCompare();
-		phev_->SetAutoSyncCompare(false);                               // since we set selection in both view we don't want this
+	bool sync_saved = phev_->AutoSyncCompare();
+	phev_->SetAutoSyncCompare(false);                               // since we set selection in both view we don't want this
 
-		// We need the type of the difference in order to set the length correctly for insertions deletions
-		ss = (CString)grid_.GetItemText(row, COL_ORIG_TYPE);
-		if (!ss.IsEmpty()) cType = ss[0];                               // First char of type string (E,R,I,D)
+	// We need the type of the difference in order to set the length correctly for insertions deletions
+	ss = (CString)grid_.GetItemText(row, COL_ORIG_TYPE);
+	if (!ss.IsEmpty()) cType = ss[0];                               // First char of type string (E,R,I,D)
 
-		// Get length of difference
-		ss = (CString)grid_.GetItemText(row, COL_LEN_HEX);
-		ss.Replace(" ", "");
-		len = ::_strtoi64(ss, NULL, 16);
+	// Get length of difference
+	ss = (CString)grid_.GetItemText(row, COL_LEN_HEX);
+	ss.Replace(" ", "");
+	len = ::_strtoi64(ss, NULL, 16);
 
-		// Get location in compare file and move the selection
-		ss = (CString)grid_.GetItemText(row, COL_COMP_HEX);
-		ss.Replace(" ", "");
-		addr = ::_strtoi64(ss, NULL, 16);
-		phev_->pcv_->MoveToAddress(addr, addr + (cType == 'I' ? 0 : len));  // I (insertion) is a deletion in the compare file
+	// Get location in compare file and move the selection
+	ss = (CString)grid_.GetItemText(row, COL_COMP_HEX);
+	ss.Replace(" ", "");
+	addr = ::_strtoi64(ss, NULL, 16);
+	phev_->pcv_->MoveToAddress(addr, addr + (cType == 'I' ? 0 : len));  // I (insertion) is a deletion in the compare file
 
-		ss = (CString)grid_.GetItemText(row, COL_ORIG_HEX);
-		ss.Replace(" ", "");
-		addr = ::_strtoi64(ss, NULL, 16);
-		phev_->MoveToAddress(addr, addr + (cType == 'D' ? 0 : len));    // for D (deletion) len is zero
+	ss = (CString)grid_.GetItemText(row, COL_ORIG_HEX);
+	ss.Replace(" ", "");
+	addr = ::_strtoi64(ss, NULL, 16);
+	phev_->MoveToAddress(addr, addr + (cType == 'D' ? 0 : len));    // for D (deletion) len is zero
 
-		phev_->SetAutoSyncCompare(sync_saved);                          // restore sync setting
-	}
+	phev_->SetAutoSyncCompare(sync_saved);                          // restore sync setting
 }
 
 void CCompareListDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
@@ -744,6 +803,12 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 		// Add the row for the found difference
 		rowAdder.AddRow(next_diff, newA, len, newB);
 
+		if (rowAdder.RowCount() > 10000)
+		{
+			rowAdder.AddMessage("Too Many", IDS_TOO_MANY_DIFFS);
+			break;
+		}
+
 		// Move to the next one
 		addrA = newA;
 		addrB = newB;
@@ -765,37 +830,3 @@ void CCompareListDlg::FillGrid(CHexEditDoc * pdoc)
 		}
 	}
 }
-
-// Clear the grid to a single row and put a message left cell
-void CCompareListDlg::AddMessage(const char * mess)
-{
-	int frc = grid_.GetFixedRowCount();
-	int fcc = grid_.GetFixedColumnCount();
-
-	// Ensure we have just one normal row
-	if (grid_.GetRowCount() != frc + 1)
-		grid_.SetRowCount(frc + 1);
-
-	GV_ITEM item;
-	item.col = fcc;  // 1st column
-	item.row = frc;
-
-	// Set item attributes that are the same for each field (column)
-	item.mask = GVIF_STATE|GVIF_FORMAT|GVIF_TEXT|GVIF_FGCLR|GVIF_BKCLR;
-	item.nState = GVIS_READONLY;
-	item.nFormat = DT_CENTER|DT_VCENTER|DT_SINGLELINE;
-	item.crFgClr = CLR_DEFAULT;
-	item.crBkClr = CLR_DEFAULT;
-
-	// Put the message in left column (top row) cell
-	item.strText = mess;
-	grid_.SetItem(&item);
-
-	// Clear the text in the rest of the cells in the row
-	item.strText = "";
-	for (++item.col; item.col < fcc + COL_LAST; ++item.col)
-	{
-		grid_.SetItem(&item);
-	}
-}
-

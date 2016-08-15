@@ -1079,7 +1079,7 @@ void CHexEditDoc::StopComp()
 		TRACE("+++ Stop Compare - thread not waiting (yet)\n");
 		Sleep(1);
 	}
-	SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_LOWEST);
+	SetThreadPriority(pthread4_->m_hThread, THREAD_PRIORITY_BELOW_NORMAL);
 	ASSERT(waiting);
 }
 
@@ -1199,7 +1199,7 @@ bool CHexEditDoc::CreateCompThread()
 	comp_fin_ = false;
 	comp_clock_ = 0;
 	TRACE1("+++ Creating compare thread for %p\n", this);
-	pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_LOWEST);
+	pthread4_ = AfxBeginThread(&bg_func, this, THREAD_PRIORITY_BELOW_NORMAL);
 	ASSERT(pthread4_ != NULL);
 	return true;
 }

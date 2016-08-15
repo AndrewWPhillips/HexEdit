@@ -1195,8 +1195,8 @@ void CDataFormatView::InitTree()
 #endif
 		}
 
-		// Update scan progress no more than once a second
-		if (double(clock() - last_checked)/CLOCKS_PER_SEC > 1)
+		// Update scan progress no more than once every 5 seconds
+		if (double(clock() - last_checked)/CLOCKS_PER_SEC > 5)
 		{
 			mm->Progress(int((ii*100)/pdoc->df_type_.size()));
 			last_checked = clock();

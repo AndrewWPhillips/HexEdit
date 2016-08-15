@@ -1731,6 +1731,21 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 			base_type_ = 2;					// base is temp file
 	}
 
+	// Before writing to disk warn if we may not have enough disk space
+	if (write_file && AvailableSpace(file_name) < file_len)
+	{
+		if (TaskMessageBox("Insufficient Disk Space",
+			"There may not be enough disk space to create the new file.\n\n"
+			"Do you want to continue?",
+			MB_YESNO) == IDNO)
+		{
+			theApp.mac_error_ = 2;
+			if (fill_bits.type == CNewFile::FILL_CLIPBOARD)
+				::CloseClipboard();
+			return -1;
+		}
+	}
+
 	// Allocate the block of memory and fill it
 	size_t buf_len;
 	if (write_file)
@@ -1924,22 +1939,39 @@ FILE_ADDRESS CHexEditDoc::insert_block(FILE_ADDRESS addr, _int64 params, const c
 		CMainFrame *mm = (CMainFrame *)AfxGetMainWnd();
 		clock_t last_checked = clock();
 
-		// Write out the file
-		FILE_ADDRESS num_out;
-		FILE_ADDRESS towrite;
-		for (num_out = 0; num_out < file_len; num_out += towrite)
+		try
 		{
-			towrite = std::min((FILE_ADDRESS)buf_len, file_len - num_out);
-			if (fill_bits.type == CNewFile::FILL_RANDOM)
-				fill_rand(buf, size_t(towrite), rand_rs);
-			pfile->Write(buf, size_t(towrite));
-
-			// Update scan progress no more than once a second
-			if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+			// Write out the file
+			FILE_ADDRESS num_out;
+			FILE_ADDRESS towrite;
+			for (num_out = 0; num_out < file_len; num_out += towrite)
 			{
-				mm->Progress(int((num_out*100)/file_len));
-				last_checked = clock();
+				towrite = std::min((FILE_ADDRESS)buf_len, file_len - num_out);
+				if (fill_bits.type == CNewFile::FILL_RANDOM)
+					fill_rand(buf, size_t(towrite), rand_rs);
+				pfile->Write(buf, size_t(towrite));
+
+				// Update write progress no more than once  every 5 seconds
+				if ((clock() - last_checked)/CLOCKS_PER_SEC > 5)
+				{
+					mm->Progress(int((num_out*100)/file_len));
+					last_checked = clock();
+				}
 			}
+		}
+		catch (CFileException *pfe)
+		{
+			TaskMessageBox("Error Creating New File", ::FileErrorMessage(pfe, CFile::modeWrite));
+			pfe->Delete();
+
+			// Close and delete the (probably incomplete) file
+			delete pfile;
+			delete[] buf;
+			remove(file_name);
+
+			mm->Progress(-1);
+			theApp.mac_error_ = 10;
+			return -1;
 		}
 
 		mm->Progress(-1);

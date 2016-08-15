@@ -4261,27 +4261,34 @@ ExprStringType expr_eval::value_t::GetDataString(CString strFormat, int size /* 
 		ASSERT(size == 1 || size == 2 || size == 4 || size == 8);
 		if (strFormat.Left(3).CompareNoCase("hex") == 0)
 		{
-			if (theApp.hex_ucase_)
-				sprintf(disp, "%*.*I64X", size*2, size*2, int64);  // pass number of digits (4-bit nybbles) to sprintf
-			else
-				sprintf(disp, "%*.*I64x", size*2, size*2, int64);
+			int2str(disp, sizeof(disp), int64, 16, 2, ' ', theApp.hex_ucase_ != FALSE, size * 2, size * 2);
 			ss = disp;
-			AddSpaces(ss);
 		}
 		else if (strFormat.Left(3).CompareNoCase("bin") == 0)
 		{
-			ss = bin_str(int64, size*8);                           // pass the number of bits to bin_str
+			int2str(disp, sizeof(disp), int64, 2, 8, ' ', false, size * 8, size * 8);
+			ss = disp;
 		}
 		else if (strFormat.Left(3).CompareNoCase("oct") == 0)
 		{
-			sprintf(disp, "%I64o", int64);
+			int2str(disp, sizeof(disp), int64, 8, 4, ' ', false, 1 + size * 8 / 3, 1 + size * 8 / 3);
 			ss = disp;
 		}
 		else if (strFormat.Find('%') == -1)
 		{
-			sprintf(disp, "%I64d", int64);
-			ss = disp;
-			AddCommas(ss);
+			// if no % symbol found (and not hex/bin/oct) then default to decimal
+			if (unsgned)
+			{
+				int2str(disp, sizeof(disp), int64);
+				ss = disp;
+			}
+			else
+			{
+				// Need sprintf to get a minus (-) sign with -ve values
+				sprintf(disp, "%I64d", int64);
+				ss = disp;
+				AddCommas(ss);
+			}
 		}
 		else
 		{

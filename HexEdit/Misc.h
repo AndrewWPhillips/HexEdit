@@ -36,6 +36,7 @@ bool ConvertToFileTime(time_t tt, FILETIME *ft);
 
 // System utils
 BOOL IsUs();     // This is just to handle a few differences in American spelling
+__int64 AvailableSpace(const char *filename);  // free space on file's drive
 CString GetExePath();
 BOOL GetDataPath(CString &data_path, int csidl = CSIDL_APPDATA);
 CString FileErrorMessage(const CFileException *fe, UINT mode = CFile::modeRead|CFile::modeWrite);
@@ -55,7 +56,8 @@ inline double fround(double r) { return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.
 
 // Number conversion/analysis
 bool int2str(char * buf, size_t buflen, unsigned __int64 val,
-             int radix = 10, int sep = 3, char sep_char = ',', bool ucase = true);
+             int radix = 10, int sep = 3, char sep_char = ',', 
+			 bool ucase = true, int min_dig = 0, int max_dig = 0);
 CString NumScale(double val);
 CString	bin_str(__int64 val,int bits);
 void AddCommas(CString &str);

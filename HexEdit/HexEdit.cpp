@@ -1904,7 +1904,6 @@ BOOL CHexEditApp::OnIdle(LONG lCount)
 		}
 	}
 
-
 	return CWinAppEx::OnIdle(lCount);
 }
 
@@ -4129,67 +4128,21 @@ BOOL CHexEditApp::backup(LPCTSTR filename, FILE_ADDRESS file_len) const
 		// Default to TRUE but if any test below fails set to FALSE
 		retval = TRUE;
 
-		if (backup_space_)
+		if (retval && backup_space_ && 
+			file_len >= AvailableSpace(filename) - 65536)    // allow 64K leeway
 		{
-			// First get the volumen name from the file name
-			_TCHAR vol[128] = "";
-			if (isalpha(filename[0]) && filename[1] == ':')
-			{
-				// Normal file name
-				vol[0] = filename[0];
-				strcpy(vol+1, _T(":\\"));
-			}
-			else if (filename[0] == '\\' && filename[1] == '\\')
-			{
-				// UNC file name (eg \\MyServer\MyShare\MyFile)
-				// Find 4th backslash and copy everything up to it
-				const char *pp = strchr(filename+2, '\\');      // 3rd
-				if (pp != NULL) pp = strchr(pp+1, '\\');    // 4th
-
-				if (pp != NULL && pp-filename + 1 < sizeof(vol)/sizeof(*vol))
-				{
-					// Copy just the volume part
-					strncpy(vol, filename, pp-filename + 1);
-					vol[pp-filename + 1] = '\0'; // terminate the string
-				}
-			}
-
-			__int64 free_space = -1;
-			ULARGE_INTEGER bytes_avail, dummy1, dummy2;
-			DWORD SectorsPerCluster;
-			DWORD BytesPerSector;
-			DWORD NumberOfFreeClusters;
-			DWORD TotalNumberOfClusters;
-
-			// Get free space on drive and make sure there is enough
-			if (::GetDiskFreeSpaceEx(vol, &bytes_avail, &dummy1, &dummy2))
-			{
-				free_space = bytes_avail.QuadPart;
-			}
-			else if (::GetDiskFreeSpace(vol,
-						&SectorsPerCluster,
-						&BytesPerSector,
-						&NumberOfFreeClusters,
-						&TotalNumberOfClusters) )
-			{
-				free_space = BytesPerSector * (__int64)SectorsPerCluster * NumberOfFreeClusters;
-			}
-
-			ASSERT(free_space != -1);   // The calls above should not fail?
-
-			if (file_len >= free_space-65536)   // allow 64K leeway
-				retval = FALSE;
+			retval = FALSE;
 		}
 
 		// Make sure file length is less than max backup size (in Mbytes)
-		if (retval && backup_size_ > 0 && file_len > FILE_ADDRESS(backup_size_)*1024)
+		if (retval && backup_size_ > 0 && 
+			file_len > FILE_ADDRESS(backup_size_)*1024)
 		{
 			retval = FALSE;
 		}
 
 		// If still backing up and prompt the user (if required)
-		if (retval &&
-			backup_prompt_ &&
+		if (retval && backup_prompt_ &&
 			TaskMessageBox("Create Backup?", "Do you want to create a backup copy of this file?", MB_YESNO) != IDYES)
 		{
 			retval = FALSE;
@@ -4604,7 +4557,7 @@ BOOL SendEmail(int def_type /*=0*/, const char *def_text /*=NULL*/, const char *
 	if (def_type == 2)
 	{
 		dlg.to_ = "info@HexEdit.com";
-		dlg.subject_ = "License";
+		dlg.subject_ = "[hexedit] License";
 	}
 
 	// If bug report then default attachment file name to be the active file

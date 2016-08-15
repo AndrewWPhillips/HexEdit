@@ -617,7 +617,8 @@ CString NumScale(double val)
 // ucase = when radix is greater than 10 this says to use lower/upper-case letters
 // return false on error (invalid parameter or buflen is too small)
 bool int2str(char * buf, size_t buflen, unsigned __int64 val,
-	int radix /*=10*/, int sep /*=3*/, char sep_char /*=','*/, bool ucase /*=true*/)
+	int radix /*=10*/, int sep /*=3*/, char sep_char /*=','*/, 
+	bool ucase /*=true*/, int min_dig /*=0*/, int max_dig /*=0*/)
 {
 	static char upper[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
 	static char lower[] = "0123456789abcdefghijklmnopqrstuvwxyz?";
@@ -636,7 +637,10 @@ bool int2str(char * buf, size_t buflen, unsigned __int64 val,
 			return false;  // buf is full
 
 		// Remove the digit we just did and stop when there are no more
-		if ((val /= radix) == 0)
+		if ((val /= radix) == 0 && dig >= min_dig)
+			break;
+
+		if (max_dig > 0 && dig >= max_dig)
 			break;
 
 		if (sep > 0 && dig%sep == 0)
@@ -1272,6 +1276,58 @@ void test_misc()
 
 //-----------------------------------------------------------------------------
 // File handling
+
+// Return the amount of free space on a file's drive (given full path), or -1 on error
+__int64 AvailableSpace(const char *filename)
+{
+	// First work out the volume that the file is on
+	char vol[128] = "";
+	if (isalpha(filename[0]) && filename[1] == ':')
+	{
+		// Normal file name
+		vol[0] = filename[0];
+		strcpy(vol + 1, _T(":\\"));
+	}
+	else if (filename[0] == '\\' && filename[1] == '\\')
+	{
+		// UNC file name (eg \\MyServer\MyShare\MyFile)
+		// Find 4th backslash and copy everything up to it
+		const char *pp = strchr(filename + 2, '\\');      // 3rd
+		if (pp != NULL) pp = strchr(pp + 1, '\\');    // 4th
+
+		if (pp != NULL && pp - filename + 1 < sizeof(vol) / sizeof(*vol))
+		{
+			// Copy just the volume part
+			strncpy(vol, filename, pp - filename + 1);
+			vol[pp - filename + 1] = '\0'; // terminate the string
+		}
+	}
+	else
+		return -1;   // Bad file name?
+
+	// Now try some Windows system calls to get the free space
+	ULARGE_INTEGER bytes_avail, dummy1, dummy2;
+	DWORD SectorsPerCluster;
+	DWORD BytesPerSector;
+	DWORD NumberOfFreeClusters;
+	DWORD TotalNumberOfClusters;
+
+	// Get free space on drive and make sure there is enough
+	if (::GetDiskFreeSpaceEx(vol, &bytes_avail, &dummy1, &dummy2))
+	{
+		return bytes_avail.QuadPart;
+	}
+	else if (::GetDiskFreeSpace(vol,
+		&SectorsPerCluster,
+		&BytesPerSector,
+		&NumberOfFreeClusters,
+		&TotalNumberOfClusters))
+	{
+		return BytesPerSector * (__int64)SectorsPerCluster * NumberOfFreeClusters;
+	}
+	else
+		return -1;
+}
 
 // Try to find the absolute path the .EXE and return it (including trailing backslash)
 CString GetExePath()

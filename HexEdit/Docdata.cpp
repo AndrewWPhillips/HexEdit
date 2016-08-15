@@ -953,7 +953,7 @@ void CHexEditDoc::WriteInPlace()
 
 					// Update progress
 					total_done += count;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 					{
 						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
@@ -989,7 +989,7 @@ void CHexEditDoc::WriteInPlace()
 
 					// Update progress
 					total_done += count;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 					{
 						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
@@ -1012,7 +1012,7 @@ void CHexEditDoc::WriteInPlace()
 #ifdef INPLACE_MOVE
 				// Update progress bar
 				total_done += (pl->dlen&doc_loc::mask);
-				if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+				if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 				{
 					mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 					last_checked = clock();
@@ -1043,7 +1043,7 @@ void CHexEditDoc::WriteInPlace()
 #ifdef INPLACE_MOVE
 					// Update progress bar
 					total_done += tocopy;
-					if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+					if ((clock() - last_checked)/CLOCKS_PER_SEC > 2)
 					{
 						mm->m_wndStatusBar.SetPaneProgress(0, long(total_done*100/total_todo));
 						last_checked = clock();
@@ -1090,9 +1090,23 @@ void CHexEditDoc::WriteInPlace()
 // The range to write is given by 'start' and 'end'.
 BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADDRESS end, BOOL append /*=FALSE*/)
 {
-	const size_t copy_buf_len = 16384;
+	// First warn if there may not be enough disk space
+	if (AvailableSpace(filename) < end - start)
+	{
+		if (TaskMessageBox("Insufficient Disk Space",
+			"There may not be enough disk space to write to the file.\n\n"
+			"Do you want to continue?",
+			MB_YESNO) == IDNO)
+		{
+			theApp.mac_error_ = 2;
+			return FALSE;
+		}
+	}
+
+	// Open the file for overwriting (or appending)
 	CFile64 ff;
 	CFileException fe;
+	FILE_ADDRESS start_pos = 0;
 	UINT flags = CFile::modeCreate|CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
 	if (append)
 		flags = CFile::modeWrite|CFile::shareExclusive|CFile::typeBinary;
@@ -1100,59 +1114,15 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 	// Open the file to write to
 	if (!ff.Open(filename, flags, &fe))
 	{
-#if 0
-		// Display info about why the open failed
-		CString mess;
-		mess.Format("File \"%s\"",filename);
-		CFileStatus fs;
-
-		switch (fe.m_cause)
-		{
-		case CFileException::badPath:
-			mess += "\ris an invalid file name";
-			break;
-		case CFileException::tooManyOpenFiles:
-			mess += "\r- too many files already open";
-			break;
-		case CFileException::directoryFull:
-			mess += "\r- directory is full";
-			break;
-		case CFileException::accessDenied:
-			if (!CFile::GetStatus(filename, fs))
-				mess += "\rcannot be created";
-			else
-			{
-				if (fs.m_attribute & CFile::directory)
-					mess += "\ris a directory";
-				else if (fs.m_attribute & (CFile::volume|CFile::hidden|CFile::system))
-					mess += "\ris a special file";
-				else if (fs.m_attribute & CFile::readOnly)
-					mess += "\ris a read only file";
-				else
-					mess += "\rcannot be used (reason unknown)";
-			}
-			break;
-		case CFileException::sharingViolation:
-		case CFileException::lockViolation:
-			mess += "\ris in use";
-			break;
-		case CFileException::hardIO:
-			mess += "\r- hardware error";
-			break;
-		default:
-			mess += "\rcould not be opened (reason unknown)";
-			break;
-		}
-		AfxMessageBox(mess);
-#else
 		TaskMessageBox("File Open Error", ::FileErrorMessage(&fe, CFile::modeWrite));
-#endif
-
 		theApp.mac_error_ = 10;
 		return FALSE;
 	}
+	if (append)
+		start_pos = ff.GetLength();
 
 	// Get memory for a buffer
+	const size_t copy_buf_len = 16384;
 	unsigned char *buf = new unsigned char[copy_buf_len];   // Where we store data
 	size_t got;                                 // How much we got from GetData
 
@@ -1172,12 +1142,14 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 			ASSERT(got > 0);
 
 			ff.Write(buf, got);
-			// Update scan progress no more than once every 1 seconds
-			if ((clock() - last_checked)/CLOCKS_PER_SEC > 1)
+			// Update save progress no more than once every 5 seconds
+			if ((clock() - last_checked)/CLOCKS_PER_SEC > 5)
 			{
-				mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
+				mm->Progress(int(((address-start)*100)/(end-start)));
 				last_checked = clock();
-				AfxGetApp()->OnIdle(0);
+				//mm->m_wndStatusBar.SetPaneProgress(0, long(((address-start)*98)/(end-start) + 1));
+				//last_checked = clock();
+				//AfxGetApp()->OnIdle(0);
 			}
 		}
 		ASSERT(address == end);
@@ -1187,18 +1159,21 @@ BOOL CHexEditDoc::WriteData(const CString filename, FILE_ADDRESS start, FILE_ADD
 		TaskMessageBox("File Write Error", ::FileErrorMessage(pfe, CFile::modeWrite));
 		pfe->Delete();
 
-		mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+		mm->Progress(-1);
 
-		// Close and delete the (probably incomplete) file
+		// Close the file and restore things as they were
+		if (append)
+			ff.SetLength(start_pos);   // truncate to original length
 		ff.Close();
-		remove(filename);
+		if (!append)
+			remove(filename);
 		delete[] buf;
 
 		theApp.mac_error_ = 10;
 		return FALSE;
 	}
 
-	mm->m_wndStatusBar.EnablePaneProgressBar(0, -1);  // disable progress bar
+	mm->Progress(-1);
 
 	ff.Close();
 	delete[] buf;
