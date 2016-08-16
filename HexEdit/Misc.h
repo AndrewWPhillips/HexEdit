@@ -33,6 +33,7 @@ DATE FromTime_t_80(long v);
 DATE FromTime_t_mins(long v);
 DATE FromTime_t_1899(long v);
 bool ConvertToFileTime(time_t tt, FILETIME *ft);
+CString FormatDate(DATE dd);
 
 // System utils
 BOOL IsUs();     // This is just to handle a few differences in American spelling
