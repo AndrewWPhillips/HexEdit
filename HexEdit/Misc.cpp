@@ -595,13 +595,20 @@ CString FormatDate(DATE dd)
 
 	// If format does not have 4 digit year (yyyy) convert 2 digit year to 4 digit year
 	if (fmt.Find("yyyy") == -1 &&
-		fmt.Replace("yy", "yyyy") > 0 &&
-		::VarUdateFromDate(dd, 0, &ud) == S_OK &&
-		::GetDateFormat(LOCALE_USER_DEFAULT, 0, &ud.st, fmt, buf, sizeof(buf)) > 0)
+		fmt.Replace("yy", "yyyy") > 0)
 	{
-		return CString(buf);
+		if (::VarUdateFromDate(dd, 0, &ud) == S_OK && 
+			::GetDateFormat(LOCALE_USER_DEFAULT, 0, &ud.st, fmt, buf, sizeof(buf)) > 0)
+		{
+			return CString(buf);
+		}
+		else
+		{
+			return CString("Invalid Date");
+		}
 	}
 
+	// Fall back on MS code
 	COleDateTime odt;
 	odt.m_dt = dd;
 	odt.m_status = COleDateTime::valid;

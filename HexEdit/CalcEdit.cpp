@@ -339,9 +339,9 @@ CALCSTATE CCalcEdit::update_value(bool side_effects /* = true */)
 				if (vv.date > 0.0 && vv.date < 1.0)
 					pp_->current_str_ = "TIME(\"" + odt.Format("%X") + "\")";   // Just show time of day part (no date)
 				else if (frac == 0.0)
-					pp_->current_str_ = "DATE(\"" + odt.Format("%x") + "\")";   // Just show date part (no time of day)
+					pp_->current_str_ = "DATE(\"" + ::FormatDate(vv.date) + "\")";   // Just show date part (no time of day)
 				else
-					pp_->current_str_ = "DATE(\"" + odt.Format("%x %X") + "\")"; // Date and time
+					pp_->current_str_ = "DATE(\"" + ::FormatDate(vv.date) + odt.Format(" %X") + "\")"; // Date and time
 				retval = CALCDATEEXPR;
 			}
 		}
