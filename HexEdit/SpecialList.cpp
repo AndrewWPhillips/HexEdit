@@ -31,7 +31,7 @@ CSpecialList::CSpecialList(int sleep /* = 5 */) : m_hwnd(0), m_pthread(NULL)
 	build();
 }
 
-BOOL CSpecialList::busy()
+BOOL CSpecialList::busy() const
 {
 	BOOL ok = m_mutex.Lock(0);
 	if (ok)
@@ -40,7 +40,7 @@ BOOL CSpecialList::busy()
 }
 
 #ifdef _DEBUG
-void CSpecialList::DEBUG_CHECK(int idx)
+void CSpecialList::DEBUG_CHECK(int idx) const
 {
 	ASSERT(m_id.size() == m_type.size());
 	ASSERT(m_filename.size() == m_type.size());
@@ -64,7 +64,7 @@ void CSpecialList::DEBUG_CHECK(int idx)
 #define DEBUG_CHECK(x) (void)0
 #endif
 
-int CSpecialList::find(LPCTSTR filename)
+int CSpecialList::find(LPCTSTR filename) const
 {
 	DEBUG_CHECK(0);
 	for (int ii = 0; ii < (int)m_filename.size(); ++ii)
@@ -73,7 +73,7 @@ int CSpecialList::find(LPCTSTR filename)
 	return -1;                  // not found
 }
 
-int CSpecialList::find(short id)
+int CSpecialList::find(short id) const
 {
 	DEBUG_CHECK(0);
 	for (int ii = 0; ii < (int)m_id.size(); ++ii)
@@ -82,7 +82,7 @@ int CSpecialList::find(short id)
 	return -1;                  // not found
 }
 
-CString CSpecialList::nicename(int idx)
+CString CSpecialList::nicename(int idx) const
 {
 	DEBUG_CHECK(idx);
 
@@ -95,49 +95,49 @@ CString CSpecialList::nicename(int idx)
 		return m_nicename[idx];
 }
 
-DWORD CSpecialList::error(int idx)
+DWORD CSpecialList::error(int idx) const
 {
 	DEBUG_CHECK(idx);
 	CSingleLock sl(&m_mutex, TRUE);
 	return m_error[idx];
 }
 
-bool CSpecialList::medium_present(int idx)
+bool CSpecialList::medium_present(int idx) const
 {
 	DEBUG_CHECK(idx);
 	CSingleLock sl(&m_mutex, TRUE);
 	return m_medium_present[idx];
 }
 
-bool CSpecialList::read_only(int idx)
+bool CSpecialList::read_only(int idx) const
 {
 	DEBUG_CHECK(idx);
 	CSingleLock sl(&m_mutex, TRUE);
 	return m_read_only[idx];
 }
 
-bool CSpecialList::removeable(int idx)
+bool CSpecialList::removeable(int idx) const
 {
 	DEBUG_CHECK(idx);
 	CSingleLock sl(&m_mutex, TRUE);
 	return m_removeable[idx];
 }
 
-int CSpecialList::sector_size(int idx)
+int CSpecialList::sector_size(int idx) const
 {
 	DEBUG_CHECK(idx);
 	CSingleLock sl(&m_mutex, TRUE);
 	return m_sector_size[idx];
 }
 
-__int64 CSpecialList::total_size(int idx)
+__int64 CSpecialList::total_size(int idx) const
 {
 	DEBUG_CHECK(idx);
 	CSingleLock sl(&m_mutex, TRUE);
 	return m_total_size[idx];
 }
 
-CString CSpecialList::DriveType(int idx)
+CString CSpecialList::DriveType(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 0);
@@ -145,7 +145,7 @@ CString CSpecialList::DriveType(int idx)
 	return m_info1[idx];
 }
 
-CString CSpecialList::FileSystem(int idx)
+CString CSpecialList::FileSystem(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 0);
@@ -153,7 +153,7 @@ CString CSpecialList::FileSystem(int idx)
 	return m_info2[idx];
 }
 
-CString CSpecialList::VolumeName(int idx)
+CString CSpecialList::VolumeName(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 0);
@@ -161,7 +161,7 @@ CString CSpecialList::VolumeName(int idx)
 	return m_info3[idx];
 }
 
-int CSpecialList::SectorsPerCluster(int idx)
+int CSpecialList::SectorsPerCluster(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 0);
@@ -169,7 +169,7 @@ int CSpecialList::SectorsPerCluster(int idx)
 	return m_size1[idx];
 }
 
-int CSpecialList::FreeClusters(int idx)
+int CSpecialList::FreeClusters(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 0);
@@ -177,7 +177,7 @@ int CSpecialList::FreeClusters(int idx)
 	return m_size2[idx];
 }
 
-int CSpecialList::TotalClusters(int idx)
+int CSpecialList::TotalClusters(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 0);
@@ -185,7 +185,7 @@ int CSpecialList::TotalClusters(int idx)
 	return m_size3[idx];
 }
 
-CString CSpecialList::Vendor(int idx)
+CString CSpecialList::Vendor(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 1);
@@ -193,7 +193,7 @@ CString CSpecialList::Vendor(int idx)
 	return m_info1[idx];
 }
 
-CString CSpecialList::Product(int idx)
+CString CSpecialList::Product(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 1);
@@ -201,7 +201,7 @@ CString CSpecialList::Product(int idx)
 	return m_info2[idx];
 }
 
-CString CSpecialList::Revision(int idx)
+CString CSpecialList::Revision(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 1);
@@ -209,7 +209,7 @@ CString CSpecialList::Revision(int idx)
 	return m_info3[idx];
 }
 
-int CSpecialList::SectorsPerTrack(int idx)
+int CSpecialList::SectorsPerTrack(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 1);
@@ -217,7 +217,7 @@ int CSpecialList::SectorsPerTrack(int idx)
 	return m_size1[idx];
 }
 
-int CSpecialList::TracksPerCylinder(int idx)
+int CSpecialList::TracksPerCylinder(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 1);
@@ -225,7 +225,7 @@ int CSpecialList::TracksPerCylinder(int idx)
 	return m_size2[idx];
 }
 
-int CSpecialList::Cylinders(int idx)
+int CSpecialList::Cylinders(int idx) const
 {
 	DEBUG_CHECK(idx);
 	ASSERT(m_type[idx] == 1);

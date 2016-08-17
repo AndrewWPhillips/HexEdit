@@ -1,6 +1,6 @@
 // SpecialList.h : Maintains list of special things that can be opened (eg disks)
 //
-// Copyright (c) 2015 by Andrew W. Phillips
+// Copyright (c) 2016 by Andrew W. Phillips
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.
@@ -30,42 +30,42 @@ class CSpecialList
 public:
 	CSpecialList(int sleep = 5);     // Constructor
 
-	int size() { return m_type.size(); }
-	int find(short id);              // find entry given unique id (or -1 if not found)
-	int find(LPCTSTR filename);      // find item entry from "file name"
-	void refresh(HWND, short id = -1);  // refresh complete list or one entry
+	int size() const { return m_type.size(); }
+	int find(short id) const;              // find entry given unique id (or -1 if not found)
+	int find(LPCTSTR filename) const;      // find item entry from "file name"
+	void refresh(HWND, short id = -1);     // refresh complete list or one entry
 
 	// Information on particular entries
-	int type(int idx) {return m_type[idx];} // 0 = volume, 1 = phys device
-	short id(int idx)  {return m_id[idx];} // uniquely id: 0=\\.\A:, 100=\\.\Floppy0, 200=\\.\PhysicalDrive0, 300=\\.\CdRom0, etc
-	CString filename(int idx) {return m_filename[idx];} // eg \\.\Floppy1
-	CString name(int idx) {return m_name[idx];} // eg Floppy Drive 1
+	int type(int idx) const {return m_type[idx];} // 0 = volume, 1 = phys device
+	short id(int idx) const {return m_id[idx];}   // uniquely id: 0=\\.\A:, 100=\\.\Floppy0, 200=\\.\PhysicalDrive0, 300=\\.\CdRom0, etc
+	CString filename(int idx) const {return m_filename[idx];} // eg \\.\Floppy1
+	CString name(int idx) const {return m_name[idx];} // eg Floppy Drive 1
 
-	CString nicename(int idx);           // Volume name, Vendor/Model etc (or name() if no other info. avail.)
-	DWORD error(int idx);            // if medium present but can't be read this is the error code
-	bool medium_present(int);        // false if removeable media device and no medium present
-	bool read_only(int);             // true if device is read-only or medium is write-protected
-	bool removeable(int);            // device is removeable physical drive (zip, flash disk etc)
-	int sector_size(int);            // Size of a sector on the device (512 for disk, may be more for CD)
-	__int64 total_size(int);         // Total numbers of bytes for the device (may not be exact)
+	CString nicename(int idx) const;    // Volume name, Vendor/Model etc (or name() if no other info. avail.)
+	DWORD error(int idx) const;         // if medium present but can't be read this is the error code
+	bool medium_present(int) const;     // false if removeable media device and no medium present
+	bool read_only(int) const;          // true if device is read-only or medium is write-protected
+	bool removeable(int) const;         // device is removeable physical drive (zip, flash disk etc)
+	int sector_size(int) const;         // Size of a sector on the device (512 for disk, may be more for CD)
+	__int64 total_size(int) const;      // Total numbers of bytes for the device (may not be exact)
 
 	// The following only apply for volumes (type() returns 0)
-	CString DriveType(int);
-	CString FileSystem(int);
-	CString VolumeName(int);
-	int SectorsPerCluster(int);
-	int FreeClusters(int);
-	int TotalClusters(int);
+	CString DriveType(int) const;
+	CString FileSystem(int) const;
+	CString VolumeName(int) const;
+	int SectorsPerCluster(int) const;
+	int FreeClusters(int) const;
+	int TotalClusters(int) const;
 
 	// The following only apply for phys devices (type() returns 1)
-	CString Vendor(int);
-	CString Product(int);
-	CString Revision(int);
-	int SectorsPerTrack(int);
-	int TracksPerCylinder(int);
-	int Cylinders(int);
+	CString Vendor(int) const;
+	CString Product(int) const;
+	CString Revision(int) const;
+	int SectorsPerTrack(int) const;
+	int TracksPerCylinder(int) const;
+	int Cylinders(int) const;
 
-	BOOL busy();                        // Is the background thread still working?
+	BOOL busy() const;                  // Is the background thread still working?
 	// Note: background() is public only because it's called from a non-member function (thread start up function)
 	UINT background();                  // called in background thread to fill in the details
 
@@ -78,11 +78,11 @@ private:
 	// m_mutex protects mosts of the data members from being accessed from the main thread while they are
 	// being changed in the background thread.  Note that this does not include m_type, m_id, m_filename
 	// and m_name as they are not modified in the background thread.
-	CMutex m_mutex;
+	mutable CMutex m_mutex;
 
 	void build();
 #ifdef _DEBUG
-	void DEBUG_CHECK(int idx);
+	void DEBUG_CHECK(int idx) const;
 #endif
 	void bg_update(int ii);             // Update one entry (part of background thread)
 
