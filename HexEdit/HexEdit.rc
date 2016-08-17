@@ -2642,8 +2642,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,0,1,GITREVISION
- PRODUCTVERSION 5,0,1,GITREVISION
+ FILEVERSION 5,0,0,GITREVISION
+ PRODUCTVERSION 5,0,0,GITREVISION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -2660,12 +2660,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Expert Commercial Software Pty Ltd"
             VALUE "FileDescription", "HexEdit Application"
-            VALUE "FileVersion", "5.0.1.0"
+            VALUE "FileVersion", "5.0.0.1347"
             VALUE "InternalName", "HexEdit"
             VALUE "LegalCopyright", "Copyright © 1999-2016  Expert Commercial Software"
             VALUE "OriginalFilename", "HEXEDIT.EXE"
             VALUE "ProductName", "HexEdit"
-            VALUE "ProductVersion", "5.0.1.0"
+            VALUE "ProductVersion", "5.0.0.1347"
         END
     END
     BLOCK "VarFileInfo"
@@ -3733,6 +3733,8 @@ BEGIN
     IDS_USE_AERIAL_SCHEME   "Change to MANY scheme?      "
     IDS_CLIPBOARD_FORMAT    "Select Clipboard Format"
     IDS_SHARED_FILE_MODIFIED "File Change Detected"
+    IDS_TOO_MANY_DIFFS      "Too Many Differences To Show in the List"
+    IDS_COMPARE_INPROGRESS  "Comparison in Progress"
 END
 
 STRINGTABLE
@@ -3797,8 +3799,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_UPDATE_AVAILABLE    "New Version Available"
-    IDS_TOO_MANY_DIFFS      "Too Many Differences To Show in the List"
-    IDS_COMPARE_INPROGRESS  "Comparison in Progress"
 END
 
 STRINGTABLE
