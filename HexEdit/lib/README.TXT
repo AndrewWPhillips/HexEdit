@@ -1,7 +1,6 @@
 This lib sub-directory contains libraries that are used to build HexEdit.
 
-Checked in libraries may be specific to VS2010 as noted below.
-How to download and build them with later versions of VS is also explained.
+How to download and/or build them (with different versions of VS) is also explained.
 
 Note that some libs also require a DLL at runtime (eg FreeImage.DLL, mpir.DLL).
 
@@ -9,9 +8,7 @@ Note that some libs also require a DLL at runtime (eg FreeImage.DLL, mpir.DLL).
 FreeImage.lib - FreeImage open source library     (see http://freeimage.sourceforge.net/)
 mpir.lib - C Multi-precision maths library forked from GMP
 mpirxx.lib - C++ class wrapper for mpir.lib               (see http://mpir.org/)
-cryptlib.lib - Crypto++ library - release version for v100 (VS2010)
-cryptlibD.lib - Crypto++ library - debug version for v100 (see https://www.cryptopp.com/)
-
+cryptlib.lib - Crypto++ library - source is now included in repo and VS soln
 
 Visual Studio
 
@@ -22,7 +19,7 @@ Visual Studio
    long as you use the Visual Studio 2010 Platform Toolset (v100). But you
    probably only have the v100 toolset if you also have VS2010 installed.
 4. To build HexEdit with later toolsets (v110, v120, etc) then you need to
-   rebuild (or obtain somehow) new Crypto++ and MPIR libraries (see below).
+   rebuild (or obtain somehow) new MPIR libraries (see below).
 
 
 Crypto++
@@ -33,10 +30,12 @@ Crypto++
    in the main project be freed within cryptlib.lib. The memory allocation
    routines in the MS CRT release and debug libraries have different block formats,
    hence you can't mix allocation and freeing of a block between debug/release.
-3. To build Crypto++ with a later version of VS for use with HexEdit:
+3. To build Crypto++ with a later version of VS change the toolset in the cryptlib project.
+4. To use a different version of Crypto++:
 	- download and extract Crypto++ (eg cryptopp563.zip)
-	- download/extract vs2010.zip (overwrites crypttest.sln from above)
-	- open crypttest.sln in Visual Studio
+	- extract vs2010.zip (overwrites cryptlib.vcxproj)
+	- Copy source (.cpp and .h files) and cryptlib.vcxproj to HexEdit\ThirdParty\CryptoPP
+   - open the HexEdit solution and open Propeties of CryptLib project
 	- ensure correct toolset is selected (Properties/General/Platform Toolset)
 	- change project to use CRT (C run-time library) in multi-threaded DLL
 	  - Properties/C-C++/Code Generation/Runtime library
@@ -48,9 +47,6 @@ Crypto++
 	  - to this:
 		m_state.BytePtr()[m_counter] ^= 6;
 	- build release and debug versions of cryptlib.lib
-	- copy ...Win32\Output\Release\cryptlib.lib to HexEdit\lib\cryptlib.lib
-	- copy ...\Debug\cryptlib.lib to HexEdit\lib\cryptlibD.lib (note extra D)
-
 
 MPIR
 
