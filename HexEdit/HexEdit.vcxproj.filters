@@ -1144,29 +1144,29 @@
     <ClInclude Include="include\mpirxx.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
-    <ClInclude Include="include\Crypto++\cryptlib.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Crypto++\md5.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Crypto++\sha.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Crypto++\sha3.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Crypto++\crc.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Crypto++\base64.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Crypto++\base32.h">
-      <Filter>Headers %28External%29</Filter>
-    </ClInclude>
     <ClInclude Include="GuiMisc.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\base32.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\base64.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\crc.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\cryptlib.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\md5.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\sha.h">
+      <Filter>Headers %28External%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\CryptoPP\sha3.h">
+      <Filter>Headers %28External%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

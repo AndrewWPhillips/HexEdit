@@ -12,10 +12,10 @@
 #include "HexEditDoc.h"
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5
-#include "include/Crypto++/cryptlib.h"
-#include "include/Crypto++/md5.h"
-#include "include/Crypto++/sha.h"
-#include "include/Crypto++/sha3.h"
+#include "../ThirdParty/CryptoPP/cryptlib.h"
+#include "../ThirdParty/CryptoPP/md5.h"
+#include "../ThirdParty/CryptoPP/sha.h"
+#include "../ThirdParty/CryptoPP/sha3.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

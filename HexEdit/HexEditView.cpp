@@ -37,18 +37,18 @@
 
 #pragma warning(push)                      // we need to save an restore warnings because Crypto++ headers muck with some
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5
-#include "include/Crypto++/cryptlib.h"
-#include "include/Crypto++/filters.h"
-#include "include/Crypto++/files.h"
-#include "include/Crypto++/md5.h"
-#include "include/Crypto++/sha.h"
-#include "include/Crypto++/sha3.h"
+#include "../ThirdParty/CryptoPP/cryptlib.h"
+#include "../ThirdParty/CryptoPP/filters.h"
+#include "../ThirdParty/CryptoPP/files.h"
+#include "../ThirdParty/CryptoPP/md5.h"
+#include "../ThirdParty/CryptoPP/sha.h"
+#include "../ThirdParty/CryptoPP/sha3.h"
 //#define CRYPTOPP_CRC32
 #ifdef CRYPTOPP_CRC32
-#include "include/Crypto++/crc.h"
+#include "../ThirdParty/CryptoPP/crc.h"
 #endif
-#include "include/Crypto++/base32.h"
-#include "include/Crypto++/base64.h"
+#include "../ThirdParty/CryptoPP/base32.h"
+#include "../ThirdParty/CryptoPP/base64.h"
 #pragma warning(pop)
 
 #include "Bin2Src.h"      // For formatted clipboard text
