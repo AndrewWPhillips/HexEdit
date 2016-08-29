@@ -1,6 +1,6 @@
 // Register.cpp : Only handles the About dialog now.
 //
-// Copyright (c) 2015 by Andrew W. Phillips
+// Copyright (c) 2016 by Andrew W. Phillips
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.
@@ -69,7 +69,7 @@ static const char *ack_name[] =
 	"Boost C++ template library - various",
 	"FreeImage DLL - Hervé Drolon (+ F. van den Berg)",
 	"MPIR (based on GMP) - various",
-	"Crypto++ - We Dai + others",
+	"Crypto++ - Wei Dai + others",
 	"ZLIB compression - J. Gailly and M. Adler",
 	"MFC Grid Control - Chris Maunder",
 	"Tree control for MFC Grid - Ken Bertelson",
