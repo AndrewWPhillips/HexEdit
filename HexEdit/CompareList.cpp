@@ -642,8 +642,13 @@ void CCompareListDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 		mm.CreatePopupMenu();
 
 		// Add a menu item for each column
+		int vis = 0;   // count visible columns
 		for (int ii = 0; headingLong[ii] != NULL; ++ii)
-			mm.AppendMenu(MF_ENABLED|(grid_.GetColumnWidth(ii+fcc)>0?MF_CHECKED:0), ii+1, headingLong[ii]);
+		{
+			bool isVisible = grid_.GetColumnWidth(ii+fcc) > 0;
+			if (isVisible) ++ vis;
+			mm.AppendMenu(MF_ENABLED|(isVisible?MF_CHECKED:0), ii+1, headingLong[ii]);
+		}
 
 		// Work out where to display the popup menu
 		CRect rct;
@@ -657,7 +662,11 @@ void CCompareListDlg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 		{
 			item += fcc-1;                        // convert menu item to corresponding column number
 			if (grid_.GetColumnWidth(item) > 0)
-				grid_.SetColumnWidth(item, 0);
+			{
+				// Only hide it if its not the last visible column
+				if (vis > 1)
+					grid_.SetColumnWidth(item, 0);
+			}
 			else
 			{
 				grid_.SetColumnWidth(item, 1);
