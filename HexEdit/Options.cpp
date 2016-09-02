@@ -4811,7 +4811,7 @@ static BOOL CALLBACK CodePageCallback(LPTSTR ss)
 		// Save what we need
 		//page_number.push_back(cpie.CodePage);
 		//page_name.push_back(CString(cpie.CodePageName));
-		page_info.push_back(make_pair<int, CString>(cpie.CodePage, CString(cpie.CodePageName)));
+		page_info.push_back(make_pair<int, CString>(int(cpie.CodePage), CString(cpie.CodePageName)));
 		ASSERT(cpie.MaxCharSize <= MAX_BYTES);
 	}
 
