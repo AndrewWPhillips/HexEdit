@@ -32,3 +32,4 @@ HexEdit/Graphics/*.bmp
 HexEdit/Graphics/*.png
 HexEdit/videos/*.avi
 HexEdit/Videos/Work/
+ThirdParty/CryptoPP/Win32/
