@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "HexEdit.h"
 #include "CompressDlg.h"
-#include "zlib/zlib.h"    // For zlib version number
+#include "../ThirdParty/zlib/zlib.h"    // For zlib version number
 #include ".\compressdlg.h"
 #include "resource.hm"     // for control help IDs
 #include "helpid.hm"       // For help button help ID

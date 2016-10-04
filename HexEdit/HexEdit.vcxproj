@@ -259,10 +259,7 @@
     <ClCompile Include="TipDlg.cpp" />
     <ClCompile Include="TipWnd.cpp" />
     <ClCompile Include="TParseDlg.cpp" />
-    <ClCompile Include="TParser.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="TParser.cpp" />
     <ClCompile Include="TransparentListBox.cpp" />
     <ClCompile Include="TransparentStatic2.cpp" />
     <ClCompile Include="UpdateChecker.cpp" />
@@ -292,91 +289,91 @@
     <ClCompile Include="GridCtrl_src\InPlaceEdit.cpp" />
     <ClCompile Include="GridCtrl_src\TitleTip.cpp" />
     <ClCompile Include="TreeColumn_src\TreeColumn.cpp" />
-    <ClCompile Include="zlib\adler32.c">
+    <ClCompile Include="..\ThirdParty\zlib\adler32.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\compress.c">
+    <ClCompile Include="..\ThirdParty\zlib\compress.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\crc32.c">
+    <ClCompile Include="..\ThirdParty\zlib\crc32.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\deflate.c">
+    <ClCompile Include="..\ThirdParty\zlib\deflate.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\gzclose.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzclose.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\gzlib.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzlib.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\gzread.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzread.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\gzwrite.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzwrite.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\infback.c">
+    <ClCompile Include="..\ThirdParty\zlib\infback.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\inffast.c">
+    <ClCompile Include="..\ThirdParty\zlib\inffast.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\inflate.c">
+    <ClCompile Include="..\ThirdParty\zlib\inflate.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\inftrees.c">
+    <ClCompile Include="..\ThirdParty\zlib\inftrees.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\trees.c">
+    <ClCompile Include="..\ThirdParty\zlib\trees.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\uncompr.c">
+    <ClCompile Include="..\ThirdParty\zlib\uncompr.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="zlib\zutil.c">
+    <ClCompile Include="..\ThirdParty\zlib\zutil.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -634,17 +631,17 @@
     <ClInclude Include="GridCtrl_src\MemDC.h" />
     <ClInclude Include="GridCtrl_src\TitleTip.h" />
     <ClInclude Include="TreeColumn_src\TreeColumn.h" />
-    <ClInclude Include="zlib\crc32.h" />
-    <ClInclude Include="zlib\deflate.h" />
-    <ClInclude Include="zlib\gzguts.h" />
-    <ClInclude Include="zlib\inffast.h" />
-    <ClInclude Include="zlib\inffixed.h" />
-    <ClInclude Include="zlib\inflate.h" />
-    <ClInclude Include="zlib\inftrees.h" />
-    <ClInclude Include="zlib\trees.h" />
-    <ClInclude Include="zlib\zconf.h" />
-    <ClInclude Include="zlib\zlib.h" />
-    <ClInclude Include="zlib\zutil.h" />
+    <ClInclude Include="..\ThirdParty\zlib\crc32.h" />
+    <ClInclude Include="..\ThirdParty\zlib\deflate.h" />
+    <ClInclude Include="..\ThirdParty\zlib\gzguts.h" />
+    <ClInclude Include="..\ThirdParty\zlib\inffast.h" />
+    <ClInclude Include="..\ThirdParty\zlib\inffixed.h" />
+    <ClInclude Include="..\ThirdParty\zlib\inflate.h" />
+    <ClInclude Include="..\ThirdParty\zlib\inftrees.h" />
+    <ClInclude Include="..\ThirdParty\zlib\trees.h" />
+    <ClInclude Include="..\ThirdParty\zlib\zconf.h" />
+    <ClInclude Include="..\ThirdParty\zlib\zlib.h" />
+    <ClInclude Include="..\ThirdParty\zlib\zutil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

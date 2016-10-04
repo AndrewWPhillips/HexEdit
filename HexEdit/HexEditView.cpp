@@ -33,7 +33,7 @@
 #include "SRecord.h"      // For import/export of Motorola S record files
 #include "IntelHex.h"     // For import/export of Intel Hex files
 #include "CopyCSrc.h"     // For Copy as C Source dialog
-#include "zlib/zlib.h"    // For compression
+#include "../ThirdParty/zlib/zlib.h"    // For compression
 
 #pragma warning(push)                      // we need to save an restore warnings because Crypto++ headers muck with some
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1   // allows use of "weak" digests like MD5

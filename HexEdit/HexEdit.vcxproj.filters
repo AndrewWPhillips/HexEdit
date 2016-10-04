@@ -328,49 +328,49 @@
     <ClCompile Include="TreeColumn_src\TreeColumn.cpp">
       <Filter>Grid Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\adler32.c">
+    <ClCompile Include="..\ThirdParty\zlib\adler32.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\compress.c">
+    <ClCompile Include="..\ThirdParty\zlib\compress.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\crc32.c">
+    <ClCompile Include="..\ThirdParty\zlib\crc32.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\deflate.c">
+    <ClCompile Include="..\ThirdParty\zlib\deflate.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\gzclose.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzclose.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\gzlib.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzlib.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\gzread.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzread.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\gzwrite.c">
+    <ClCompile Include="..\ThirdParty\zlib\gzwrite.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\infback.c">
+    <ClCompile Include="..\ThirdParty\zlib\infback.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\inffast.c">
+    <ClCompile Include="..\ThirdParty\zlib\inffast.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\inflate.c">
+    <ClCompile Include="..\ThirdParty\zlib\inflate.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\inftrees.c">
+    <ClCompile Include="..\ThirdParty\zlib\inftrees.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\trees.c">
+    <ClCompile Include="..\ThirdParty\zlib\trees.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\uncompr.c">
+    <ClCompile Include="..\ThirdParty\zlib\uncompr.c">
       <Filter>zlib</Filter>
     </ClCompile>
-    <ClCompile Include="zlib\zutil.c">
+    <ClCompile Include="..\ThirdParty\zlib\zutil.c">
       <Filter>zlib</Filter>
     </ClCompile>
     <ClCompile Include="NewCompare.cpp">
@@ -1090,37 +1090,37 @@
     <ClInclude Include="TreeColumn_src\TreeColumn.h">
       <Filter>Grid Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\crc32.h">
+    <ClInclude Include="..\ThirdParty\zlib\crc32.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\deflate.h">
+    <ClInclude Include="..\ThirdParty\zlib\deflate.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\gzguts.h">
+    <ClInclude Include="..\ThirdParty\zlib\gzguts.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\inffast.h">
+    <ClInclude Include="..\ThirdParty\zlib\inffast.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\inffixed.h">
+    <ClInclude Include="..\ThirdParty\zlib\inffixed.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\inflate.h">
+    <ClInclude Include="..\ThirdParty\zlib\inflate.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\inftrees.h">
+    <ClInclude Include="..\ThirdParty\zlib\inftrees.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\trees.h">
+    <ClInclude Include="..\ThirdParty\zlib\trees.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\zconf.h">
+    <ClInclude Include="..\ThirdParty\zlib\zconf.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\zlib.h">
+    <ClInclude Include="..\ThirdParty\zlib\zlib.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
-    <ClInclude Include="zlib\zutil.h">
+    <ClInclude Include="..\ThirdParty\zlib\zutil.h">
       <Filter>zlib\header</Filter>
     </ClInclude>
     <ClInclude Include="NewCompare.h">

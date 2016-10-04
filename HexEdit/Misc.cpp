@@ -109,7 +109,7 @@ Description:    Like AddCommas() above but adds spaces to a hex number rather
 #include <winioctl.h>           // For DISK_GEOMETRY, IOCTL_DISK_GET_DRIVE_GEOMETRY etc
 #include <direct.h>             // For _getdrive()
 #include <FreeImage.h>
-#include "zlib/zlib.h"          // For decompression
+#include "../ThirdParty/zlib/zlib.h"          // For decompression
 
 #include "misc.h"
 #include "ntapi.h"
