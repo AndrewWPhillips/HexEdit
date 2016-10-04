@@ -107,6 +107,7 @@ BOOL CGeneralCRC::OnInitDialog()
 	}
 
 	// Attach the menu to the button
+	select_menu_.m_bRightArrow = TRUE;
 	select_menu_.m_hMenu = mm.GetSafeHmenu();
 	mm.Detach();
 
