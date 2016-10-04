@@ -1135,13 +1135,13 @@
     <ClInclude Include="CompareList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FreeImage.h">
+    <ClInclude Include="..\ThirdParty\include\FreeImage.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
-    <ClInclude Include="include\mpir.h">
+    <ClInclude Include="..\ThirdParty\include\mpir.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
-    <ClInclude Include="include\mpirxx.h">
+    <ClInclude Include="..\ThirdParty\include\mpirxx.h">
       <Filter>Headers %28External%29</Filter>
     </ClInclude>
     <ClInclude Include="GuiMisc.h">

@@ -568,9 +568,9 @@
     <ClInclude Include="HexEditView.h" />
     <ClInclude Include="HexFileList.h" />
     <ClInclude Include="HexPrintDialog.h" />
-    <ClInclude Include="include\FreeImage.h" />
-    <ClInclude Include="include\mpir.h" />
-    <ClInclude Include="include\mpirxx.h" />
+    <ClInclude Include="..\ThirdParty\include\FreeImage.h" />
+    <ClInclude Include="..\ThirdParty\include\mpir.h" />
+    <ClInclude Include="..\ThirdParty\include\mpirxx.h" />
     <ClInclude Include="IntelHex.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Misc.h" />
