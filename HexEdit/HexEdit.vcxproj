@@ -55,8 +55,8 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\include;$(IncludePath)</IncludePath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -90,7 +90,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;..\ThirdParty\CryptoPP\Win32\Output\Release\cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;..\ThirdParty\lib\FreeImage.lib;..\ThirdParty\lib\mpir.lib;..\ThirdParty\CryptoPP\Win32\Output\Release\cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>$(IntDir)HexEdit.pdb</ProgramDatabaseFile>
@@ -146,7 +146,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;FreeImage.lib;mpir.lib;..\ThirdParty\CryptoPP\Win32\Output\Debug\cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;setargv.obj;imagehlp.lib;htmlhelp.lib;Winmm.lib;..\ThirdParty\lib\FreeImage.lib;..\ThirdParty\lib\mpir.lib;..\ThirdParty\CryptoPP\Win32\Output\Debug\cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)HexEdit.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
