@@ -1,8 +1,6 @@
-!HexEdit/lib/*.lib
 *.opensdf
 *.sdf
 HexEdit/GitRevision.h
-HexEdit/include/OLD/
 HexEdit/Release/
 HexEdit/Output/
 HexEdit/Debug/
@@ -33,3 +31,4 @@ HexEdit/Graphics/*.png
 HexEdit/videos/*.avi
 HexEdit/Videos/Work/
 ThirdParty/CryptoPP/Win32/
+ThirdParty/CryptoPP/*.copied
