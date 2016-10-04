@@ -1,6 +1,6 @@
 // CalcDlg.h : header file for Calculator Dialog
 //
-// Copyright (c) 2015 by Andrew W. Phillips
+// Copyright (c) 2016 by Andrew W. Phillips
 //
 // This file is distributed under the MIT license, which basically says
 // you can do what you want with it and I take no responsibility for bugs.
@@ -19,7 +19,7 @@
 #include "Expr.h"
 #include "optypes.h"
 #include "ResizeCtrl.h"
-#include "mpirxx.h"
+#include <mpirxx.h>
 
 // Just override CMFCButton so we can ceck the button colour
 class CCalcButton : public CMFCButton

@@ -1,4 +1,11 @@
 // Preview.h - header for CPreview class
+//
+// Copyright (c) 2016 by Andrew W. Phillips
+//
+// This file is distributed under the MIT license, which basically says
+// you can do what you want with it and I take no responsibility for bugs.
+// See http://www.opensource.org/licenses/mit-license.php for full details.
+//
 
 #pragma once
 // CPreview - used to display preview bitmap in file open dialog
