@@ -19,9 +19,9 @@ Language=D:\Program Files\RoboHelp Office\RoboHTML\Language\English\RoboHHRE.lng
 Stop List=D:\Program Files\RoboHelp Office\RoboHTML\Language\English\System.stp
 
 [SS Settings: RoboHtml For OracleHelp]
-WindowType0=3624;FALSE;NewWindow;;;;;;;;;;
-WindowType1=3624;TRUE;main;;;;;;;;;;
-WindowType2=3624;FALSE;form;;;;;;;;;;
+WindowType0=26297;FALSE;NewWindow;;;;;;;;;;
+WindowType1=26297;TRUE;main;;;;;;;;;;
+WindowType2=26297;FALSE;form;;;;;;;;;;
 
 [Target:WebHelp]
 ResultFileName=D:\tmp\help\Hexedit.htm
@@ -378,7 +378,7 @@ m_bTocFloderIcon=0
 DestinationProjectName=Hexedit.chm
 BuildExpression=NORMAL    
 PublishString=
-CreateProjectTime=16:34, July 02, 2016
+CreateProjectTime=00:11, July 12, 2016
 CreateProjectUser=andrew
 ViewFileName=Hexedit.chm
 Enable Result Dialog=1
