@@ -23,26 +23,31 @@ at the web site http://www.hexedit.com.
 About the Code
 --------------
 
-The source code for HexEdit is completely mine (apart, of course,
-from standard library and MFC code supplied with the compiler).
-Please send any bug fixes or enhancements to hexeditsup@hotmail.com.
+The source code for the original HexEdit was completely mine (apart
+from libraries from Microsoft), but since HexEdit 1.0 was released in
+1999 open-source code and libraries have been used including:
 
-There are probably some bugs still lurking in the code.  However, I
-have used the program basically unchanged for the last 6 months and
-have found no serious problems.
+- Boost C++ library
+- FreeImage
+- MPIR (forked from GMP)
+- Crypto++
+- zlib
+- MFC Grid Control and MFC controls/code from CodeProject
+
+The program is quite reliable having very few reported bugs, though 
+there are a few design issues.  There has only ever been one reported
+bug that caused HexEdit to crash.
 
 Another good metric that the program is relatively stable is that
 Bounds Checker found few problems (although I haven't used it since
 June 1998).  I exercised every aspect and condition of the program
 that I could think of, but Bounds Checker only reported a few
 problems deep in the MFC code none of which I could track back to
-anything in my code.  I also used the Final Check option but as it
-was so slow and was not finding any problems I gave up on that.  
-
+anything in my code.  I also used the Final Check option.
 
 As the code was, at least initially, just a test program as I learnt
 to use MFC it is not of the highest quality as far as maintainability
-or reuseability go.  Nevertheless, there are a few components that
+or reusability go.  Nevertheless, there are a few components that
 you can easily use in other programs.
 
 In particular, range_set.h implements a class that when used as a
@@ -79,8 +84,10 @@ with Visual C++" by Mike Blaszczak, which despite its name is a good
 book.  All Knowledge of C++ comes from "The C++ Programming Language"
 1st, 2nd and 3rd editions, by Bjarne Stroustrup.
 
+Since the above was written HexEdit has been updated many times and
+is now built using VC++11 which comes with Visual Studio 2012.
 
-Description of Source Files
+Description of Source Files (HexEdit 1.0)
 ---------------------------
 
 HexEdit.dsp - Dev Studio project file 
