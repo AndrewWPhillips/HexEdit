@@ -2964,7 +2964,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 			val_.TrimRight();
 
 			char *endptr;
-			enum {NORMAL, INF, NINF, NAN} special = NORMAL;
+			enum {NORMAL, INF, NINF, NaN} special = NORMAL;
 			double dbl_val = strtod(val_, &endptr);
 
 			if (format_ == FMT_IEEE32 || format_ == FMT_IEEE64)
@@ -2976,7 +2976,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 				else if (strncmp(val_, "-inf", 4) == 0 || dbl_val == -HUGE_VAL)
 					special = NINF;
 				else if (strncmp(val_, "nan", 3) == 0)
-					special = NAN;
+					special = NaN;
 			}
 
 			size_t len = 8;
@@ -3035,7 +3035,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 						memcpy((char *)&flt_val, "\x00\x00\x80\x7F", 4);
 					else if (special == NINF)
 						memcpy((char *)&flt_val, "\x00\x00\x80\xFF", 4);
-					else if (special == NAN)
+					else if (special == NaN)
 						memcpy((char *)&flt_val, "\xFF\xFF\xFF\xFF", 4);
 
 					pp = (unsigned char *)&flt_val;
@@ -3046,7 +3046,7 @@ BOOL CPropRealPage::PreTranslateMessage(MSG* pMsg)
 						memcpy((char *)&dbl_val, "\x00\x00\x00\x00\x00\x00\xf0\x7F", 8);
 					else if (special == NINF)
 						memcpy((char *)&dbl_val, "\x00\x00\x00\x00\x00\x00\xf0\xFF", 8);
-					else if (special == NAN)
+					else if (special == NaN)
 						memcpy((char *)&dbl_val, "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF", 8);
 
 						pp = (unsigned char *)&dbl_val;
